@@ -47,10 +47,13 @@ export default {
             .filter(fieldDefinition => this.esInstance[toEsFieldName(fieldDefinition.name)])
             .map(fieldDefinition => {
               let value = getValue(this.esInstance, fieldDefinition).join(', ')
-              if(fieldDefinition.description.indexOf("$date")>=0) {
-                value = (new Date(value*1)).toISOString().split('T')[0]
-              } else if(fieldDefinition.description.indexOf("$link")>=0) {
-                value = "<a href='"+getValue(this.esInstance, fieldDefinition)+"'>link</a>"
+              if (fieldDefinition.description.indexOf("$datetime") >= 0) {
+                let dt = (new Date(value * 1)).toISOString()
+                value = dt.split('T')[0] + " " + dt.split('T')[1].substring(0, 8)
+              } else if (fieldDefinition.description.indexOf("$date") >= 0) {
+                value = (new Date(value * 1)).toISOString().split('T')[0]
+              } else if (fieldDefinition.description.indexOf("$link") >= 0) {
+                value = "<a href='" + getValue(this.esInstance, fieldDefinition) + "'>link</a>"
               }
               return {
                 name: fieldDefinition.name,
