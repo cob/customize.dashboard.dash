@@ -38,8 +38,7 @@
     },
 
     props: {
-      component: Object,
-      userInfo: Object
+      component: Object
     },
 
     data: () => ({
@@ -192,7 +191,7 @@
             }
 
             // Calculate final query
-            const eventQuery = this.eventSources[i]['EventsQuery'] && this.eventSources[i]['EventsQuery'].replace(/__USERNAME__/g, this.userInfo.username) || '*'
+            const eventQuery = this.eventSources[i]['EventsQuery'] || '*'
             const baseQuery = `${eventQuery} AND (${dateRangeQuery})`
             const inputVars = new Set(this.inputVarCalendar.map(inputVar => inputVar['InputVarCalendar']));
             const finalQuery = `${baseQuery} ${[...inputVars].map(inputVar => this.component.vars[inputVar]).join(' ')}`.trim()

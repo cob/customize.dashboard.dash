@@ -1,5 +1,3 @@
-import * as dashFunctions from '@cob/dashboard-info';
-
 const clone = (obj) => JSON.parse(JSON.stringify(obj))
 
 function collect(bucket, source) {
@@ -49,7 +47,7 @@ function collect(bucket, source) {
     return bucket;
 }
 
-function parseDashboard(raw_dashboard, userInfo) {
+function parseDashboard(raw_dashboard) {
     let dash = {
         "Name": "",
         "DashboardCustomize": [{
@@ -57,7 +55,8 @@ function parseDashboard(raw_dashboard, userInfo) {
             "Width": "",
             "DashboardClasses": "",
             "Image": "",
-            "GroupAccess": [{}]
+            "GroupAccess": [{}],
+            "Context": ""
         }],
         "Board": [{
             "BoardCustomize": [{
@@ -171,51 +170,7 @@ function parseDashboard(raw_dashboard, userInfo) {
 
     // remove all 'Initial_Templates' and 'instanceId' added for processing
     dash = JSON.parse(JSON.stringify(dash, (k, v) => (k === 'Initial_Template' || k === 'instanceId') ? undefined : v))
-    dash.vars = {} //Available to every components in component.vars
 
-    // Add extra info to structure
-    dash["Board"].forEach(b => b.Component.forEach(c => {
-        // Add user info for permission evaluations
-        c.userInfo = userInfo
-        c.vars = dash.vars
-
-        if (c.Component === "Menu") {
-            c.Text.forEach(t => {
-                // If Attention is configured for this menu line then add attention status as user check
-                if (t["TextCustomize"][0]["TextAttention"]) {
-                    t["TextCustomize"][0].AttentionInfo = dashFunctions.instancesList("Dashboard-Attention", "name.raw:" + t["TextCustomize"][0]["TextAttention"], 1, 0, {validity: 30})
-                }
-            })
-        } else if (c.Component === "Totals") {
-            c.Line.forEach(l => {
-                l.Value = l.Value.map(v => {
-                    if (v.Arg[2] && (v.Arg[2] + "").startsWith("{")) {
-                        v.Arg[2] = JSON.parse(v.Arg[2])
-                    }
-                    // If Attention is configured for this value line then add attention status as user check
-                    if (v["ValueCustomize"][0]["ValueAttention"]) {
-                        v["ValueCustomize"][0].AttentionInfo = dashFunctions.instancesList("Dashboard-Attention", "name.raw:" + v["ValueCustomize"][0]["ValueAttention"], 1, 0, {validity: 10})
-                    }
-
-                    if (v.Value === 'Label') {
-                        v.dash_info = {value: v.Arg[0].Arg, state: "ready"}
-                    } else if (v.Value === 'link') {
-                        v.dash_info = {value:  v.Arg[1].Arg, href:  v.Arg[0].Arg, state: "ready", isLink: true}
-                    } else {
-                        // add dash-info values in Totals
-                        v.dash_info = dashFunctions[v.Value].apply(this, v['Arg'].map( a =>
-                            a['Arg'].replace(/__USERNAME__/g,c.userInfo.username)
-                        )) // Return DashInfo, which is used by the component
-                    }
-                    return v
-                })
-            })
-        } else if (c.Component === "Kibana") {
-            if (c["KibanaCustomize"][0]["InputQueryKibana"] !== null) {
-                c["KibanaCustomize"][0]["InputQueryKibana"] = c["KibanaCustomize"][0]["InputQueryKibana"].replaceAll("__USERNAME__", c.userInfo.username)
-            }
-        }
-    }))
     return dash
 }
 

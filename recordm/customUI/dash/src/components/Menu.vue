@@ -20,8 +20,7 @@
     export default {
         components: { Attention },
         props: { 
-            component: Object,
-            userInfo: Object
+            component: Object
         },
         computed: {
             options() { return this.component['MenuCustomize'][0] },
@@ -31,13 +30,10 @@
                     classes:   line["TextCustomize"][0]['TextClasses'] || "transition ease-in-out duration-300 rounded-md border border-gray-300 border-l-2 border-l-sky-600 shadow-sm transform hover:translate-x-0.5 p-2 bg-white",
                     icon:      line["TextCustomize"][0]['Icon'] || "",
                     text:      line['Text'] || "",
-                    link:      line['Link'] && line['Link'].replace(/__USERNAME__/g, this.userInfo.username) || "",
-                    groups:    line["TextCustomize"][0]['GroupVisibility'].map(g => g["GroupVisibility"] && g["GroupVisibility"] ).filter(g => g) || [],
+                    link:      line['Link'] || "",
                     attention: line["TextCustomize"][0]['AttentionInfo'],
                 }))
-                // Filter out lines that have groupVisibility AND the user does not have any of the groups
-                let userGroups = this.component.userInfo.groups.map(g => g.name)
-                return lines.filter(l => l.groups.length === 0 || l.groups.filter(g => userGroups.includes(g)).length !== 0 )
+                return lines
             }
         }
     }

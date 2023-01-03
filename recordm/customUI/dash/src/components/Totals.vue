@@ -17,8 +17,7 @@
     export default {
         components: { TotalsValue },
         props: {
-          component: Object,
-          userInfo: Object
+          component: Object
         },
         computed: {
             options()     { return this.component['TotalsCustomize'][0] },
@@ -38,9 +37,29 @@
                 if(newValue === "") return //PRESSUPOSTO IMPORTANTE: se newValue é vazio é porque estamos em transições (porque usamos sempre um valor, nem que seja *) e o melhor é usar o valor antigo para o valor não mudar momentaneamente (e ainda desperdicar uma pesquisa). Se o pressuposto for quebrado vamos impedir a actualização do inputFilter quando o valor é ""
                 this.lines.forEach(l => {
                     l.values.forEach(v => {
-                      let arg = (v.Arg[1] instanceof Object ? v.Arg[1].Arg : v.Arg[1])
+                        debugger
+                      let index
+                      switch (v.Value) {
+                        case "dmEquipmentCount":
+                            index = 0;
+                            break;
+                        case "definitionCount":
+                        case "domainCount":
+                        case "instancesList":
+                            index = 1;
+                            break;
+                        case "fieldSum":
+                        case "fieldAverage":
+                            index = 2;
+                            break;
+                        case "fieldWeightedAverage":
+                            index = 3;
+                            break;
+                      }
+
+                      let arg = (v.Arg[index] instanceof Object ? v.Arg[index].Arg : v.Arg[index])
                       let newFilter = ((arg || "") + " " + newValue.trim()) || "*"
-                      if (v.dash_info) v.dash_info.changeArgs({query: newFilter.replaceAll("__USERNAME__",this.userInfo.username)})
+                      if (v.dash_info) v.dash_info.changeArgs({ query: newFilter })
                     });
                 });
             }
