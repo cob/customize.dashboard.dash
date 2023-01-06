@@ -71,7 +71,7 @@ export default {
              || this.dashboardList.state === 'loading'
     },
     dashboardQuery() {
-      let groups = this.userInfo.groups.map(g=> "\"" + g.name + "\"").join(" OR ")
+      let groups = this.userInfo.groups && this.userInfo.groups.map(g=> "\"" + g.name + "\"").join(" OR ") || ""
       let nameQuery = "name.raw:\"" + this.dashboardName + "\" "
       let accessQuery = " (groupaccess.raw:(" + groups + ") OR (-groupaccess:*) )"
       return "(" + nameQuery + accessQuery +") OR id:" + this.dashboardName
