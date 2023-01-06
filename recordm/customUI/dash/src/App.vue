@@ -71,7 +71,7 @@ export default {
              || this.dashboardList.state === 'loading'
     },
     dashboardQuery() {
-      let groups = this.userInfo.groups && this.userInfo.groups.map(g=> "\"" + g.name + "\"").join(" OR ") || ""
+      let groups = this.userInfo.groups.length && this.userInfo.groups.map(g=> "\"" + g.name + "\"").join(" OR ") || ""
       let nameQuery = "name.raw:\"" + this.dashboardName + "\" "
       let accessQuery = " (groupaccess.raw:(" + groups + ") OR (-groupaccess:*) )"
       return "(" + nameQuery + accessQuery +") OR id:" + this.dashboardName
@@ -86,8 +86,20 @@ export default {
           // check who's the new user:
           umLoggedin().then( userInfo => {
             if(userInfo.username === "anonymous") {
-              // If the user is anonymous it means we timed out the cookie validity - reload at the same url
-              document.location.reload()
+              // If the user is anonymous it means we timed out the cookie validity. Two situations are possible:
+              axios.get(document.location)
+              .then(() => {
+                // If we have permissions to get the current page it means we are on a server where 
+                // anonymous has access to custom resources. We can only redirect to root to force the auth. 
+                // Unfortunatly the user will need to re-navigate to the page where he was
+                debugger
+                document.location = "/" 
+              })
+              .catch(() => {
+                // otherwiser we can do a reload at the same url wich will fire the auth page
+                document.location.reload()
+              })
+
             } else {
               // Otherwise the user changed (in another tab) OR the user groups changed OR the dashboards access groups changed: send to root !
               document.location = "/" 
