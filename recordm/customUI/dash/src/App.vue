@@ -81,7 +81,7 @@ export default {
     // Monitor changes to the status of getting the Dashboard list
     'dashboardList.state'(newDashboardListState) {
       if(newDashboardListState === "error") {
-        // Special treatment for 430 (unauthorized) error:
+        // Special treatment for 403 (unauthorized) error:
         if(this.dashboardList.errorCode === 403) {
           // check who's the new user:
           umLoggedin().then( userInfo => {
