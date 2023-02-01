@@ -7,8 +7,8 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "@cob/dashboard-info": "^2.8.2",
-    "@cob/rest-api-wrapper": "^2.3.0",
+    "@cob/dashboard-info": "^3.0.3",
+    "@cob/rest-api-wrapper": "^2.3.2",
     "@fullcalendar/core": "^5.11.0",
     "@fullcalendar/daygrid": "^5.11.0",
     "@fullcalendar/interaction": "^5.11.0",
