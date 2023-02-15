@@ -2,7 +2,7 @@
     <div class="h-full w-full">
         <div v-if="error || chooserError" class="text-center my-20 text-2xl text-red-500"> {{error}} {{chooserError}} </div>
         <Dashboard v-else-if="dashboardProcessed" :dashboard="dashboardProcessed" :userInfo="userInfo"/>
-        
+
         <Waiting2 v-if="processingFlag" class="fixed top-16 right-0"/>
     </div>
 </template>
@@ -66,8 +66,8 @@ export default {
   },
   computed: {
     processingFlag() {
-      return this.dashboardProcessed == null 
-             || this.dashboardList.state === 'updating' 
+      return this.dashboardProcessed == null
+             || this.dashboardList.state === 'updating'
              || this.dashboardList.state === 'loading'
     },
     dashboardQuery() {
@@ -89,11 +89,10 @@ export default {
               // If the user is anonymous it means we timed out the cookie validity. Two situations are possible:
               axios.get(document.location)
               .then(() => {
-                // If we have permissions to get the current page it means we are on a server where 
-                // anonymous has access to custom resources. We can only redirect to root to force the auth. 
+                // If we have permissions to get the current page it means we are on a server where
+                // anonymous has access to custom resources. We can only redirect to root to force the auth.
                 // Unfortunatly the user will need to re-navigate to the page where he was
-                debugger
-                document.location = "/" 
+                document.location = "/"
               })
               .catch(() => {
                 // otherwiser we can do a reload at the same url wich will fire the auth page
@@ -102,7 +101,7 @@ export default {
 
             } else {
               // Otherwise the user changed (in another tab) OR the user groups changed OR the dashboards access groups changed: send to root !
-              document.location = "/" 
+              document.location = "/"
             }
           })
         } else {
@@ -120,9 +119,9 @@ export default {
       } else if (newDashboardListValue.length > 1) {
           //More then 1 dashboard found: show generic dashboard to choose from
           if(this.dashboardChooser.value) {
-            // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is loaded 
+            // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is loaded
             this.loadDashboardInstance(this.dashboardChooser.value[0].id);
-          } 
+          }
       } else {
         //Exactly one instance found, load it
         let newDashboardId =  newDashboardListValue[0].id
@@ -141,9 +140,8 @@ export default {
       }
     },
 
-    dashboardContext: { 
-      handler (newContext) {
-        debugger
+    dashboardContext: {
+      handler () {
         this.buildDashboard()
       },
       deep: true
@@ -160,7 +158,7 @@ export default {
             this.setCompiledDashboard(dashboardParsed)
             this.dashboardContext = this.getContext(dashboardParsed, this.dashboardList)
             this.buildDashboard()
-            
+
             //Set the page title
             document.title = "Recordm[" + dashboardParsed.Name + "]"
           }
@@ -184,7 +182,7 @@ export default {
       let template = this.JsonStringifyWithBlockHelpers(dashboardParsed,replaceList)
       for(let i=replaceList.length-1; i > -1 ; i--) {
         template = template.replace('"#REPLACE'+i+'"',replaceList[i]) // The replacement of blocks must include de " " that were put around the block
-      }      
+      }
       this.dashboardTemplate = template
       this.dashboardProcessor = Handlebars.compile(template)
     },
@@ -197,7 +195,6 @@ export default {
         }
         eval("context = " + dashboardParsed.DashboardCustomize[0].Context)
       } catch(e) {
-        debugger
       }
 
       context = context || {}
@@ -213,12 +210,12 @@ export default {
       if(this.dashboardContext) {
         let result = this.dashboardProcessor(this.dashboardContext).replaceAll(/,\s*]/g,"]").replaceAll(/(,\s*)+/g,",") // Every last comma in arrays OR double comma in the resulting arrays are to be removed
         let dash = JSON.parse(result)
-        
+
         //Make common 'vars' object that will be available to every components in component.vars
-        dash.vars = {} 
+        dash.vars = {}
 
         // Add extra info to structure
-        for( let b of dash["Board"]) { 
+        for( let b of dash["Board"]) {
           for( let c of b.Component) {
             // Add user info for permission evaluations
             c.userInfo = this.userInfo
@@ -269,7 +266,7 @@ export default {
       // Replacements will occur on every duplicate field of the dashboard instance that has a value starting with "{{#each something}} ..." or other block helper
       const me = this
       const newJson = traverse(json).map(function(node) {
-        // If the node has a property with the same name as the name of the enclosing property (ie, something like 'Board' im '{ Board: [ { ..., Board:"string value",...}, ...]}' ) test for the block pattern 
+        // If the node has a property with the same name as the name of the enclosing property (ie, something like 'Board' im '{ Board: [ { ..., Board:"string value",...}, ...]}' ) test for the block pattern
         // (this will be the situation for all duplicate fields, as set by the collector)
         const epn = this.parent && this.parent.key; //EPN = Enclosing Property Name
         const propertyValueForEPN = node && epn && typeof (node[epn])==="string" && node[epn];
