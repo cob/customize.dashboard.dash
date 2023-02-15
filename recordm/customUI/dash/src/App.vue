@@ -92,8 +92,7 @@ export default {
                 // If we have permissions to get the current page it means we are on a server where 
                 // anonymous has access to custom resources. We can only redirect to root to force the auth. 
                 // Unfortunatly the user will need to re-navigate to the page where he was
-                debugger
-                document.location = "/" 
+                document.location = "/"
               })
               .catch(() => {
                 // otherwiser we can do a reload at the same url wich will fire the auth page
@@ -141,9 +140,8 @@ export default {
       }
     },
 
-    dashboardContext: { 
-      handler (newContext) {
-        debugger
+    dashboardContext: {
+      handler () {
         this.buildDashboard()
       },
       deep: true
@@ -197,7 +195,6 @@ export default {
         }
         eval("context = " + dashboardParsed.DashboardCustomize[0].Context)
       } catch(e) {
-        debugger
       }
 
       context = context || {}
