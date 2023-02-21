@@ -55,18 +55,13 @@
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
         timeZone: 'local',
         locales: allLocales,
+        locale: navigator.language,
         // Take in consideration updating the initial state value of `activeView` if you change this value
         initialView: 'dayGridWeek',
         headerToolbar: {
           left: 'today prev next',
           center: '',
           right: 'dayGridWeek,dayGridMonth,listMonth'
-        },
-        buttonText: {
-          today: 'Today',
-          week: 'Week',
-          month: 'Month',
-          list: 'List',
         },
         height: 'auto',
         contentHeight: 'auto',
@@ -130,7 +125,7 @@
       calendarApi.setOption('datesSet', (dateInfo) => {
         // Reflect immediately the change in the title and set 'debouncing' to 'true' to signal change in progress
         const currentDate = calendarApi.getDate()
-        this.monthTitle = currentDate.toLocaleString('default', {month: 'long'});
+        this.monthTitle = currentDate.toLocaleString(navigator.language, {month: 'long'});
         this.yearTitle = currentDate.getFullYear()
         this.debouncing = true   
 
