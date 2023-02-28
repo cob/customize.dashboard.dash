@@ -42,7 +42,13 @@
             unit()             { return this.options['Unit'] },
             state()            { return this.valueData.dash_info && this.valueData.dash_info.state || "" },
             updating()         { return this.state === "updating" || this.state === "loading" },
-            classes()          { return (this.options['ValueClasses'] || "Default Info") + " S_"+this.valueData.dash_info.state },
+            classes()          { 
+                let extraDimClass
+                if(this.valueData.dash_info && !isNaN(this.valueData.dash_info.value) && this.valueData.dash_info.value==0) {
+                    extraDimClass = "bg-transparent text-inherit"
+                } 
+                return (this.options['ValueClasses'] || "Default Info") + " S_"+this.valueData.dash_info.state + " " + extraDimClass
+            },
             link()             { return this.valueData.dash_info.href + (this.view ? "&av=" + this.view : "") },
             expandedClasses()  { return this.classes.split(/\s/).map(c => specialClasses[c] || c ).join(" ") },
             value() {
