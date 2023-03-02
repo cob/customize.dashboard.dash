@@ -1,1 +1,1 @@
-import("./customizations/dashboard_v1.js");
+import("./customizations/dashboard.js");
