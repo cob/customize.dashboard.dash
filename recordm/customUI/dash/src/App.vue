@@ -32,7 +32,6 @@ export default {
     dashboardArg: null,
     dashboardChooser: null,
     dashboardList: null,
-    dashboardTemplate: null,
     dashboardProcessor: null,
     dashboardContext: {},
     dashboardProcessed: null
@@ -141,6 +140,8 @@ export default {
     },
 
     dashboardContext: {
+      // Since the context might include dash-info queries that may change on the course of the lifetime of the dashboarb
+      // we need to rebuild the dashboard whenever that happens 
       handler () {
         this.buildDashboard()
       },
@@ -157,7 +158,6 @@ export default {
             const dashboardParsed = parseDashboard(resp.data)
             this.setCompiledDashboard(dashboardParsed)
             this.dashboardContext = this.getContext(dashboardParsed, this.dashboardList)
-            this.buildDashboard()
             
             //Set the page title
             document.title = "Recordm[" + dashboardParsed.Name + "]"
@@ -182,26 +182,34 @@ export default {
       let template = this.JsonStringifyWithBlockHelpers(dashboardParsed,replaceList)
       for(let i=replaceList.length-1; i > -1 ; i--) {
         template = template.replace('"#REPLACE'+i+'"',replaceList[i]) // The replacement of blocks must include de " " that were put around the block
-      }      
-      this.dashboardTemplate = template
+      }
       this.dashboardProcessor = Handlebars.compile(template)
     },
 
     getContext(dashboardParsed, dashboardList) {
-      let context
+      // This initial code is to allow handelbars on the specifiedContext 
+      let baseContext = {
+        user : this.userInfo,
+        arg: this.dashboardArg
+      };
+      let specifiedContextStr = dashboardParsed.DashboardCustomize[0].Context
+      let specifiedContextParsed = specifiedContextStr ? (Handlebars.compile(specifiedContextStr))(baseContext) : {}
+
+      // Get the specifiedContext evaluated (using available functions: [list] )
+      let specifiedContext
       try {
         function list(...args) {
           return instancesList(...args)
         }
-        eval("context = " + dashboardParsed.DashboardCustomize[0].Context)
+        eval("specifiedContext = " + specifiedContextParsed )
       } catch(e) {
       }
 
-      context = context || {}
-
+      // Build final context with all components
+      let context = specifiedContext || {}
+      context = { ...baseContext, ...context}
+      // Add the dashboardList result for Chooser to display
       context.dashboards = dashboardList.value.slice().reverse();
-      context.arg = this.dashboardArg;
-      context.user = this.userInfo;
 
       return context;
     },
@@ -264,9 +272,10 @@ export default {
 
     JsonStringifyWithBlockHelpers(json,replaceList) {
       // Replacements will occur on every duplicate field of the dashboard instance that has a value starting with "{{#each something}} ..." or other block helper
+      // replaceList will recursively be set with 
       const me = this
       const newJson = traverse(json).map(function(node) {
-        // If the node has a property with the same name as the name of the enclosing property (ie, something like 'Board' im '{ Board: [ { ..., Board:"string value",...}, ...]}' ) test for the block pattern 
+        // If the node has a property with the same name as the name of the enclosing property (ie, something like 'Board' in '{ Board: [ { ..., Board:"string value",...}, ...]}' ) test for the block pattern 
         // (this will be the situation for all duplicate fields, as set by the collector)
         const epn = this.parent && this.parent.key; //EPN = Enclosing Property Name
         const propertyValueForEPN = node && epn && typeof (node[epn])==="string" && node[epn];
