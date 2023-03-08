@@ -1,13 +1,13 @@
 {
   "name": "cob-dashboard-vue",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "@cob/dashboard-info": "^3.0.3",
+    "@cob/dashboard-info": "^3.1.1",
     "@cob/rest-api-wrapper": "^2.3.2",
     "@fullcalendar/core": "^5.11.0",
     "@fullcalendar/daygrid": "^5.11.0",
