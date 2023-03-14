@@ -10,7 +10,7 @@
 <script>
 import axios from 'axios';
 import {umLoggedin} from '@cob/rest-api-wrapper';
-import {instancesList} from '@cob/dashboard-info';
+import { instancesList, fieldValues } from '@cob/dashboard-info';
 import * as dashFunctions from '@cob/dashboard-info';
 import {parseDashboard} from './collector.js'
 import Dashboard from './components/Dashboard.vue'
@@ -45,35 +45,30 @@ export default {
       this.userInfo = userInfo
       this.dashboardName = document.getElementsByClassName("custom-resource")[0].getAttribute('data-name').split(":")[0]
       this.dashboardArg = document.getElementsByClassName("custom-resource")[0].getAttribute('data-name').substring(this.dashboardName.length+1)
-      this.dashboardList = instancesList(DASHBOARD_DEF, this.dashboardQuery, 100)
+      this.dashboardList = instancesList(DASHBOARD_DEF, this.dashboardQuery(), 100)
     })
 
     // Upon anchor navigation we get the dashboard instance name from the first param to the 'resume' callback.
     $('section.custom-resource').on('resume', (e, params) => {
       //Recheck user (the user might have changed or his groups might have changed after previous load)
       umLoggedin().then(userInfo => {
-        let name = params[0].split(":")[0]
+        this.userInfo = userInfo
+        this.dashboardName = params[0].split(":")[0]
+        this.dashboardArg = params[0].substring(this.dashboardName.length + 1)
 
-        if( name !== this.dashboardName || this.userInfo.username !== userInfo.username ){
-          this.userInfo = userInfo
-          this.dashboardName = name
-          this.dashboardArg = params[0].substring(name.length+1)
-          this.dashboardList.changeArgs({query: this.dashboardQuery })
-        }
+        this.dashboardContext.name = this.dashboardName
+        this.dashboardContext.user = this.userInfo
+        this.dashboardContext.Arg = this.dashboardArg
+
+        this.dashboardList.changeArgs({ query: this.dashboardQuery() })
       })
     });
   },
   computed: {
     processingFlag() {
-      return this.dashboardProcessed == null 
-             || this.dashboardList.state === 'updating' 
-             || this.dashboardList.state === 'loading'
-    },
-    dashboardQuery() {
-      let groups = this.userInfo.groups.length && this.userInfo.groups.map(g=> "\"" + g.name + "\"").join(" OR ") || ""
-      let nameQuery = "name.raw:\"" + this.dashboardName + "\" "
-      let accessQuery = " (groupaccess.raw:(" + groups + ") OR (-groupaccess:*) )"
-      return "(" + nameQuery + accessQuery +") OR id:" + this.dashboardName
+      return this.dashboardProcessed == null
+        || this.dashboardList.state === 'updating'
+        || this.dashboardList.state === 'loading'
     }
   },
   watch: {
@@ -87,20 +82,20 @@ export default {
             if(userInfo.username === "anonymous") {
               // If the user is anonymous it means we timed out the cookie validity. Two situations are possible:
               axios.get(document.location)
-              .then(() => {
-                // If we have permissions to get the current page it means we are on a server where 
-                // anonymous has access to custom resources. We can only redirect to root to force the auth. 
-                // Unfortunatly the user will need to re-navigate to the page where he was
-                document.location = "/"
-              })
-              .catch(() => {
-                // otherwiser we can do a reload at the same url wich will fire the auth page
-                document.location.reload()
-              })
+                .then(() => {
+                  // If we have permissions to get the current page it means we are on a server where 
+                  // anonymous has access to custom resources. We can only redirect to root to force the auth. 
+                  // Unfortunatly the user will need to re-navigate to the page where he was
+                  document.location = "/"
+                })
+                .catch(() => {
+                  // otherwiser we can do a reload at the same url wich will fire the auth page
+                  document.location.reload()
+                })
 
             } else {
               // Otherwise the user changed (in another tab) OR the user groups changed OR the dashboards access groups changed: send to root !
-              document.location = "/" 
+              document.location = "/"
             }
           })
         } else {
@@ -116,11 +111,11 @@ export default {
       if(newDashboardListValue.length === 0) {
         this.error = "Error: dashboard '" + this.dashboardName + "' was not found for your user"
       } else if (newDashboardListValue.length > 1) {
-          //More then 1 dashboard found: show generic dashboard to choose from
-          if(this.dashboardChooser.value) {
-            // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is loaded 
-            this.loadDashboardInstance(this.dashboardChooser.value[0].id);
-          } 
+        //More then 1 dashboard found: show generic dashboard to choose from
+        if(this.dashboardChooser.value) {
+          // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is loaded 
+          this.loadDashboardInstance(this.dashboardChooser.value[0].id);
+        }
       } else {
         //Exactly one instance found, load it
         let newDashboardId =  newDashboardListValue[0].id
@@ -142,14 +137,36 @@ export default {
     dashboardContext: {
       // Since the context might include dash-info queries that may change on the course of the lifetime of the dashboarb
       // we need to rebuild the dashboard whenever that happens 
-      handler () {
-        this.buildDashboard()
+      handler(prev, next) {
+        const compareExcludeKeys = (object1, object2, excludeKeys = []) => {
+          if (Object.keys(object1).length !== Object.keys(object2).length) return false;
+          return Object.entries(object1).reduce((isEqual, [key, value]) => {
+            const isValueEqual = typeof value === 'object' && value !== null
+              ? compareExcludeKeys(value, object2[key], excludeKeys)
+              : excludeKeys.includes(key) || object2[key] === value;
+            if (!isValueEqual) {
+              console.log("false")
+            }
+            return isEqual && isValueEqual;
+          }, true);
+        };
+
+
+        if (!compareExcludeKeys(next, prev, ['currentState', 'getterArgs', '_getNewResults'])) {
+          this.buildDashboard()
+        }
       },
       deep: true
     }
 
   },
   methods: {
+    dashboardQuery() {
+      let groups = this.userInfo.groups.length && this.userInfo.groups.map(g => "\"" + g.name + "\"").join(" OR ") || ""
+      let nameQuery = "name.raw:\"" + this.dashboardName + "\" "
+      let accessQuery = " (groupaccess.raw:(" + groups + ") OR (-groupaccess:*) )"
+      return "(" + nameQuery + accessQuery + ") OR id:" + this.dashboardName
+    },
     loadDashboardInstance(dashboardId) {
       axios.get("/recordm/recordm/instances/" + dashboardId)
         .then(resp => {
@@ -190,7 +207,8 @@ export default {
       // This initial code is to allow handelbars on the specifiedContext 
       let baseContext = {
         user : this.userInfo,
-        arg: this.dashboardArg
+        arg: this.dashboardArg,
+        name: this.dashboardName
       };
       let specifiedContextStr = dashboardParsed.DashboardCustomize[0].Context
       let specifiedContextParsed = specifiedContextStr ? (Handlebars.compile(specifiedContextStr))(baseContext) : {}
@@ -200,6 +218,9 @@ export default {
       try {
         function list(...args) {
           return instancesList(...args)
+        }
+        function distinct(...args) {
+          return fieldValues(...args)
         }
         eval("specifiedContext = " + specifiedContextParsed )
       } catch(e) {
