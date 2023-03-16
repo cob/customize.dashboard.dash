@@ -111,11 +111,11 @@ export default {
       if(newDashboardListValue.length === 0) {
         this.error = "Error: dashboard '" + this.dashboardName + "' was not found for your user"
       } else if (newDashboardListValue.length > 1) {
-        //More then 1 dashboard found: show generic dashboard to choose from
-        if(this.dashboardChooser.value) {
-          // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is loaded 
-          this.loadDashboardInstance(this.dashboardChooser.value[0].id);
-        }
+          //More then 1 dashboard found: show generic dashboard to choose from
+          if(this.dashboardChooser.value) {
+            // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is loaded 
+            this.loadDashboardInstance(this.dashboardChooser.value[0].id);
+          } 
       } else {
         //Exactly one instance found, load it
         let newDashboardId =  newDashboardListValue[0].id
@@ -137,24 +137,8 @@ export default {
     dashboardContext: {
       // Since the context might include dash-info queries that may change on the course of the lifetime of the dashboarb
       // we need to rebuild the dashboard whenever that happens 
-      handler(prev, next) {
-        const compareExcludeKeys = (object1, object2, excludeKeys = []) => {
-          if (Object.keys(object1).length !== Object.keys(object2).length) return false;
-          return Object.entries(object1).reduce((isEqual, [key, value]) => {
-            const isValueEqual = typeof value === 'object' && value !== null
-              ? compareExcludeKeys(value, object2[key], excludeKeys)
-              : excludeKeys.includes(key) || object2[key] === value;
-            if (!isValueEqual) {
-              console.log("false")
-            }
-            return isEqual && isValueEqual;
-          }, true);
-        };
-
-
-        if (!compareExcludeKeys(next, prev, ['currentState', 'getterArgs', '_getNewResults'])) {
-          this.buildDashboard()
-        }
+      handler () {
+        this.buildDashboard()
       },
       deep: true
     }
