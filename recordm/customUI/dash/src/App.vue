@@ -45,7 +45,7 @@ export default {
       this.userInfo = userInfo
       this.dashboardName = document.getElementsByClassName("custom-resource")[0].getAttribute('data-name').split(":")[0]
       this.dashboardArg = document.getElementsByClassName("custom-resource")[0].getAttribute('data-name').substring(this.dashboardName.length+1)
-      this.dashboardList = instancesList(DASHBOARD_DEF, this.dashboardQuery(), 100)
+      this.dashboardList = instancesList(DASHBOARD_DEF, this.dashboardQuery(), 100,0,"","", { changeCB: this.dashboardList_changed })
     })
 
     // Upon anchor navigation we get the dashboard instance name from the first param to the 'resume' callback.
@@ -106,23 +106,6 @@ export default {
       }
     },
 
-    // Monitor changes to the values of the Dashboard list
-    'dashboardList.value'(newDashboardListValue) {
-      if(newDashboardListValue.length === 0) {
-        this.error = "Error: dashboard '" + this.dashboardName + "' was not found for your user"
-      } else if (newDashboardListValue.length > 1) {
-          //More then 1 dashboard found: show generic dashboard to choose from
-          if(this.dashboardChooser.value) {
-            // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is loaded 
-            this.loadDashboardInstance(this.dashboardChooser.value[0].id);
-          } 
-      } else {
-        //Exactly one instance found, load it
-        let newDashboardId =  newDashboardListValue[0].id
-        this.loadDashboardInstance(newDashboardId);
-      }
-    },
-
     //Monitor for initial load of dashboardChooser, in case there's already alternativeDashboards to be displayed (and the dashboardChooser was not ready)
     'dashboardChooser.value'(chooserDashboard) {
       if(chooserDashboard.length) {
@@ -145,12 +128,32 @@ export default {
 
   },
   methods: {
+
+    // Monitor changes to the values of the Dashboard list
+    dashboardList_changed(newDashboardListResult) {
+      console.log("Dashboards Dash: dashboardList calback called")
+      if(newDashboardListResult.value.length === 0) {
+        this.error = "Error: dashboard '" + this.dashboardName + "' was not found for your user"
+      } else if (newDashboardListResult.value.length > 1) {
+          //More then 1 dashboard found: show generic dashboard to choose from
+          if(this.dashboardChooser.value) {
+            // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is loaded 
+            this.loadDashboardInstance(this.dashboardChooser.value[0].id);
+          } 
+      } else {
+        //Exactly one instance found, load it
+        let newDashboardId =  newDashboardListResult.value[0].id
+        this.loadDashboardInstance(newDashboardId);
+      }
+    },
+  
     dashboardQuery() {
       let groups = this.userInfo.groups.length && this.userInfo.groups.map(g => "\"" + g.name + "\"").join(" OR ") || ""
       let nameQuery = "name.raw:\"" + this.dashboardName + "\" "
       let accessQuery = " (groupaccess.raw:(" + groups + ") OR (-groupaccess:*) )"
       return "(" + nameQuery + accessQuery + ") OR id:" + this.dashboardName
     },
+    
     loadDashboardInstance(dashboardId) {
       axios.get("/recordm/recordm/instances/" + dashboardId)
         .then(resp => {
@@ -159,6 +162,7 @@ export default {
             const dashboardParsed = parseDashboard(resp.data)
             this.setCompiledDashboard(dashboardParsed)
             this.dashboardContext = this.getContext(dashboardParsed, this.dashboardList)
+            this.buildDashboard()
             
             //Set the page title
             document.title = "Recordm[" + dashboardParsed.Name + "]"
