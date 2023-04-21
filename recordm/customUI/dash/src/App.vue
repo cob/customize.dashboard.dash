@@ -10,7 +10,7 @@
 <script>
 import axios from 'axios';
 import {umLoggedin} from '@cob/rest-api-wrapper';
-import { instancesList, fieldValues } from '@cob/dashboard-info';
+import { instancesList, fieldValuesHits } from '@cob/dashboard-info';
 import * as dashFunctions from '@cob/dashboard-info';
 import {parseDashboard} from './collector.js'
 import Dashboard from './components/Dashboard.vue'
@@ -212,7 +212,7 @@ methods: {
         return instancesList(...args)
       }
       function distinct(...args) {
-        return fieldValues(...args)
+        return fieldValuesHits(...args)
       }
       eval("specifiedContext = " + specifiedContextParsed )
     } catch(e) {
