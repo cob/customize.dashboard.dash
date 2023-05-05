@@ -52,7 +52,7 @@
       debouncing: false,
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
-        timeZone: 'local',
+        timeZone: 'UTC',
         locales: allLocales,
         locale: navigator.language,
         // Take in consideration updating the initial state value of `activeView` if you change this value
