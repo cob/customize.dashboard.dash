@@ -189,16 +189,16 @@
             const baseQuery = `${eventQuery} AND (${dateRangeQuery})`
             const inputVars = new Set(this.inputVarCalendar.map(inputVar => inputVar['InputVarCalendar']));
             const finalQuery = `${baseQuery} ${[...inputVars].map(inputVar => this.component.vars[inputVar]).join(' ')}`.trim()
-  
+
             queries.push(finalQuery)
 
             // If set, the 'outputVar' should be a query reflecting the current date range displayed on the calendar. Since we can use only one date_field for the query we opt to use the first(0) "Event Source" specs
-            if (i==0 && this.outputVar) this.$set(this.component.vars, this.outputVar, dateRangeQuery) 
+            if (i===0 && this.outputVar) this.$set(this.component.vars, this.outputVar, dateRangeQuery)
           }
         }
         return queries
       },
-      
+
       allResults() {
         let results = []
         for (var i=0; i<this.rmEventSources.length;i++) {
@@ -249,13 +249,13 @@
           this.calendarApi.changeView(newContent.activeView ? newContent.activeView : this.calendarOptions.initialView )
         }
       },
-      
+
       updatePersistedStateBasedOnCalendarChange() {
         const activeView = this.calendarApi.view.type
         const currentDate = this.calendarApi.getDate()
         const newState = { }
-        if(JSON.stringify(currentDate) != JSON.stringify(this.initialDate)) newState.initialDate = `${currentDate.getFullYear()}-${("0" + (currentDate.getMonth() + 1)).slice(-2)}-01`
-        if(activeView != this.calendarOptions.initialView) newState.activeView = activeView
+        if(JSON.stringify(currentDate) !== JSON.stringify(this.initialDate)) newState.initialDate = `${currentDate.getFullYear()}-${("0" + (currentDate.getMonth() + 1)).slice(-2)}-01`
+        if(activeView !== this.calendarOptions.initialView) newState.activeView = activeView
         if(newState.initialDate || newState.activeView ) this.statePersistence.content = newState
       },
 
@@ -310,6 +310,8 @@
           interactive: true,
           trigger: 'click',
           offset: [0, 10],
+          appendTo: document.getElementsByClassName("fc-view")[0],
+          zIndex: 10000, // +1 unit higher than the " .fc .fc-popover"
           onShown: () => {
             this.lazyCalendarConfigurer(calendarApi, false)
           },
