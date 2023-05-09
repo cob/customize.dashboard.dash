@@ -52,7 +52,7 @@
       debouncing: false,
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
-        timeZone: 'UTC',
+        timeZone: 'local',
         locales: allLocales,
         locale: navigator.language,
         // Take in consideration updating the initial state value of `activeView` if you change this value
@@ -268,8 +268,8 @@
               const stateField            = esInstance["STATE FIELD"]
 
               const title = esInstance[descriptionEventField] || [esInstance.id]
-              const startDate = new Date(parseInt(esInstance[startDateField][0], 10))
-              const endDate = endDateField ? new Date(parseInt(esInstance[endDateField][0], 10)) : null
+              const startDate = parseInt(esInstance[startDateField][0], 10)
+              const endDate = endDateField ? parseInt(esInstance[endDateField][0], 10) : null
 
               let color
               if(stateField && stateField.startsWith("#")) {
