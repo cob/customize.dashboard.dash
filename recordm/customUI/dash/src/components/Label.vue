@@ -5,6 +5,12 @@
 <script>
     export default {
         props: { component: Object },
+        created() {
+            if(this.label && this.label.indexOf("script:") === 0) {
+                const script = this.label.substring(7)
+                eval(script)
+            }
+        },
         computed: {
             options() { return this.component['LabelCustomize'][0] },
             label()   { return this.component['Label']      || "" },
