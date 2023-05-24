@@ -32,7 +32,6 @@ cob.custom.customize.push(function (core, utils, _ui) {
             model.menus.push(...cleanMenus); // NOTE: this should not do any difference if server is configured with only dashboards
             core.publish('updated-app-info'); 
          }
-         model.menus.length = 1 // NOTE: This should be removed once every server is already upgraded
 
          const groups = groupsArray && groupsArray.map(g => "\"" + g + "\"").join(" OR ") 
          const query = " ( groupaccess.raw:(" + groups + ") OR (-groupaccess:*) )"
