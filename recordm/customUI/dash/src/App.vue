@@ -45,6 +45,7 @@
       const updateRequestData = (userInfo,urlDashPart) =>{
         userInfo.groupsQuery = userInfo.groups.length && userInfo.groups.map(g => "\"" + g.name + "\"").join(" OR ")
         this.userInfo        = userInfo 
+        this.urlDashPart     = urlDashPart
         this.dashboardName   = urlDashPart.split(":")[0]
         this.dashboardArg    = urlDashPart.substring(this.dashboardName.length+1)
       }
@@ -177,6 +178,15 @@
 
     methods: {
       loadDashboard(newDashEs, requestList) {
+        this.error = ""
+
+        // Set the last visited dash in order to show it in case of a login withou specific dashboard destination
+        localStorage.setItem("lastDash-"+this.userInfo.username, this.urlDashPart)
+
+        //Calculate the key to use on a cache for each different combination of 1)url arguments AND 2) result list of IDs
+        const key = this.dashboardArg + requestList.map(d=>d.id).join("-")
+        const dashKey = "H" + sha256(key).toString().replace("=","_")       
+
         const compileDashboard = (dashboardParsed) => {
           const JsonStringifyWithBlockHelpers = (json,replaceList) => {
             // Replacements will occur on every duplicate field of the dashboard instance that has a value starting with "{{#each something}} ..." or other block helper
@@ -311,15 +321,22 @@
           let menu = []
           // only add menu entries in case there's more then 1 dashboard for this solution
           if(newSiblings && newSiblings.length > 1) {
+
+            // Setup the menu link for this solution to this specific dashboard for future requests (ie, allways start by showing last choice of dashboard for the solution in question)
+            const solution = newSiblings[0].solution[0] // Equal for all siblings
+            localStorage.setItem("lastDash-"+this.userInfo.username+"-"+solution, this.dashboardsCached[dashKey].urlDashPart)
+            cob.app.publish('updated-app-info',{rebuildMenu: true}); 
+
+            // Start by adding a menu entry to show the CHOOSER with all the dashboards available
+            menu.push({
+              name: '<i class="fa-solid fa-table-cells-large"></i>',
+              href: "#/cob.custom-resource/" + solution + "/dash",
+              active: this.dashboardChooser.value && newDashEs.id === this.dashboardChooser.value[0].id
+            })
+            
+            // Add each of the sibling dashboards
             for(let i = newSiblings.length-1; i >= 0; i--) {
               const item = newSiblings[i]
-              if(i === newSiblings.length-1) {
-                menu.push({
-                  name:'<i class="fa-solid fa-table-cells-large"></i>',
-                  href:"#/cob.custom-resource/"+item.solution+"/dash",
-                  active: this.dashboardChooser.value && newDashEs.id === this.dashboardChooser.value[0].id
-                })
-              }
               menu.push({
                 name:item.name[0],
                 href:"#/cob.custom-resource/"+item.id+"/dash",
@@ -331,12 +348,6 @@
           this.$set(this.dashboardsCached[dashKey], "menu", menu);
         }
 
-        this.error = ""
-
-        //Maintain a cache for each different combination of 1)url arguments AND 2) result list of IDs
-        const key = this.dashboardArg + requestList.map(d=>d.id).join("-")
-        const dashKey = "H" + sha256(key).toString().replace("=","_")       
-        
         if (this.dashboardsCached[dashKey] === undefined || this.dashboardsCached[dashKey].version !== newDashEs.version) {
           // If the dashKey propertie doesn't exist or it changed version then this is the first time we display this dashboard (at this version) and we need to build it from scratch (or rebuild, if is a new version)
           axios.get("/recordm/recordm/instances/" + newDashEs.id)
@@ -345,6 +356,7 @@
                 let dash = {};
                 dash.dashKey = dashKey;
                 dash.id = newDashEs.id;
+                dash.urlDashPart = this.urlDashPart;
                 dash.version = newDashEs.version;
                 dash.dashboardParsed = parseDashboard(resp.data);
                 dash.dashboardProcessor = compileDashboard(dash.dashboardParsed);
