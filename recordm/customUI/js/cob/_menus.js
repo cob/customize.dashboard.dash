@@ -1,16 +1,15 @@
 cob.custom.customize.push(function (core, utils, _ui) {
    core.customizeMenu((model) => {
+      // For legacy porpose start by storing the pre-defined menu configured on recordm/services/com.cultofbits.web.integration.properties
+      // and then remove all entries that we know we're going to add on other pre-defined dashboards
       const cleanMenus = model.menus.filter(v => ["Home", "reports", "rm-importer-stats", "@"].reduce((pr, x) => pr && v.name.indexOf(x) != 0, true))
 
+      // For anonymous user don't do any menu customization
       if (core.getCurrentLoggedInUser() != 'anonymous') {
-         const groupsArray = core.getGroups();
 
+         // The function that will be called once we have backend (or cache) information on current user Solutions access (ie, distinct values of Solution field of available dashboard instances)
          let updateMenu = (solutions) => {
-            model.menus.length = 0 // NOTE: remove first entry, that should be the dash entry
-            if(solutions.value.length > 0) {
-               for(let i = solutions.value.length-1; i >= 0; i--) {
-                  const solution = solutions.value[i]
-                  if(solutions.value.length > 1 && i === solutions.value.length-1) {
+            model.menus.length = 0 //We will re-build completly the menu
                      model.menus.push({ 
                         name: "<i class='fa-solid fa-house'></i>", 
                         href: "cob.custom-resource/Home/dash"
@@ -29,16 +28,17 @@ cob.custom.customize.push(function (core, utils, _ui) {
                   }
                }
             }
-            model.menus.push(...cleanMenus); // NOTE: this should not do any difference if server is configured with only dashboards
-            core.publish('updated-app-info'); 
+
+            model.menus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
+            core.publish('updated-app-info');  // Request an update to the built menu
          }
 
-         const groups = groupsArray && groupsArray.map(g => "\"" + g + "\"").join(" OR ") 
-         const query = " ( groupaccess.raw:(" + groups + ") OR (-groupaccess:*) )"
+         const userGroups = core.getGroups();
+         const groupsQuery = userGroups && userGroups.map(g => "\"" + g + "\"").join(" OR ") 
+         const dashboardsQuery = " ( groupaccess.raw:(" + groupsQuery + ") OR (-groupaccess:*) )"
 
-         window.cob.app = { getCurrentLoggedInUser :  core.getCurrentLoggedInUser } //Hack to make getCurrentLoggedInUser available to the dashInfo from the start (otherwise it will have to do a query to userm and the next call will be async, not having an answer in T0)
-         //Assumes cobDashboarInfo was loaded on customizations2.js
-         cobDashboardInfo.fieldValues(89, "solution.raw", query, 100, { changeCB: updateMenu })
+         window.cob.app = window.cob.app || { getCurrentLoggedInUser :  core.getCurrentLoggedInUser } //Hack to make cob.app.getCurrentLoggedInUser available to the dashInfo from the start (otherwise it will have to do a query to userm and the next call will be async, not having an answer at t0)
+         cobDashboardInfo.fieldValues(89, "solution.raw", dashboardsQuery, 100, { changeCB: updateMenu }) //Assumes cobDashboarInfo was loaded synchronously on customizations2.js
       }
    });
-});
+})

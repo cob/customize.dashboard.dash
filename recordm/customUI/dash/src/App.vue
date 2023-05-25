@@ -49,17 +49,16 @@
         this.dashboardArg    = urlDashPart.substring(this.dashboardName.length+1)
       }
       const dashboardQuery = () => {
-        const system = this.userInfo.groups.length && this.userInfo.groups.map(g => g.name).indexOf("System") >= 0
+        const isSystem = this.userInfo.groups.length && this.userInfo.groups.map(g => g.name).indexOf("System") >= 0
+        const accessQuery = isSystem ? "" : " (groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )"
         const nameQuery = "( solution.raw:\"" + this.dashboardName + "\"" + " OR name.raw:\"" + this.dashboardName + "\" ) "
-        const accessQuery = system ? " * " : " (groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )"
-        // const accessQuery = " (groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )"
         return "(" + nameQuery + accessQuery + ") OR id:\"" + this.dashboardName + "\""
       }
 
-      // Load the chooser dashboard, to be used in case there's more than one dashboard found for a given name and a given user
+      // Preemptively load the chooser dashboard, to be used in case there's more than one dashboard found for a given name and a given user
       this.dashboardChooser = instancesList(DASHBOARD_DEF, "name.raw:\""+DASHBOARD_CHOOSER+"\"", 1)
 
-      // At the initial load we get the dashboard instance name from the url
+      // At the initial load we get the dashboard instance name from the custom-resource div's attribute "data-name"
       umLoggedin().then( userInfo => {
         const urlDashPart = document.getElementsByClassName("custom-resource")[0].getAttribute('data-name')
         updateRequestData(userInfo,urlDashPart)
@@ -67,7 +66,7 @@
         this.dashboardsRequested = instancesList(DASHBOARD_DEF, dashboardQuery(), 100)
       })
 
-      // Upon anchor navigation we get the dashboard instance name from the first param to the 'resume' callback.
+      // Upon anchor navigation we get the dashboard instance name from the param to the 'resume' callback
       $('section.custom-resource').on('resume', (e, params) => {
         //Recheck user (the user might have changed or his groups might have changed after previous load)
         umLoggedin().then(userInfo => {
@@ -123,7 +122,7 @@
                   // If we have permissions to get the current page it means we are on a server where 
                   // anonymous has access to custom resources. We can only redirect to root to force the auth.
                   // However we save the request hash so we can restore after login
-                  localStorage.setItem("dashRestore", document.location.hash)
+                  localStorage.setItem("dashBeforeReauthentication", document.location.hash)
                   document.location = "/"
                 })
                 .catch(() => {
@@ -145,14 +144,16 @@
 
     "dashboardsRequested.value": {
       handler(newList) {
-        const dashRestore = localStorage.getItem("dashRestore")
-        if (dashRestore) {
+        // Check if we are being called after a re-authentication request and, if so, redirect to the previous page the user was 
+        const dashBeforeReauthentication = localStorage.getItem("dashBeforeReauthentication")
+        if (dashBeforeReauthentication) {
           this.$unwatch && this.$unwatch()
-          localStorage.setItem("dashRestore", "")
-          // Wait a little before redirecting to allow for the response to the existing requests (not catched on time by the $unwatch). Not ideal but only happens with direct links while logedout 
-          setTimeout(() => {document.location = dashRestore}, 300)
+          localStorage.setItem("dashBeforeReauthentication", "")
+          // Wait a little before redirecting to allow for the response to the existing requests (not catched on time by the $unwatch). Not ideal but only happens with direct links while logged out 
+          setTimeout(() => {document.location = dashBeforeReauthentication}, 300)
           return
         }
+
         if (!newList) return
         console.log("DASH: request result: [" + newList.map(l => l.id + "/" + l.name).join(",") + "]")
 
@@ -308,6 +309,7 @@
 
         const siblingsWatcher = (newSiblings, oldSiblings) => {
           let menu = []
+          // only add menu entries in case there's more then 1 dashboard for this solution
           if(newSiblings && newSiblings.length > 1) {
             for(let i = newSiblings.length-1; i >= 0; i--) {
               const item = newSiblings[i]
@@ -325,6 +327,7 @@
               })
             }
           }
+          // Set the menu for the dashboard being processed
           this.$set(this.dashboardsCached[dashKey], "menu", menu);
         }
 
