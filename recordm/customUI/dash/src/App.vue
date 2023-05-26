@@ -180,9 +180,6 @@
       loadDashboard(newDashEs, requestList) {
         this.error = ""
 
-        // Set the last visited dash in order to show it in case of a login withou specific dashboard destination
-        localStorage.setItem("lastDash-"+this.userInfo.username, this.urlDashPart)
-
         //Calculate the key to use on a cache for each different combination of 1)url arguments AND 2) result list of IDs
         const key = this.dashboardArg + requestList.map(d=>d.id).join("-")
         const dashKey = "H" + sha256(key).toString().replace("=","_")       
@@ -319,13 +316,10 @@
 
         const siblingsWatcher = (newSiblings, oldSiblings) => {
           let menu = []
+          let solution = ""
           // only add menu entries in case there's more then 1 dashboard for this solution
           if(newSiblings && newSiblings.length > 1) {
-
-            // Setup the menu link for this solution to this specific dashboard for future requests (ie, allways start by showing last choice of dashboard for the solution in question)
-            const solution = newSiblings[0].solution[0] // Equal for all siblings
-            localStorage.setItem("lastDash-"+this.userInfo.username+"-"+solution, this.dashboardsCached[dashKey].urlDashPart)
-            cob.app.publish('updated-app-info',{rebuildMenu: true}); 
+            solution = newSiblings[0].solution[0] // Equal for all siblings
 
             // Start by adding a menu entry to show the CHOOSER with all the dashboards available
             menu.push({
@@ -343,9 +337,31 @@
                 active: newDashEs.id === item.id 
               })
             }
+
+            // Setup the menu link for this solution to this specific dashboard for future requests (ie, allways start by showing last choice of dashboard for the solution in question)
+            localStorage.setItem("lastDash-"+this.userInfo.username+"-" + solution, this.dashboardsCached[dashKey].urlDashPart)
+            cob.app.publish('updated-app-info',{rebuildMenu: true}); 
           }
-          // Set the menu for the dashboard being processed
+          // Set the menu and solution for the dashboard being processed
           this.$set(this.dashboardsCached[dashKey], "menu", menu);
+          this.$set(this.dashboardsCached[dashKey], "solution", solution);
+        }
+
+        const activateDash = () => {
+          //Activate new dashboard
+          this.activeDashHash=dashKey;
+
+          // Set the last visited dash in order to show it in case of a login withou specific dashboard destination
+          localStorage.setItem("lastDash-"+this.userInfo.username, this.dashboardsCached[dashKey].urlDashPart);
+          cob.app.publish('updated-app-info',{rebuildMenu: true}); 
+        }
+
+        const reportError = (error) => {
+          this.error = error;
+          this.activeDashHash = null
+          localStorage.setItem("lastDash-"+this.userInfo.username, "");          
+          localStorage.setItem("lastDash-"+this.userInfo.username+"-" + this.dashboardsCached[dashKey].solution, "")
+          cob.app.publish('updated-app-info',{rebuildMenu: true}); 
         }
 
         if (this.dashboardsCached[dashKey] === undefined || this.dashboardsCached[dashKey].version !== newDashEs.version) {
@@ -366,11 +382,10 @@
                 dash.stopContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardContext", contextWatcher, { deep: true }); 
                 dash.stopSiblingsWatcher = this.$watch("dashboardsCached." + dashKey + ".solutionSiblings.value", siblingsWatcher, { deep: true }); 
                 this.$set(this.dashboardsCached, dashKey, dash);
-                this.activeDashHash = dashKey
+                activateDash(dashKey)
               }
               catch (e) {
-                this.error = "Error: error building dashboard " + newDashEs.id + " (" + e + ")";
-                this.activeDashHash = null
+                reportError("Error: error building dashboard " + newDashEs.id + " (" + e + ")")
                 console.warn(e);
               }
             })
@@ -378,8 +393,7 @@
               if (e.response && e.response.status && e.response.status === 403) {
                 this.error = "New authorization required...";
               } else {
-                this.error = "Error: error getting dashboard " + newDashEs.id;
-                this.activeDashHash = null
+                reportError("Error: error getting dashboard " + newDashEs.id)
               }
               console.warn(e);
             });
@@ -400,8 +414,7 @@
           this.dashboardsCached[dashKey].solutionSiblings.update()
           if(this.dashboardsCached[dashKey].runningQueries) this.dashboardsCached[dashKey].runningQueries.forEach(dashInfoItem => dashInfoItem.update())
 
-          //Activate new dashboard
-          this.activeDashHash = dashKey
+          activateDash(dashKey)
         }
       }      
     }
