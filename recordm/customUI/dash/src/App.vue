@@ -401,11 +401,14 @@
           // Otherwise we already have all necessary data. 
 
           // Stop context & siblings Watcher, if present
-          if(this.dashboardsCached[this.activeDashHash].stopContextWatcher) this.dashboardsCached[this.activeDashHash].stopContextWatcher()
-          if(this.dashboardsCached[this.activeDashHash].stopSiblingsWatcher) this.dashboardsCached[this.activeDashHash].stopSiblingsWatcher()
-          // Stop sibling query and any queries defined in context, if present
-          this.dashboardsCached[this.activeDashHash].solutionSiblings.stopUpdates()
-          if(this.dashboardsCached[this.activeDashHash].runningQueries) this.dashboardsCached[this.activeDashHash].runningQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
+          const activeDash = this.dashboardsCached[this.activeDashHash]
+          if(activeDash) {
+            if(activeDash.stopContextWatcher) activeDash.stopContextWatcher()
+            if(activeDash.stopSiblingsWatcher) activeDash.stopSiblingsWatcher()
+            // Stop sibling query and any queries defined in context, if present
+            activeDash.solutionSiblings.stopUpdates()
+            if(activeDash.runningQueries) activeDash.runningQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
+          }
           
           // Restart context Watcher on entering dashboard
           this.dashboardsCached[dashKey].stopContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardContext", contextWatcher, { deep: true }); 
