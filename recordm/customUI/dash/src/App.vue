@@ -52,7 +52,7 @@
       const dashboardQuery = () => {
         const isSystem = this.userInfo.groups.length && this.userInfo.groups.map(g => g.name).indexOf("System") >= 0
         const accessQuery = isSystem ? "" : " (groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )"
-        const nameQuery = "( solution.raw:\"" + this.dashboardName + "\"" + " OR name.raw:\"" + this.dashboardName + "\" ) "
+        const nameQuery = "( solution_menu.raw:\"" + this.dashboardName + "\"" + " OR name.raw:\"" + this.dashboardName + "\" ) "
         return "(" + nameQuery + accessQuery + ") OR id:\"" + this.dashboardName + "\""
       }
 
@@ -324,7 +324,7 @@
             // Start by adding a menu entry to show the CHOOSER with all the dashboards available
             menu.push({
               name: '<i class="fa-solid fa-table-cells-large"></i>',
-              href: "#/cob.custom-resource/" + solution + "/dash",
+              href: "#/cob.custom-resource/" + newSiblings[0].solution_menu[0] + "/dash",
               active: this.dashboardChooser.value && newDashEs.id === this.dashboardChooser.value[0].id
             })
             

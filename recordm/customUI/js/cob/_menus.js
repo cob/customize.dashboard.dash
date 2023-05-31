@@ -75,7 +75,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
          const dashboardsQuery = " ( groupaccess.raw:(" + groupsQuery + ") OR (-groupaccess:*) )"
 
          window.cob.app = window.cob.app || { getCurrentLoggedInUser :  core.getCurrentLoggedInUser } //Hack to make cob.app.getCurrentLoggedInUser available to the dashInfo from the start (otherwise it will have to do a query to userm and the next call will be async, not having an answer at t0)
-         cobDashboardInfo.fieldValues(89, "solution.raw", dashboardsQuery, 100, { changeCB: updateMenu }) //Assumes cobDashboarInfo was loaded synchronously on customizations2.js
+         cobDashboardInfo.fieldValues(89, "solution_menu.raw", dashboardsQuery, 100, { changeCB: updateMenu }) //Assumes cobDashboarInfo was loaded synchronously on customizations2.js
       }
    });
 })
