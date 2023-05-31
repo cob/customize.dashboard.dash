@@ -1,4 +1,6 @@
 cob.custom.customize.push(function (core, utils, _ui) {
+   utils.loadCSS("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+   
    core.customizeMenu((model) => {
       // For legacy porpose start by storing the pre-defined menu configured on recordm/services/com.cultofbits.web.integration.properties
       // and then remove all entries that we know we're going to add on other pre-defined dashboards
