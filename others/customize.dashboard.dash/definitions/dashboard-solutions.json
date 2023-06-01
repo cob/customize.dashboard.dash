@@ -1,0 +1,75 @@
+{
+    "id": null,
+    "name": "Dashboard-Solutions",
+    "description": "@dash @config v4.3.0",
+    "duplicable": null,
+    "state": "enabled",
+    "fieldDefinitions": [
+        {
+            "id": null,
+            "name": "Nome",
+            "required": null,
+            "description": "$instanceLabel",
+            "condition": null,
+            "duplicable": false,
+            "fields": [],
+            "order": 0,
+            "rootField": true,
+            "restricted": false,
+            "defaultValue": null
+        },
+        {
+            "id": null,
+            "name": "Nome Menu",
+            "required": null,
+            "description": "$instanceDescription",
+            "condition": null,
+            "duplicable": false,
+            "fields": [],
+            "order": 1,
+            "rootField": true,
+            "restricted": false,
+            "defaultValue": null
+        },
+        {
+            "id": null,
+            "name": "Sigla",
+            "required": null,
+            "description": "$instanceDescription",
+            "condition": null,
+            "duplicable": false,
+            "fields": [],
+            "order": 2,
+            "rootField": true,
+            "restricted": false,
+            "defaultValue": null
+        },
+        {
+            "id": null,
+            "name": "icon",
+            "required": null,
+            "description": null,
+            "condition": null,
+            "duplicable": false,
+            "fields": [],
+            "order": 3,
+            "rootField": true,
+            "restricted": false,
+            "defaultValue": null
+        },
+        {
+            "id": null,
+            "name": "Descrição",
+            "required": null,
+            "description": "$markdown $style[mdPreview]",
+            "condition": null,
+            "duplicable": false,
+            "fields": [],
+            "order": 4,
+            "rootField": true,
+            "restricted": false,
+            "defaultValue": null
+        }
+    ],
+    "version": null
+}

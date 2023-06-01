@@ -1,7 +1,7 @@
 {
     "id": null,
     "name": "Dashboard-Files",
-    "description": "@config v4.0.0",
+    "description": "@config v6.0.0",
     "duplicable": null,
     "state": "enabled",
     "fieldDefinitions": [
