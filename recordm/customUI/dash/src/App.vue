@@ -193,7 +193,7 @@
               // (this will be the situation for all duplicate fields, as set by the collector)
               const epn = this.parent && this.parent.key; //EPN = Enclosing Property Name
               const propertyValueForEPN = node && epn && typeof (node[epn])==="string" && node[epn];
-              const blockExpression = propertyValueForEPN && propertyValueForEPN.match(/^\s*{{#(\w+)\s+([^}]*)}}(.*)/);
+              const blockExpression = propertyValueForEPN && propertyValueForEPN.replaceAll("\n"," ").match(/^\s*{{#(\w+)\s+([^}]*)}}(.*)/);
 
               if(blockExpression) {
                 node[epn] = blockExpression[3]; // Remove the block expression from the dashboard object and leave the remaining content
@@ -361,7 +361,7 @@
           this.error = error;
           this.activeDashHash = null
           localStorage.setItem("lastDash-"+this.userInfo.username, "");          
-          localStorage.setItem("lastDash-"+this.userInfo.username+"-" + this.dashboardsCached[dashKey].solution, "")
+          localStorage.setItem("lastDash-"+this.userInfo.username+"-" + (this.dashboardsCached[dashKey] && this.dashboardsCached[dashKey].solution), "")
           cob.app.publish('updated-app-info',{rebuildMenu: true}); 
         }
 
