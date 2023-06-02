@@ -240,6 +240,7 @@
             }
             eval("specifiedContext = " + specifiedContextParsed.replace(/&quot;/g, '\"') )
           } catch(e) {
+            console.error("Error processing specific context:",e)
           }
 
           // Build final context with all components
