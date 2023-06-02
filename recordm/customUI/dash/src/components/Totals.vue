@@ -58,7 +58,7 @@
 
                       let arg = (v.Arg[index] instanceof Object ? v.Arg[index].Arg : v.Arg[index])
                       let newFilter = ((arg || "") + " " + newValue.trim()) || "*"
-                      if (v.dash_info) v.dash_info.changeArgs({ query: newFilter })
+                      if (v.dash_info && v.dash_info.changeArgs) v.dash_info.changeArgs({ query: newFilter })
                     });
                 });
             }
