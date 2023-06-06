@@ -238,7 +238,7 @@
               dashboard.runningQueries.push(dashInfoItem)
               return dashInfoItem
             }
-            eval("specifiedContext = " + specifiedContextParsed.replace(/&quot;/g, '\"') )
+            eval("specifiedContext = " + (specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, '\"') : "{}") )
           } catch(e) {
             console.error("Error processing specific context:",e)
           }
@@ -317,11 +317,8 @@
 
         const siblingsWatcher = (newSiblings, oldSiblings) => {
           let menu = []
-          let solution = ""
           // only add menu entries in case there's more then 1 dashboard for this solution
           if(newSiblings && newSiblings.length > 1) {
-            solution = newSiblings[0].solution[0] // Equal for all siblings
-
             // Start by adding a menu entry to show the CHOOSER with all the dashboards available
             menu.push({
               name: '<i class="fa-solid fa-table-cells-large"></i>',
@@ -338,14 +335,9 @@
                 active: newDashEs.id === item.id 
               })
             }
-
-            // Setup the menu link for this solution to this specific dashboard for future requests (ie, allways start by showing last choice of dashboard for the solution in question)
-            localStorage.setItem("lastDash-"+this.userInfo.username+"-" + solution, this.dashboardsCached[dashKey].urlDashPart)
-            cob.app.publish('updated-app-info',{rebuildMenu: true}); 
           }
           // Set the menu and solution for the dashboard being processed
           this.$set(this.dashboardsCached[dashKey], "menu", menu);
-          this.$set(this.dashboardsCached[dashKey], "solution", solution);
         }
 
         const activateDash = () => {
@@ -354,6 +346,7 @@
 
           // Set the last visited dash in order to show it in case of a login withou specific dashboard destination
           localStorage.setItem("lastDash-"+this.userInfo.username, this.dashboardsCached[dashKey].urlDashPart);
+          localStorage.setItem("lastDash-"+this.userInfo.username+"-" + this.dashboardsCached[dashKey].solution, this.dashboardsCached[dashKey].id)
           cob.app.publish('updated-app-info',{rebuildMenu: true}); 
         }
 
@@ -373,6 +366,7 @@
                 let dash = {};
                 dash.dashKey = dashKey;
                 dash.id = newDashEs.id;
+                dash.solution = newDashEs.solution_menu;
                 dash.urlDashPart = this.urlDashPart;
                 dash.version = newDashEs.version;
                 dash.dashboardParsed = parseDashboard(resp.data);
