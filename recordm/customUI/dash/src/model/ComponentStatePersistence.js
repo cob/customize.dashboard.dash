@@ -1,11 +1,11 @@
-const DEBUG = true
+const DEBUG = false
 class ComponentStatePersistence {
     constructor(id,updateCb) {
         this._id = id
         this.content = this._getStateFromHash()
         updateCb(this.content)
         this._onHashChange = function() {
-            if(DEBUG) console.log("[STATE] Hash changed",this._id,this._content)
+            if(DEBUG) console.log("DASH: [STATE] Hash changed",this._id,this._content)
             this.content = this._getStateFromHash()
             if(updateCb) updateCb(this.content)
         }.bind(this)
@@ -17,7 +17,7 @@ class ComponentStatePersistence {
     }
 
     set content(newContent) {
-        if(DEBUG) console.log("[STATE] update value:", JSON.stringify(this._content) !== JSON.stringify(newContent), this._id,JSON.stringify(this._content),JSON.stringify(newContent))
+        if(DEBUG) console.log("DASH: [STATE] update value:", JSON.stringify(this._content) !== JSON.stringify(newContent), this._id,JSON.stringify(this._content),JSON.stringify(newContent))
         if (JSON.stringify(this._content) !== JSON.stringify(newContent)) {
             this._content = newContent
             this._setStateInHash()
@@ -25,7 +25,7 @@ class ComponentStatePersistence {
     }
 
     stop() {
-        if(DEBUG) console.log("[STATE] stoped",this._id,this.content,this._getStateFromHash())
+        if(DEBUG) console.log("DASH: [STATE] stoped",this._id,this.content,this._getStateFromHash())
         window.removeEventListener('hashchange', this._onHashChange, true)
     }
     
