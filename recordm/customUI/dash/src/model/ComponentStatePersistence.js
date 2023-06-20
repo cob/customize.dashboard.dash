@@ -3,7 +3,7 @@ class ComponentStatePersistence {
     constructor(id,updateCb) {
         this._id = id
         this.content = this._getStateFromHash()
-        updateCb(this.content)
+        if(updateCb) updateCb(this.content)
         this._onHashChange = function() {
             if(this.content != this._getStateFromHash() ) {
                 this.content = this._getStateFromHash()
