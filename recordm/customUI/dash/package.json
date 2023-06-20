@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "build-css": "NODE_OPTIONS=\"--max-old-space-size=8000\" tailwindcss -i src/input.css -o src/output.css --watch"
   },
   "dependencies": {
     "@cob/dashboard-info": "^3.4.0",
