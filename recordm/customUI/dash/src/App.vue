@@ -22,7 +22,7 @@
 
   const DASHBOARD_DEF = "Dashboard_v1"
   const DASHBOARD_CHOOSER = "CHOOSER"
-  const DEBUG = false
+  const DEBUG = true
 
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
 
@@ -40,7 +40,6 @@
       dashboardsCached: {},
       dashboardsRequested: [],
       stopContextWatcher: null,
-      runningQueries: {},
       hashArg: ""
     }),
 
@@ -104,7 +103,7 @@
       const activeDash = this.dashboardsCached[this.activeDashHash]
       if (activeDash) {
         activeDash.solutionSiblings.stopUpdates()
-        if (activeDash.runningQueries) activeDash.runningQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
+        if (activeDash.contextQueries) activeDash.contextQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
       }
     },
 
@@ -227,7 +226,7 @@
 
     methods: {
       loadDashboard(newDashEs, requestResultList) {
-        if(DEBUG) console.log("DASH: 5 loadDashboard: called with newDashEs=",newDashEs," requestResultList=", requestResultList)
+        if(DEBUG) console.log("DINFO DASH: 5 loadDashboard: called with newDashEs=",newDashEs," requestResultList=", requestResultList)
         this.error = ""
 
         //Calculate the key to use on a cache for each different combination of 1)url arguments AND 2) result list of IDs
@@ -235,7 +234,7 @@
         const dashKey = "H" + sha256(key).toString().replace("=", "_")
 
         const compileDashboard = (dashboardParsed) => {
-          if(DEBUG) console.log("DASH: 5.1 loadDashboard: compileDashboard: dashboardParsed=",dashboardParsed)
+          if(DEBUG) console.log("DINFO DASH: 5.1 loadDashboard: compileDashboard: dashboardParsed=",dashboardParsed)
 
           const JsonStringifyWithBlockHelpers = (json, replaceList) => {
             // Replacements will occur on every duplicate field of the dashboard instance that has a value starting with "{{#each something}} ..." or other block helper
@@ -266,7 +265,7 @@
         }
 
         const getBaseContext = () => {
-          if(DEBUG) console.log("DASH: 5.2 loadDashboard: getBaseContext: ")
+          if(DEBUG) console.log("DINFO DASH: 5.2 loadDashboard: getBaseContext: ")
           return {
             user: this.userInfo,
             arg: this.hashArg.content,
@@ -276,14 +275,14 @@
         }
 
         const baseContextVarsWatcher = (newBaseContextVars) => {
-          if(DEBUG) console.log("DASH: 5.2.1 loadDashboard: baseContextVarsWatcher: context changed for '", this.dashboardsCached[dashKey].id + "/" + newDashEs.name,"'. newBaseContext.vars=",JSON.stringify(newBaseContextVars))
+          if(DEBUG) console.log("DINFO DASH: 5.2.1 loadDashboard: baseContextVarsWatcher: context changed for '", this.dashboardsCached[dashKey].id + "/" + newDashEs.name,"'. newBaseContext.vars=",JSON.stringify(newBaseContextVars))
 
           const newContext = getContext(this.dashboardsCached[dashKey])
           this.$set(this.dashboardsCached[dashKey], "dashboardContext", newContext);
         }
 
         const getContext = (dashboard) => {
-          if(DEBUG) console.log("DASH: 5.3 loadDashboard: getContext: dashboard=",dashboard)
+          if(DEBUG) console.log("DINFO DASH: 5.3 loadDashboard: getContext: dashboard=",dashboard)
 
           const baseContext = dashboard.dashboardBaseContext
 
@@ -296,14 +295,12 @@
           try {
             function list(...args) {
               const dashInfoItem = instancesList(...args)
-              dashboard.runningQueries = dashboard.runningQueries || []
-              dashboard.runningQueries.push(dashInfoItem)
+              dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
             function distinct(...args) {
               const dashInfoItem = fieldValues(...args)
-              dashboard.runningQueries = dashboard.runningQueries || []
-              dashboard.runningQueries.push(dashInfoItem)
+              dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
             eval("specifiedContext = " + (specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, '\"') : "{}"))
@@ -321,25 +318,30 @@
         }
 
         const contextWatcher = (newContext) => {
-          if(DEBUG) console.log("DASH: 5.3.1 loadDashboard: contextWatcher: context changed for '", this.dashboardsCached[dashKey].id + "/" + newDashEs.name,"'. newContext=",newContext)
+          if(DEBUG) console.log("DINFO DASH: 5.3.1 loadDashboard: contextWatcher: context changed for '", this.dashboardsCached[dashKey].id + "/" + newDashEs.name,"'. newContext=",newContext)
 
-          const newProcessed = buildDashboard(this.dashboardsCached[dashKey].dashboardProcessor, this.dashboardsCached[dashKey].dashboardContext)
+          for( let i = 0; i < this.dashboardsCached[dashKey].boardQueries.length; i++ ) {
+            let dashInfoItem = this.dashboardsCached[dashKey].boardQueries.pop()
+            dashInfoItem.stopUpdates()
+          }
+          
+          const newProcessed = buildDashboard(this.dashboardsCached[dashKey])
           this.$set(this.dashboardsCached[dashKey], "dashboardProcessed", newProcessed);
         }
 
-        const buildDashboard = (dashboardProcessor, dashboardContext) => {
-          if(DEBUG) console.log("DASH: 5.4 loadDashboard: buildDashboard: dashboardContext=",dashboardContext)
+        const buildDashboard = (dashboard) => {
+          if(DEBUG) console.log("DINFO DASH: 5.4 loadDashboard: buildDashboard: dashboard=",dashboard)
 
           let dash = JSON.parse(
-            dashboardProcessor(dashboardContext)
+            dashboard.dashboardProcessor(dashboard.dashboardContext)
               .replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]") // Every last comma in array are removed. Ssupport UP TO 3 consequently commas 
-              .replaceAll(/(,(\s*))+/g, ",$2") //  Also remove double comma in the resulting arrays (mantain the spaces in case normal text with commas)
+              .replaceAll(/(,(\s*))+/g, ",$2") //  Also remove double comma in the resulting arrays (maintain the spaces in case normal text with commas)
           )
 
           // Add extra info to structure
           for (let b of dash["Board"]) {
             for (let c of b.Component) {
-              c.vars = dashboardContext.vars
+              c.vars = dashboard.dashboardContext.vars
 
               if (c.Component === "Menu") {
                 c.Text.forEach(t => {
@@ -366,6 +368,7 @@
                     } else {
                       // add dash-info values in Totals
                       v.dash_info = dashFunctions[v.Value].apply(this, v['Arg'].map(a => a['Arg'])) // Return DashInfo, which is used by the component
+                      dashboard.boardQueries.push(v.dash_info)
                     }
                     return v
                   })
@@ -377,7 +380,7 @@
         }
 
         const siblingsWatcher = (newSiblings) => {
-          if(DEBUG) console.log("DASH: 5.4.1 loadDashboard: siblingsWatcher: changed. newSiblings==[" + (newSiblings && newSiblings.map(l => l.id + "/" + l.name).join(",") || "") + "]")
+          if(DEBUG) console.log("DINFO DASH: 5.4.1 loadDashboard: siblingsWatcher: changed. newSiblings==[" + (newSiblings && newSiblings.map(l => l.id + "/" + l.name).join(",") || "") + "]")
 
           let menu = []
           // only add menu entries in case there's more then 1 dashboard for this solution
@@ -404,7 +407,7 @@
         }
 
         const activateDash = () => {
-          if(DEBUG) console.log("DASH: 5.5 loadDashboard: activateDash: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
+          if(DEBUG) console.log("DINFO DASH: 5.5 loadDashboard: activateDash: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
 
           // Restart context and sibling Watchers before
           this.dashboardsCached[dashKey].stopBaseContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardBaseContext.vars", baseContextVarsWatcher, { deep: true });
@@ -414,9 +417,10 @@
           // Call siblingsWathcer to setup siblings with current siblings (in case there's no change that will call the siblingsWatcher)
           siblingsWatcher(this.dashboardsCached[dashKey].solutionSiblings.value)
 
-          // Update any queries defined in context
+          // Update any queries defined in siblings, context and boards
           this.dashboardsCached[dashKey].solutionSiblings.update({force:false})
-          if (this.dashboardsCached[dashKey].runningQueries) this.dashboardsCached[dashKey].runningQueries.forEach(dashInfoItem => dashInfoItem.update({force:false}))
+          if (this.dashboardsCached[dashKey].contextQueries) this.dashboardsCached[dashKey].contextQueries.forEach(dashInfoItem => dashInfoItem.update({force:false}))
+          if (this.dashboardsCached[dashKey].boardQueries) this.dashboardsCached[dashKey].boardQueries.forEach(dashInfoItem => dashInfoItem.update({force:false}))
 
           //Activate new dashboard
           this.activeDashHash = dashKey;
@@ -439,21 +443,22 @@
         // If current dash exists stop its Context & Siblings Watcher
         const activeDash = this.dashboardsCached[this.activeDashHash]
         if (activeDash) {
-          if(DEBUG) console.log("DASH: 5 loadDashboard: stopping watchers and queries for leavingDashboard=", this.dashboardsCached[this.activeDashHash].id)
+          if(DEBUG) console.log("DINFO DASH: 5 loadDashboard: stopping watchers and queries for leavingDashboard=", this.dashboardsCached[this.activeDashHash].id)
           if (activeDash.stopContextWatcher) activeDash.stopContextWatcher()
           if (activeDash.stopSiblingsWatcher) activeDash.stopSiblingsWatcher()
           // Stop sibling query and any queries defined in context, if present
           activeDash.solutionSiblings.stopUpdates()
-          if (activeDash.runningQueries) activeDash.runningQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
+          if (activeDash.contextQueries) activeDash.contextQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
+          if (activeDash.boardQueries) activeDash.boardQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
         }
 
         if (this.dashboardsCached[dashKey] !== undefined && this.dashboardsCached[dashKey].version === newDashEs.version) {
-          if(DEBUG) console.log("DASH: 5 loadDashboard: dashboard previously processed. Activate newDashId=", newDashEs.id)
+          if(DEBUG) console.log("DINFO DASH: 5 loadDashboard: dashboard previously processed. Activate newDashId=", newDashEs.id)
           activateDash(dashKey)
 
         } else {
           // If the dashKey property doesn't exist or it changed version then this is the first time we display this dashboard (at this version) and we need to build it from scratch
-          if(DEBUG) console.log("DASH: 5 loadDashboard: first processing of ", newDashEs.id)
+          if(DEBUG) console.log("DINFO DASH: 5 loadDashboard: first processing of ", newDashEs.id)
           axios.get("/recordm/recordm/instances/" + newDashEs.id)
             .then(resp => {
               try {
@@ -463,22 +468,24 @@
                 dash.solution = newDashEs.solution_menu;
                 dash.urlDashPart = this.urlDashPart;
                 dash.version = newDashEs.version;
+                dash.contextQueries = []
+                dash.boardQueries = []
                 dash.dashboardParsed = parseDashboard(resp.data);
                 dash.dashboardProcessor = compileDashboard(dash.dashboardParsed);
                 dash.dashboardBaseContext = getBaseContext();
                 dash.dashboardContext = getContext(dash);
-                dash.dashboardProcessed = buildDashboard(dash.dashboardProcessor, dash.dashboardContext);
+                dash.dashboardProcessed = buildDashboard(dash);
                 dash.solutionSiblings = instancesList(DASHBOARD_DEF, "solution.raw:\"" + newDashEs.solution + "\" AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )", 102, 0, "order", "false", { validity: 600 });
                 this.$set(this.dashboardsCached, dashKey, dash);
                 activateDash(dashKey)
               }
               catch (e) {
-                if(DEBUG) console.log("DASH: 5 loadDashboard: Excepcion processing dash. e=", e)
+                if(DEBUG) console.log("DINFO DASH: 5 loadDashboard: Exception processing dash. e=", e)
                 reportError("Error: error building dashboard " + newDashEs.id + " (" + e + ")")
               }
             })
             .catch((e) => {
-              if(DEBUG) console.log("DASH: 5 loadDashboard: error getting dash. e=", e)
+              if(DEBUG) console.log("DINFO DASH: 5 loadDashboard: error getting dash. e=", e)
               if (e.response && e.response.status && e.response.status === 403) {
                 this.error = "New authorization required...";
               } else {
