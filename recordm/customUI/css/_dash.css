@@ -1,0 +1,61 @@
+/* tooltip support for menus (ex: CoB Solutions Main) */
+.tooltip {
+    visibility: hidden;
+    position: absolute;
+}
+
+.has-tooltip:hover .tooltip {
+    visibility: visible;
+    z-index: 100;
+}
+
+/* dropdown submenus */
+details.cob-submenu {
+    position:relative; 
+    margin: 0px 5px 0px 15px;
+}
+
+details.cob-submenu > summary {
+    list-style: none;
+}
+
+details.cob-submenu > summary::-webkit-details-marker {
+    display: none
+}
+
+details.cob-submenu > summary::after,
+details.cob-submenu[open] > summary:after {
+    color: #fbfbfb;
+    content: "▼";
+}
+
+details.cob-submenu > ul.dropdown-menu {
+    display:unset !important; 
+    margin-top:5px !important; 
+    padding-right: 4px !important; 
+    text-align:left !important; 
+    min-width: 120px !important; 
+    left:unset !important; 
+    right:0 !important
+}
+
+details.cob-submenu > ul.dropdown-menu li {
+    margin: 0px 3px !important; 
+    white-space: nowrap !important;
+}
+
+details.cob-submenu a {
+    color: #fbfbfb;
+    cursor: pointer;
+}
+details.cob-submenu > summary > a:hover {
+    color: #fbfbfb;
+    border-bottom: 3px solid #F79728;
+    text-decoration: none;
+}
+
+@media (max-width: 585px) {
+    details.cob-submenu a {
+        color: #fbfbfb !important;
+    }
+}
