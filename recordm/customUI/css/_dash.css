@@ -7,11 +7,22 @@ section.custom-resource {
 .tooltip {
     visibility: hidden;
     position: absolute;
+    right: 0;
 }
 
 .has-tooltip:hover .tooltip {
-    visibility: visible;
     z-index: 100;
+    animation: 500ms fadeIn;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+    99% {
+      visibility: hidden;
+    }
+    100% {
+      visibility: visible;
+    }
 }
 
 /* dropdown submenus */
