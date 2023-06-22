@@ -1,3 +1,8 @@
+/* Reverte hide feito no dashboard.html */
+section.custom-resource {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
 /* tooltip support for menus (ex: CoB Solutions Main) */
 .tooltip {
     visibility: hidden;
@@ -66,7 +71,9 @@ details.cob-submenu > summary > a:hover {
 .cob-app .slick-cell *,
 .cob-app .slick-column-name,
 .cob-app .slick-header-column,
-.cob-app .toggle-button.label,
+.cob-app .toggle-button,
+.cob-app .remove-button,
+.cob-app .duplicate-button,
 .cob-app .btn.btn-mini svg,
 #loading {
     box-sizing: content-box !important;

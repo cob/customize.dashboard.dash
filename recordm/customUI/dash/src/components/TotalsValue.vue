@@ -1,5 +1,5 @@
 <template>
-    <a v-if="state" :href="link" :class="expandedClasses">
+    <a v-if="state" :href="link" :class="classes">
 
         <Attention :attentionInfo="attention" :classes="attentionClasses" />
 
@@ -15,20 +15,27 @@
 <script>
     import Attention from './Attention.vue'
     const specialClasses = {
-        "Info":      "border border-sky-600 bg-sky-200/10 ring-sky-600 bg-white ",
-        "Success":   "border border-lime-500 bg-lime-200/10 ring-lime-500 bg-white ",
-        "Warning":   "border border-amber-500 bg-amber-200/10 ring-amber-500 bg-white ",
-        "Important": "border border-rose-600 bg-rose-200/10 ring-rose-600 bg-white ",
-        "Gray":      "text-gray-400 border-gray-200 bg-gray-200/10 ring-gray-200 bg-white ",
-        "Default":   "inline-block "                                                    // para poder conter internamente o Attention sem ser noutra linha
-                    +"bg-white  "                                                       // Para ficar legível
-                    +"whitespace-nowrap "                                               // Para não partir o texto + attention
-                    +"font-mono font-semibold "                                         // Estilo default para o texto
-                    +"px-2 py-1 "                                                       // Espaçamento horizontal e vertical
-                    +"rounded-md "                                                      // Border arrendondada
-                    +"transition ease-in-out ring-sky-600 ring-offset-1 hover:ring-2 ", // Estilo para hover (só funciona em localhost, não sei porquê)
-        "S_loading": "border border-amber-500 bg-amber-200/10 ring-amber-500 ",         // Igual a Warning
-        "S_error":   "border border-rose-600 bg-rose-200/10 ring-rose-600 ",            // Igual a Important
+        "Default":   " inline-block m-1 "                                         // para poder conter internamente o Attention sem ser noutra linha
+                    +" whitespace-nowrap "                                        // Para não partir o texto + attention
+                    +" font-mono font-semibold "                   // Estilo default para o texto
+                    +" px-2 py-1 "                                                // Espaçamento horizontal e vertical
+                    +" border rounded-md "                                        // Border cinza arrendondada
+                    +" ring-sky-600 ring-offset-0 hover:ring-1 ring-stone-300 ",  // Estilo para hover
+
+        "Info":            " border-sky-500   bg-sky-50 ",
+        "Success":         " border-lime-400  bg-lime-50  ",
+        "Warning":         " border-amber-400 bg-amber-50 ",
+        "Important":       " border-rose-300  bg-rose-50 ",
+        "Gray":            " border-stone-300 bg-stone-50 ",
+
+        "StrongInfo":      " border-stone-300 bg-cyan-600 ",
+        "StrongSuccess":   " border-stone-300  bg-lime-600  ",
+        "StrongWarning":   " border-stone-300 bg-amber-500 ",
+        "StrongImportant": " border-stone-300  bg-rose-600 ",
+        "StrongGray":      " border-stone-300 bg-stone-600 ",
+
+        "S_loading":       " border-amber-300 bg-amber-50 ",  // Igual a Warning
+        "S_error":         " border-rose-300  bg-rose-50  "    // Igual a Important
     }
 
     export default {
@@ -42,15 +49,18 @@
             unit()             { return this.options['Unit'] },
             state()            { return this.valueData.dash_info && this.valueData.dash_info.state || "" },
             updating()         { return this.state === "updating" || this.state === "loading" },
+            link()             { return this.valueData.dash_info.href ? this.valueData.dash_info.href + (this.view ? "&av=" + this.view : "") : "#"},
             classes()          { 
-                let extraDimClass
-                if(this.valueData.dash_info && !isNaN(this.valueData.dash_info.value) && this.valueData.dash_info.value==0) {
-                    extraDimClass = "bg-transparent text-inherit"
-                } 
-                return (this.options['ValueClasses'] || "Default Info") + " S_"+this.valueData.dash_info.state + " " + extraDimClass
+                let classes =  (this.options['ValueClasses'] || " Default Info text-sm text-stone-800 ")
+                if(["loading","error"].indexOf(this.valueData.dash_info.state) != -1) {
+                    classes = classes.replace(/Bg(Dim){0,1}(Red|Orange|Blue|Gray|Green)/," ") 
+                    classes = classes.replace(/(Info|Success|Warning|Important|Gray)(Strong){0,1} /," ") 
+                    classes += " S_" +this.valueData.dash_info.state
+                } else if(this.valueData.dash_info && !isNaN(this.valueData.dash_info.value) && this.valueData.dash_info.value==0) {
+                    classes = classes.replace(/(Info|Success|Warning|Important|Gray)/," Gray text-cob-white ") 
+                }
+                return classes.split(/\s/).map(c => specialClasses[c] || c ).join(" ") 
             },
-            link()             { return this.valueData.dash_info.href + (this.view ? "&av=" + this.view : "") },
-            expandedClasses()  { return this.classes.split(/\s/).map(c => specialClasses[c] || c ).join(" ") },
             value() {
                 if(this.valueData.dash_info.state === "loading") return "L"
                 if(this.valueData.dash_info.state === "error") return "E"
@@ -63,3 +73,9 @@
         }
     }
 </script>
+
+<style scoped>
+    .text-cob-white {
+        color: #78716c;
+    }
+</style>

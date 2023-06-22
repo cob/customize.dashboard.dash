@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "build-css": "NODE_OPTIONS=\"--max-old-space-size=8000\" tailwindcss -i src/input.css -o src/output.css --watch"
+    "build-css": "NODE_OPTIONS=\"--max-old-space-size=8000\" tailwindcss -i src/input.css -o ../css/tailwind.css ",
+    "continuous-build-css": "NODE_OPTIONS=\"--max-old-space-size=8000\" tailwindcss -i src/input.css -o ../css/tailwind.css --watch"
   },
   "dependencies": {
     "@cob/dashboard-info": "^3.4.1",

@@ -27,8 +27,8 @@
             lines() {
                 return this.component['Line'].map( l => ({
                     title :       l['Line']                             || "",
-                    lineClasses:  l["LineCustomize"][0]["LineClasses"]  || "text-right transition ease-in-out ring-sky-600 ring-offset-1 hover:ring-2 rounded-md",
-                    titleClasses: l["LineCustomize"][0]["TitleClasses"] || "text-left p-2",
+                    lineClasses:  l["LineCustomize"][0]["LineClasses"]  || "text-right transition ease-in-out rounded ring-offset-0 hover:ring-1 ring-stone-300 ",
+                    titleClasses: l["LineCustomize"][0]["TitleClasses"] || "text-left text-stone-600 p-1",
                     values:       l['Value']
             }))}
         },
