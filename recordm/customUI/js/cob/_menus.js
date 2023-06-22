@@ -9,6 +9,13 @@ cob.custom.customize.push(function (core, utils, _ui) {
          const groupsQuery = userGroups && userGroups.map(g => "\"" + g + "\"").join(" OR ") 
          const dashboardsQuery = "( groupaccess.raw:(" + groupsQuery + ") OR (-groupaccess:*) )"
 
+         // For legacy purpose start by storing the pre-defined menu configured on recordm/services/com.cultofbits.web.integration.properties
+         // and then remove all entries that we know we're going to add on other pre-defined dashboards
+         const defaultInitial = model.menus[0]
+         const cleanMenus = model.menus.filter(v => ["Home", "reports", "rm-importer-stats", "@"].reduce((pr, x) => pr && v.name.indexOf(x) != 0, true))
+         const domains = model.menus.filter(m => m.name.indexOf("@") >= 0 )
+         const cobMenus = model.menus.filter((m) => ["rm-importer-stats", "domains"].indexOf(m.name) >= 0 ).map(m => { m.rel = m.name; return m; }) // Reenable translation with rel attribute
+
          //note: cobDashboardInfo is defined synchronously at the end of this file
          cobDashboardInfo.fieldValues(89, "solution_menu.raw", dashboardsQuery, 103, { validity: 600, changeCB: (solutions) => {
             // This will be called once we have backend (or cache) information on current user Solutions access (ie, distinct values of Solution field of available dashboard instances)
@@ -17,12 +24,6 @@ cob.custom.customize.push(function (core, utils, _ui) {
             const numberOfSolutions = solutions.value && solutions.value.length || 0
             if (numberOfSolutions > 0) {
 
-               // For legacy purpose start by storing the pre-defined menu configured on recordm/services/com.cultofbits.web.integration.properties
-               // and then remove all entries that we know we're going to add on other pre-defined dashboards
-               const defaultInitial = model.menus[0]
-               const cleanMenus = model.menus.filter(v => ["Home", "reports", "rm-importer-stats", "@"].reduce((pr, x) => pr && v.name.indexOf(x) != 0, true))
-               const domains = model.menus.filter(m => m.name.indexOf("@") >= 0 )
-               const cobMenus = model.menus.filter((m) => ["rm-importer-stats", "domains"].indexOf(m.name) >= 0 ).map(m => { m.rel = m.name; return m; }) // Reenable translation with rel attribute
                model.menus.length = 0 //We will re-build completely the menu
 
                // Create a initial, invisible menu entry which will be used if the url doesn't have a specific page specified, ie, if the url doesn't specify a specific destinations 
