@@ -22,7 +22,7 @@
 
   const DASHBOARD_DEF = "Dashboard_v1"
   const DASHBOARD_CHOOSER = "CHOOSER"
-  const DEBUG = true
+  const DEBUG = false
 
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
 
