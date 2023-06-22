@@ -3,6 +3,11 @@ module.exports = {
     theme: {
     },
     safelist: [
+        // {
+        //     pattern: /.*/,
+        //     variants: ['sm','md','lg','xl','2xl','hover']
+        // },
+
         {pattern: /.*-[w|h]-.*/   , variants: ['sm','md','lg','xl','2xl'] },
         {pattern: /text-.*/       , variants: ['sm','md','lg','xl','2xl','hover'] },
         // {pattern: /font-.*/},
