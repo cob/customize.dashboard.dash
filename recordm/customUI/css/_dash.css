@@ -59,3 +59,18 @@ details.cob-submenu > summary > a:hover {
         color: #fbfbfb !important;
     }
 }
+
+/* un-reset css for specific element */
+.cob-app input,
+.cob-app .slick-cell,
+.cob-app .slick-cell *,
+.cob-app .slick-column-name,
+.cob-app .slick-header-column,
+.cob-app .toggle-button.label,
+.cob-app .btn.btn-mini svg,
+#loading {
+    box-sizing: content-box !important;
+}
+.cob-app .instance-detail-container .instance-container .sidenav .details svg {
+    padding-top: 0px
+}
