@@ -1,5 +1,5 @@
-window.CoBDasHDEBUG.state = window.CoBDasHDEBUG.state || {}
-const DEBUG = window.CoBDasHDEBUG.state
+window.CoBDasHDebug = window.CoBDasHDebug || {}
+const DEBUG = window.CoBDasHDebug
 class ComponentStatePersistence {
     constructor(id,updateCb) {
         this._id = id
