@@ -3,6 +3,7 @@ import App from "./App.vue";
 
 Vue.config.productionTip = false;
 
+console.debug("DASHMAIN: Creating vue for the dashboard");
 let vueApp = new Vue({
     render: function(h) { return h(App); },
 }).$mount("#app");
@@ -12,15 +13,23 @@ function getDashName() {
     return dashParts[dashParts.length - 1].split("?")[0]
 }
 
-const dashName = getDashName()
+const initialDashName = getDashName()
+let dashActive = true
 
 function onHashChange() {
     const currentDashName = getDashName()
-    if (currentDashName !== dashName) {
-        console.debug("Leaving the dashboard. Destroying the dashboard");
+    if (currentDashName !== initialDashName && dashActive ) {
+        console.debug("DASHMAIN: Leaving the initialDashName=",initialDashName," for currentDashName=",currentDashName,". Destroying the dashboard");
         vueApp.$destroy();
-        window.removeEventListener("hashchange", onHashChange, true);
+        dashActive = false
+    } 
+    if (currentDashName === initialDashName && !dashActive ) {
+        dashActive = true
+        console.debug("DASHMAIN: Re-Creating vue for the dashboard");
+        vueApp = new Vue({
+            render: function(h) { return h(App); },
+        }).$mount("#app");        
     }
 }
 
-window.addEventListener("hashchange", onHashChange, true);
+window.addEventListener("hashchange", onHashChange);
