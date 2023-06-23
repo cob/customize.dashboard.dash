@@ -3,7 +3,6 @@ import App from "./App.vue";
 
 Vue.config.productionTip = false;
 
-debugger
 if(typeof(window.dashActive) == 'undefined') {
     window.dashActive = false
 }
@@ -16,7 +15,7 @@ if (!window.dashActive) {
     }).$mount("#app");
     window.dashActive = true
 } else {
-    console.debug("DASHMAIN: Not creating vue for the dashboard (will be done by the handler)"); 
+    console.debug("DASHMAIN: Not creating vue for the dashboard (it was done by the hash handler)"); 
 }
 
 function getDashName() {
@@ -39,7 +38,7 @@ function onHashChange() {
             vueApp = new Vue({
                 render: function(h) { return h(App); },
             }).$mount("#app"); 
-
+            window.dashActive = true
         } else {
             console.debug("DASHMAIN: #app not ready. Wait a little ");
             var div = document.createElement("div");
