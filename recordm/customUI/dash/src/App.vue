@@ -1,9 +1,9 @@
 <template>
   <div class="h-full w-full">
-    <div v-if="error || chooserError" class="text-center my-20 text-2xl text-red-500"> {{ error }} <br> {{ chooserError }} </div>
-    <Dashboard v-else-if="activeDashHash" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" />
+    <div v-if="error || chooserError" class="text-center my-20 text-2xl "> {{ error }} <br> {{ chooserError }} </div>
+    <Dashboard v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" />
 
-    <Waiting2 v-if="processingFlag" class="fixed top-16 right-0" />
+    <Waiting2 :updating="processingFlag" @refresh="updateQueries" class="fixed top-16 left-1" />
   </div>
 </template>
 
@@ -36,7 +36,7 @@
       error: "",
       chooserError: "",
       dashboardChooser: null,
-      activeDashHash: null,
+      activeDashKey: null,
       userGroupsQuery: null,
       dashboardName: null,
       dashboardArg: null,
@@ -104,7 +104,7 @@
       $('section.custom-resource').unbind('resume',this.resumeListener)
       this.$unwatch && this.$unwatch()
       this.hashArg.stop()
-      const activeDash = this.dashboardsCached[this.activeDashHash]
+      const activeDash = this.dashboardsCached[this.activeDashKey]
       if (activeDash) {
         activeDash.solutionSiblings.stopUpdates()
         if (activeDash.contextQueries) activeDash.contextQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
@@ -118,11 +118,16 @@
           || this.dashboardsRequested.state === 'updating'
           || this.dashboardsRequested.state === 'loading'
           || Object.values(this.dashboardsCached).filter(d => d.dashboardProcessed == null).length > 0
+          || this.currentDashboard && (
+              this.currentDashboard.contextQueries.filter(d => d.state === 'loading' || d.state === "updating" ).length > 0
+              || this.currentDashboard.contextQueries.filter(d => d.state === 'loading' || d.state === "updating" ).length > 0
+              || this.currentDashboard.boardQueries.filter(d => d.state === 'loading' || d.state === "updating" ).length > 0
+          )
       },
 
       currentDashboard() {
-        if(DEBUG.app) console.log("DASH:  APP: 6: currentDashboard: update display. activeDashboardId=", this.dashboardsCached[this.activeDashHash].id)
-        return (this.dashboardsCached[this.activeDashHash])
+        if(DEBUG.app) console.log("DASH:  APP: 6: currentDashboard: update display. activeDashboardId=", this.dashboardsCached[this.activeDashKey].id)
+        return (this.dashboardsCached[this.activeDashKey])
       }
     },
 
@@ -168,7 +173,7 @@
           } else {
             if(DEBUG.app) console.log("DASH:  APP: 2: dashboardsRequested.state: error getting dashboard. Response=", this.dashboardsRequested)
             this.error = "Error: error getting dashboard (" + this.dashboardsRequested.errorCode + ")"
-            this.activeDashHash = null
+            this.activeDashKey = null
           }
         } else if (newDashboardsRequestedState === "loading") {
           const reCheckWaitTime = 500
@@ -210,7 +215,7 @@
           if (newList.length === 0) {
             if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: empty list. Show no dash found")
             this.error = "Error: dashboard '" + this.dashboardName + "' was not found for your user"
-            this.activeDashHash = null
+            this.activeDashKey = null
 
           } else if (newList.length === 1) {
             if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list of 1. loadDashboard for dashRequestResults=",newList[0].id)
@@ -230,6 +235,18 @@
     },
 
     methods: {
+      updateQueries(specificDashKey, forceRefresh = true) {
+
+        let dashKey = specificDashKey ? specificDashKey : this.activeDashKey
+        if(DEBUG.app) console.log("DASH:  APP: 5.5.1: updateQueries: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
+
+        if (dashKey && this.dashboardsCached[dashKey].solutionSiblings) this.dashboardsCached[dashKey].solutionSiblings.update({force:forceRefresh})
+        if (dashKey && this.dashboardsCached[dashKey].contextQueries) this.dashboardsCached[dashKey].contextQueries.forEach(dashInfoItem => dashInfoItem.update({force:forceRefresh}))
+        if (dashKey && this.dashboardsCached[dashKey].boardQueries) this.dashboardsCached[dashKey].boardQueries.forEach(dashInfoItem => dashInfoItem.update({force:forceRefresh}))
+
+        document.dispatchEvent(new Event("cobRefreshMenu"));
+      },
+
       loadDashboard(newDashEs, requestResultList) {
         if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: called with newDashEs=",newDashEs," requestResultList=", requestResultList)
         this.error = ""
@@ -358,8 +375,8 @@
               } else if (c.Component === "Totals") {
                 for (let l of c.Line) {
                   l.Value = l.Value.map(v => {
-                    if (v.Arg[2] && (v.Arg[2] + "").startsWith("{")) {
-                      v.Arg[2] = JSON.parse(v.Arg[2])
+                    if (v.Arg[2] && v.Arg[2].Arg.startsWith("{")) {
+                      v.Arg[2]['Arg'] = JSON.parse(v.Arg[2]['Arg'])
                     }
                     // If Attention is configured for this value line then add attention status as user check
                     if (v["ValueCustomize"][0]["ValueAttention"]) {
@@ -423,12 +440,10 @@
           siblingsWatcher(this.dashboardsCached[dashKey].solutionSiblings.value)
 
           // Update any queries defined in siblings, context and boards
-          this.dashboardsCached[dashKey].solutionSiblings.update({force:false})
-          if (this.dashboardsCached[dashKey].contextQueries) this.dashboardsCached[dashKey].contextQueries.forEach(dashInfoItem => dashInfoItem.update({force:false}))
-          if (this.dashboardsCached[dashKey].boardQueries) this.dashboardsCached[dashKey].boardQueries.forEach(dashInfoItem => dashInfoItem.update({force:false}))
+          this.updateQueries(dashKey,false)
 
           //Activate new dashboard
-          this.activeDashHash = dashKey;
+          this.activeDashKey = dashKey;
           document.title = (this.dashboardsCached[dashKey].solution ? this.dashboardsCached[dashKey].solution + " | " : "") +this.dashboardsCached[dashKey].dashboardParsed.Name
 
           // Set the last visited dash in order to show it in case of a login without specific dashboard destination
@@ -439,16 +454,16 @@
 
         const reportError = (error) => {
           this.error = error;
-          this.activeDashHash = null
+          this.activeDashKey = null
           localStorage.setItem("lastDash-" + this.userInfo.username, "");
           localStorage.setItem("lastDash-" + this.userInfo.username + "-" + (this.dashboardsCached[dashKey] && this.dashboardsCached[dashKey].solution), "")
           cob.app.publish('updated-app-info', { rebuildMenu: true });
         }
 
         // If current dash exists stop its Context & Siblings Watcher
-        const activeDash = this.dashboardsCached[this.activeDashHash]
+        const activeDash = this.dashboardsCached[this.activeDashKey]
         if (activeDash) {
-          if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: stopping watchers and queries for leavingDashboard=", this.dashboardsCached[this.activeDashHash].id)
+          if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: stopping watchers and queries for leavingDashboard=", this.dashboardsCached[this.activeDashKey].id)
           if (activeDash.stopContextWatcher) activeDash.stopContextWatcher()
           if (activeDash.stopSiblingsWatcher) activeDash.stopSiblingsWatcher()
           // Stop sibling query and any queries defined in context, if present
