@@ -1,22 +1,9 @@
 import Vue from "vue";
 import App from "./App.vue";
 
-Vue.config.productionTip = false;
-
-if(typeof(window.dashActive) == 'undefined') {
-    window.dashActive = false
-}
-
-let vueApp
-if (!window.dashActive) {
-    console.debug("DASHMAIN: Creating vue for the dashboard");
-    vueApp = new Vue({
-        render: function(h) { return h(App); },
-    }).$mount("#app");
-    window.dashActive = true
-} else {
-    console.debug("DASHMAIN: Not creating vue for the dashboard (it was done by the hash handler)"); 
-}
+window.CoBDasHDebug = window.CoBDasHDebug || {}
+const DEBUG = window.CoBDasHDebug
+Vue.config.productionTip = true;
 
 function getDashName() {
     const dashParts = window.location.hash.split("/")
@@ -25,26 +12,17 @@ function getDashName() {
 
 const initialDashName = getDashName()
 
+if(DEBUG.main) console.log("DASH: MAIN: 0: Creating vue for the dashboard");
+const vueApp = new Vue({
+    render: function(h) { return h(App); },
+}).$mount("#app");
 
 function onHashChange() {
     const currentDashName = getDashName()
-    if (currentDashName !== initialDashName && window.dashActive ) {
-        console.debug("DASHMAIN: Leaving the initialDashName=",initialDashName," for currentDashName=",currentDashName,". Destroying the dashboard");
+    if (currentDashName !== initialDashName) {
+        if(DEBUG.main) console.log("DASH: MAIN: 9: Leaving the initialDashName=",initialDashName," for currentDashName=",currentDashName,". Destroying the dashboard");
         vueApp.$destroy();
-        window.dashActive = false
-    } else if (currentDashName === initialDashName && !window.dashActive) {
-        if(document.getElementById("app")) {
-            console.debug("DASHMAIN: Re-Creating vue for the dashboard");
-            vueApp = new Vue({
-                render: function(h) { return h(App); },
-            }).$mount("#app"); 
-            window.dashActive = true
-        } else {
-            console.debug("DASHMAIN: #app not ready. Wait a little ");
-            var div = document.createElement("div");
-            document.getElementById("dash").appendChild(div);                   
-            setTimeout( onHashChange, 100 )
-        }
+        window.removeEventListener("hashchange", onHashChange);
     }
 }
 
