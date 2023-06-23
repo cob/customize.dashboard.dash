@@ -92,11 +92,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
             }
          }});
 
-         const forceUpdate = () => {
-            debugger;
-
-            query.update({force:true})
-         }
+         const forceUpdate = () => query.update({force:true})
          document.addEventListener("cobRefreshMenu",forceUpdate)
       }
    })

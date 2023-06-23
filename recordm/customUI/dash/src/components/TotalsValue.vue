@@ -64,7 +64,10 @@
             value() {
                 if(this.valueData.dash_info.state === "loading") return "L"
                 if(this.valueData.dash_info.state === "error") return "E"
-                if(isNaN(this.valueData.dash_info.value)) {
+                debugger
+                if(typeof(this.valueData.dash_info.value) == "undefined") {
+                    return "L"
+                } else if(isNaN(this.valueData.dash_info.value)) {
                     return this.valueData.dash_info.value
                 } else {
                     return new Intl.NumberFormat('en-US', {maximumFractionDigits: 0}).format(this.valueData.dash_info.value) 
