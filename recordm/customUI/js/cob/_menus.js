@@ -46,7 +46,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
       
       const userGroups = core.getGroups();
       const groupsQuery = userGroups && userGroups.map(g => "\"" + g + "\"").join(" OR ") 
-      const dashboardsQuery = "* OR ( groupaccess.raw:(" + groupsQuery + ") OR (-groupaccess:*) )"
+      const dashboardsQuery = "( groupaccess.raw:(" + groupsQuery + ") OR (-groupaccess:*) )"
 
       if(solutionDashInfo) {
          // If we're not a first call and already have a solutionDashInfo just update the query. call solutionDashInfo handler even if anything changes (worst case it will be called twice, but this way we garanty that it is called at least once)
@@ -132,7 +132,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
                   })
                }
 
-               // currentMenus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
+               currentMenus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
                core.publish('updated-app-info');  // Request an update to the built menu       
             }               
          }})   

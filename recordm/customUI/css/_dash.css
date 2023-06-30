@@ -134,3 +134,6 @@
         padding-left: 11px ;
         padding-right: 11px ;
     }
+    .cob-app .definition-container .fields-container .root-fields > .field .remove-button {
+        left: -41px;
+    }
