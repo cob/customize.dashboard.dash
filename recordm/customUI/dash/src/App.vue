@@ -1,9 +1,9 @@
 <template>
-  <div class="h-full w-full">
+  <div id="cobDashApp" class="h-full w-full">
     <div v-if="error || chooserError" class="text-center my-20 text-2xl "> {{ error }} <br> {{ chooserError }} </div>
     <Dashboard v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" />
 
-    <Waiting2 :updating="processingFlag" @refresh="updateQueries" class="fixed top-16 left-1" />
+    <Refresh :updating="processingFlag" @refresh="refreshRequest" class="fixed top-16 left-1" />
   </div>
 </template>
 
@@ -14,14 +14,15 @@
   import * as dashFunctions from '@cob/dashboard-info';
   import { parseDashboard } from './collector.js'
   import Dashboard from './components/Dashboard.vue'
-  import Waiting2 from './components/shared/Waiting2.vue'
+  import Refresh from './components/shared/Refresh.vue'
+  import ComponentStatePersistence from "./model/ComponentStatePersistence";
   import Handlebars from "handlebars";
   import traverse from "traverse";
   import sha256 from "crypto-js/sha256";
-  import ComponentStatePersistence from "@/model/ComponentStatePersistence";
 
   window.CoBDasHDebug = window.CoBDasHDebug || {}
   const DEBUG = window.CoBDasHDebug
+// window.CoBDasHDebug.app = true
   
   const DASHBOARD_DEF = "Dashboard_v1"
   const DASHBOARD_CHOOSER = "CHOOSER"
@@ -30,9 +31,8 @@
 
   export default {
     name: 'App',
-    components: { Dashboard, Waiting2 },
+    components: { Dashboard, Refresh },
     data: () => ({
-      resumeListener: null,
       error: "",
       chooserError: "",
       dashboardChooser: null,
@@ -50,69 +50,37 @@
       if(DEBUG.app) console.log("DASH:  APP: 1: created: bind to 'arg' var in hash arguments")
       this.hashArg = new ComponentStatePersistence("arg")
 
-      const dashboardQuery = () => {
-        const isSystem = this.userInfo.groups.length && this.userInfo.groups.map(g => g.name).indexOf("System") >= 0
-        const accessQuery = isSystem ? "" : " (groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )"
-        const nameQuery = "( solution_menu.raw:\"" + this.dashboardName + "\"" + " OR name.raw:\"" + this.dashboardName + "\" ) "
-        return "(" + nameQuery + accessQuery + ") OR id:\"" + this.dashboardName + "\""
-      }
-
-      const updateRequestData = (userInfo, urlDashPart) => {
-        if(DEBUG.app) console.log("DASH:  APP: 1.1: created: updateRequestData: urlDashPart="+ urlDashPart)
-        // Check if we are being called after a re-authentication request and, if so, redirect to the previous page the user was 
-        const urlBeforeReAuthentication = localStorage.getItem("urlBeforeReAuthentication")
-        if (urlBeforeReAuthentication) {
-          const storedValues = JSON.parse(urlBeforeReAuthentication)
-          if(DEBUG.app) console.log("DASH:  APP: 1.1: created: updateRequestData: because urlBeforeReAuthentication exists use storedValues=",storedValues)
-          localStorage.removeItem("urlBeforeReAuthentication")
-          urlDashPart = storedValues.urlDashPart
-          window.location.hash = storedValues.location
-        }
-        userInfo.groupsQuery = userInfo.groups.length && userInfo.groups.map(g => "\"" + g.name + "\"").join(" OR ")
-        this.userInfo = userInfo
-        this.urlDashPart = urlDashPart
-        this.dashboardName = urlDashPart.split(":")[0]
-        this.dashboardArg = urlDashPart.substring(this.dashboardName.length + 1)
-        return urlDashPart
-      }
-
       // Preemptively load the chooser dashboard, to be used in case there's more than one dashboard found for a given name and a given user
       if(DEBUG.app) console.log("DASH:  APP: 1: created: Requesting chooser")
       this.dashboardChooser = instancesList(DASHBOARD_DEF, "name.raw:\"" + DASHBOARD_CHOOSER + "\"", 1, 0, "order", "true", { validity: 600 })
 
       // At the initial load we get the dashboard instance name from the custom-resource div's attribute "data-name"
       umLoggedin().then(userInfo => {
-        const urlDashPart = updateRequestData(userInfo, document.getElementsByClassName("custom-resource")[0].getAttribute('data-name') )
-        if(DEBUG.app) console.log("DASH:  APP: 1.2: created: Requesting dashs for '", this.userInfo.username,"'. urlDashPart=", urlDashPart, " query=", dashboardQuery())
-        this.dashboardsRequested = instancesList(DASHBOARD_DEF, dashboardQuery(), 99, 0, "order", "false", { validity: 600 })
+        if(DEBUG.app) console.log("DASH:  APP: 1.1: created: Requesting dashs...")
+        this.updateRequestData(userInfo, document.getElementsByClassName("custom-resource")[0].getAttribute('data-name') )
+        this.dashboardsRequested = instancesList(DASHBOARD_DEF, this.dashboardQuery, 99, 0, "order", "false", { validity: 600 })
       })
       // Upon anchor navigation we get the dashboard instance name from the param to the 'resume' callback
-      this.resumeListener = (e, params) => {
-        //Recheck user (the user might have changed or his groups might have changed after previous load)
-        umLoggedin().then(userInfo => {
-          const urlDashPart = updateRequestData(userInfo, params[0] )
-          if(DEBUG.app) console.log("DASH:  APP: 1.3: created: Requesting dashs for '", this.userInfo.username,"' after hash change. urlDashPart=", urlDashPart, " query= ", dashboardQuery())
-          this.dashboardsRequested.changeArgs({ query: dashboardQuery() })
-        })
-      };
-      $('section.custom-resource').on('resume',this.resumeListener)
+      this.resumeEventListner = $('section.custom-resource').on('resume',this.resumeListener)
     },
 
     beforeDestroy() {
-      // Stop all watchers
       if(DEBUG.app) console.log("DASH:  APP: 9: beforeDestroy: Stop all watchers and updates")
-      $('section.custom-resource').unbind('resume',this.resumeListener)
-      this.$unwatch && this.$unwatch()
+      this.resumeEventListner.off('resume')
       this.hashArg.stop()
-      const activeDash = this.dashboardsCached[this.activeDashKey]
-      if (activeDash) {
-        activeDash.solutionSiblings.stopUpdates()
-        if (activeDash.contextQueries) activeDash.contextQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
-        if (activeDash.boardQueries) activeDash.boardQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
-      }
+      this.stopActiveDash()
     },
 
     computed: {
+      dashboardQuery() {        
+        const isSystem = this.userInfo.groups.length && this.userInfo.groups.map(g => g.name).indexOf("System") >= 0
+        const accessQuery = isSystem ? "" : " (groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )"
+        const nameQuery = "( solution_menu.raw:\"" + this.dashboardName + "\"" + " OR name.raw:\"" + this.dashboardName + "\" ) "
+        const query =  "(" + nameQuery + accessQuery + ") OR id:\"" + this.dashboardName + "\""
+        if(DEBUG.app) console.log("DASH:  APP: 1.4: dashboardQuery: username='", this.userInfo.username,"'. urlDashPart=", this.urlDashPart, " query=", query)
+        return query
+      },
+
       processingFlag() {
         return this.dashboardsRequested == null
           || this.dashboardsRequested.state === 'updating'
@@ -126,7 +94,14 @@
       },
 
       currentDashboard() {
+        if(!this.activeDashKey) return null
         if(DEBUG.app) console.log("DASH:  APP: 6: currentDashboard: update display. activeDashboardId=", this.dashboardsCached[this.activeDashKey].id)
+       
+        let cobDashAppOld = document.getElementById("cobDashAppOld")
+        if(cobDashAppOld) {
+          // If there's an old dash being displayed delete it in a few millis and get a smooth transition
+          setTimeout(() => cobDashAppOld.remove(), 10)
+        }
         return (this.dashboardsCached[this.activeDashKey])
       }
     },
@@ -235,16 +210,48 @@
     },
 
     methods: {
+      resumeListener(e, params) {
+        //Recheck user (the user might have changed or his groups might have changed after previous load)
+        umLoggedin().then(userInfo => {
+          if(DEBUG.app) console.log("DASH:  APP: 1.2: resumeListener: Requesting dashs ...")
+          this.updateRequestData(userInfo, params[0] )
+          this.dashboardsRequested.changeArgs({ query: this.dashboardQuery })
+        })
+      },
+      
+      updateRequestData(userInfo, urlDashPart) {
+        if(DEBUG.app) console.log("DASH:  APP: 1.3: updateRequestData: urlDashPart="+ urlDashPart)
+        // Check if we are being called after a re-authentication request and, if so, redirect to the previous page the user was 
+        const urlBeforeReAuthentication = localStorage.getItem("urlBeforeReAuthentication")
+        if (urlBeforeReAuthentication) {
+          const storedValues = JSON.parse(urlBeforeReAuthentication)
+          if(DEBUG.app) console.log("DASH:  APP: 1.3.1: updateRequestData: because urlBeforeReAuthentication exists use storedValues=",storedValues)
+          localStorage.removeItem("urlBeforeReAuthentication")
+          urlDashPart = storedValues.urlDashPart
+          window.location.hash = storedValues.location
+        }
+        userInfo.groupsQuery = userInfo.groups.length && userInfo.groups.map(g => "\"" + g.name + "\"").join(" OR ")
+        this.userInfo = userInfo
+        this.urlDashPart = urlDashPart
+        this.dashboardName = urlDashPart.split(":")[0]
+        this.dashboardArg = urlDashPart.substring(this.dashboardName.length + 1)
+      },
+
+      refreshRequest() {
+        this.updateQueries()
+        document.dispatchEvent(new Event("cobRefreshMenu"));
+      },
+
       updateQueries(specificDashKey, forceRefresh = true) {
 
         let dashKey = specificDashKey ? specificDashKey : this.activeDashKey
         if(DEBUG.app) console.log("DASH:  APP: 5.5.1: updateQueries: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
 
-        if (dashKey && this.dashboardsCached[dashKey].solutionSiblings) this.dashboardsCached[dashKey].solutionSiblings.update({force:forceRefresh})
-        if (dashKey && this.dashboardsCached[dashKey].contextQueries) this.dashboardsCached[dashKey].contextQueries.forEach(dashInfoItem => dashInfoItem.update({force:forceRefresh}))
-        if (dashKey && this.dashboardsCached[dashKey].boardQueries) this.dashboardsCached[dashKey].boardQueries.forEach(dashInfoItem => dashInfoItem.update({force:forceRefresh}))
-
-        document.dispatchEvent(new Event("cobRefreshMenu"));
+        if (dashKey) {
+          if (this.dashboardsCached[dashKey].solutionSiblings) this.dashboardsCached[dashKey].solutionSiblings.startUpdates({forceUpdate:forceRefresh})
+          if (this.dashboardsCached[dashKey].contextQueries) this.dashboardsCached[dashKey].contextQueries.forEach(dashInfoItem => dashInfoItem.startUpdates({forceUpdate:forceRefresh}))
+          if (this.dashboardsCached[dashKey].boardQueries) this.dashboardsCached[dashKey].boardQueries.forEach(dashInfoItem => dashInfoItem.startUpdates({forceUpdate:forceRefresh}))
+        }
       },
 
       loadDashboard(newDashEs, requestResultList) {
@@ -297,6 +304,12 @@
         }
 
         const baseContextVarsWatcher = (newBaseContextVars) => {
+          const newBaseContextVarsString = JSON.stringify(newBaseContextVars)
+          if(this.dashboardsCached[dashKey].dashboardBaseContextVarsString == newBaseContextVarsString ) {
+            return
+          } else {
+            this.dashboardsCached[dashKey].dashboardBaseContextVarsString = newBaseContextVarsString
+          }
           if(DEBUG.app) console.log("DASH:  APP: 5.2.1: loadDashboard: baseContextVarsWatcher: context changed for '", this.dashboardsCached[dashKey].id + "/" + newDashEs.name,"'. newBaseContext.vars=",JSON.stringify(newBaseContextVars))
 
           const newContext = getContext(this.dashboardsCached[dashKey])
@@ -340,13 +353,14 @@
         }
 
         const contextWatcher = (newContext) => {
+          const newContextString = JSON.stringify(newContext)
+          if(this.dashboardsCached[dashKey].dashboardContextString == newContextString ) {
+            return
+          } else {
+            this.dashboardsCached[dashKey].dashboardContextString = newContextString
+          }
           if(DEBUG.app) console.log("DASH:  APP: 5.3.1: loadDashboard: contextWatcher: context changed for '", this.dashboardsCached[dashKey].id + "/" + newDashEs.name,"'. newContext=",newContext)
 
-          for( let i = 0; i < this.dashboardsCached[dashKey].boardQueries.length; i++ ) {
-            let dashInfoItem = this.dashboardsCached[dashKey].boardQueries.pop()
-            dashInfoItem.stopUpdates()
-          }
-          
           const newProcessed = buildDashboard(this.dashboardsCached[dashKey])
           this.$set(this.dashboardsCached[dashKey], "dashboardProcessed", newProcessed);
         }
@@ -360,6 +374,11 @@
               .replaceAll(/(,(\s*))+/g, ",$2") //  Also remove double comma in the resulting arrays (maintain the spaces in case normal text with commas)
           )
 
+          for( let i = dashboard.boardQueries.length; i > 0 ; i-- ) {
+            let dashInfoItem = dashboard.boardQueries.pop()
+            dashInfoItem.stopUpdates()
+          }
+          
           // Add extra info to structure
           for (let b of dash["Board"]) {
             for (let c of b.Component) {
@@ -401,7 +420,14 @@
           return dash
         }
 
-        const siblingsWatcher = (newSiblings) => {
+        const siblingsWatcher = (newSiblings, force=false) => {
+          const newSiblingsString = JSON.stringify(newSiblings)
+          if(!force && this.dashboardsCached[dashKey].solutionSiblingsString == newSiblingsString ) {
+            return
+          } else {
+            this.dashboardsCached[dashKey].solutionSiblingsString = newSiblingsString
+          }
+
           if(DEBUG.app) console.log("DASH:  APP: 5.4.1: loadDashboard: siblingsWatcher: changed. newSiblings==[" + (newSiblings && newSiblings.map(l => l.id + "/" + l.name).join(",") || "") + "]")
 
           let menu = []
@@ -428,7 +454,7 @@
           this.$set(this.dashboardsCached[dashKey], "menu", menu);
         }
 
-        const activateDash = () => {
+        const activateDash = (reactivate) => {
           if(DEBUG.app) console.log("DASH:  APP: 5.5: loadDashboard: activateDash: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
 
           // Restart context and sibling Watchers before
@@ -437,19 +463,30 @@
           this.dashboardsCached[dashKey].stopSiblingsWatcher = this.$watch("dashboardsCached." + dashKey + ".solutionSiblings.value", siblingsWatcher, { deep: true });
 
           // Call siblingsWathcer to setup siblings with current siblings (in case there's no change that will call the siblingsWatcher)
-          siblingsWatcher(this.dashboardsCached[dashKey].solutionSiblings.value)
+          siblingsWatcher(this.dashboardsCached[dashKey].solutionSiblings.value,true)
 
           // Update any queries defined in siblings, context and boards
-          this.updateQueries(dashKey,false)
+          if(reactivate) this.updateQueries(dashKey,false)
 
           //Activate new dashboard
           this.activeDashKey = dashKey;
           document.title = (this.dashboardsCached[dashKey].solution ? this.dashboardsCached[dashKey].solution + " | " : "") +this.dashboardsCached[dashKey].dashboardParsed.Name
 
           // Set the last visited dash in order to show it in case of a login without specific dashboard destination
-          localStorage.setItem(this.userInfo.username + "-lastDash", this.dashboardsCached[dashKey].urlDashPart);
-          if(this.dashboardsCached[dashKey].solution) localStorage.setItem(this.userInfo.username + "-lastDash" + "-" + this.dashboardsCached[dashKey].solution, this.dashboardsCached[dashKey].id)
-          cob.app.publish('updated-app-info', { rebuildMenu: true });
+          let currentLastDash = localStorage.getItem(this.userInfo.username + "-lastDash");
+          let menuUpdateNeeded = false
+          if(currentLastDash != this.dashboardsCached[dashKey].urlDashPart) {
+            localStorage.setItem(this.userInfo.username + "-lastDash", this.dashboardsCached[dashKey].urlDashPart);
+            menuUpdateNeeded = true
+          }
+          if(this.dashboardsCached[dashKey].solution) {
+            let currentLastSolutionDash = localStorage.getItem(this.userInfo.username + "-lastDash" + "-" + this.dashboardsCached[dashKey].solution)
+            if(currentLastSolutionDash != this.dashboardsCached[dashKey].id) {
+              localStorage.setItem(this.userInfo.username + "-lastDash" + "-" + this.dashboardsCached[dashKey].solution, this.dashboardsCached[dashKey].id)
+              menuUpdateNeeded = true
+            }            
+          }
+          if(menuUpdateNeeded) cob.app.publish('updated-app-info', { rebuildMenu: true });
         }
 
         const reportError = (error) => {
@@ -460,21 +497,11 @@
           cob.app.publish('updated-app-info', { rebuildMenu: true });
         }
 
-        // If current dash exists stop its Context & Siblings Watcher
-        const activeDash = this.dashboardsCached[this.activeDashKey]
-        if (activeDash) {
-          if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: stopping watchers and queries for leavingDashboard=", this.dashboardsCached[this.activeDashKey].id)
-          if (activeDash.stopContextWatcher) activeDash.stopContextWatcher()
-          if (activeDash.stopSiblingsWatcher) activeDash.stopSiblingsWatcher()
-          // Stop sibling query and any queries defined in context, if present
-          activeDash.solutionSiblings.stopUpdates()
-          if (activeDash.contextQueries) activeDash.contextQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
-          if (activeDash.boardQueries) activeDash.boardQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
-        }
-
+        this.stopActiveDash()
+        
         if (this.dashboardsCached[dashKey] !== undefined && this.dashboardsCached[dashKey].version === newDashEs.version) {
           if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: dashboard previously processed. Activate newDashId=", newDashEs.id)
-          activateDash(dashKey)
+          activateDash(true)
 
         } else {
           // If the dashKey property doesn't exist or it changed version then this is the first time we display this dashboard (at this version) and we need to build it from scratch
@@ -493,11 +520,14 @@
                 dash.dashboardParsed = parseDashboard(resp.data);
                 dash.dashboardProcessor = compileDashboard(dash.dashboardParsed);
                 dash.dashboardBaseContext = getBaseContext();
+                dash.dashboardBaseContextVarsString = JSON.stringify(dash.dashboardBaseContext.vars)
                 dash.dashboardContext = getContext(dash);
+                dash.dashboardContextString = JSON.stringify(dash.dashboardContext)
                 dash.dashboardProcessed = buildDashboard(dash);
                 dash.solutionSiblings = instancesList(DASHBOARD_DEF, "solution.raw:\"" + newDashEs.solution + "\" AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )", 102, 0, "order", "false", { validity: 600 });
+                dash.solutionSiblingsString = JSON.stringify(dash.solutionSiblings.value)
                 this.$set(this.dashboardsCached, dashKey, dash);
-                activateDash(dashKey)
+                activateDash(false)
               }
               catch (e) {
                 if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: Exception processing dash. e=", e)
@@ -512,6 +542,22 @@
                 reportError("Error: error getting dashboard " + newDashEs.id)
               }
             });
+        }
+      },
+
+      stopActiveDash() {
+        // If current dash exists stop its Context & Siblings Watcher
+        const activeDash = this.dashboardsCached[this.activeDashKey]
+        if (activeDash) {
+          if(DEBUG.app) console.log("DASH:  APP: 6: stopActiveDash: stopping watchers and queries for dashboard=", this.dashboardsCached[this.activeDashKey].id)
+          activeDash.stopBaseContextWatcher()
+          activeDash.stopContextWatcher()
+          activeDash.stopSiblingsWatcher()
+
+          // Stop sibling query and any queries defined in context, if present
+          activeDash.solutionSiblings.stopUpdates()
+          if (activeDash.contextQueries) activeDash.contextQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
+          if (activeDash.boardQueries) activeDash.boardQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
         }
       }
     }

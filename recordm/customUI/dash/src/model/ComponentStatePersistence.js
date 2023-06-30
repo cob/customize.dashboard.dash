@@ -8,7 +8,7 @@ class ComponentStatePersistence {
         this._onHashChange = function() {
             if(this.content != this._getStateFromHash() ) {
                 this.content = this._getStateFromHash()
-                if(DEBUG.state) console.log("DASH: [STATE] Hash changed",this._id,this._content)
+                if(DEBUG.state) console.log("DASH: STATE: Hash changed id=",this._id," content=",this._content)
                 if(updateCb) updateCb(this.content)
             }
         }.bind(this)
@@ -20,7 +20,7 @@ class ComponentStatePersistence {
     }
 
     set content(newContent) {
-        if(DEBUG.state) console.log("DASH: [STATE] update value:", JSON.stringify(this._content) !== JSON.stringify(newContent), this._id,JSON.stringify(this._content),JSON.stringify(newContent))
+        if(DEBUG.state) console.log("DASH: STATE: update id=", this._id," changed=", JSON.stringify(this._content) !== JSON.stringify(newContent), " old=",JSON.stringify(this._content), " new=",JSON.stringify(newContent))
         if (JSON.stringify(this._content) !== JSON.stringify(newContent)) {
             this._content = newContent
             this._setStateInHash()
@@ -28,18 +28,18 @@ class ComponentStatePersistence {
     }
 
     stop() {
-        if(DEBUG.state) console.log("DASH: [STATE] stoped",this._id,this.content,this._getStateFromHash())
+        if(DEBUG.state) console.log("DASH: STATE: stopped id=",this._id)
         window.removeEventListener('hashchange', this._onHashChange, true)
     }
     
     _getStateFromHash() {
         const hashParts = window.location.hash.split("/")
-        const [name, ...rest] = hashParts[2].split(":")
         try {
+            const [name, ...rest] = hashParts[2].split(":")
             let statesInHash = rest.length > 1 ? JSON.parse(decodeURIComponent(rest.join(":"))) : {}
             return statesInHash[this._id]
         } catch (e) {
-            if(DEBUG.state) console.error("DASH: [STATE] invalid parse of hash:", decodeURIComponent(rest.join(":")))
+            if(DEBUG.state) console.error("DASH: STATE: invalid parse of hash=", decodeURIComponent(rest.join(":")))
             return undefined
         }
     }
@@ -71,7 +71,7 @@ class ComponentStatePersistence {
             }
         }
         catch (e) {
-            if(DEBUG.state) console.error("DASH: [STATE] invalid parse of hash:", decodeURIComponent(rest.join(":")))
+            if(DEBUG.state) console.error("DASH: STATE: invalid parse of hash=", decodeURIComponent(rest.join(":")))
         }
     }
 }

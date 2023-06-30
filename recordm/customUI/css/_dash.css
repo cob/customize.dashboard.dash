@@ -1,94 +1,101 @@
+/* Uniformiza fonte do recordm com a do dash */
+    /* .cob-app {
+        font-family: inherit;
+    }
+    .ui-widget {
+    font-family: inherit;
+    } */
+
 /* Reverte hide feito no dashboard.html */
-section.custom-resource {
-    visibility: visible !important;
-    opacity: 1 !important;
-}
+    section.custom-resource {
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
 /* tooltip support for menus (ex: CoB Solutions Main) */
-.tooltip {
-    visibility: hidden;
-    position: absolute;
-    right: 0;
-}
-
-.has-tooltip:hover .tooltip {
-    z-index: 100;
-    animation: 500ms fadeIn;
-    animation-fill-mode: forwards;
-}
-
-@keyframes fadeIn {
-    99% {
-      visibility: hidden;
+    .tooltip {
+        visibility: hidden;
+        position: absolute;
+        right: 0;
     }
-    100% {
-      visibility: visible;
+
+    .has-tooltip:hover .tooltip {
+        z-index: 100;
+        animation: 500ms fadeIn;
+        animation-fill-mode: forwards;
     }
-}
+
+    @keyframes fadeIn {
+        99% {
+        visibility: hidden;
+        }
+        100% {
+        visibility: visible;
+        }
+    }
 
 /* dropdown submenus */
-details.cob-submenu {
-    position:relative; 
-    margin: 0px 5px 0px 15px;
-}
-
-details.cob-submenu > summary {
-    list-style: none;
-}
-
-details.cob-submenu > summary::-webkit-details-marker {
-    display: none
-}
-
-details.cob-submenu > summary::after,
-details.cob-submenu[open] > summary:after {
-    color: #fbfbfb;
-    content: "▼";
-}
-
-details.cob-submenu > ul.dropdown-menu {
-    display:unset !important; 
-    margin-top:5px !important; 
-    padding-right: 4px !important; 
-    text-align:left !important; 
-    min-width: 120px !important; 
-    left:unset !important; 
-    right:0 !important
-}
-
-details.cob-submenu > ul.dropdown-menu li {
-    margin: 0px 3px !important; 
-    white-space: nowrap !important;
-}
-
-details.cob-submenu a {
-    color: #fbfbfb;
-    cursor: pointer;
-}
-details.cob-submenu > summary > a:hover {
-    color: #fbfbfb;
-    border-bottom: 3px solid #F79728;
-    text-decoration: none;
-}
-
-@media (max-width: 585px) {
-    details.cob-submenu a {
-        color: #fbfbfb !important;
+    .cob-app #header .nav > li > a,
+    details.cob-submenu {
+        position:relative; 
+        margin: 0px 10px 0px 10px;
     }
-}
+
+    details.cob-submenu > summary {
+        list-style: none;
+    }
+    details.cob-submenu > summary::-webkit-details-marker {
+        display: none
+    }
+
+    details.cob-submenu > summary::after {
+        color: #fbfbfb;
+        content: "▼";
+    }
+
+    details.cob-submenu > ul.dropdown-menu {
+        display: unset !important; 
+        margin-top: 5px !important; 
+        padding-right: 4px !important; 
+        text-align: left !important; 
+        min-width: 120px !important; 
+        left: unset !important; 
+        right: -15px !important
+    }
+
+    details.cob-submenu > ul.dropdown-menu li {
+        margin: 0px 3px !important; 
+        white-space: nowrap !important;
+    }
+
+    details.cob-submenu a {
+        color: #fbfbfb;
+        cursor: pointer;
+    }
+    details.cob-submenu > summary > a:hover {
+        color: #fbfbfb;
+        border-bottom: 3px solid #F79728;
+        text-decoration: none;
+    }
+
+    @media (max-width: 585px) {
+        details.cob-submenu a {
+            color: #fbfbfb !important;
+        }
+    }
 
 /* un-reset css for specific element */
-.cob-app input,
-.cob-app .slick-cell,
-.cob-app .slick-cell *,
-.cob-app .slick-column-name,
-.cob-app .slick-header-column,
-.cob-app .toggle-button,
-.cob-app .remove-button,
-.cob-app .duplicate-button,
-.cob-app .btn.btn-mini svg,
-#loading {
-    box-sizing: content-box !important;
-}
-.cob-app .instance-detail-container .instance-container .sidenav .details svg {
-    padding-top: 0px
-}
+    .cob-app input,
+    .cob-app .slick-cell,
+    .cob-app .slick-cell *,
+    .cob-app .slick-column-name,
+    .cob-app .slick-header-column,
+    .cob-app .toggle-button,
+    .cob-app .remove-button,
+    .cob-app .duplicate-button,
+    .cob-app .btn.btn-mini svg,
+    #loading {
+        box-sizing: content-box !important;
+    }
+    .cob-app .instance-detail-container .instance-container .sidenav .details svg {
+        padding-top: 0px
+    }
