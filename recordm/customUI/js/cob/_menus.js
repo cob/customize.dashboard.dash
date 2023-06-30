@@ -9,7 +9,25 @@ cob.custom.customize.push(function (core, utils, _ui) {
       var subMenus = [...document.querySelectorAll('.cob-submenu')];
       subMenus.forEach(sm => { if (!sm.contains(e.target)) sm.removeAttribute('open') });
    })
-   
+   // event handlers for menus 
+   window.cobMenuMouseEnter = function(e) {
+      let subMenus = document.querySelectorAll(".cob-submenu");
+      subMenus.forEach(sm => { if(!sm.contains(e.target)) sm.removeAttribute('open') });
+      let details = e.target.closest("details");
+      details.setAttribute("open", "open");
+      clearTimeout(details.dataset.timer)
+   }
+   window.cobMenuMouseLeave = function(e) {
+      clearTimeout(e.target.dataset.timer)
+      e.target.dataset.timer = setTimeout(function() {
+         e.target.removeAttribute("open");
+      }, 500);
+   }
+   // when collapsed close RM submenu window
+   window.cobMenuClick = function(e) {
+      document.querySelector(".js-menu-btn.btn.btn-navbar").click()
+   }
+
    let currentMenus  // will be used everywhere in the code to ensure that we're always changing the same model.menu (and not the scoped 'model' inside th customizeMenu)
    core.customizeMenu((model) => {   
       // For anonymous user don't do any menu customization
@@ -28,7 +46,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
       
       const userGroups = core.getGroups();
       const groupsQuery = userGroups && userGroups.map(g => "\"" + g + "\"").join(" OR ") 
-      const dashboardsQuery = "( groupaccess.raw:(" + groupsQuery + ") OR (-groupaccess:*) )"
+      const dashboardsQuery = "* OR ( groupaccess.raw:(" + groupsQuery + ") OR (-groupaccess:*) )"
 
       if(solutionDashInfo) {
          // If we're not a first call and already have a solutionDashInfo just update the query. call solutionDashInfo handler even if anything changes (worst case it will be called twice, but this way we garanty that it is called at least once)
@@ -83,7 +101,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
                      id: solutionMenuName,
                      name: solutionLabel,
                      href: "cob.custom-resource/" + solutionLink + "/dash",
-                     html: '<details class="cob-submenu">'
+                     html: '<details class="cob-submenu" onclick="cobMenuClick(event)" onmouseenter="cobMenuMouseEnter(event)" onmouseleave="cobMenuMouseLeave(event)">'
                         +  ' <summary>'
                         +  '    <a href="#/cob.custom-resource/' + solutionLink + '/dash" >' + solutionLabel + '</a>'
                         +  ' </summary>'
@@ -114,8 +132,8 @@ cob.custom.customize.push(function (core, utils, _ui) {
                   })
                }
 
-               currentMenus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
-               core.publish('updated-app-info');  // Request an update to the built menu
+               // currentMenus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
+               core.publish('updated-app-info');  // Request an update to the built menu       
             }               
          }})   
       }         

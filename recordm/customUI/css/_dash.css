@@ -11,6 +11,7 @@
         visibility: visible !important;
         opacity: 1 !important;
     }
+    
 /* tooltip support for menus (ex: CoB Solutions Main) */
     .tooltip {
         visibility: hidden;
@@ -37,7 +38,7 @@
     .cob-app #header .nav > li > a,
     details.cob-submenu {
         position:relative; 
-        margin: 0px 10px 0px 10px;
+        margin: 0px 14px 0px 14px;
     }
 
     details.cob-submenu > summary {
@@ -47,10 +48,11 @@
         display: none
     }
 
+    /* detail drop down
     details.cob-submenu > summary::after {
         color: #fbfbfb;
         content: "▼";
-    }
+    } */
 
     details.cob-submenu > ul.dropdown-menu {
         display: unset !important; 
@@ -61,12 +63,12 @@
         left: unset !important; 
         right: -15px !important
     }
-
+    
     details.cob-submenu > ul.dropdown-menu li {
         margin: 0px 3px !important; 
         white-space: nowrap !important;
     }
-
+ 
     details.cob-submenu a {
         color: #fbfbfb;
         cursor: pointer;
@@ -76,13 +78,37 @@
         border-bottom: 3px solid #F79728;
         text-decoration: none;
     }
-
-    @media (max-width: 585px) {
-        details.cob-submenu a {
-            color: #fbfbfb !important;
-        }
+    
+    .smart-menu details.cob-submenu {
+        text-align: left;
+    }
+    .smart-menu details.cob-submenu > ul.dropdown-menu {
+        margin-top: -30px !important; 
+        right: 110px !important
+    }
+    .smart-menu  details.cob-submenu a {
+        color: #383838;
     }
 
+    @media (max-width: 585px) {
+        .collapse details.cob-submenu a {
+            color: #fbfbfb !important;
+        }
+        .collapse details.cob-submenu {
+            overflow: auto;
+            max-height: 300px;
+        }
+        .nav-collapse .details.cob-submenu .dropdown-menu {
+            left: 0 !important; 
+            right: unset !important;
+            background-color: gray !important;
+        }
+    
+        .cob-app #header .nav-collapse.in  {
+            max-height: unset;
+        }
+    }
+    
 /* un-reset css for specific element */
     .cob-app input,
     .cob-app .slick-cell,
@@ -98,4 +124,13 @@
     }
     .cob-app .instance-detail-container .instance-container .sidenav .details svg {
         padding-top: 0px
+    }
+    .cob-app .input-block-level {
+        /* Fix definition edit */
+        min-height: unset
+    }
+    .cob-app .definition-container .fields-container table td {
+        /* Fix definition edit */
+        padding-left: 11px ;
+        padding-right: 11px ;
     }
