@@ -1,7 +1,7 @@
 {
     "id": null,
     "name": "Dashboard-Attention",
-    "description": "@config v6.0.0",
+    "description": "@config v6.0.0 @COB",
     "duplicable": null,
     "state": "enabled",
     "fieldDefinitions": [
@@ -29,7 +29,6 @@
             "order": 1,
             "rootField": true,
             "restricted": false,
-            "defaultValue": "1671019315956"
         },
         {
             "id": null,

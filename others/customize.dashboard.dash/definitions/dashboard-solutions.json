@@ -1,7 +1,7 @@
 {
     "id": null,
     "name": "Dashboard-Solutions",
-    "description": "@dash @config v4.3.0",
+    "description": "@dash @config v6.4.0 @COB",
     "duplicable": null,
     "state": "enabled",
     "fieldDefinitions": [
@@ -46,13 +46,26 @@
         },
         {
             "id": null,
+            "name": "Ordem",
+            "required": null,
+            "description": "$number $instanceDescription",
+            "condition": null,
+            "duplicable": false,
+            "fields": [],
+            "order": 3,
+            "rootField": true,
+            "restricted": false,
+            "defaultValue": null
+        },
+        {
+            "id": null,
             "name": "icon",
             "required": null,
             "description": null,
             "condition": null,
             "duplicable": false,
             "fields": [],
-            "order": 3,
+            "order": 4,
             "rootField": true,
             "restricted": false,
             "defaultValue": null
@@ -65,7 +78,20 @@
             "condition": null,
             "duplicable": false,
             "fields": [],
-            "order": 4,
+            "order": 5,
+            "rootField": true,
+            "restricted": false,
+            "defaultValue": null
+        },
+        {
+            "id": null,
+            "name": "Dashboards",
+            "required": null,
+            "description": "$references(Dashboard_v1,Solution)",
+            "condition": null,
+            "duplicable": false,
+            "fields": [],
+            "order": 6,
             "rootField": true,
             "restricted": false,
             "defaultValue": null
