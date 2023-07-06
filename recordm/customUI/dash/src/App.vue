@@ -3,7 +3,7 @@
     <div v-if="error || chooserError" class="text-center my-20 text-2xl "> {{ error }} <br> {{ chooserError }} </div>
     <Dashboard v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" />
 
-    <Refresh :updating="processingFlag" @refresh="refreshRequest" class="fixed top-16 left-1" />
+    <Refresh :updating="processingFlag" @refresh="updateQueries" class="fixed top-16 left-1" />
   </div>
 </template>
 
@@ -235,11 +235,6 @@
         this.urlDashPart = urlDashPart
         this.dashboardName = urlDashPart.split(":")[0]
         this.dashboardArg = urlDashPart.substring(this.dashboardName.length + 1)
-      },
-
-      refreshRequest() {
-        this.updateQueries()
-        document.dispatchEvent(new Event("cobRefreshMenu"));
       },
 
       updateQueries(specificDashKey, forceRefresh = true) {

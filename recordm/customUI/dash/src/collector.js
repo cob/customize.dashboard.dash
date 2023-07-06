@@ -169,7 +169,7 @@ function parseDashboard(raw_dashboard) {
 
 
     // remove all 'Initial_Templates' and 'instanceId' added for processing
-    dash = JSON.parse(JSON.stringify(dash, (k, v) => (k === 'Initial_Template' || k === 'instanceId') ? undefined : v))
+    dash = JSON.parse(JSON.stringify(dash, (k, v) => (k === 'Initial_Template') ? undefined : v))
 
     return dash
 }

@@ -80,7 +80,11 @@ cob.custom.customize.push(function (core, utils, _ui) {
                });
 
                // Iterate the different solutions
-               const solutionsList = solutions.value.sort((a,b)=>solutions.hits[a].hits[0].solution_ordem[0]*1 - solutions.hits[b].hits[0].solution_ordem[0]*1)
+               const solutionsList = solutions.value.sort((a,b)=>{
+                  const aOrder = solutions.hits[a].hits[0].solution_ordem && solutions.hits[a].hits[0].solution_ordem[0]*1 || 99
+                  const bOrder = solutions.hits[b].hits[0].solution_ordem && solutions.hits[a].hits[0].solution_ordem[0]*1 || 99
+                  return aOrder - bOrder
+               })
                for (let i = 0; i < numberOfSolutions; i++) {
                   const solutionMenuName = solutionsList[i]
                   const icon = solutions.hits[solutionMenuName].hits[0].solution_icon

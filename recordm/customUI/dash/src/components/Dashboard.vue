@@ -6,7 +6,7 @@
         
         <div  >
             <div :class="width + ' ' + grid">
-                <Board v-for="(board,i) in boards" :board="board" :key="i" />
+                <Board v-for="(board,i) in boards" :board="board" :key="board.instanceId+'-'+i" />
             </div>
         </div>
     </div>

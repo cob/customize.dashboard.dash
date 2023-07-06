@@ -1,7 +1,10 @@
 window.CoBDasHDebug = window.CoBDasHDebug || {}
 const DEBUG = window.CoBDasHDebug
+// window.CoBDasHDebug.state = true
+
 class ComponentStatePersistence {
     constructor(id,updateCb) {
+        if(DEBUG.state) console.log("DASH: STATE: create id=",id)
         this._id = id
         this.content = this._getStateFromHash()
         if(updateCb) updateCb(this.content)

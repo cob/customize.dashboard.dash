@@ -4,7 +4,7 @@
             <td  :class="line.titleClasses">
                 {{ line.title }}
             </td>
-            <td v-for="(value, j) in line.values" :key="'value'+i+'-'+j">
+            <td v-for="(value, j) in line.values" :key="'value'+inputFilter+i+'-'+j">
                 <TotalsValue :value-data="value"/>
             </td>
         </tr>
@@ -37,8 +37,8 @@
                 if(newValue === "") return //PRESSUPOSTO IMPORTANTE: se newValue é vazio é porque estamos em transições (porque usamos sempre um valor, nem que seja *) e o melhor é usar o valor antigo para o valor não mudar momentaneamente (e ainda desperdicar uma pesquisa). Se o pressuposto for quebrado vamos impedir a actualização do inputFilter quando o valor é ""
                 this.lines.forEach(l => {
                     l.values.forEach(v => {
-                      let index
-                      switch (v.Value) {
+                    let index
+                    switch (v.Value) {
                         case "dmEquipmentCount":
                             index = 0;
                             break;
@@ -54,11 +54,11 @@
                         case "fieldWeightedAverage":
                             index = 3;
                             break;
-                      }
+                    }
 
-                      let arg = (v.Arg[index] instanceof Object ? v.Arg[index].Arg : v.Arg[index])
-                      let newFilter = ((arg || "") + " " + newValue.trim()) || "*"
-                      if (v.dash_info && v.dash_info.changeArgs) v.dash_info.changeArgs({ query: newFilter })
+                    let arg = (v.Arg[index] instanceof Object ? v.Arg[index].Arg : v.Arg[index])
+                    let newFilter = ((arg || "") + " " + newValue.trim()) || "*"
+                    if (v.dash_info && v.dash_info.changeArgs) v.dash_info.changeArgs({ query: newFilter })
                     });
                 });
             }
