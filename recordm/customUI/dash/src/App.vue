@@ -95,7 +95,7 @@
 
       currentDashboard() {
         if(!this.activeDashKey) return null
-        if(DEBUG.app) console.log("DASH:  APP: 6: currentDashboard: update display. activeDashboardId=", this.dashboardsCached[this.activeDashKey].id)
+        if(DEBUG.app) console.log("DASH:  APP: 7: currentDashboard: update display. activeDashboardId=", this.dashboardsCached[this.activeDashKey].id)
        
         let cobDashAppOld = document.getElementById("cobDashAppOld")
         if(cobDashAppOld) {
@@ -237,16 +237,14 @@
         this.dashboardArg = urlDashPart.substring(this.dashboardName.length + 1)
       },
 
-      updateQueries(specificDashKey, forceRefresh = true) {
+      updateQueries(forceRefresh = true) {
 
-        let dashKey = specificDashKey ? specificDashKey : this.activeDashKey
+        let dashKey = this.activeDashKey
         if(DEBUG.app) console.log("DASH:  APP: 5.5.1: updateQueries: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
 
-        if (dashKey) {
           if (this.dashboardsCached[dashKey].solutionSiblings) this.dashboardsCached[dashKey].solutionSiblings.startUpdates({forceUpdate:forceRefresh})
           if (this.dashboardsCached[dashKey].contextQueries) this.dashboardsCached[dashKey].contextQueries.forEach(dashInfoItem => dashInfoItem.startUpdates({forceUpdate:forceRefresh}))
           if (this.dashboardsCached[dashKey].boardQueries) this.dashboardsCached[dashKey].boardQueries.forEach(dashInfoItem => dashInfoItem.startUpdates({forceUpdate:forceRefresh}))
-        }
       },
 
       loadDashboard(newDashEs, requestResultList) {
@@ -460,11 +458,12 @@
           // Call siblingsWathcer to setup siblings with current siblings (in case there's no change that will call the siblingsWatcher)
           siblingsWatcher(this.dashboardsCached[dashKey].solutionSiblings.value,true)
 
-          // Update any queries defined in siblings, context and boards
-          if(reactivate) this.updateQueries(dashKey,false)
-
           //Activate new dashboard
           this.activeDashKey = dashKey;
+
+          // Update any queries defined in siblings, context and boards
+          if(reactivate) this.updateQueries(false)
+
           document.title = (this.dashboardsCached[dashKey].solution ? this.dashboardsCached[dashKey].solution + " | " : "") +this.dashboardsCached[dashKey].dashboardParsed.Name
 
           // Set the last visited dash in order to show it in case of a login without specific dashboard destination
@@ -544,7 +543,7 @@
         // If current dash exists stop its Context & Siblings Watcher
         const activeDash = this.dashboardsCached[this.activeDashKey]
         if (activeDash) {
-          if(DEBUG.app) console.log("DASH:  APP: 6: stopActiveDash: stopping watchers and queries for dashboard=", this.dashboardsCached[this.activeDashKey].id)
+          if(DEBUG.app) console.log("DASH:  APP: 6: stopActiveDash: stopping watchers and queries for dashboard=", activeDash.id)
           activeDash.stopBaseContextWatcher()
           activeDash.stopContextWatcher()
           activeDash.stopSiblingsWatcher()
