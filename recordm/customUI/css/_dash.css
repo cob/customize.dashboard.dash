@@ -137,3 +137,6 @@
     .cob-app .definition-container .fields-container .root-fields > .field .remove-button {
         left: -41px;
     }
+    .domains-definitions .collapse {
+        visibility: unset;
+    }
