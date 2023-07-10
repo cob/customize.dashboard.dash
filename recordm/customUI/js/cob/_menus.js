@@ -43,7 +43,6 @@ cob.custom.customize.push(function (core, utils, _ui) {
       const domains = currentMenus.filter(m => m.name.indexOf("@") >= 0 )
       // Get all entries relevant to CoB admin. They will be placed on CoB solution submenu
       const cobSubmenus = currentMenus.filter((m) => ["rm-importer-stats", "domains"].indexOf(m.name) >= 0 ).map(m => { m.rel = m.name; return m; }) // Reenable translation with rel attribute
-      cobSubmenus.push({name: "UserM", href: "/userm/", rel: "x"  })
 
       const userGroups = core.getGroups();
       const isSystem = userGroups.indexOf("System") >= 0 
