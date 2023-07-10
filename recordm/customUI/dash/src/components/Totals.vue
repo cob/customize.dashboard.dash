@@ -1,9 +1,7 @@
 <template>
     <table :class="classes">
         <tr v-for="(line, i) in lines" :key="'line'+i" :class="line.lineClasses">
-            <td  :class="line.titleClasses">
-                {{ line.title }}
-            </td>
+            <td  :class="line.titleClasses" v-html="line.title"></td>
             <td v-for="(value, j) in line.values" :key="'value'+inputFilter+i+'-'+j">
                 <TotalsValue :value-data="value"/>
             </td>
