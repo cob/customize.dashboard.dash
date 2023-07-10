@@ -518,7 +518,8 @@
                 dash.dashboardContext = getContext(dash);
                 dash.dashboardContextString = JSON.stringify(dash.dashboardContext)
                 dash.dashboardProcessed = buildDashboard(dash);
-                dash.solutionSiblings = instancesList(DASHBOARD_DEF, "solution.raw:\"" + newDashEs.solution + "\" AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )", 102, 0, "order", "false", { validity: 600 });
+                const isSystem = this.userInfo.groups.length && this.userInfo.groups.map(g => g.name).indexOf("System") >= 0
+                dash.solutionSiblings = instancesList(DASHBOARD_DEF, "solution.raw:\"" + newDashEs.solution + "\"" + (isSystem ? "" : " AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*)  )" ) , 102, 0, "order", "false", { validity: 600 });
                 dash.solutionSiblingsString = JSON.stringify(dash.solutionSiblings.value)
                 this.$set(this.dashboardsCached, dashKey, dash);
                 activateDash(false)
