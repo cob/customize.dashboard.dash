@@ -83,15 +83,15 @@ cob.custom.customize.push(function (core, utils, _ui) {
 
                // Iterate the different solutions
                const solutionsList = solutions.value.sort((a,b)=>{
-                  const aOrder = solutions.hits[a].hits[0].solution_ordem && solutions.hits[a].hits[0].solution_ordem[0]*1 || 99
-                  const bOrder = solutions.hits[b].hits[0].solution_ordem && solutions.hits[a].hits[0].solution_ordem[0]*1 || 99
+                  const aOrder = solutions.hits[a].hits[0].solution_ordem ? solutions.hits[a].hits[0].solution_ordem[0]*1 : 99
+                  const bOrder = solutions.hits[b].hits[0].solution_ordem ? solutions.hits[b].hits[0].solution_ordem[0]*1 : 99
                   return aOrder - bOrder
                })
                for (let i = 0; i < numberOfSolutions; i++) {
                   const solutionMenuName = solutionsList[i]
                   const icon = solutions.hits[solutionMenuName].hits[0].solution_icon
                   const solutionLabel = " <i class='fa-solid " + icon + "' style='padding-right: 3px;' ></i>" + solutionMenuName
-                  const solutionSubmenus = solutions.hits[solutionMenuName].hits.sort((a,b) => (a.order && a.order[0]*1 || 100) - (b.order && b.order[0]*1 || 100))
+                  const solutionSubmenus = solutions.hits[solutionMenuName].hits.sort((a,b) => (a.order ? a.order[0]*1 : 99) - (b.order ? b.order[0]*1 : 99))
                   const solutionSigla = solutions.hits[solutionMenuName].hits[0].solution_sigla
                   let domainSubmenus = domains.filter(d => d.name.indexOf("@" + solutionSigla) >= 0)
 
