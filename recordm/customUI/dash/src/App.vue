@@ -37,7 +37,6 @@
       chooserError: "",
       dashboardChooser: null,
       activeDashKey: null,
-      userGroupsQuery: null,
       dashboardName: null,
       dashboardArg: null,
       dashboardsCached: {},
@@ -73,8 +72,7 @@
 
     computed: {
       dashboardQuery() {        
-        const isSystem = this.userInfo.groups.length && this.userInfo.groups.map(g => g.name).indexOf("System") >= 0
-        const accessQuery = isSystem ? "" : " (groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )"
+        const accessQuery = this.userInfo.isSystem ? "" : " (groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )"
         const nameQuery = "( solution_menu.raw:\"" + this.dashboardName + "\"" + " OR name.raw:\"" + this.dashboardName + "\" ) "
         const query =  "(" + nameQuery + accessQuery + ") OR id:\"" + this.dashboardName + "\""
         if(DEBUG.app) console.log("DASH:  APP: 1.4: dashboardQuery: username='", this.userInfo.username,"'. urlDashPart=", this.urlDashPart, " query=", query)
@@ -231,6 +229,7 @@
           window.location.hash = storedValues.location
         }
         userInfo.groupsQuery = userInfo.groups.length && userInfo.groups.map(g => "\"" + g.name + "\"").join(" OR ")
+        userInfo.isSystem = userInfo.groups.length && userInfo.groups.map(g => g.name).indexOf("System") >= 0
         this.userInfo = userInfo
         this.urlDashPart = urlDashPart
         this.dashboardName = urlDashPart.split(":")[0]
@@ -518,8 +517,7 @@
                 dash.dashboardContext = getContext(dash);
                 dash.dashboardContextString = JSON.stringify(dash.dashboardContext)
                 dash.dashboardProcessed = buildDashboard(dash);
-                const isSystem = this.userInfo.groups.length && this.userInfo.groups.map(g => g.name).indexOf("System") >= 0
-                dash.solutionSiblings = instancesList(DASHBOARD_DEF, "solution.raw:\"" + newDashEs.solution + "\"" + (isSystem ? "" : " AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*)  )" ) , 102, 0, "order", "false", { validity: 600 });
+                dash.solutionSiblings = instancesList(DASHBOARD_DEF, "solution.raw:\"" + newDashEs.solution + "\"" + (this.userInfo.isSystem ? "" : " AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*)  )" ) , 102, 0, "order", "false", { validity: 600 });
                 dash.solutionSiblingsString = JSON.stringify(dash.solutionSiblings.value)
                 this.$set(this.dashboardsCached, dashKey, dash);
                 activateDash(false)
