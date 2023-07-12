@@ -43,6 +43,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
       const domains = currentMenus.filter(m => m.name.indexOf("@") >= 0 )
       // Get all entries relevant to CoB admin. They will be placed on CoB solution submenu
       const cobSubmenus = currentMenus.filter((m) => ["rm-importer-stats", "domains"].indexOf(m.name) >= 0 ).map(m => { m.rel = m.name; return m; }) // Reenable translation with rel attribute
+      cobSubmenus.push({name: "UserM", href: "/userm/", fullUrl:"true"})
 
       const userGroups = core.getGroups();
       const isSystem = userGroups.indexOf("System") >= 0 
@@ -113,7 +114,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
                         +  ' <ul class="dropdown-menu">'
                            + conditionalCobSubmenus.map(s => ''
                            + ' <li>'
-                           + '    <a href="#/' + s.href + '" rel="localize[menu.' + s.rel +  ']">' 
+                           + '    <a href="' + (s.fullUrl ? '' : '#/') + s.href + '" rel="localize[menu.' + s.rel +  ']">' 
                            +         s.name 
                            + '    </a>'
                            + ' </li>'
@@ -137,7 +138,12 @@ cob.custom.customize.push(function (core, utils, _ui) {
                   })
                }
 
-               if (!isSystem) currentMenus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
+               if (isSystem && core.getCurrentLoggedInUser() != 'mimes') {
+                  model.apps.push({name: "Defs", href: "/recordm/index.html#/domains"});
+                  model.apps.push({name: "User", href: "/userm"});
+               } else {
+                  currentMenus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
+               }
                core.publish('updated-app-info');  // Request an update to the built menu       
             }               
          }})   
