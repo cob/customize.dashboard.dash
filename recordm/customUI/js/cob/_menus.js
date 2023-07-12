@@ -141,7 +141,8 @@ cob.custom.customize.push(function (core, utils, _ui) {
                if (isSystem && core.getCurrentLoggedInUser() != 'mimes') {
                   model.apps.push({name: "Defs", href: "/recordm/index.html#/domains"});
                   model.apps.push({name: "User", href: "/userm"});
-               } else {
+               } 
+               if (!isSystem) {
                   currentMenus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
                }
                core.publish('updated-app-info');  // Request an update to the built menu       
