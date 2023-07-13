@@ -139,6 +139,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
                }
 
                if (isSystem && core.getCurrentLoggedInUser() != 'mimes') {
+                  model.apps.length = 0
                   model.apps.push({name: "Defs", href: "/recordm/index.html#/domains"});
                   model.apps.push({name: "User", href: "/userm"});
                } 
