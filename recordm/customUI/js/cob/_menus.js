@@ -38,7 +38,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
       // For legacy purpose start by storing the pre-defined menu configured on recordm/services/com.cultofbits.web.integration.properties
       // and then remove all entries that we know we're going to add on other pre-defined dashboards
       const defaultInitial = currentMenus[0]
-      const cleanMenus = currentMenus.filter(v => ["Home", "reports", "rm-importer-stats", "@"].reduce((pr, x) => pr && v.name.indexOf(x) != 0, true))
+      const cleanMenus = currentMenus.filter(v => ["Home", "reports", "rm-importer-stats", "domains", "@"].reduce((pr, x) => pr && v.name.indexOf(x) != 0, true))
       // Remove all domains which name starts with @. By convention they will be placed inside the submenu of their Solution
       const domains = currentMenus.filter(m => m.name.indexOf("@") >= 0 )
       // Get all entries relevant to CoB admin. They will be placed on CoB solution submenu
@@ -87,6 +87,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
                   const bOrder = solutions.hits[b].hits[0].solution_ordem ? solutions.hits[b].hits[0].solution_ordem[0]*1 : 99
                   return aOrder - bOrder
                })
+               
                for (let i = 0; i < numberOfSolutions; i++) {
                   const solutionMenuName = solutionsList[i]
                   const icon = solutions.hits[solutionMenuName].hits[0].solution_icon
@@ -143,9 +144,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
                   model.apps.push({name: "Defs", href: "/recordm/index.html#/domains"});
                   model.apps.push({name: "User", href: "/userm"});
                } 
-               if (!isSystem) {
-                  currentMenus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
-               }
+               currentMenus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
                core.publish('updated-app-info');  // Request an update to the built menu       
             }               
          }})   
