@@ -7,136 +7,139 @@
     } */
 
 /* Reverte hide feito no dashboard.html */
-    section.custom-resource {
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-    
+section.custom-resource {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
 /* tooltip support for menus (ex: CoB Solutions Main) */
-    .tooltip {
-        visibility: hidden;
-        position: absolute;
-        right: 0;
-    }
+.tooltip {
+    visibility: hidden;
+    position: absolute;
+    right: 0;
+}
 
-    .has-tooltip:hover .tooltip {
-        z-index: 100;
-        animation: 500ms fadeIn;
-        animation-fill-mode: forwards;
-    }
+.has-tooltip:hover .tooltip {
+    z-index: 100;
+    animation: 500ms fadeIn;
+    animation-fill-mode: forwards;
+}
 
-    @keyframes fadeIn {
-        99% {
-        visibility: hidden;
-        }
-        100% {
-        visibility: visible;
-        }
+@keyframes fadeIn {
+    99% {
+    visibility: hidden;
     }
+    100% {
+    visibility: visible;
+    }
+}
 
 /* dropdown submenus */
-    .cob-app #header .nav > li > a,
-    details.cob-submenu {
-        position:relative; 
-        margin: 0px 14px 0px 14px;
+.cob-app #header .nav > li > a,
+details.cob-submenu {
+    position:relative; 
+    margin: 0px 14px 0px 14px;
+}
+
+details.cob-submenu > summary {
+    list-style: none;
+}
+details.cob-submenu > summary::-webkit-details-marker {
+    display: none
+}
+
+/* detail drop down
+details.cob-submenu > summary::after {
+    color: #fbfbfb;
+    content: "▼";
+} */
+
+details.cob-submenu > ul.dropdown-menu {
+    display: unset !important; 
+    margin-top: 5px !important; 
+    padding-right: 4px !important; 
+    text-align: left !important; 
+    min-width: 120px !important; 
+    left: unset !important; 
+    right: -15px !important
+}
+
+details.cob-submenu > ul.dropdown-menu li {
+    margin: 0px 3px !important; 
+    white-space: nowrap !important;
+}
+
+details.cob-submenu a {
+    color: #fbfbfb;
+    cursor: pointer;
+}
+details.cob-submenu > summary > a:hover {
+    color: #fbfbfb;
+    border-bottom: 3px solid #F79728;
+    text-decoration: none;
+}
+details.cob-submenu > summary.activeSolution a {
+    border-bottom: 3px solid #F79728;
+}
+
+.smart-menu details.cob-submenu {
+    text-align: left;
+}
+.smart-menu details.cob-submenu > ul.dropdown-menu {
+    margin-top: -30px !important; 
+    right: 110px !important
+}
+.smart-menu  details.cob-submenu a {
+    color: #383838;
+}
+
+@media (max-width: 585px) {
+    .collapse details.cob-submenu a {
+        color: #fbfbfb !important;
+    }
+    .collapse details.cob-submenu {
+        overflow: auto;
+        max-height: 300px;
+    }
+    .nav-collapse .details.cob-submenu .dropdown-menu {
+        left: 0 !important; 
+        right: unset !important;
+        background-color: gray !important;
     }
 
-    details.cob-submenu > summary {
-        list-style: none;
+    .cob-app #header .nav-collapse.in  {
+        max-height: unset;
     }
-    details.cob-submenu > summary::-webkit-details-marker {
-        display: none
-    }
+}
 
-    /* detail drop down
-    details.cob-submenu > summary::after {
-        color: #fbfbfb;
-        content: "▼";
-    } */
-
-    details.cob-submenu > ul.dropdown-menu {
-        display: unset !important; 
-        margin-top: 5px !important; 
-        padding-right: 4px !important; 
-        text-align: left !important; 
-        min-width: 120px !important; 
-        left: unset !important; 
-        right: -15px !important
-    }
-    
-    details.cob-submenu > ul.dropdown-menu li {
-        margin: 0px 3px !important; 
-        white-space: nowrap !important;
-    }
- 
-    details.cob-submenu a {
-        color: #fbfbfb;
-        cursor: pointer;
-    }
-    details.cob-submenu > summary > a:hover {
-        color: #fbfbfb;
-        border-bottom: 3px solid #F79728;
-        text-decoration: none;
-    }
-    
-    .smart-menu details.cob-submenu {
-        text-align: left;
-    }
-    .smart-menu details.cob-submenu > ul.dropdown-menu {
-        margin-top: -30px !important; 
-        right: 110px !important
-    }
-    .smart-menu  details.cob-submenu a {
-        color: #383838;
-    }
-
-    @media (max-width: 585px) {
-        .collapse details.cob-submenu a {
-            color: #fbfbfb !important;
-        }
-        .collapse details.cob-submenu {
-            overflow: auto;
-            max-height: 300px;
-        }
-        .nav-collapse .details.cob-submenu .dropdown-menu {
-            left: 0 !important; 
-            right: unset !important;
-            background-color: gray !important;
-        }
-    
-        .cob-app #header .nav-collapse.in  {
-            max-height: unset;
-        }
-    }
-    
 /* un-reset css for specific element */
-    .cob-app input,
-    .cob-app .slick-cell,
-    .cob-app .slick-cell *,
-    .cob-app .slick-column-name,
-    .cob-app .slick-header-column,
-    .cob-app .toggle-button,
-    .cob-app .remove-button,
-    .cob-app .duplicate-button,
-    .cob-app .btn.btn-mini svg,
-    #loading {
-        box-sizing: content-box !important;
-    }
-    .cob-app .instance-detail-container .instance-container .sidenav .details svg {
-        padding-top: 0px
-    }
-    .cob-app .input-block-level {
-        /* Fix definition edit */
-        min-height: unset
-    }
-    .cob-app .definition-container .fields-container table td {
-        /* Fix definition edit */
-        padding-left: 11px ;
-        padding-right: 11px ;
-    }
-    .cob-app .definition-container .fields-container .root-fields > .field .remove-button {
-        left: -41px;
-    }
-    .domains-definitions .collapse {
-        visibility: unset;
-    }
+.cob-app input,
+.cob-app .slick-cell,
+.cob-app .slick-cell *,
+.cob-app .slick-column-name,
+.cob-app .slick-header-column,
+.cob-app .toggle-button,
+.cob-app .remove-button,
+.cob-app .duplicate-button,
+.cob-app .btn.btn-mini svg,
+#loading {
+    box-sizing: content-box !important;
+}
+.cob-app .instance-detail-container .instance-container .sidenav .details svg {
+    padding-top: 0px
+}
+.cob-app .input-block-level {
+    /* Fix definition edit */
+    min-height: unset
+}
+.cob-app .definition-container .fields-container table td {
+    /* Fix definition edit */
+    padding-left: 11px ;
+    padding-right: 11px ;
+}
+.cob-app .definition-container .fields-container .root-fields > .field .remove-button {
+    left: -41px;
+}
+.domains-definitions .collapse {
+    visibility: unset;
+}

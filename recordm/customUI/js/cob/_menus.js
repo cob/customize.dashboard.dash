@@ -3,7 +3,28 @@ cob.custom.customize.push(function (core, utils, _ui) {
    // event listener for requests from the dash app (when lastDash and lastDahsolution changes)
    let solutionDashInfo // Declare it now to be used here but will only be initialized on first call to menu customization
    document.addEventListener("cobRefreshMenu", () => solutionDashInfo.update({force:true}))
-   
+
+   function extractFirstAtSymbol(text) {
+      if (!text) return null;
+
+      const atIndex = text.indexOf('@');
+      if (atIndex === -1) {
+        return null;
+      }
+    
+      let extractedWord = '';
+      for (let i = atIndex + 1; i < text.length; i++) {
+        const char = text.charAt(i);
+            // Break loop if whitespace or special characters encountered
+        if (char === ' ' || char === '\t' || char === '\n' || char === '\r' || char === '.' || char === ',') {
+          break;
+        }
+       extractedWord += char;
+      }
+    
+      return extractedWord;
+    }
+    
    // event listener that closes submenus when there's clicks outside that submenu
    document.addEventListener('click', function(e) {
       var subMenus = [...document.querySelectorAll('.cob-submenu')];
@@ -27,13 +48,53 @@ cob.custom.customize.push(function (core, utils, _ui) {
    window.cobMenuClick = function(e) {
       document.querySelector(".js-menu-btn.btn.btn-navbar").click()
    }
+   window.markActiveSolution = function (e) {
+      const activeModule = core.getActiveModule()
+      if(activeModule) {
+         const instance = activeModule && activeModule.instance
+         const description = instance && instance.getDescription()
+
+         let solutionSigla
+         if(instance.name == "domains"
+            || instance.name == "definition-edit"
+            || instance.name == "importer-stats" ) { 
+            solutionSigla = "COB"
+
+         } else if(instance.name == "search-domain") { 
+            solutionSigla = extractFirstAtSymbol(description.domain.name)
+
+         } else if(instance.name == "search-definition") { 
+            solutionSigla = extractFirstAtSymbol(description.definition.description)
+
+         } else if(instance.name == "instance.detail") { 
+            solutionSigla = extractFirstAtSymbol(description.definition.description)
+
+         } else if(instance.name == "custom-resource") {
+            let dashboardName = location.hash.substring("#/cob.custom-resource/".length).split("/")[0].split(":")[0]
+            solutionSigla = window.cobSolutions && cobSolutions[dashboardName]
+         }
+
+         if(solutionSigla) {
+            setTimeout(  () => {
+               let menuEntry = document.querySelector('[data-solution="' + solutionSigla + '"]')
+               if(menuEntry) menuEntry.classList.add("activeSolution")
+            }, 1000)
+         }
+      } else {
+         console.log("TEST2: wait for activeModule")
+         setTimeout( markActiveSolution, 100) 
+      }
+   }
+   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,300) )
 
    let currentMenus  // will be used everywhere in the code to ensure that we're always changing the same model.menu (and not the scoped 'model' inside th customizeMenu)
+   let currentApps   // will be used everywhere in the code to ensure that we're always changing the same model.menu (and not the scoped 'model' inside th customizeMenu)
    core.customizeMenu((model) => {   
       // For anonymous user don't do any menu customization
       if (core.getCurrentLoggedInUser() == 'anonymous') return
 
       currentMenus = model.menus
+      currentApps = model.apps
 
       // For legacy purpose start by storing the pre-defined menu configured on recordm/services/com.cultofbits.web.integration.properties
       // and then remove all entries that we know we're going to add on other pre-defined dashboards
@@ -109,7 +170,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
                      name: solutionLabel,
                      href: "cob.custom-resource/" + solutionLink + "/dash",
                      html: '<details class="cob-submenu" onclick="cobMenuClick(event)" onmouseenter="cobMenuMouseEnter(event)" onmouseleave="cobMenuMouseLeave(event)">'
-                        +  ' <summary>'
+                        +  ' <summary data-solution="' + solutionSigla + '">'
                         +  '    <a href="#/cob.custom-resource/' + solutionLink + '/dash" >' + solutionLabel + '</a>'
                         +  ' </summary>'
                         +  ' <ul class="dropdown-menu">'
@@ -138,17 +199,17 @@ cob.custom.customize.push(function (core, utils, _ui) {
                         + '</details>'
                   })
                }
-
-               if (isSystem && core.getCurrentLoggedInUser() != 'mimes') {
-                  model.apps.length = 0
-                  model.apps.push({name: "Defs", href: "/recordm/index.html#/domains"});
-                  model.apps.push({name: "User", href: "/userm"});
+               if (isSystem) {
+                  currentApps.length = 0
+                  currentApps.push({name: "Defs", href: "/recordm/index.html#/domains"});
+                  currentApps.push({name: "UserM", href: "/userm/"});
                } 
                currentMenus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
-               core.publish('updated-app-info');  // Request an update to the built menu       
-            }               
-         }})   
-      }         
+               core.publish('updated-app-info');  // Request an update to the built menu
+               markActiveSolution()
+            }
+         }})
+      }
    })
 
    window.cob.app = window.cob.app || { getCurrentLoggedInUser :  core.getCurrentLoggedInUser } //Hack to make cob.app.getCurrentLoggedInUser available to the dashInfo from the start (otherwise it will have to do a query to userm and the next call will be async, not having an answer at t0)

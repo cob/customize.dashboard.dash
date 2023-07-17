@@ -84,7 +84,8 @@
           || this.dashboardsRequested.state === 'updating'
           || this.dashboardsRequested.state === 'loading'
           || Object.values(this.dashboardsCached).filter(d => d.dashboardProcessed == null).length > 0
-          || this.currentDashboard && (
+          || this.currentDashboard 
+          && (
               this.currentDashboard.contextQueries.filter(d => d.state === 'loading' || d.state === "updating" ).length > 0
               || this.currentDashboard.contextQueries.filter(d => d.state === 'loading' || d.state === "updating" ).length > 0
               || this.currentDashboard.boardQueries.filter(d => d.state === 'loading' || d.state === "updating" ).length > 0
@@ -449,6 +450,10 @@
         const activateDash = (reactivate) => {
           if(DEBUG.app) console.log("DASH:  APP: 5.5: loadDashboard: activateDash: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
 
+          window.cobSolutions = window.cobSolutions || {};
+          window.cobSolutions[this.dashboardName] = this.dashboardsCached[dashKey].solution_sigla
+          window.markActiveSolution()
+
           // Restart context and sibling Watchers before
           this.dashboardsCached[dashKey].stopBaseContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardBaseContext.vars", baseContextVarsWatcher, { deep: true });
           this.dashboardsCached[dashKey].stopContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardContext", contextWatcher, { deep: true });
@@ -506,6 +511,7 @@
                 dash.dashKey = dashKey;
                 dash.id = newDashEs.id;
                 dash.solution = newDashEs.solution_menu;
+                dash.solution_sigla = newDashEs.solution_sigla;
                 dash.urlDashPart = this.urlDashPart;
                 dash.version = newDashEs.version;
                 dash.contextQueries = []
