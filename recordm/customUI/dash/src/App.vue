@@ -197,18 +197,12 @@
             if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list of 1. loadDashboard for dashRequestResults=",newList[0].id)
             this.loadDashboard(newList[0], newList);
 
-            window.cobSolutions[this.dashboardName] = newList[0].solution_sigla[0]
-            window.markActiveSolution()
-
           } else {
             if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list with more than 1 => use chooser")
             if (this.dashboardChooser.value && this.dashboardChooser.value[0]) {
               // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is called 
               if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list more than 1 with chooser=", this.dashboardChooser.value[0].id)
               this.loadDashboard(this.dashboardChooser.value[0], newList);
-
-              window.cobSolutions[this.dashboardName] = newList[0].solution_sigla[0]
-              window.markActiveSolution()
 
             }
           }
@@ -258,7 +252,6 @@
 
       loadDashboard(newDashEs, requestResultList) {
         if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: called with newDashEs=",newDashEs," requestResultList=", requestResultList)
-        this.error = ""
 
         //Calculate the key to use on a cache for each different combination of 1)url arguments AND 2) result list of IDs
         const key = this.dashboardArg + requestResultList.map(d => d.id).join("-")
@@ -473,7 +466,7 @@
           // Update any queries defined in siblings, context and boards
           if(reactivate) this.updateQueries(false)
 
-          document.title = (this.dashboardsCached[dashKey].solution ? this.dashboardsCached[dashKey].solution + " | " : "") +this.dashboardsCached[dashKey].dashboardParsed.Name
+          document.title = (this.dashboardsCached[dashKey].solution_menu ? this.dashboardsCached[dashKey].solution_menu + " | " : "") +this.dashboardsCached[dashKey].dashboardParsed.Name
 
           // Set the last visited dash in order to show it in case of a login without specific dashboard destination
           let currentLastDash = localStorage.getItem(this.userInfo.username + "-lastDash");
@@ -482,10 +475,10 @@
             localStorage.setItem(this.userInfo.username + "-lastDash", this.dashboardsCached[dashKey].urlDashPart);
             menuUpdateNeeded = true
           }
-          if(this.dashboardsCached[dashKey].solution) {
-            let currentLastSolutionDash = localStorage.getItem(this.userInfo.username + "-lastDash" + "-" + this.dashboardsCached[dashKey].solution)
+          if(this.dashboardsCached[dashKey].solution_menu) {
+            let currentLastSolutionDash = localStorage.getItem(this.userInfo.username + "-lastDash" + "-" + this.dashboardsCached[dashKey].solution_menu)
             if(currentLastSolutionDash != this.dashboardsCached[dashKey].id) {
-              localStorage.setItem(this.userInfo.username + "-lastDash" + "-" + this.dashboardsCached[dashKey].solution, this.dashboardsCached[dashKey].id)
+              localStorage.setItem(this.userInfo.username + "-lastDash" + "-" + this.dashboardsCached[dashKey].solution_menu, this.dashboardsCached[dashKey].id)
               menuUpdateNeeded = true
             }            
           }
@@ -496,10 +489,15 @@
           this.error = error;
           this.activeDashKey = null
           localStorage.setItem("lastDash-" + this.userInfo.username, "");
-          localStorage.setItem("lastDash-" + this.userInfo.username + "-" + (this.dashboardsCached[dashKey] && this.dashboardsCached[dashKey].solution), "")
+          localStorage.setItem("lastDash-" + this.userInfo.username + "-" + (this.dashboardsCached[dashKey] && this.dashboardsCached[dashKey].solution_menu), "")
           cob.app.publish('updated-app-info', { rebuildMenu: true });
         }
 
+        // Add entry to window.cobSolutions map and ask _menu.js to mark the current active solution
+        window.cobSolutions[this.dashboardName] = requestResultList[0].solution_sigla && requestResultList[0].solution_sigla[0]
+        window.markActiveSolution()
+
+        this.error = ""        
         this.stopActiveDash()
         
         if (this.dashboardsCached[dashKey] !== undefined && this.dashboardsCached[dashKey].version === newDashEs.version) {
@@ -515,8 +513,7 @@
                 let dash = {};
                 dash.dashKey = dashKey;
                 dash.id = newDashEs.id;
-                dash.solution = newDashEs.solution_menu;
-                dash.solution_sigla = newDashEs.solution_sigla;
+                dash.solution_menu = newDashEs.solution_menu;
                 dash.urlDashPart = this.urlDashPart;
                 dash.version = newDashEs.version;
                 dash.contextQueries = []

@@ -1,3 +1,5 @@
+const DASHBOARD_DEF = 89
+
 cob.custom.customize.push(function (core, utils, _ui) {
 
    // event listener for requests from the dash app (when lastDash and lastDahsolution changes)
@@ -62,7 +64,8 @@ cob.custom.customize.push(function (core, utils, _ui) {
             solutionSigla = "COB"
 
          } else if(instance.name == "search-domain") { 
-            solutionSigla = extractFirstAtSymbol(description.domain && description.domain.name)
+            let legacyAwaredescription = description.domain ? description.domain : description
+            solutionSigla = extractFirstAtSymbol(legacyAwaredescription)
 
          } else if(instance.name == "search-definition" || instance.name == "instance.detail") { 
             solutionSigla = extractFirstAtSymbol(description.definition && description.definition.description)
@@ -119,7 +122,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
          solutionDashInfo.changeCB(solutionDashInfo.results)
       } else {            
          // First call: initialize solutionDashInfo and setup it's change handler
-         solutionDashInfo = cobDashboardInfo.fieldValues(89, "solution_menu.raw", dashboardsQuery, 103, { validity: 600, noDelays:true, changeCB: (solutions) => {
+         solutionDashInfo = cobDashboardInfo.fieldValues(DASHBOARD_DEF, "solution_menu.raw", dashboardsQuery, 103, { validity: 600, noDelays:true, changeCB: (solutions) => {
             // solutionDashInfo changed: customize menu if the user has at least access to one solution
             const numberOfSolutions = solutions && solutions.value && solutions.value.length || 0
             if (numberOfSolutions > 0) {
