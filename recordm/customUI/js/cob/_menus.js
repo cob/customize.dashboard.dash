@@ -48,6 +48,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
    window.cobMenuClick = function(e) {
       document.querySelector(".js-menu-btn.btn.btn-navbar").click()
    }
+   
    window.markActiveSolution = function (e) {
       const activeModule = core.getActiveModule()
       if(activeModule) {
@@ -56,36 +57,37 @@ cob.custom.customize.push(function (core, utils, _ui) {
 
          let solutionSigla
          if(instance.name == "domains"
-            || instance.name == "definition-edit"
+            || instance.name == "definition.edit"
             || instance.name == "importer-stats" ) { 
             solutionSigla = "COB"
 
          } else if(instance.name == "search-domain") { 
-            solutionSigla = extractFirstAtSymbol(description.domain.name)
+            solutionSigla = extractFirstAtSymbol(description.domain && description.domain.name)
 
-         } else if(instance.name == "search-definition") { 
-            solutionSigla = extractFirstAtSymbol(description.definition.description)
-
-         } else if(instance.name == "instance.detail") { 
-            solutionSigla = extractFirstAtSymbol(description.definition.description)
+         } else if(instance.name == "search-definition" || instance.name == "instance.detail") { 
+            solutionSigla = extractFirstAtSymbol(description.definition && description.definition.description)
 
          } else if(instance.name == "custom-resource") {
             let dashboardName = location.hash.substring("#/cob.custom-resource/".length).split("/")[0].split(":")[0]
-            solutionSigla = window.cobSolutions && cobSolutions[dashboardName]
+            solutionSigla = window.cobSolutions && cobSolutions[decodeURI(dashboardName)]
          }
 
          if(solutionSigla) {
             setTimeout(  () => {
+               document.querySelectorAll('summary.activeSolution').forEach(m => m.classList.remove("activeSolution"))
                let menuEntry = document.querySelector('[data-solution="' + solutionSigla + '"]')
                if(menuEntry) menuEntry.classList.add("activeSolution")
             }, 1000)
          }
       } else {
-         console.log("TEST2: wait for activeModule")
+         // Test if activeModule is already available in 100ms
          setTimeout( markActiveSolution, 100) 
       }
    }
-   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,300) )
+   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,100) )
+   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,500) )
+   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,1000) )
+   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,2000) )
 
    let currentMenus  // will be used everywhere in the code to ensure that we're always changing the same model.menu (and not the scoped 'model' inside th customizeMenu)
    let currentApps   // will be used everywhere in the code to ensure that we're always changing the same model.menu (and not the scoped 'model' inside th customizeMenu)

@@ -47,6 +47,8 @@
 
     created() {
       if(DEBUG.app) console.log("DASH:  APP: 1: created: bind to 'arg' var in hash arguments")
+      window.cobSolutions = {};
+
       this.hashArg = new ComponentStatePersistence("arg")
 
       // Preemptively load the chooser dashboard, to be used in case there's more than one dashboard found for a given name and a given user
@@ -195,12 +197,19 @@
             if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list of 1. loadDashboard for dashRequestResults=",newList[0].id)
             this.loadDashboard(newList[0], newList);
 
+            window.cobSolutions[this.dashboardName] = newList[0].solution_sigla[0]
+            window.markActiveSolution()
+
           } else {
             if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list with more than 1 => use chooser")
             if (this.dashboardChooser.value && this.dashboardChooser.value[0]) {
               // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is called 
               if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list more than 1 with chooser=", this.dashboardChooser.value[0].id)
               this.loadDashboard(this.dashboardChooser.value[0], newList);
+
+              window.cobSolutions[this.dashboardName] = newList[0].solution_sigla[0]
+              window.markActiveSolution()
+
             }
           }
         },
@@ -449,10 +458,6 @@
 
         const activateDash = (reactivate) => {
           if(DEBUG.app) console.log("DASH:  APP: 5.5: loadDashboard: activateDash: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
-
-          window.cobSolutions = window.cobSolutions || {};
-          window.cobSolutions[this.dashboardName] = this.dashboardsCached[dashKey].solution_sigla
-          window.markActiveSolution()
 
           // Restart context and sibling Watchers before
           this.dashboardsCached[dashKey].stopBaseContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardBaseContext.vars", baseContextVarsWatcher, { deep: true });
