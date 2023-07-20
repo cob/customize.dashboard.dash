@@ -208,7 +208,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
                }
                if (isSystem) {
                   currentApps.length = 0
-                  currentApps.push({name: "Defs", href: "/recordm/index.html#/domains"});
+                  currentApps.push({name: "Defs", href: "#/domains"});
                   currentApps.push({name: "UserM", href: "/userm/"});
                } 
                currentMenus.push(...cleanMenus); // Restore the legacy stored menu entries removed in the beginning 
