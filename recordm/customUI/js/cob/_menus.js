@@ -196,8 +196,8 @@ cob.custom.customize.push(function (core, utils, _ui) {
             solutionSigla = "COB"
 
          } else if(instance.name == "search-domain") {
-            let legacyAwaredescription = description.domain ? description.domain.name : description
-            solutionSigla = extractFirstAtSymbol(legacyAwaredescription)
+            let legacyAwareDescription = description && description.domain ? description.domain.name : description
+            solutionSigla = extractFirstAtSymbol(legacyAwareDescription)
 
          } else if(instance.name == "search-definition" || instance.name == "instance.detail") {
             solutionSigla = extractFirstAtSymbol(description.definition && description.definition.description)
