@@ -1,7 +1,7 @@
 {
     "id": null,
     "name": "Dashboard-Attention",
-    "description": "@config v6.0.0 @COB",
+    "description": "@COB v6.0.0",
     "duplicable": null,
     "state": "enabled",
     "fieldDefinitions": [

@@ -1,7 +1,7 @@
 {
     "id": null,
     "name": "Dashboard_v1",
-    "description": "@dash @config v6.4.1 @COB",
+    "description": "@COB v6.4.1 ",
     "duplicable": null,
     "state": "enabled",
     "fieldDefinitions": [
