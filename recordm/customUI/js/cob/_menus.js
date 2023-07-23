@@ -187,7 +187,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
       const activeModule = core.getActiveModule()
       if(activeModule) {
          const instance = activeModule && activeModule.instance
-         const description = instance && instance.getDescription()
+         const description = instance && instance.getDescription && instance.getDescription()
 
          let solutionSigla
          if(instance.name == "domains"
