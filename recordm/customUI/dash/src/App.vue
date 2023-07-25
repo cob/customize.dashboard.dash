@@ -521,12 +521,9 @@
                 dash.dashboardParsed = parseDashboard(resp.data);
                 dash.dashboardProcessor = compileDashboard(dash.dashboardParsed);
                 dash.dashboardBaseContext = getBaseContext();
-                dash.dashboardBaseContextVarsString = JSON.stringify(dash.dashboardBaseContext.vars)
                 dash.dashboardContext = getContext(dash);
-                dash.dashboardContextString = JSON.stringify(dash.dashboardContext)
                 dash.dashboardProcessed = buildDashboard(dash);
                 dash.solutionSiblings = instancesList(DASHBOARD_DEF, "solution.raw:\"" + newDashEs.solution + "\"" + (this.userInfo.isSystem ? "" : " AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*)  )" ) , 102, 0, "order", "false", { validity: 600 });
-                dash.solutionSiblingsString = JSON.stringify(dash.solutionSiblings.value)
                 this.$set(this.dashboardsCached, dashKey, dash);
                 activateDash(false)
               }
