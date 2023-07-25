@@ -39,7 +39,7 @@ class ComponentStatePersistence {
         const hashParts = window.location.hash.split("/")
         try {
             const [name, ...rest] = hashParts[2].split(":")
-            let statesInHash = rest.length > 1 ? JSON.parse(decodeURIComponent(rest.join(":"))) : {}
+            let statesInHash = rest.length > 1 ? JSON.parse(decodeURIComponent(rest.join(":")).replaceAll("'","\"")) : {}
             return statesInHash[this._id]
         } catch (e) {
             if(DEBUG.state) console.error("DASH: STATE: invalid parse of hash=", decodeURIComponent(rest.join(":")))
