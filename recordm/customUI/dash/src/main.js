@@ -7,7 +7,7 @@ const DEBUG = window.CoBDasHDebug
 
 Vue.config.productionTip = true;
 
-if(DEBUG.main) console.log("DASH: MAIN: 0");
+if(DEBUG.main) console.log("DASH: MAIN: 0 location.hash=" + window.location.hash);
 
 function getDashName() {
     const dashParts = window.location.hash.split("/")

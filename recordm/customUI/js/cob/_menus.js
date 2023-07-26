@@ -4,6 +4,25 @@ const DASHBOARD_DEF = "Dashboard_v1"
 
 cob.custom.customize.push(function (core, utils, _ui) {
 
+
+   cob.custom.getDefaultModuleUri = function () {
+      if (core.getCurrentLoggedInUser() === 'anonymous') {
+         return "login";
+      }
+
+      var options = core.getAppInfoModel().opts;
+
+      if (options && options.length > 0) {
+         // Check for stored last dashboard page (recorded in dash component at every request) 
+         const lastDash = localStorage.getItem(core.getCurrentLoggedInUser() + "-lastDash")
+         // Use the previous page in this browser localStorage, if we have one, OR the first menu entry 
+         return lastDash ? "cob.custom-resource/" + lastDash + "/dash" : options[0].href;
+
+      } else {
+         return "forbidden"
+      }
+   }
+
    let solutionDashInfo // Declare it here so it can be used on the addEventListener("cobRefreshMenu")
    let currentMenus  // will be used everywhere in the code to ensure that we're always changing the same model.menu (and not the scoped 'model' inside th customizeMenu)
    let currentApps   // will be used everywhere in the code to ensure that we're always changing the same model.menu (and not the scoped 'model' inside th customizeMenu)
@@ -15,9 +34,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
       currentMenus = model.menus
       currentApps = model.apps
 
-      // For legacy purpose start by storing the pre-defined menu configured on recordm/services/com.cultofbits.web.integration.properties
-      // and then remove all entries that we know we're going to add on other pre-defined dashboards
-      const defaultInitial = currentMenus[0]
+      // remove all entries that we know we're going to add on other pre-defined dashboards
       const cleanMenus = currentMenus.filter(v => ["Home", "reports", "rm-importer-stats", "domains", "@"].reduce((pr, x) => pr && v.name.indexOf(x) != 0, true))
       // Remove all domains which name starts with @. By convention they will be placed inside the submenu of their Solution
       const domains = currentMenus.filter(m => m.name.indexOf("@") >= 0 )
@@ -44,17 +61,6 @@ cob.custom.customize.push(function (core, utils, _ui) {
             if (numberOfSolutions > 0) {
 
                currentMenus.length = 0 //We will re-build completely the menu
-
-               // Create a initial, invisible menu entry which will be used if the url doesn't have a specific page specified, ie, if the url doesn't specify a specific destinations 
-               // Check for stored last dashboard page (recorded in dash component at every request) 
-               // Use "Home" OR the previous page in this browser localStorage, if we have one, as the entry page
-               const lastDash = localStorage.getItem(core.getCurrentLoggedInUser() + "-lastDash")
-               currentMenus.push({
-                  id: "0",
-                  name: "Solutions Home",
-                  html: " ", // ie, no text, wich makes it invisible
-                  href: "cob.custom-resource/" + (lastDash ? lastDash : defaultInitial.href) + "/dash",
-               })
 
                // Show the solution chooser link (make sure there's a "Home" dashboard created for this purpose)
                currentMenus.push({
@@ -212,7 +218,6 @@ cob.custom.customize.push(function (core, utils, _ui) {
                document.querySelectorAll('summary.activeSolution').forEach(m => m.classList.remove("activeSolution"))
                let menuEntry = document.querySelector('[data-solution="' + solutionSigla + '"]')
                if(menuEntry) menuEntry.classList.add("activeSolution")
-               window.dispatchEvent(new CustomEvent("solutionSet", {detail: core}))
             }, 1000)
          }
       } else {
