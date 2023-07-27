@@ -1,7 +1,7 @@
 <template>
     <a v-if="state" :href="link" :class="classes" >
         <Attention :attentionInfo="attention" :classes="attentionClasses" />
-        <span v-html="value" /><span class="" >{{unit}}</span>
+        <span v-html="value" /><span class="" v-html="unit"/>
     </a>
 </template>
 
