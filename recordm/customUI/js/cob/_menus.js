@@ -218,6 +218,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
                document.querySelectorAll('summary.activeSolution').forEach(m => m.classList.remove("activeSolution"))
                let menuEntry = document.querySelector('[data-solution="' + solutionSigla + '"]')
                if(menuEntry) menuEntry.classList.add("activeSolution")
+               window.dispatchEvent(new CustomEvent("solutionSet", {detail: core}))
             }, 1000)
          }
       } else {
