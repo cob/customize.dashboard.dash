@@ -203,9 +203,7 @@
             if (this.dashboardChooser.value && this.dashboardChooser.value[0]) {
               // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is called 
               if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list more than 1 with chooser=", this.dashboardChooser.value[0].id)
-              this.dashboardChooser.value[0].solution_menu = newList[0].solution_menu
               this.loadDashboard(this.dashboardChooser.value[0], newList);
-
             }
           }
         },
@@ -469,7 +467,6 @@
           this.dashboardsCached[dashKey].stopSiblingsWatcher = this.$watch("dashboardsCached." + dashKey + ".solutionSiblings.value", siblingsWatcher, { deep: true });
 
           // Call siblingsWathcer to setup siblings with current siblings (in case there's no change that will call the siblingsWatcher)
-          siblingsWatcher(this.dashboardsCached[dashKey].solutionSiblings.value,true)
 
           //Activate new dashboard
           this.activeDashKey = dashKey;
@@ -477,7 +474,8 @@
           // Update any queries defined in siblings, context and boards
           if(reactivate) this.updateQueries(false)
 
-          document.title = (this.dashboardsCached[dashKey].solution_menu ? this.dashboardsCached[dashKey].solution_menu + " | " : "") +this.dashboardsCached[dashKey].dashboardParsed.Name
+          const solutionName = this.dashboardsCached[dashKey].solution_menu;
+          document.title = (solutionName ? solutionName + " | " : "") + this.dashboardsCached[dashKey].dashboardParsed.Name
 
           // Set the last visited dash in order to show it in case of a login without specific dashboard destination
           let currentLastDash = localStorage.getItem(this.userInfo.username + "-lastDash");
@@ -486,10 +484,11 @@
             localStorage.setItem(this.userInfo.username + "-lastDash", this.dashboardsCached[dashKey].urlDashPart);
             menuUpdateNeeded = true
           }
+          debugger
           if(this.dashboardsCached[dashKey].solution_menu) {
-            let currentLastSolutionDash = localStorage.getItem(this.userInfo.username + "-lastDash" + "-" + this.dashboardsCached[dashKey].solution_menu)
-            if(currentLastSolutionDash != this.dashboardsCached[dashKey].id) {
-              localStorage.setItem(this.userInfo.username + "-lastDash" + "-" + this.dashboardsCached[dashKey].solution_menu, this.dashboardsCached[dashKey].id)
+            let currentLastSolutionDash = localStorage.getItem(this.userInfo.username + "-lastDash-" + this.dashboardsCached[dashKey].solution_menu)
+            if(currentLastSolutionDash != this.dashboardsCached[dashKey].id && this.dashboardsCached[dashKey].id != this.dashboardChooser.value[0].id) {
+              localStorage.setItem(this.userInfo.username + "-lastDash-" + this.dashboardsCached[dashKey].solution_menu, this.dashboardsCached[dashKey].id)
               menuUpdateNeeded = true
             }            
           }
@@ -499,8 +498,8 @@
         const reportError = (error) => {
           this.error = error;
           this.activeDashKey = null
-          localStorage.setItem("lastDash-" + this.userInfo.username, "");
-          localStorage.setItem("lastDash-" + this.userInfo.username + "-" + (this.dashboardsCached[dashKey] && this.dashboardsCached[dashKey].solution_menu), "")
+          localStorage.setItem(this.userInfo.username + "-lastDash", "");
+          localStorage.setItem(this.userInfo.username + "-lastDash-" + (this.dashboardsCached[dashKey] && this.dashboardsCached[dashKey].solution_menu), "")
           cob.app.publish('updated-app-info', { rebuildMenu: true });
         }
 
@@ -522,9 +521,18 @@
             .then(resp => {
               try {
                 let dash = {};
+
+                let solution, solution_menu
+                if(newDashEs.id == this.dashboardChooser.value[0].id) {                 
+                  solution = this.dashboardsRequested.value[0].solution
+                  solution_menu = this.dashboardsRequested.value[0].solution_menu
+                } else {
+                  solution = newDashEs.solution
+                  solution_menu = newDashEs.solution_menu
+                }                
                 dash.dashKey = dashKey;
                 dash.id = newDashEs.id;
-                dash.solution_menu = newDashEs.solution_menu;
+                dash.solution_menu = solution_menu;
                 dash.urlDashPart = this.urlDashPart;
                 dash.version = newDashEs.version;
                 dash.contextQueries = []
@@ -534,7 +542,7 @@
                 dash.dashboardBaseContext = getBaseContext();
                 dash.dashboardContext = getContext(dash);
                 dash.dashboardProcessed = buildDashboard(dash);
-                dash.solutionSiblings = instancesList(DASHBOARD_DEF, "solution.raw:\"" + newDashEs.solution + "\"" + (this.userInfo.isSystem ? "" : " AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*)  )" ) , 102, 0, "order", "false", { validity: 600 });
+                dash.solutionSiblings = instancesList(DASHBOARD_DEF, "solution.raw:\"" + solution + "\"" + (this.userInfo.isSystem ? "" : " AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*)  )" ) , 102, 0, "order", "false", { validity: 600 });
                 this.$set(this.dashboardsCached, dashKey, dash);
                 activateDash(false)
               }
