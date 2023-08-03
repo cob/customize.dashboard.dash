@@ -203,6 +203,7 @@
             if (this.dashboardChooser.value && this.dashboardChooser.value[0]) {
               // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is called 
               if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list more than 1 with chooser=", this.dashboardChooser.value[0].id)
+              this.dashboardChooser.value[0].solution_menu = newList[0].solution_menu
               this.loadDashboard(this.dashboardChooser.value[0], newList);
 
             }
