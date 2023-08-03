@@ -1,6 +1,7 @@
 import {fieldValues} from "./dashboard-info.esm.js";
 
 const DASHBOARD_DEF = "Dashboard_v1"
+const SCOPE_ACCESS_PERMISSION_KEYWORD = "ACESSO ";
 
 cob.custom.customize.push(function (core, utils, _ui) {
 
@@ -45,7 +46,11 @@ cob.custom.customize.push(function (core, utils, _ui) {
 
       const userGroups = core.getGroups();
       const isSystem = userGroups.indexOf("System") >= 0 
-      const groupsQuery = userGroups && userGroups.map(g => "\"" + g + "\"").join(" OR ") 
+      let groupsQuery = userGroups && userGroups.map(g => "\"" + g + "\"").join(" OR ") 
+      const currentUserScope = (userGroups.find((grp) => grp.indexOf(SCOPE_ACCESS_PERMISSION_KEYWORD) === 0));
+      if(currentUserScope) {
+         groupsQuery = groupsQuery.replaceAll(currentUserScope.substring(SCOPE_ACCESS_PERMISSION_KEYWORD.length),"_SCOPE_")
+      }
       const dashboardsQuery = isSystem ? "*" : "groupaccess.raw:(" + groupsQuery + ") OR (-groupaccess:*)" 
 
       if(solutionDashInfo) {

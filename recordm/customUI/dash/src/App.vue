@@ -26,6 +26,7 @@
   
   const DASHBOARD_DEF = "Dashboard_v1"
   const DASHBOARD_CHOOSER = "CHOOSER"
+  const SCOPE_ACCESS_PERMISSION_KEYWORD = "ACESSO ";
 
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
 
@@ -233,6 +234,12 @@
           window.location.hash = storedValues.location
         }
         userInfo.groupsQuery = userInfo.groups.length && userInfo.groups.map(g => "\"" + g.name + "\"").join(" OR ")
+
+        const currentUserScope = (userInfo.groups.find((grp) => grp.name.indexOf(SCOPE_ACCESS_PERMISSION_KEYWORD) === 0));
+        if(currentUserScope) {
+          userInfo.groupsQuery = userInfo.groupsQuery.replaceAll(currentUserScope.name.substring(SCOPE_ACCESS_PERMISSION_KEYWORD.length),"_SCOPE_")
+        }
+        
         userInfo.isSystem = userInfo.groups.length && userInfo.groups.map(g => g.name).indexOf("System") >= 0
         this.userInfo = userInfo
         this.urlDashPart = urlDashPart
