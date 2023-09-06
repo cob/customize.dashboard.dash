@@ -484,7 +484,6 @@
             localStorage.setItem(this.userInfo.username + "-lastDash", this.dashboardsCached[dashKey].urlDashPart);
             menuUpdateNeeded = true
           }
-          debugger
           if(this.dashboardsCached[dashKey].solution_menu) {
             let currentLastSolutionDash = localStorage.getItem(this.userInfo.username + "-lastDash-" + this.dashboardsCached[dashKey].solution_menu)
             if(currentLastSolutionDash != this.dashboardsCached[dashKey].id && this.dashboardsCached[dashKey].id != this.dashboardChooser.value[0].id) {
