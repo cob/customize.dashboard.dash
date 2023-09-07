@@ -14,6 +14,7 @@
 <script>
   import FullCalendar from '@fullcalendar/vue'
   import dayGridPlugin from '@fullcalendar/daygrid'
+  import multiMonthPlugin from '@fullcalendar/multimonth'
   import interactionPlugin from '@fullcalendar/interaction'
   import listPlugin from '@fullcalendar/list'
   import allLocales from '@fullcalendar/core/locales-all';
@@ -51,7 +52,7 @@
       calendarApi: null,
       debouncing: false,
       calendarOptions: {
-        plugins: [dayGridPlugin, interactionPlugin, listPlugin],
+        plugins: [dayGridPlugin, interactionPlugin, listPlugin,multiMonthPlugin],
         timeZone: 'local',
         locales: allLocales,
         locale: navigator.language,
@@ -60,7 +61,7 @@
         headerToolbar: {
           left: 'today prev next',
           center: '',
-          right: 'dayGridWeek,dayGridMonth,listMonth'
+          right: 'dayGridWeek,dayGridMonth,listMonth,multiMonthYear'
         },
         height: 'auto',
         contentHeight: 'auto',

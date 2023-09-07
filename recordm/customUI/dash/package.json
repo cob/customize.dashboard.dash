@@ -15,6 +15,7 @@
     "@fullcalendar/daygrid": "^6.1.6",
     "@fullcalendar/interaction": "^6.1.6",
     "@fullcalendar/list": "^6.1.6",
+    "@fullcalendar/multimonth": "^6.1.8",
     "@fullcalendar/timegrid": "^6.1.6",
     "@fullcalendar/vue": "^6.1.6",
     "crypto-js": "^4.1.1",
