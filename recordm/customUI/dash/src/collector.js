@@ -149,6 +149,15 @@ function parseDashboard(raw_dashboard) {
                 "StateEventField": "",
                 "EventsQuery": "",
             }],
+        },
+        "List": {
+            "ListCustomize": [{
+                "ListClasses": "",
+                "InputVarList": [{}],
+                "OutputVarList": ""
+            }],
+            "ListDefinition": "",
+            "ListQuery": ""
         }
     }
 

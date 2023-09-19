@@ -7,6 +7,7 @@
             <Kibana   v-if="item['Component'] === 'Kibana'"   :component="item" :key="i" />
             <Filtro   v-if="item['Component'] === 'Filter'"   :component="item" :key="i" />
             <Calendar v-if="item['Component'] === 'Calendar'" :component="item" :key="i" />
+            <List     v-if="item['Component'] === 'List'"     :component="item" :key="i" />
         </template>
     </div>
 </template>
@@ -18,9 +19,10 @@
     import Kibana from './Kibana.vue'
     import Filtro from './Filter.vue'
     import Calendar from './Calendar.vue'
+    import List   from './List.vue'
 
     export default {
-        components: { Label, Menu, Totals, Kibana, Filtro, Calendar },
+        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List },
         props: {
           board: Object
         },
