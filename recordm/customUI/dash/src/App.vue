@@ -384,6 +384,7 @@
           }
           
           // Add extra info to structure
+          dash.dashboardContext = dashboard.dashboardContext
           for (let b of dash["Board"]) {
             for (let c of b.Component) {
               c.vars = dashboard.dashboardContext.vars
