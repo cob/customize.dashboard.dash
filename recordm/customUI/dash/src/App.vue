@@ -194,7 +194,7 @@
             this.error = "Error: dashboard '" + this.dashboardName + "' was not found for your user"
             this.activeDashKey = null
 
-          } else if (newList.length === 1) {
+          } else if (newList.length === 1 && (this.dashboardName == newList[0].name[0] || this.dashboardName == newList[0].id) ) {
             if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list of 1. loadDashboard for dashRequestResults=",newList[0].id)
             this.loadDashboard(newList[0], newList);
 
@@ -436,7 +436,7 @@
 
           let menu = []
           // only add menu entries in case there's more then 1 dashboard for this solution
-          if (newSiblings && newSiblings.length > 1) {
+          if (newSiblings && newSiblings.length > 0) {
             // Start by adding a menu entry to show the CHOOSER with all the dashboards available
             menu.push({
               name: '<i class="fa-solid fa-table-cells-large"></i>',
@@ -484,13 +484,7 @@
             localStorage.setItem(this.userInfo.username + "-lastDash", this.dashboardsCached[dashKey].urlDashPart);
             menuUpdateNeeded = true
           }
-          if(this.dashboardsCached[dashKey].solution_menu) {
-            let currentLastSolutionDash = localStorage.getItem(this.userInfo.username + "-lastDash-" + this.dashboardsCached[dashKey].solution_menu)
-            if(currentLastSolutionDash != this.dashboardsCached[dashKey].id && this.dashboardsCached[dashKey].id != this.dashboardChooser.value[0].id) {
-              localStorage.setItem(this.userInfo.username + "-lastDash-" + this.dashboardsCached[dashKey].solution_menu, this.dashboardsCached[dashKey].id)
-              menuUpdateNeeded = true
-            }            
-          }
+
           if(menuUpdateNeeded) cob.app.publish('updated-app-info', { rebuildMenu: true });
         }
 
@@ -498,7 +492,6 @@
           this.error = error;
           this.activeDashKey = null
           localStorage.setItem(this.userInfo.username + "-lastDash", "");
-          localStorage.setItem(this.userInfo.username + "-lastDash-" + (this.dashboardsCached[dashKey] && this.dashboardsCached[dashKey].solution_menu), "")
           cob.app.publish('updated-app-info', { rebuildMenu: true });
         }
 

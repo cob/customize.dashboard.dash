@@ -92,21 +92,16 @@ cob.custom.customize.push(function (core, utils, _ui) {
                   const solutionSigla = solutions.hits[solutionMenuName].hits[0].solution_sigla
                   let domainSubmenus = domains.filter(d => d.name.indexOf("@" + solutionSigla) >= 0)
 
-                  // If there's a last dashboard used for this specific solution make it the default link for this solution
-                  // otherwise use the solution name (meaning we will show the default CHOOSER with all relevant dashboard options if there's more than 1 dashboard for the solution or the dashboard itself if there's only one)
-                  const lastSolutionDash = localStorage.getItem(core.getCurrentLoggedInUser() + "-lastDash" + "-" + solutionMenuName)
-                  const solutionLink = lastSolutionDash ? lastSolutionDash : solutionMenuName
-
                   const conditionalCobSubmenus = solutionSigla == "COB" ? cobSubmenus : []
 
                   // Add the entry with the decided link and all the dashboards associated with the solution as submenus
                   currentMenus.push({
                      id: solutionMenuName,
                      name: solutionLabel,
-                     href: "cob.custom-resource/" + solutionLink + "/dash",
+                     href: "cob.custom-resource/" + solutionMenuName + "/dash",
                      html: '<details class="cob-submenu" onclick="cobMenuClick(event)" onmouseenter="cobMenuMouseEnter(event)" onmouseleave="cobMenuMouseLeave(event)">'
                         +  ' <summary data-solution="' + solutionSigla + '">'
-                        +  '    <a href="#/cob.custom-resource/' + solutionLink + '/dash" >' + solutionLabel + '</a>'
+                        +  '    <a href="#/cob.custom-resource/' + solutionMenuName + '/dash" >' + solutionLabel + '</a>'
                         +  ' </summary>'
                         +  ' <ul class="dropdown-menu">'
                            + conditionalCobSubmenus.map(s => ''
@@ -228,6 +223,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
          setTimeout( markActiveSolution, 100)
       }
    }
+   // There's no guarantee to when the menu is ready, so set a few updates to be sure
    window.addEventListener("hashchange", () => setTimeout(markActiveSolution,100) )
    window.addEventListener("hashchange", () => setTimeout(markActiveSolution,500) )
    window.addEventListener("hashchange", () => setTimeout(markActiveSolution,1000) )
