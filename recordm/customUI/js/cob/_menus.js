@@ -5,7 +5,8 @@ const SCOPE_ACCESS_PERMISSION_KEYWORD = "ACESSO ";
 
 cob.custom.customize.push(function (core, utils, _ui) {
 
-
+   // -------------------- -------------------- -------------------- -------------------- -------------------- 
+   // Custom getDefaultModuleUri that returns last showed dashboard if it exists as entry page
    cob.custom.getDefaultModuleUri = function () {
       if (core.getCurrentLoggedInUser() === 'anonymous') {
          return "login";
@@ -24,21 +25,18 @@ cob.custom.customize.push(function (core, utils, _ui) {
       }
    }
 
+   // -------------------- -------------------- -------------------- -------------------- -------------------- 
+   // Custom Menu based on existing dashboards
    let solutionDashInfo // Declare it here so it can be used on the addEventListener("cobRefreshMenu")
    let currentMenus  // will be used everywhere in the code to ensure that we're always changing the same model.menu (and not the scoped 'model' inside th customizeMenu)
    let currentApps   // will be used everywhere in the code to ensure that we're always changing the same model.menu (and not the scoped 'model' inside th customizeMenu)
 
-   function solutionsMenuCustomization(model) {   
+   core.customizeMenu( (model) => {   
       // For anonymous user don't do any menu customization
       if (core.getCurrentLoggedInUser() == 'anonymous') return
 
       currentMenus = model.menus
       currentApps = model.apps
-
-      // remove all entries that we know we're going to add on other pre-defined dashboards
-      const cleanMenus = currentMenus.filter(v => ["Home", "reports", "rm-importer-stats", "domains", "@"].reduce((pr, x) => pr && v.name.indexOf(x) != 0, true))
-      // Remove all domains which name starts with @. By convention they will be placed inside the submenu of their Solution
-      const domains = currentMenus.filter(m => m.name.indexOf("@") >= 0 )
 
       // Get all entries relevant to CoB admin. They will be placed on CoB solution submenu
       const cobSubmenus = currentMenus.filter((m) => ["rm-importer-stats", "domains"].indexOf(m.name) >= 0 ).map(m => { m.rel = m.name; return m; }) // Reenable translation with rel attribute
@@ -65,12 +63,17 @@ cob.custom.customize.push(function (core, utils, _ui) {
             const numberOfSolutions = solutions && solutions.value && solutions.value.length || 0
             if (numberOfSolutions > 0) {
 
+               // remove all entries that we know we're going to add
+               const cleanMenus = currentMenus.filter(v => ["Home", "reports", "rm-importer-stats", "domains", "@", " <"].reduce((pr, x) => pr && v.name.indexOf(x) != 0, true))
+               // Remove all domains which name starts with @. By convention they will be placed inside the submenu of their Solution
+               const domains = currentMenus.filter(m => m.name.indexOf("@") >= 0 )
+
                currentMenus.length = 0 //We will re-build completely the menu
 
                // Show the solution chooser link (make sure there's a "Home" dashboard created for this purpose)
                currentMenus.push({
-                  id: "1",
-                  name: "<i class='fa-solid fa-house'></i>",
+                  id: "Home",
+                  name: " <i class='fa-solid fa-house'></i>",
                   href: "cob.custom-resource/Home/dash"
                });
 
@@ -167,18 +170,12 @@ cob.custom.customize.push(function (core, utils, _ui) {
          document.querySelector(".js-menu-btn.btn.btn-navbar").click()  
       }
    
-   }   
-
-   core.customizeMenu(solutionsMenuCustomization)
+   })
    setTimeout(() => core.publish('updated-app-info'),1) //Hack to overcome the fact that sometimes the core.customizeMenu is not being called on time
 
-   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,100) )
-   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,500) )
-   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,1000) )
-   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,2000) )
-
+   // -------------------- -------------------- -------------------- -------------------- -------------------- 
+   // Mark active Solution on menu  
    window.markActiveSolution = function (e) {
-
       const extractFirstAtSymbol = (text) => {
          const atIndex = text && text.indexOf('@');
          if (!text || atIndex === -1) return null;
@@ -231,4 +228,9 @@ cob.custom.customize.push(function (core, utils, _ui) {
          setTimeout( markActiveSolution, 100)
       }
    }
+   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,100) )
+   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,500) )
+   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,1000) )
+   window.addEventListener("hashchange", () => setTimeout(markActiveSolution,2000) )
+
 })
