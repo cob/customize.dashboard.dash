@@ -22,7 +22,7 @@
   window.CoBDasHDebug = window.CoBDasHDebug || {}
   const DEBUG = window.CoBDasHDebug
 // window.CoBDasHDebug.app = true
-  
+
   const DASHBOARD_DEF = "Dashboard_v1"
   const DASHBOARD_CHOOSER = "CHOOSER"
   const SCOPE_ACCESS_PERMISSION_KEYWORD = "ACESSO ";
@@ -73,7 +73,7 @@
     },
 
     computed: {
-      dashboardQuery() {        
+      dashboardQuery() {
         const accessQuery = this.userInfo.isSystem ? "" : " (groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )"
         const nameQuery = "( solution_menu.raw:\"" + this.dashboardName + "\"" + " OR name.raw:\"" + this.dashboardName + "\" ) "
         const query =  "(" + nameQuery + accessQuery + ") OR id:\"" + this.dashboardName + "\""
@@ -86,7 +86,7 @@
           || this.dashboardsRequested.state === 'updating'
           || this.dashboardsRequested.state === 'loading'
           || Object.values(this.dashboardsCached).filter(d => d.dashboardProcessed == null).length > 0
-          || this.currentDashboard 
+          || this.currentDashboard
           && (
               this.currentDashboard.contextQueries.filter(d => d.state === 'loading' || d.state === "updating" ).length > 0
               || this.currentDashboard.contextQueries.filter(d => d.state === 'loading' || d.state === "updating" ).length > 0
@@ -97,7 +97,7 @@
       currentDashboard() {
         if(!this.activeDashKey) return null
         if(DEBUG.app) console.log("DASH:  APP: 7: currentDashboard: update display. activeDashboardId=", this.dashboardsCached[this.activeDashKey].id)
-       
+
         let cobDashAppOld = document.getElementById("cobDashAppOld")
         if(cobDashAppOld) {
           // If there's an old dash being displayed delete it in a few millis and get a smooth transition
@@ -117,7 +117,7 @@
           // If the user is anonymous it means we timed out the cookie validity. Two situations are possible:
           axios.get(document.location)
             .then(() => {
-              // If we have permissions to get the current page it means we are on a server where 
+              // If we have permissions to get the current page it means we are on a server where
               // anonymous has access to custom resources. We can only redirect to root to force the auth.
               // However we save the request hash so we can restore after login
               const storedRestart = { location : window.location.hash, urlDashPart: this.urlDashPart}
@@ -128,7 +128,7 @@
             .catch(() => {
               // otherwise we can do a reload at the same url which will fire the auth page
               document.location.reload()
-            })          
+            })
         }
 
         if (newDashboardsRequestedState === "error") {
@@ -200,7 +200,7 @@
           } else {
             if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list with more than 1 => use chooser")
             if (this.dashboardChooser.value && this.dashboardChooser.value[0]) {
-              // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is called 
+              // if we already have the dashboardChoose loaded use it, otherwise do nothing and it will be loaded once 'dashboardChooser.value' is called
               if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list more than 1 with chooser=", this.dashboardChooser.value[0].id)
               this.loadDashboard(this.dashboardChooser.value[0], newList);
             }
@@ -219,10 +219,10 @@
           this.dashboardsRequested.changeArgs({ query: this.dashboardQuery })
         })
       },
-      
+
       updateRequestData(userInfo, urlDashPart) {
         if(DEBUG.app) console.log("DASH:  APP: 1.3: updateRequestData: urlDashPart="+ urlDashPart)
-        // Check if we are being called after a re-authentication request and, if so, redirect to the previous page the user was 
+        // Check if we are being called after a re-authentication request and, if so, redirect to the previous page the user was
         const urlBeforeReAuthentication = localStorage.getItem("urlBeforeReAuthentication")
         if (urlBeforeReAuthentication) {
           const storedValues = JSON.parse(urlBeforeReAuthentication)
@@ -237,7 +237,7 @@
         if(currentUserScope) {
           userInfo.groupsQuery = userInfo.groupsQuery.replaceAll(currentUserScope.name.substring(SCOPE_ACCESS_PERMISSION_KEYWORD.length),"_SCOPE_")
         }
-        
+
         userInfo.isSystem = userInfo.groups.length && userInfo.groups.map(g => g.name).indexOf("System") >= 0
         this.userInfo = userInfo
         this.urlDashPart = urlDashPart
@@ -270,9 +270,9 @@
 
           const JsonStringifyWithBlockHelpers = (json, replaceList) => {
             // Replacements will occur on every duplicate field of the dashboard instance that has a value starting with "{{#each something}} ..." or other block helper
-            // replaceList will recursively be set with 
+            // replaceList will recursively be set with
             const newJson = traverse(json).map(function (node) {
-              // If the node has a property with the same name as the name of the enclosing property (ie, something like 'Board' in '{ Board: [ { ..., Board:"string value",...}, ...]}' ) test for the block pattern 
+              // If the node has a property with the same name as the name of the enclosing property (ie, something like 'Board' in '{ Board: [ { ..., Board:"string value",...}, ...]}' ) test for the block pattern
               // (this will be the situation for all duplicate fields, as set by the collector)
               const epn = this.parent && this.parent.key; //EPN = Enclosing Property Name
               const propertyValueForEPN = node && epn && typeof (node[epn]) === "string" && node[epn];
@@ -390,7 +390,7 @@
 
           let dash = JSON.parse(
             dashboard.dashboardProcessor(dashboard.dashboardContext)
-              .replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]") // Every last comma in array are removed. Ssupport UP TO 3 consequently commas 
+              .replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]") // Every last comma in array are removed. Ssupport UP TO 3 consequently commas
               .replaceAll(/(,(\s*))+/g, ",$2") //  Also remove double comma in the resulting arrays (maintain the spaces in case normal text with commas)
           )
 
@@ -398,7 +398,7 @@
             let dashInfoItem = dashboard.boardQueries.pop()
             dashInfoItem.stopUpdates()
           }
-          
+
           // Add extra info to structure
           dash.dashboardContext = dashboard.dashboardContext
           for (let b of dash["Board"]) {
@@ -429,7 +429,7 @@
                       v.dash_info = { value: v.Arg[1].Arg, href: v.Arg[0].Arg, state: "ready", isLink: true }
                     } else {
                       // add dash-info values in Totals
-                      v.dash_info = dashFunctions[v.Value].apply(this, v['Arg'].map(a => a['Arg'])) // Return DashInfo, which is used by the component
+                      v.dash_info = DashFunctions[v.Value].apply(this, v['Arg'].map(a => a['Arg'])) // Return DashInfo, which is used by the component
                       dashboard.boardQueries.push(v.dash_info)
                     }
                     return v
@@ -516,9 +516,9 @@
         window.cobSolutions[this.dashboardName] = requestResultList[0].solution_sigla && requestResultList[0].solution_sigla[0]
         window.markActiveSolution()
 
-        this.error = ""        
+        this.error = ""
         this.stopActiveDash()
-        
+
         if (this.dashboardsCached[dashKey] !== undefined && this.dashboardsCached[dashKey].version === newDashEs.version) {
           if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: dashboard previously processed. Activate newDashId=", newDashEs.id)
           activateDash(true)
@@ -532,13 +532,13 @@
                 let dash = {};
 
                 let solution, solution_menu
-                if(newDashEs.id == this.dashboardChooser.value[0].id) {                 
+                if(newDashEs.id == this.dashboardChooser.value[0].id) {
                   solution = this.dashboardsRequested.value[0].solution
                   solution_menu = this.dashboardsRequested.value[0].solution_menu
                 } else {
                   solution = newDashEs.solution
                   solution_menu = newDashEs.solution_menu
-                }                
+                }
                 dash.dashKey = dashKey;
                 dash.id = newDashEs.id;
                 dash.solution_menu = solution_menu;
