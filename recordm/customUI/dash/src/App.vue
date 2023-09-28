@@ -10,8 +10,7 @@
 <script>
   import axios from 'axios';
   import { umLoggedin } from '@cob/rest-api-wrapper';
-  import { instancesList, fieldValues } from '@cob/dashboard-info';
-  import * as dashFunctions from '@cob/dashboard-info';
+  import * as DashFunctions from '@cob/dashboard-info';
   import { parseDashboard } from './collector.js'
   import Dashboard from './components/Dashboard.vue'
   import Refresh from './components/shared/Refresh.vue'
@@ -54,13 +53,13 @@
 
       // Preemptively load the chooser dashboard, to be used in case there's more than one dashboard found for a given name and a given user
       if(DEBUG.app) console.log("DASH:  APP: 1: created: Requesting chooser")
-      this.dashboardChooser = instancesList(DASHBOARD_DEF, "name.raw:\"" + DASHBOARD_CHOOSER + "\"", 1, 0, "order", "true", { validity: 600 })
+      this.dashboardChooser = DashFunctions.instancesList(DASHBOARD_DEF, "name.raw:\"" + DASHBOARD_CHOOSER + "\"", 1, 0, "order", "true", { validity: 600 })
 
       // At the initial load we get the dashboard instance name from the custom-resource div's attribute "data-name"
       umLoggedin().then(userInfo => {
         if(DEBUG.app) console.log("DASH:  APP: 1.1: created: Requesting dashs...")
         this.updateRequestData(userInfo, document.getElementsByClassName("custom-resource")[0].getAttribute('data-name') )
-        this.dashboardsRequested = instancesList(DASHBOARD_DEF, this.dashboardQuery, 99, 0, "order", "false", { validity: 600 })
+        this.dashboardsRequested = DashFunctions.instancesList(DASHBOARD_DEF, this.dashboardQuery, 99, 0, "order", "false", { validity: 600 })
       })
       // Upon anchor navigation we get the dashboard instance name from the param to the 'resume' callback
       this.resumeEventListner = $('section.custom-resource').on('resume',this.resumeListener)
@@ -333,16 +332,33 @@
           let specifiedContext
           try {
             function list(...args) {
-              const dashInfoItem = instancesList(...args)
+              const dashInfoItem = DashFunctions.instancesList(...args)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
+
             function distinct(...args) {
-              const dashInfoItem = fieldValues(...args)
+              const dashInfoItem = DashFunctions.fieldValues(...args)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
-            eval("specifiedContext = " + (specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, '\"') : "{}"))
+
+            function httpGet(...args) {
+              const dashInfoItem = DashFunctions.httpGet(...args);
+              dashboard.contextQueries.push(dashInfoItem);
+              return dashInfoItem;
+            }
+
+            function httpPost(...args) {
+              const dashInfoItem = DashFunctions.httpPost(...args);
+              dashboard.contextQueries.push(dashInfoItem);
+              return dashInfoItem;
+            }
+
+            const expression = `specifiedContext= ${specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, "\"") : "{}"}`;
+            console.debug(expression);
+            eval(expression);
+
           } catch (e) {
             console.error("Error processing specific context:", e)
           }
@@ -393,7 +409,7 @@
                 c.Text.forEach(t => {
                   // If Attention is configured for this menu line then add attention status as user check
                   if (t["TextCustomize"][0]["TextAttention"]) {
-                    t["TextCustomize"][0].AttentionInfo = dashFunctions.instancesList("Dashboard-Attention", "name.raw:" + t["TextCustomize"][0]["TextAttention"], 1, 0, "", "", { validity: 300 })
+                    t["TextCustomize"][0].AttentionInfo = DashFunctions.instancesList("Dashboard-Attention", "name.raw:" + t["TextCustomize"][0]["TextAttention"], 1, 0, "", "", { validity: 300 })
                   }
                 })
               } else if (c.Component === "Totals") {
@@ -404,7 +420,7 @@
                     }
                     // If Attention is configured for this value line then add attention status as user check
                     if (v["ValueCustomize"][0]["ValueAttention"]) {
-                      v["ValueCustomize"][0].AttentionInfo = dashFunctions.instancesList("Dashboard-Attention", "name.raw:" + v["ValueCustomize"][0]["ValueAttention"], 1, 0, "", "", { validity: 300 })
+                      v["ValueCustomize"][0].AttentionInfo = DashFunctions.instancesList("Dashboard-Attention", "name.raw:" + v["ValueCustomize"][0]["ValueAttention"], 1, 0, "", "", { validity: 300 })
                     }
 
                     if (v.Value === 'Label') {
@@ -535,7 +551,7 @@
                 dash.dashboardBaseContext = getBaseContext();
                 dash.dashboardContext = getContext(dash);
                 dash.dashboardProcessed = buildDashboard(dash);
-                dash.solutionSiblings = instancesList(DASHBOARD_DEF, "solution.raw:\"" + solution + "\"" + (this.userInfo.isSystem ? "" : " AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*)  )" ) , 102, 0, "order", "false", { validity: 600 });
+                dash.solutionSiblings = DashFunctions.instancesList(DASHBOARD_DEF, "solution.raw:\"" + solution + "\"" + (this.userInfo.isSystem ? "" : " AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*)  )" ) , 102, 0, "order", "false", { validity: 600 });
                 this.$set(this.dashboardsCached, dashKey, dash);
                 activateDash(false)
               }
