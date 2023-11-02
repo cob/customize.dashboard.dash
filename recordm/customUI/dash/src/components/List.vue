@@ -37,10 +37,10 @@
 
                 } else {
                     this.simpleSearch = new cob.components.SimpleSearch(cob.app, `#${this.containerId}`, this.definition, this.queryWithFilter, {
-                        activeVisualizationName: "VMovimentos",
-                        showViews: true,
-                        showActions: true,
-                        showCreateAndDelete: true
+                        activeVisualizationName: this.options["activeVisualizationName"],
+                        showViews: this.options["showViews"] === "TRUE",
+                        showActions: this.options["showActions"] === "TRUE",
+                        showCreateAndDelete: this.options["showCreateAndDelete"] === "TRUE",
                     });
                 }
             }
