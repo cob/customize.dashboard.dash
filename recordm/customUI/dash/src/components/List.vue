@@ -1,7 +1,5 @@
 <template>
-    <section class="cob-app search-definition content">
-        <div id="simplesearch-container"></div>
-    </section>
+    <section ref="searchContainer" class="cob-app search-definition content"></section>
 </template>
 
 <script>
@@ -11,10 +9,16 @@
             simpleSearch: null
         }),
         mounted() {
-            debugger
+            this.$refs.searchContainer.setAttribute("id", this.containerId);
             setTimeout(this.updateQuery, 10)
         },
+        beforeDestroy() {
+          if (this.simpleSearch) {
+            this.simpleSearch.destroy()
+          }
+        },
         computed: {
+            containerId() {return `simple-search-${Date.now()}`;},
             options()         { return this.component['ListCustomize'][0] },
             definition()      { return this.component['ListDefinition']      || "" },
             query()           { return this.component['ListQuery']      || "" },
@@ -28,10 +32,11 @@
         },
         methods: {
             updateQuery() {
-                if(this.simpleSearch && this.simpleSearch.setSearchValue ) {
+                if(this.simpleSearch) {
                     this.simpleSearch.setSearchValue(this.queryWithFilter)
+
                 } else {
-                    this.simpleSearch = new cob.components.SimpleSearch(cob.app, "#simplesearch-container",this.definition, this.queryWithFilter, {
+                    this.simpleSearch = new cob.components.SimpleSearch(cob.app, `#${this.containerId}`, this.definition, this.queryWithFilter, {
                         activeVisualizationName: "VMovimentos",
                         showViews: true,
                         showActions: true,
@@ -46,7 +51,7 @@
 <style>
     .cob-app.search-definition {
         box-sizing: unset;
-        position: unset; 
+        position: unset;
         background-color: white;
     }
     .slick-header-menu {
