@@ -82,7 +82,7 @@
     created() {
         this.calendarOptions.initialView = this.eventView[0]
         this.calendarOptions.headerToolbar.right = this.eventView.join(",")
-        
+
         this.statePersistence = new ComponentStatePersistence(this.component.id, this.updateCalendarBasedOnPersistedStateChange)
 
         // Setup a dashInfo placeholder for each event source, initially with a zero result query ( "-*") so it has a fast response
@@ -127,9 +127,9 @@
         const currentDate = calendarApi.getDate()
         this.monthTitle = currentDate.toLocaleString(navigator.language, {month: 'long'});
         this.yearTitle = currentDate.getFullYear()
-        this.debouncing = true   
+        this.debouncing = true
 
-        // 'debounce' loading the events (ie, wait for some user inactivity) 
+        // 'debounce' loading the events (ie, wait for some user inactivity)
         lazyEventsLoader(dateInfo)
       })
 
@@ -165,7 +165,7 @@
       eventView()            { return this.options['EventViews'] && this.options['EventViews'].split(',') || ['dayGridWeek','dayGridMonth','listMonth'] },
       outputVar()            { return this.options['OutputVarCalendar'] || '' },
       dayMaxEvents()         { return parseInt(this.options['MaxVisibleDayEvents'], 10) || MAX_VISIBLE_DAY_EVENTS },
-      
+
       // Calendar component model
       eventSources()         { return this.component['Events'] },
 
@@ -270,7 +270,7 @@
 
               const title = esInstance[descriptionEventField] || [esInstance.id]
               const startDate = parseInt(esInstance[startDateField][0], 10)
-              const endDate = endDateField ? parseInt(esInstance[endDateField][0], 10) : null
+              const endDate = endDateField && esInstance[endDateField] ? parseInt(esInstance[endDateField][0], 10) : null
 
               let color
               if(stateField && stateField.startsWith("#")) {
@@ -332,7 +332,7 @@
         }
 
         const fields = []
-        // Since we need to choose only 1 set of fields use the first source spec (eventSources[0]) 
+        // Since we need to choose only 1 set of fields use the first source spec (eventSources[0])
         fields.push({fieldDefinition: {name: this.eventSources[0]['DateStartEventField']}, value: dateInfo.start.getTime()})
 
         if (this.eventSources[0]['DateEndEventField']) {
