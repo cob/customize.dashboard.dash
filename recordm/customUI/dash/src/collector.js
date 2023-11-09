@@ -19,13 +19,13 @@ function collect(bucket, source) {
                 if (typeof bucket[sourceName][0].Initial_Template == "undefined") {
                     //Means it's the initial bucket (because it doesn't have the Initial_Template field copy)
                     initialBucketCopy = clone(bucket[sourceName][0])                  // Clone the bucket template
-                    initialBucketCopy.Initial_Template = clone(initialBucketCopy)     // Save a copy of the bucket template as template for additional items 
+                    initialBucketCopy.Initial_Template = clone(initialBucketCopy)     // Save a copy of the bucket template as template for additional items
                     bucket[sourceName].shift()                                        // remove original empty bucket template from collection
                 } else {
                     // Means it's additional source matches
                     initialBucketCopy = clone(bucket[sourceName][0].Initial_Template) // we use a copy of the previously copied template
                 }
-                initialBucketCopy.instanceId = bucket.instanceId  //needed to build $file url 
+                initialBucketCopy.instanceId = bucket.instanceId  //needed to build $file url
                 children.reduce(collect, initialBucketCopy)    // collect values from the children
                 initialBucketCopy[sourceName] = source.value  // Add extra field with original name of the source
                 bucket[sourceName].push(initialBucketCopy)    // Add to bucket collector
@@ -154,7 +154,8 @@ function parseDashboard(raw_dashboard) {
             "ListCustomize": [{
                 "ListClasses": "",
                 "InputVarList": [{}],
-                "OutputVarList": ""
+                "OutputVarList": "",
+                "activeVisualizationName": ""
             }],
             "ListDefinition": "",
             "ListQuery": ""

@@ -20,6 +20,7 @@
         computed: {
             containerId() {return `simple-search-${Date.now()}`;},
             options()         { return this.component['ListCustomize'][0] },
+            selectedOptions() { return this.options['ListCustomize'].split("\u0000") || [] },
             definition()      { return this.component['ListDefinition']      || "" },
             query()           { return this.component['ListQuery']      || "" },
             classes()         { return this.options['ListClasses'] || "text-center font-bold pb-2 " },
@@ -36,12 +37,13 @@
                     this.simpleSearch.setSearchValue(this.queryWithFilter)
 
                 } else {
-                    this.simpleSearch = new cob.components.SimpleSearch(cob.app, `#${this.containerId}`, this.definition, this.queryWithFilter, {
-                        activeVisualizationName: this.options["activeVisualizationName"],
-                        showViews: this.options["showViews"] === "TRUE",
-                        showActions: this.options["showActions"] === "TRUE",
-                        showCreateAndDelete: this.options["showCreateAndDelete"] === "TRUE",
-                    });
+                  const simpleSearchOptions = {
+                    activeVisualizationName: this.options['activeVisualizationName'],
+                    showViews: this.selectedOptions.indexOf("ShowViews") !== -1,
+                    showActions: this.selectedOptions.indexOf("ShowActions") !== -1,
+                    showCreateAndDelete: this.selectedOptions.indexOf("ShowCreateAndDelete") !== -1,
+                  }
+                  this.simpleSearch = new cob.components.SimpleSearch(cob.app, `#${this.containerId}`, this.definition, this.queryWithFilter, simpleSearchOptions);
                 }
             }
         },
