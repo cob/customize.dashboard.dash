@@ -38,10 +38,10 @@
 
                 } else {
                   const simpleSearchOptions = {
-                    activeVisualizationName: this.options['activeVisualizationName'],
+                    activeVisualizationName: this.options['DefaultView'],
                     showViews: this.selectedOptions.indexOf("ShowViews") !== -1,
                     showActions: this.selectedOptions.indexOf("ShowActions") !== -1,
-                    showCreateAndDelete: this.selectedOptions.indexOf("ShowCreateAndDelete") !== -1,
+                    showCreateAndDelete: this.selectedOptions.indexOf("CreateAndDelete") !== -1,
                   }
                   this.simpleSearch = new cob.components.SimpleSearch(cob.app, `#${this.containerId}`, this.definition, this.queryWithFilter, simpleSearchOptions);
                 }
