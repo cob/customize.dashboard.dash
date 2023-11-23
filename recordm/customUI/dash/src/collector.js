@@ -152,10 +152,8 @@ function parseDashboard(raw_dashboard) {
         },
         "List": {
             "ListCustomize": [{
-                "ListClasses": "",
                 "InputVarList": [{}],
-                "OutputVarList": "",
-                "activeVisualizationName": ""
+                "DefaultView": ""
             }],
             "ListDefinition": "",
             "ListQuery": ""
