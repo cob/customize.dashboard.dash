@@ -127,6 +127,7 @@ function parseDashboard(raw_dashboard) {
         "Filter": {
             "FilterCustomize": [{
                 "FilterClasses": "",
+                "noButton":"",
                 "Placeholder": ""
             }],
             "OutputVarFilter": "",

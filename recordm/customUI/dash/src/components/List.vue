@@ -37,7 +37,6 @@
                     this.simpleSearch.setSearchValue(this.queryWithFilter)
 
                 } else {
-                    debugger
                   const simpleSearchOptions = {
                     activeVisualizationName: this.options['DefaultView'],
                     showViews: this.selectedOptions.indexOf("ShowViews") !== -1,

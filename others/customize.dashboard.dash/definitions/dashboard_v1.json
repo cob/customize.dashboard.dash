@@ -1,7 +1,7 @@
 {
     "id": null,
     "name": "Dashboard_v1",
-    "description": "@COB v6.19.0",
+    "description": "@COB v6.19.1",
     "duplicable": null,
     "state": "enabled",
     "fieldDefinitions": [
@@ -1748,7 +1748,7 @@
                             "id": null,
                             "name": "FilterCustomize",
                             "required": null,
-                            "description": "$[Classes,Type,Placeholder] $multiple $help[Select the defaults to change] ",
+                            "description": "$[Classes,noButton,Type,Placeholder] $multiple $help[Select the defaults to change] ",
                             "configuration": {
                                 "description": "",
                                 "keys": {
@@ -1761,6 +1761,7 @@
                                     "Select": {
                                         "args": [
                                             "Classes",
+                                            "noButton",
                                             "Type",
                                             "Placeholder"
                                         ],
