@@ -21,6 +21,7 @@
 
 <script>
     import Board from './Board.vue'
+    import ComponentStatePersistence from "@/model/ComponentStatePersistence"
 
     export default {
         components: { Board },
@@ -28,13 +29,33 @@
           dashboard: Object,
           menu: Array
         },
+        created() {
+            this.statePersistence = []
+            this.vars.forEach(varName => {
+                this.statePersistence[varName] = new ComponentStatePersistence(varName,this.activateFromPersistenceChange(varName))
+                this.dashboard.dashboardContext.vars[varName] = this.statePersistence[varName].content
+            });
+        },
+        beforeDestroy() {
+            this.vars.forEach(varName => {
+                this.statePersistence[varName].stop()
+            });
+        },
         computed: {
             options() { return this.dashboard['DashboardCustomize'][0] },
             boards()  { return this.dashboard['Board'] },
             classes() { return this.options['DashboardClasses'] || "h-full bg-cover bg-center overflow-auto p-3" },
             width()   { return this.options['Width']            || "max-w-6xl mx-auto" },
             grid()    { return this.options['Grid']             || "grid grid-flow-row-dense md:grid-cols-12" },
+            vars()    { return this.options['VarName'].map(v => v['VarName']) },
             image()   { return this.options['Image'] ? "background-image: url(" + this.options['Image'] +  ");" : "" }
+        },
+        methods: {
+            activateFromPersistenceChange(varName) {
+                return (newContent) => {
+                    this.$set(this.dashboard.dashboardContext.vars, varName, newContent)
+                }
+            }
         }
     }
 </script>
