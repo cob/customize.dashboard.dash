@@ -1,7 +1,7 @@
 {
     "id": null,
     "name": "Dashboard_v1",
-    "description": "@COB v6.19.1",
+    "description": "@COB v6.21.0",
     "duplicable": null,
     "state": "enabled",
     "fieldDefinitions": [
@@ -18,12 +18,11 @@
                 "extensions": {}
             },
             "condition": null,
-            "visibilityCondition": null,
             "duplicable": false,
             "fields": [],
             "order": 0,
-            "restricted": false,
             "rootField": true,
+            "restricted": false,
             "defaultValue": null
         },
         {
@@ -47,7 +46,6 @@
                 }
             },
             "condition": null,
-            "visibilityCondition": null,
             "duplicable": false,
             "fields": [
                 {
@@ -68,12 +66,11 @@
                         "extensions": {}
                     },
                     "condition": null,
-                    "visibilityCondition": null,
                     "duplicable": false,
                     "fields": [],
                     "order": 2,
-                    "restricted": false,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": null
                 },
                 {
@@ -94,12 +91,11 @@
                         "extensions": {}
                     },
                     "condition": null,
-                    "visibilityCondition": null,
                     "duplicable": false,
                     "fields": [],
                     "order": 3,
-                    "restricted": false,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": null
                 },
                 {
@@ -120,12 +116,11 @@
                         "extensions": {}
                     },
                     "condition": null,
-                    "visibilityCondition": null,
                     "duplicable": false,
                     "fields": [],
                     "order": 4,
-                    "restricted": false,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": null
                 },
                 {
@@ -146,12 +141,11 @@
                         "extensions": {}
                     },
                     "condition": null,
-                    "visibilityCondition": null,
                     "duplicable": false,
                     "fields": [],
                     "order": 5,
-                    "restricted": false,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": null
                 },
                 {
@@ -162,29 +156,28 @@
                     "configuration": {
                         "description": "",
                         "keys": {
-                            "InstanceDescription": {},
                             "AutoRefField": {
                                 "args": {
                                     "source_field": "Solution",
                                     "field_name": "Ordem"
                                 }
-                            }
+                            },
+                            "InstanceDescription": {}
                         },
                         "extensions": {}
                     },
                     "condition": null,
-                    "visibilityCondition": null,
                     "duplicable": false,
                     "fields": [],
                     "order": 6,
-                    "restricted": false,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": null
                 }
             ],
             "order": 1,
-            "restricted": false,
             "rootField": true,
+            "restricted": false,
             "defaultValue": null
         },
         {
@@ -195,20 +188,19 @@
             "configuration": {
                 "description": "",
                 "keys": {
-                    "InstanceLabel": {},
                     "Expanded": {
                         "args": {}
-                    }
+                    },
+                    "InstanceLabel": {}
                 },
                 "extensions": {}
             },
             "condition": null,
-            "visibilityCondition": null,
             "duplicable": false,
             "fields": [],
             "order": 7,
-            "restricted": false,
             "rootField": true,
+            "restricted": false,
             "defaultValue": null
         },
         {
@@ -226,12 +218,11 @@
                 }
             },
             "condition": null,
-            "visibilityCondition": null,
             "duplicable": false,
             "fields": [],
             "order": 8,
-            "restricted": false,
             "rootField": true,
+            "restricted": false,
             "defaultValue": null
         },
         {
@@ -242,27 +233,26 @@
             "configuration": {
                 "description": "",
                 "keys": {
-                    "InstanceDescription": {},
                     "Number": {
                         "args": {}
-                    }
+                    },
+                    "InstanceDescription": {}
                 },
                 "extensions": {}
             },
             "condition": null,
-            "visibilityCondition": null,
             "duplicable": false,
             "fields": [],
             "order": 9,
-            "restricted": false,
             "rootField": true,
+            "restricted": false,
             "defaultValue": null
         },
         {
             "id": null,
             "name": "DashboardCustomize",
             "required": null,
-            "description": "$[Classes,Image,Width,Grid,Access,Context] $multiple $help[Select the defaults to change] ",
+            "description": "$[Classes,Image,Width,Grid,Access,Vars,Context] $multiple $help[Select the defaults to change] ",
             "configuration": {
                 "description": "",
                 "keys": {
@@ -279,6 +269,7 @@
                             "Width",
                             "Grid",
                             "Access",
+                            "Vars",
                             "Context"
                         ],
                         "default": null
@@ -287,7 +278,6 @@
                 "extensions": {}
             },
             "condition": null,
-            "visibilityCondition": null,
             "duplicable": false,
             "fields": [
                 {
@@ -309,20 +299,11 @@
                         }
                     },
                     "condition": "=Classes",
-                    "visibilityCondition": {
-                        "type": "Equal",
-                        "value": [
-                            "Classes"
-                        ],
-                        "matcher": {
-                            "type": "Parent"
-                        }
-                    },
                     "duplicable": false,
                     "fields": [],
                     "order": 11,
-                    "restricted": false,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": "h-full bg-cover bg-center overflow-auto p-3"
                 },
                 {
@@ -338,20 +319,11 @@
                         }
                     },
                     "condition": "=Image",
-                    "visibilityCondition": {
-                        "type": "Equal",
-                        "value": [
-                            "Image"
-                        ],
-                        "matcher": {
-                            "type": "Parent"
-                        }
-                    },
                     "duplicable": false,
                     "fields": [],
                     "order": 12,
-                    "restricted": false,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": null
                 },
                 {
@@ -365,20 +337,11 @@
                         "extensions": {}
                     },
                     "condition": "=Width",
-                    "visibilityCondition": {
-                        "type": "Equal",
-                        "value": [
-                            "Width"
-                        ],
-                        "matcher": {
-                            "type": "Parent"
-                        }
-                    },
                     "duplicable": false,
                     "fields": [],
                     "order": 13,
-                    "restricted": false,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": null
                 },
                 {
@@ -398,20 +361,11 @@
                         "extensions": {}
                     },
                     "condition": "=Grid",
-                    "visibilityCondition": {
-                        "type": "Equal",
-                        "value": [
-                            "Grid"
-                        ],
-                        "matcher": {
-                            "type": "Parent"
-                        }
-                    },
                     "duplicable": false,
                     "fields": [],
                     "order": 14,
-                    "restricted": false,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": "grid grid-flow-row-dense md:grid-cols-12"
                 },
                 {
@@ -427,20 +381,11 @@
                         "extensions": {}
                     },
                     "condition": "=Access",
-                    "visibilityCondition": {
-                        "type": "Equal",
-                        "value": [
-                            "Access"
-                        ],
-                        "matcher": {
-                            "type": "Parent"
-                        }
-                    },
                     "duplicable": true,
                     "fields": [],
                     "order": 15,
-                    "restricted": false,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": null
                 },
                 {
@@ -456,26 +401,35 @@
                         }
                     },
                     "condition": "=Context",
-                    "visibilityCondition": {
-                        "type": "Equal",
-                        "value": [
-                            "Context"
-                        ],
-                        "matcher": {
-                            "type": "Parent"
-                        }
-                    },
                     "duplicable": false,
                     "fields": [],
                     "order": 16,
-                    "restricted": false,
                     "rootField": false,
+                    "restricted": false,
+                    "defaultValue": null
+                },
+                {
+                    "id": null,
+                    "name": "VarName",
+                    "required": null,
+                    "description": null,
+                    "configuration": {
+                        "description": null,
+                        "keys": {},
+                        "extensions": {}
+                    },
+                    "condition": "=Vars",
+                    "duplicable": true,
+                    "fields": [],
+                    "order": 17,
+                    "rootField": false,
+                    "restricted": false,
                     "defaultValue": null
                 }
             ],
             "order": 10,
-            "restricted": false,
             "rootField": true,
+            "restricted": false,
             "defaultValue": null
         },
         {
@@ -486,27 +440,26 @@
             "configuration": {
                 "description": "",
                 "keys": {
+                    "Link": {
+                        "args": {}
+                    },
+                    "InstanceDescription": {},
                     "AutoTextJoin": {
                         "args": [
                             "'/recordm/index.html#/cob.custom-resource/'",
                             "id",
                             "'/dash'"
                         ]
-                    },
-                    "InstanceDescription": {},
-                    "Link": {
-                        "args": {}
                     }
                 },
                 "extensions": {}
             },
             "condition": null,
-            "visibilityCondition": null,
             "duplicable": false,
             "fields": [],
-            "order": 17,
-            "restricted": false,
+            "order": 18,
             "rootField": true,
+            "restricted": false,
             "defaultValue": null
         },
         {
@@ -522,12 +475,11 @@
                 "extensions": {}
             },
             "condition": null,
-            "visibilityCondition": null,
             "duplicable": false,
             "fields": [],
-            "order": 18,
-            "restricted": false,
+            "order": 19,
             "rootField": true,
+            "restricted": false,
             "defaultValue": null
         },
         {
@@ -541,7 +493,6 @@
                 "extensions": {}
             },
             "condition": null,
-            "visibilityCondition": null,
             "duplicable": true,
             "fields": [
                 {
@@ -569,7 +520,6 @@
                         "extensions": {}
                     },
                     "condition": null,
-                    "visibilityCondition": null,
                     "duplicable": false,
                     "fields": [
                         {
@@ -591,20 +541,11 @@
                                 }
                             },
                             "condition": "=Classes",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Classes"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [],
-                            "order": 21,
-                            "restricted": false,
+                            "order": 22,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": "col-span-12 md:col-span-4 rounded-md border border-gray-300 bg-white bg-opacity-70 p-4 m-1"
                         },
                         {
@@ -620,26 +561,17 @@
                                 "extensions": {}
                             },
                             "condition": "=Image",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Image"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [],
-                            "order": 22,
-                            "restricted": false,
+                            "order": 23,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         }
                     ],
-                    "order": 20,
-                    "restricted": false,
+                    "order": 21,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": null
                 },
                 {
@@ -650,7 +582,6 @@
                     "configuration": {
                         "description": "",
                         "keys": {
-                            "InstanceDescription": {},
                             "Select": {
                                 "args": [
                                     "Label",
@@ -662,7 +593,8 @@
                                     "List"
                                 ],
                                 "default": null
-                            }
+                            },
+                            "InstanceDescription": {}
                         },
                         "extensions": {
                             "$style": {
@@ -673,7 +605,6 @@
                         }
                     },
                     "condition": null,
-                    "visibilityCondition": null,
                     "duplicable": true,
                     "fields": [
                         {
@@ -701,15 +632,6 @@
                                 "extensions": {}
                             },
                             "condition": "=Label",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Label"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [
                                 {
@@ -731,20 +653,11 @@
                                         }
                                     },
                                     "condition": "=Classes",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Classes"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 25,
-                                    "restricted": false,
+                                    "order": 26,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": "text-center font-bold pb-2"
                                 },
                                 {
@@ -760,26 +673,17 @@
                                         "extensions": {}
                                     },
                                     "condition": "=Image",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Image"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 26,
-                                    "restricted": false,
+                                    "order": 27,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 24,
-                            "restricted": false,
+                            "order": 25,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -793,20 +697,11 @@
                                 "extensions": {}
                             },
                             "condition": "=Label",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Label"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [],
-                            "order": 27,
-                            "restricted": false,
+                            "order": 28,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -833,15 +728,6 @@
                                 "extensions": {}
                             },
                             "condition": "=Menu",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Menu"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [
                                 {
@@ -863,26 +749,17 @@
                                         }
                                     },
                                     "condition": "=Classes",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Classes"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 29,
-                                    "restricted": false,
+                                    "order": 30,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": "flex flex-col gap-y-2"
                                 }
                             ],
-                            "order": 28,
-                            "restricted": false,
+                            "order": 29,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -898,15 +775,6 @@
                                 }
                             },
                             "condition": "=Menu",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Menu"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": true,
                             "fields": [
                                 {
@@ -936,7 +804,6 @@
                                         "extensions": {}
                                     },
                                     "condition": null,
-                                    "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [
                                         {
@@ -958,20 +825,11 @@
                                                 }
                                             },
                                             "condition": "=Classes",
-                                            "visibilityCondition": {
-                                                "type": "Equal",
-                                                "value": [
-                                                    "Classes"
-                                                ],
-                                                "matcher": {
-                                                    "type": "Parent"
-                                                }
-                                            },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 32,
-                                            "restricted": false,
+                                            "order": 33,
                                             "rootField": false,
+                                            "restricted": false,
                                             "defaultValue": "rounded-md border border-gray-300 border-l-2 border-l-sky-600 shadow-sm hover:bg-sky-800 hover:text-white p-2 bg-white"
                                         },
                                         {
@@ -985,20 +843,11 @@
                                                 "extensions": {}
                                             },
                                             "condition": "=Icon",
-                                            "visibilityCondition": {
-                                                "type": "Equal",
-                                                "value": [
-                                                    "Icon"
-                                                ],
-                                                "matcher": {
-                                                    "type": "Parent"
-                                                }
-                                            },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 33,
-                                            "restricted": false,
+                                            "order": 34,
                                             "rootField": false,
+                                            "restricted": false,
                                             "defaultValue": null
                                         },
                                         {
@@ -1012,20 +861,11 @@
                                                 "extensions": {}
                                             },
                                             "condition": "=Attention",
-                                            "visibilityCondition": {
-                                                "type": "Equal",
-                                                "value": [
-                                                    "Attention"
-                                                ],
-                                                "matcher": {
-                                                    "type": "Parent"
-                                                }
-                                            },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 34,
-                                            "restricted": false,
+                                            "order": 35,
                                             "rootField": false,
+                                            "restricted": false,
                                             "defaultValue": null
                                         },
                                         {
@@ -1039,26 +879,17 @@
                                                 "extensions": {}
                                             },
                                             "condition": "=Visibility",
-                                            "visibilityCondition": {
-                                                "type": "Equal",
-                                                "value": [
-                                                    "Visibility"
-                                                ],
-                                                "matcher": {
-                                                    "type": "Parent"
-                                                }
-                                            },
                                             "duplicable": true,
                                             "fields": [],
-                                            "order": 35,
-                                            "restricted": false,
+                                            "order": 36,
                                             "rootField": false,
+                                            "restricted": false,
                                             "defaultValue": null
                                         }
                                     ],
-                                    "order": 31,
-                                    "restricted": false,
+                                    "order": 32,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1072,18 +903,17 @@
                                         "extensions": {}
                                     },
                                     "condition": null,
-                                    "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 36,
-                                    "restricted": false,
+                                    "order": 37,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 30,
-                            "restricted": false,
+                            "order": 31,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -1111,15 +941,6 @@
                                 "extensions": {}
                             },
                             "condition": "=Totals",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Totals"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [
                                 {
@@ -1141,20 +962,11 @@
                                         }
                                     },
                                     "condition": "=Classes",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Classes"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 38,
-                                    "restricted": false,
+                                    "order": 39,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": "w-full table-auto"
                                 },
                                 {
@@ -1168,26 +980,17 @@
                                         "extensions": {}
                                     },
                                     "condition": "=InputVar",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "InputVar"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": true,
                                     "fields": [],
-                                    "order": 39,
-                                    "restricted": false,
+                                    "order": 40,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 37,
-                            "restricted": false,
+                            "order": 38,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -1201,15 +1004,6 @@
                                 "extensions": {}
                             },
                             "condition": "=Totals",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Totals"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": true,
                             "fields": [
                                 {
@@ -1237,7 +1031,6 @@
                                         "extensions": {}
                                     },
                                     "condition": null,
-                                    "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [
                                         {
@@ -1259,20 +1052,11 @@
                                                 }
                                             },
                                             "condition": "=LineClasses",
-                                            "visibilityCondition": {
-                                                "type": "Equal",
-                                                "value": [
-                                                    "LineClasses"
-                                                ],
-                                                "matcher": {
-                                                    "type": "Parent"
-                                                }
-                                            },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 42,
-                                            "restricted": false,
+                                            "order": 43,
                                             "rootField": false,
+                                            "restricted": false,
                                             "defaultValue": "text-right transition ease-in-out rounded ring-offset-0 hover:ring-1 ring-stone-300"
                                         },
                                         {
@@ -1294,26 +1078,17 @@
                                                 }
                                             },
                                             "condition": "=TitleClasses",
-                                            "visibilityCondition": {
-                                                "type": "Equal",
-                                                "value": [
-                                                    "TitleClasses"
-                                                ],
-                                                "matcher": {
-                                                    "type": "Parent"
-                                                }
-                                            },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 43,
-                                            "restricted": false,
+                                            "order": 44,
                                             "rootField": false,
+                                            "restricted": false,
                                             "defaultValue": "text-left text-stone-600 p-1"
                                         }
                                     ],
-                                    "order": 41,
-                                    "restricted": false,
+                                    "order": 42,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1341,7 +1116,6 @@
                                         "extensions": {}
                                     },
                                     "condition": null,
-                                    "visibilityCondition": null,
                                     "duplicable": true,
                                     "fields": [
                                         {
@@ -1372,7 +1146,6 @@
                                                 "extensions": {}
                                             },
                                             "condition": null,
-                                            "visibilityCondition": null,
                                             "duplicable": false,
                                             "fields": [
                                                 {
@@ -1394,20 +1167,11 @@
                                                         }
                                                     },
                                                     "condition": "=Classes",
-                                                    "visibilityCondition": {
-                                                        "type": "Equal",
-                                                        "value": [
-                                                            "Classes"
-                                                        ],
-                                                        "matcher": {
-                                                            "type": "Parent"
-                                                        }
-                                                    },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 46,
-                                                    "restricted": false,
+                                                    "order": 47,
                                                     "rootField": false,
+                                                    "restricted": false,
                                                     "defaultValue": "Default Info text-sm text-stone-800"
                                                 },
                                                 {
@@ -1421,20 +1185,11 @@
                                                         "extensions": {}
                                                     },
                                                     "condition": "=View",
-                                                    "visibilityCondition": {
-                                                        "type": "Equal",
-                                                        "value": [
-                                                            "View"
-                                                        ],
-                                                        "matcher": {
-                                                            "type": "Parent"
-                                                        }
-                                                    },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 47,
-                                                    "restricted": false,
+                                                    "order": 48,
                                                     "rootField": false,
+                                                    "restricted": false,
                                                     "defaultValue": null
                                                 },
                                                 {
@@ -1448,20 +1203,11 @@
                                                         "extensions": {}
                                                     },
                                                     "condition": "=Attention",
-                                                    "visibilityCondition": {
-                                                        "type": "Equal",
-                                                        "value": [
-                                                            "Attention"
-                                                        ],
-                                                        "matcher": {
-                                                            "type": "Parent"
-                                                        }
-                                                    },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 48,
-                                                    "restricted": false,
+                                                    "order": 49,
                                                     "rootField": false,
+                                                    "restricted": false,
                                                     "defaultValue": null
                                                 },
                                                 {
@@ -1483,20 +1229,11 @@
                                                         }
                                                     },
                                                     "condition": "=AttentionClasses",
-                                                    "visibilityCondition": {
-                                                        "type": "Equal",
-                                                        "value": [
-                                                            "AttentionClasses"
-                                                        ],
-                                                        "matcher": {
-                                                            "type": "Parent"
-                                                        }
-                                                    },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 49,
-                                                    "restricted": false,
+                                                    "order": 50,
                                                     "rootField": false,
+                                                    "restricted": false,
                                                     "defaultValue": "fa-solid fa-circle pr-1 animate-pulse text-lg align-middle"
                                                 },
                                                 {
@@ -1510,26 +1247,17 @@
                                                         "extensions": {}
                                                     },
                                                     "condition": "=Unit",
-                                                    "visibilityCondition": {
-                                                        "type": "Equal",
-                                                        "value": [
-                                                            "Unit"
-                                                        ],
-                                                        "matcher": {
-                                                            "type": "Parent"
-                                                        }
-                                                    },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 50,
-                                                    "restricted": false,
+                                                    "order": 51,
                                                     "rootField": false,
+                                                    "restricted": false,
                                                     "defaultValue": null
                                                 }
                                             ],
-                                            "order": 45,
-                                            "restricted": false,
+                                            "order": 46,
                                             "rootField": false,
+                                            "restricted": false,
                                             "defaultValue": null
                                         },
                                         {
@@ -1543,24 +1271,23 @@
                                                 "extensions": {}
                                             },
                                             "condition": null,
-                                            "visibilityCondition": null,
                                             "duplicable": true,
                                             "fields": [],
-                                            "order": 51,
-                                            "restricted": false,
+                                            "order": 52,
                                             "rootField": false,
+                                            "restricted": false,
                                             "defaultValue": null
                                         }
                                     ],
-                                    "order": 44,
-                                    "restricted": false,
+                                    "order": 45,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": "Label"
                                 }
                             ],
-                            "order": 40,
-                            "restricted": false,
+                            "order": 41,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -1590,15 +1317,6 @@
                                 "extensions": {}
                             },
                             "condition": "=Kibana",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Kibana"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [
                                 {
@@ -1614,20 +1332,11 @@
                                         }
                                     },
                                     "condition": "=Classes",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Classes"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 53,
-                                    "restricted": false,
+                                    "order": 54,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1641,20 +1350,11 @@
                                         "extensions": {}
                                     },
                                     "condition": "=InputVar",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "InputVar"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": true,
                                     "fields": [],
-                                    "order": 54,
-                                    "restricted": false,
+                                    "order": 55,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1668,20 +1368,11 @@
                                         "extensions": {}
                                     },
                                     "condition": "=OutputVar",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "OutputVar"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 55,
-                                    "restricted": false,
+                                    "order": 56,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1695,26 +1386,17 @@
                                         "extensions": {}
                                     },
                                     "condition": "=Query",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Query"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 56,
-                                    "restricted": false,
+                                    "order": 57,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 52,
-                            "restricted": false,
+                            "order": 53,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -1728,20 +1410,11 @@
                                 "extensions": {}
                             },
                             "condition": "=Kibana",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Kibana"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [],
-                            "order": 57,
-                            "restricted": false,
+                            "order": 58,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -1771,15 +1444,6 @@
                                 "extensions": {}
                             },
                             "condition": "=Filter",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Filter"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [
                                 {
@@ -1795,20 +1459,11 @@
                                         }
                                     },
                                     "condition": "=Classes",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Classes"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 59,
-                                    "restricted": false,
+                                    "order": 60,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1831,15 +1486,6 @@
                                         "extensions": {}
                                     },
                                     "condition": "=Type",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Type"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [
                                         {
@@ -1853,20 +1499,11 @@
                                                 "extensions": {}
                                             },
                                             "condition": "=List",
-                                            "visibilityCondition": {
-                                                "type": "Equal",
-                                                "value": [
-                                                    "List"
-                                                ],
-                                                "matcher": {
-                                                    "type": "Parent"
-                                                }
-                                            },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 61,
-                                            "restricted": false,
+                                            "order": 62,
                                             "rootField": false,
+                                            "restricted": false,
                                             "defaultValue": null
                                         },
                                         {
@@ -1880,26 +1517,17 @@
                                                 "extensions": {}
                                             },
                                             "condition": "=Date",
-                                            "visibilityCondition": {
-                                                "type": "Equal",
-                                                "value": [
-                                                    "Date"
-                                                ],
-                                                "matcher": {
-                                                    "type": "Parent"
-                                                }
-                                            },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 62,
-                                            "restricted": false,
+                                            "order": 63,
                                             "rootField": false,
+                                            "restricted": false,
                                             "defaultValue": null
                                         }
                                     ],
-                                    "order": 60,
-                                    "restricted": false,
+                                    "order": 61,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1919,26 +1547,17 @@
                                         "extensions": {}
                                     },
                                     "condition": "=Placeholder",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Placeholder"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 63,
-                                    "restricted": false,
+                                    "order": 64,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": "Pesquisar..."
                                 }
                             ],
-                            "order": 58,
-                            "restricted": false,
+                            "order": 59,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -1952,20 +1571,11 @@
                                 "extensions": {}
                             },
                             "condition": "=Filter",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Filter"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [],
-                            "order": 64,
-                            "restricted": false,
+                            "order": 65,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -1979,20 +1589,11 @@
                                 "extensions": {}
                             },
                             "condition": "=MD List",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "MD List"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [],
-                            "order": 65,
-                            "restricted": false,
+                            "order": 66,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -2022,15 +1623,6 @@
                                 "extensions": {}
                             },
                             "condition": "=Calendar",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Calendar"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [
                                 {
@@ -2046,20 +1638,11 @@
                                         }
                                     },
                                     "condition": "=Classes",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Classes"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 67,
-                                    "restricted": false,
+                                    "order": 68,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2073,20 +1656,11 @@
                                         "extensions": {}
                                     },
                                     "condition": "=InputVar",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "InputVar"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": true,
                                     "fields": [],
-                                    "order": 68,
-                                    "restricted": false,
+                                    "order": 69,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2106,20 +1680,11 @@
                                         "extensions": {}
                                     },
                                     "condition": "=Settings",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Settings"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 69,
-                                    "restricted": false,
+                                    "order": 70,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2146,20 +1711,11 @@
                                         "extensions": {}
                                     },
                                     "condition": "=Settings",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Settings"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 70,
-                                    "restricted": false,
+                                    "order": 71,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": "FALSE"
                                 },
                                 {
@@ -2173,20 +1729,11 @@
                                         "extensions": {}
                                     },
                                     "condition": "=Settings",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Settings"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 71,
-                                    "restricted": false,
+                                    "order": 72,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2200,20 +1747,11 @@
                                         "extensions": {}
                                     },
                                     "condition": "=Settings",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Settings"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 72,
-                                    "restricted": false,
+                                    "order": 73,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2227,26 +1765,17 @@
                                         "extensions": {}
                                     },
                                     "condition": "=OutputVar",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "OutputVar"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 73,
-                                    "restricted": false,
+                                    "order": 74,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 66,
-                            "restricted": false,
+                            "order": 67,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -2262,22 +1791,13 @@
                                 "extensions": {}
                             },
                             "condition": "=Calendar",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Calendar"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": true,
                             "fields": [
                                 {
                                     "id": null,
                                     "name": "Definition",
-                                    "required": null,
-                                    "description": "$definition ",
+                                    "required": "mandatory",
+                                    "description": "$definition",
                                     "configuration": {
                                         "description": "",
                                         "keys": {},
@@ -2286,113 +1806,107 @@
                                         }
                                     },
                                     "condition": null,
-                                    "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 75,
-                                    "restricted": false,
+                                    "order": 76,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
                                     "id": null,
                                     "name": "DateStartEventField",
-                                    "required": null,
-                                    "description": "Name of the definition date field that represents the beginning of the event ",
+                                    "required": "mandatory",
+                                    "description": "Name of the definition date field that represents the beginning of the event",
                                     "configuration": {
                                         "description": "Name of the definition date field that represents the beginning of the event",
                                         "keys": {},
                                         "extensions": {}
                                     },
                                     "condition": null,
-                                    "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 76,
-                                    "restricted": false,
+                                    "order": 77,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
                                     "id": null,
                                     "name": "DateEndEventField",
                                     "required": null,
-                                    "description": "Name of the definition date field that represents the end of the event ",
+                                    "description": "Name of the definition date field that represents the end of the event",
                                     "configuration": {
                                         "description": "Name of the definition date field that represents the end of the event",
                                         "keys": {},
                                         "extensions": {}
                                     },
                                     "condition": null,
-                                    "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 77,
-                                    "restricted": false,
+                                    "order": 78,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
                                     "id": null,
                                     "name": "DescriptionEventField",
-                                    "required": null,
-                                    "description": "Name of the definition field to use as the event description ",
+                                    "required": "mandatory",
+                                    "description": "Name of the definition field to use as the event description",
                                     "configuration": {
                                         "description": "Name of the definition field to use as the event description",
                                         "keys": {},
                                         "extensions": {}
                                     },
                                     "condition": null,
-                                    "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 78,
-                                    "restricted": false,
+                                    "order": 79,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
                                     "id": null,
                                     "name": "StateEventField",
                                     "required": null,
-                                    "description": "Name of the field to calculate the color for the event. If not defined it will use always the same color for all events ",
+                                    "description": "Name of the field to calculate the color for the event. If not defined it will use always the same color for all events",
                                     "configuration": {
                                         "description": "Name of the field to calculate the color for the event. If not defined it will use always the same color for all events",
                                         "keys": {},
                                         "extensions": {}
                                     },
                                     "condition": null,
-                                    "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 79,
-                                    "restricted": false,
+                                    "order": 80,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
                                     "id": null,
                                     "name": "EventsQuery",
                                     "required": null,
-                                    "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition ",
+                                    "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition",
                                     "configuration": {
                                         "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition",
                                         "keys": {},
                                         "extensions": {}
                                     },
                                     "condition": null,
-                                    "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 80,
-                                    "restricted": false,
+                                    "order": 81,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 74,
-                            "restricted": false,
+                            "order": 75,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -2423,15 +1937,6 @@
                                 "extensions": {}
                             },
                             "condition": "=List",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "List"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [
                                 {
@@ -2445,20 +1950,11 @@
                                         "extensions": {}
                                     },
                                     "condition": "=InputVar",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "InputVar"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": true,
                                     "fields": [],
-                                    "order": 82,
-                                    "restricted": false,
+                                    "order": 83,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2472,26 +1968,17 @@
                                         "extensions": {}
                                     },
                                     "condition": "=SetDefaultView",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "SetDefaultView"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 83,
-                                    "restricted": false,
+                                    "order": 84,
                                     "rootField": false,
+                                    "restricted": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 81,
-                            "restricted": false,
+                            "order": 82,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -2505,20 +1992,11 @@
                                 "extensions": {}
                             },
                             "condition": "=List",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "List"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [],
-                            "order": 84,
-                            "restricted": false,
+                            "order": 85,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         },
                         {
@@ -2532,32 +2010,23 @@
                                 "extensions": {}
                             },
                             "condition": "=List",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "List"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
                             "duplicable": false,
                             "fields": [],
-                            "order": 85,
-                            "restricted": false,
+                            "order": 86,
                             "rootField": false,
+                            "restricted": false,
                             "defaultValue": null
                         }
                     ],
-                    "order": 23,
-                    "restricted": false,
+                    "order": 24,
                     "rootField": false,
+                    "restricted": false,
                     "defaultValue": null
                 }
             ],
-            "order": 19,
-            "restricted": false,
+            "order": 20,
             "rootField": true,
+            "restricted": false,
             "defaultValue": null
         }
     ],
