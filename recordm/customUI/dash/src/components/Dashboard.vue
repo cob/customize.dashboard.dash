@@ -31,10 +31,6 @@
         },
         created() {
             this.statePersistence = []
-            this.vars.forEach(varName => {
-                this.statePersistence[varName] = new ComponentStatePersistence(varName,this.activateFromPersistenceChange(varName))
-                this.dashboard.dashboardContext.vars[varName] = this.statePersistence[varName].content
-            });
         },
         beforeDestroy() {
             this.vars.forEach(varName => {
@@ -49,6 +45,20 @@
             grid()    { return this.options['Grid']             || "grid grid-flow-row-dense md:grid-cols-12" },
             vars()    { return this.options['VarName'].map(v => v['VarName']) },
             image()   { return this.options['Image'] ? "background-image: url(" + this.options['Image'] +  ");" : "" }
+        },
+        watch: {
+            vars(newVars,oldVars) {
+                // for (let varName of oldVars) {
+                //     if (varName == null) continue
+                //     this.statePersistence[varName].stop()
+                // };                
+                for (let varName of newVars) {
+                    if (varName == null) continue
+                    this.statePersistence[varName] = new ComponentStatePersistence(varName, this.activateFromPersistenceChange(varName))
+                    this.dashboard.dashboardContext.vars[varName] = this.statePersistence[varName].content
+                };
+            }
+
         },
         methods: {
             activateFromPersistenceChange(varName) {
