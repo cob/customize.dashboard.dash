@@ -44,7 +44,7 @@
         watch: {
             activeContent(newActiveContent) {
               let cleanContent = newActiveContent.replace(/\n/g,' ').trim()
-              let esFilter = cleanContent ? "(" + cleanContent +")" : "*"
+              let esFilter = cleanContent ? cleanContent : ""
               this.$set(this.component.vars, this.outputVar, esFilter)
             },
         },
