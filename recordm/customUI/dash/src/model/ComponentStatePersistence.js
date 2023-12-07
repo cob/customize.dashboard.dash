@@ -61,16 +61,22 @@ class ComponentStatePersistence {
                 } else {
                     delete statesInHash[this._id]
                 }
-        
+
                 hashParts[2] = Object.keys(statesInHash).length > 0 ? `${name}:${JSON.stringify(statesInHash)}` : name
-        
-                const newDestination = hashParts.join("/")
-                if(history.pushState) {
-                    history.pushState(null, null, newDestination);
-                }
-                else {
-                    location.hash = newDestination;
-                }
+
+                //
+
+                // const newDestination = hashParts.join("/")
+                // if(history.pushState) {
+                //     console.log("HM history.pushState")
+                //     history.pushState(null, null, newDestination);
+                // }
+                // else {
+                //     console.log("HM newDestination")
+                //     location.hash = newDestination;
+                // }
+
+                location.hash = hashParts.join("/");
             }
         }
         catch (e) {

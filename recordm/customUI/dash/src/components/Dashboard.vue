@@ -29,43 +29,13 @@
           dashboard: Object,
           menu: Array
         },
-        created() {
-            this.statePersistence = []
-        },
-        beforeDestroy() {
-            this.vars.forEach(varName => {
-                this.statePersistence[varName].stop()
-            });
-        },
         computed: {
             options() { return this.dashboard['DashboardCustomize'][0] },
             boards()  { return this.dashboard['Board'] },
             classes() { return this.options['DashboardClasses'] || "h-full bg-cover bg-center overflow-auto p-3" },
             width()   { return this.options['Width']            || "max-w-6xl mx-auto" },
             grid()    { return this.options['Grid']             || "grid grid-flow-row-dense md:grid-cols-12" },
-            vars()    { return this.options['VarName'].map(v => v['VarName']) },
             image()   { return this.options['Image'] ? "background-image: url(" + this.options['Image'] +  ");" : "" }
         },
-        watch: {
-            vars(newVars,oldVars) {
-                // for (let varName of oldVars) {
-                //     if (varName == null) continue
-                //     this.statePersistence[varName].stop()
-                // };                
-                for (let varName of newVars) {
-                    if (varName == null) continue
-                    this.statePersistence[varName] = new ComponentStatePersistence(varName, this.activateFromPersistenceChange(varName))
-                    this.dashboard.dashboardContext.vars[varName] = this.statePersistence[varName].content
-                };
-            }
-
-        },
-        methods: {
-            activateFromPersistenceChange(varName) {
-                return (newContent) => {
-                    this.$set(this.dashboard.dashboardContext.vars, varName, newContent)
-                }
-            }
-        }
     }
 </script>

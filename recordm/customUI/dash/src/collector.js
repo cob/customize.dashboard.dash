@@ -89,7 +89,9 @@ function parseDashboard(raw_dashboard) {
                     "TextClasses": "",
                     "Icon": "",
                     "TextAttention": "",
-                    "GroupVisibility": [{}]
+                    "GroupVisibility": [{}],
+                    "FilterVarName": "",
+                    "FilterValue": ""
                 }],
             }],
         },
