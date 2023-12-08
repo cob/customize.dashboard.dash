@@ -85,13 +85,12 @@ function parseDashboard(raw_dashboard) {
             }],
             "Text": [{
                 "Link": "",
+                "FilterVarName": "",
+                "FilterValue": "",
                 "TextCustomize": [{
                     "TextClasses": "",
                     "Icon": "",
-                    "TextAttention": "",
-                    "GroupVisibility": [{}],
-                    "FilterVarName": "",
-                    "FilterValue": ""
+                    "TextAttention": ""
                 }],
             }],
         },

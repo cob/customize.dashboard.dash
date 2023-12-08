@@ -2,7 +2,7 @@
     <div :class="classes">
         <component v-for="(line, i) in lines" :is="line.componentTag"
             :key="i"
-            :class="[line.classes,'cursor-pointer']"
+            :class="[line.classes,{'cursor-pointer': line.clickable}]"
             :href="line.link || false"
             :onClick="line.script"
             @click="line.clickHandler"
@@ -48,13 +48,12 @@
                         script = link.substring('javascript:'.length)
                         link = ""
                     } else {
-                        if (!link) link = "";
                         componentTag = "a"
                     }
 
-                    const filterVarName = line["TextCustomize"][0]["FilterVarName"];
-                    const filterValue = line["TextCustomize"][0]["FilterValue"];
-                    const clickHandler = filterVarName ? ((_) => this.activateFromInputChange(filterVarName, filterValue)) : (() => true)
+                    const filterVarName = line["FilterVarName"];
+                    const filterValue   = line["FilterValue"];
+                    const clickHandler  = filterVarName ? ((_) => this.activateFromInputChange(filterVarName, filterValue)) : (() => true)
 
                     return {
                         classes:      line["TextCustomize"][0]['TextClasses'] || "transition ease-in-out duration-300 rounded-md border border-gray-300 border-l-2 border-l-sky-600 shadow-sm transform hover:translate-x-0.5 p-2 bg-white",
