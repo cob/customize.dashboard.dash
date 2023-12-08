@@ -38,7 +38,6 @@
         computed: {
             options() { return this.component['MenuCustomize'][0] },
             classes() { return this.options['MenuClasses'] || "flex flex-col gap-y-2" },
-            filterValue() { return this.options['MenuClasses'] || "flex flex-col gap-y-2" },
             lines() {
                 return this.component['Text'].map( line => {
                     let script, componentTag
@@ -55,7 +54,7 @@
 
                     const filterVarName = line["TextCustomize"][0]["FilterVarName"];
                     const filterValue = line["TextCustomize"][0]["FilterValue"];
-                    const clickHandler = filterValue ? ((_) => this.activateFromInputChange(filterVarName, filterValue)) : (() => true)
+                    const clickHandler = filterVarName ? ((_) => this.activateFromInputChange(filterVarName, filterValue)) : (() => true)
 
                     return {
                         classes:      line["TextCustomize"][0]['TextClasses'] || "transition ease-in-out duration-300 rounded-md border border-gray-300 border-l-2 border-l-sky-600 shadow-sm transform hover:translate-x-0.5 p-2 bg-white",
