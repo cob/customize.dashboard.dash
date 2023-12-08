@@ -2,7 +2,7 @@
     <div :class="classes">
         <component v-for="(line, i) in lines" :is="line.componentTag"
             :key="i"
-            :class="[line.classes, {'cursor-pointer': line.clickable}]"
+            :class="[line.classes,'cursor-pointer']"
             :href="line.link || false"
             :onClick="line.script"
             @click="line.clickHandler"
