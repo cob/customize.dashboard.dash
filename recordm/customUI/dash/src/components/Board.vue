@@ -1,13 +1,16 @@
 <template>
-    <div :class="classes" :style="image" >
+    <div :class="classes" :style="image">
         <template v-for="(item, i) in components">
-            <Label    v-if="item['Component'] === 'Label'"    :component="item" :key="i" />
-            <Menu     v-if="item['Component'] === 'Menu'"     :component="item" :key="i" />
-            <Totals   v-if="item['Component'] === 'Totals'"   :component="item" :key="i" />
-            <Kibana   v-if="item['Component'] === 'Kibana'"   :component="item" :key="i" />
-            <Filtro   v-if="item['Component'] === 'Filter'"   :component="item" :key="i" />
-            <Calendar v-if="item['Component'] === 'Calendar'" :component="item" :key="i" />
-            <List     v-if="item['Component'] === 'List'"     :component="item" :key="i" />
+            <Markdown  v-if="item['Component'] === 'Markdown'"  :component="item" :key="i"/>
+            <Mermaid   v-if="item['Component'] === 'Mermaid'"   :component="item" :key="i" />
+            <Label     v-if="item['Component'] === 'Label'"     :component="item" :key="i" />
+            <Menu      v-if="item['Component'] === 'Menu'"      :component="item" :key="i" />
+            <Totals    v-if="item['Component'] === 'Totals'"    :component="item" :key="i" />
+            <Kibana    v-if="item['Component'] === 'Kibana'"    :component="item" :key="i" />
+            <Filtro    v-if="item['Component'] === 'Filter'"    :component="item" :key="i" />
+            <Calendar  v-if="item['Component'] === 'Calendar'"  :component="item" :key="i" />
+            <List      v-if="item['Component'] === 'List'"      :component="item" :key="i" />
+            <Activator v-if="item['Component'] === 'ModalActivator'" :component="item" :key="i" @show-modal="d => $emit('show-modal', d)"/>
         </template>
     </div>
 </template>
@@ -20,9 +23,12 @@
     import Filtro from './Filter.vue'
     import Calendar from './Calendar.vue'
     import List   from './List.vue'
+    import Mermaid from './Mermaid.vue'
+    import Activator from './Activator.vue'
+import Markdown from './Markdown.vue'
 
     export default {
-        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List },
+        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown },
         props: {
           board: Object
         },

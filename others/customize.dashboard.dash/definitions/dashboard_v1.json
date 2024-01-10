@@ -1,7 +1,7 @@
 {
     "id": null,
     "name": "Dashboard_v1",
-    "description": "@COB v6.22.0",
+    "description": "@COB v6.23.0",
     "duplicable": null,
     "state": "enabled",
     "fieldDefinitions": [
@@ -34,13 +34,13 @@
             "configuration": {
                 "description": "",
                 "keys": {
+                    "InstanceDescription": {},
                     "Reference": {
                         "args": {
                             "query": "*",
                             "definition": "Dashboard-Solutions"
                         }
-                    },
-                    "InstanceDescription": {}
+                    }
                 },
                 "extensions": {
                     "$groupEdit": {}
@@ -195,10 +195,10 @@
             "configuration": {
                 "description": "",
                 "keys": {
-                    "InstanceLabel": {},
                     "Expanded": {
                         "args": {}
-                    }
+                    },
+                    "InstanceLabel": {}
                 },
                 "extensions": {}
             },
@@ -271,7 +271,6 @@
                             "Select the defaults to change"
                         ]
                     },
-                    "Multiple": {},
                     "Select": {
                         "args": [
                             "Classes",
@@ -283,7 +282,8 @@
                             "Context"
                         ],
                         "default": null
-                    }
+                    },
+                    "Multiple": {}
                 },
                 "extensions": {}
             },
@@ -514,16 +514,16 @@
             "configuration": {
                 "description": "",
                 "keys": {
+                    "Link": {
+                        "args": {}
+                    },
+                    "InstanceDescription": {},
                     "AutoTextJoin": {
                         "args": [
                             "'/recordm/index.html#/cob.custom-resource/'",
                             "id",
                             "'/dash'"
                         ]
-                    },
-                    "InstanceDescription": {},
-                    "Link": {
-                        "args": {}
                     }
                 },
                 "extensions": {}
@@ -585,14 +585,14 @@
                                     "Select the defaults to change"
                                 ]
                             },
-                            "Multiple": {},
                             "Select": {
                                 "args": [
                                     "Classes",
                                     "Image"
                                 ],
                                 "default": null
-                            }
+                            },
+                            "Multiple": {}
                         },
                         "extensions": {}
                     },
@@ -674,11 +674,10 @@
                     "id": null,
                     "name": "Component",
                     "required": null,
-                    "description": "$[Label,Menu,Totals,Kibana,Filter,Calendar,List] $instanceDescription $style[singleColumn] ",
+                    "description": "$[Label,Menu,Totals,Kibana,Filter,Calendar,List,Markdown] $instanceDescription $style[singleColumn] ",
                     "configuration": {
                         "description": "",
                         "keys": {
-                            "InstanceDescription": {},
                             "Select": {
                                 "args": [
                                     "Label",
@@ -687,10 +686,12 @@
                                     "Kibana",
                                     "Filter",
                                     "Calendar",
-                                    "List"
+                                    "List",
+                                    "Markdown"
                                 ],
                                 "default": null
-                            }
+                            },
+                            "InstanceDescription": {}
                         },
                         "extensions": {
                             "$style": {
@@ -717,14 +718,14 @@
                                             "Select the defaults to change"
                                         ]
                                     },
-                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
                                             "Image"
                                         ],
                                         "default": null
-                                    }
+                                    },
+                                    "Multiple": {}
                                 },
                                 "extensions": {}
                             },
@@ -814,11 +815,13 @@
                             "id": null,
                             "name": "Label",
                             "required": null,
-                            "description": null,
+                            "description": "$text",
                             "configuration": {
-                                "description": null,
+                                "description": "",
                                 "keys": {},
-                                "extensions": {}
+                                "extensions": {
+                                    "$text": {}
+                                }
                             },
                             "condition": "=Label",
                             "visibilityCondition": {
@@ -850,13 +853,13 @@
                                             "Select the defaults to change"
                                         ]
                                     },
-                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes"
                                         ],
                                         "default": null
-                                    }
+                                    },
+                                    "Multiple": {}
                                 },
                                 "extensions": {}
                             },
@@ -950,7 +953,6 @@
                                                     "Select the defaults to change"
                                                 ]
                                             },
-                                            "Multiple": {},
                                             "Select": {
                                                 "args": [
                                                     "Classes",
@@ -960,7 +962,8 @@
                                                     "Filter"
                                                 ],
                                                 "default": null
-                                            }
+                                            },
+                                            "Multiple": {}
                                         },
                                         "extensions": {}
                                     },
@@ -1123,9 +1126,9 @@
                                     "id": null,
                                     "name": "FilterValue",
                                     "required": null,
-                                    "description": "The value of the filter.",
+                                    "description": "The value of the filter",
                                     "configuration": {
-                                        "description": "The value of the filter.",
+                                        "description": "The value of the filter",
                                         "keys": {},
                                         "extensions": {}
                                     },
@@ -1166,14 +1169,14 @@
                                             "Select the defaults to change"
                                         ]
                                     },
-                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
                                             "InputVar"
                                         ],
                                         "default": null
-                                    }
+                                    },
+                                    "Multiple": {}
                                 },
                                 "extensions": {}
                             },
@@ -1292,14 +1295,14 @@
                                                     "Select the defaults to change"
                                                 ]
                                             },
-                                            "Multiple": {},
                                             "Select": {
                                                 "args": [
                                                     "LineClasses",
                                                     "TitleClasses"
                                                 ],
                                                 "default": null
-                                            }
+                                            },
+                                            "Multiple": {}
                                         },
                                         "extensions": {}
                                     },
@@ -1424,7 +1427,6 @@
                                                             "Select the defaults to change"
                                                         ]
                                                     },
-                                                    "Multiple": {},
                                                     "Select": {
                                                         "args": [
                                                             "Classes",
@@ -1434,7 +1436,8 @@
                                                             "Unit"
                                                         ],
                                                         "default": null
-                                                    }
+                                                    },
+                                                    "Multiple": {}
                                                 },
                                                 "extensions": {}
                                             },
@@ -1643,7 +1646,6 @@
                                             "Select the defaults to change"
                                         ]
                                     },
-                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
@@ -1652,7 +1654,8 @@
                                             "Query"
                                         ],
                                         "default": null
-                                    }
+                                    },
+                                    "Multiple": {}
                                 },
                                 "extensions": {}
                             },
@@ -1815,7 +1818,7 @@
                             "id": null,
                             "name": "FilterCustomize",
                             "required": null,
-                            "description": "$[Classes,noButton,Type,Placeholder] $multiple $help[Select the defaults to change] ",
+                            "description": "$[Classes,noButton,Placeholder] $multiple $help[Select the defaults to change] ",
                             "configuration": {
                                 "description": "",
                                 "keys": {
@@ -1824,16 +1827,15 @@
                                             "Select the defaults to change"
                                         ]
                                     },
-                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
                                             "noButton",
-                                            "Type",
                                             "Placeholder"
                                         ],
                                         "default": null
-                                    }
+                                    },
+                                    "Multiple": {}
                                 },
                                 "extensions": {}
                             },
@@ -1984,7 +1986,6 @@
                                             "Select the defaults to change"
                                         ]
                                     },
-                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
@@ -1993,7 +1994,8 @@
                                             "Settings"
                                         ],
                                         "default": null
-                                    }
+                                    },
+                                    "Multiple": {}
                                 },
                                 "extensions": {}
                             },
@@ -2106,17 +2108,17 @@
                                     "configuration": {
                                         "description": "",
                                         "keys": {
+                                            "Default": {
+                                                "args": {
+                                                    "value": "FALSE"
+                                                }
+                                            },
                                             "Select": {
                                                 "args": [
                                                     "TRUE",
                                                     "FALSE"
                                                 ],
                                                 "default": null
-                                            },
-                                            "Default": {
-                                                "args": {
-                                                    "value": "FALSE"
-                                                }
                                             }
                                         },
                                         "extensions": {}
@@ -2384,7 +2386,6 @@
                                             "Select the defaults to change"
                                         ]
                                     },
-                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "InputVar",
@@ -2394,7 +2395,8 @@
                                             "CreateAndDelete"
                                         ],
                                         "default": null
-                                    }
+                                    },
+                                    "Multiple": {}
                                 },
                                 "extensions": {}
                             },
@@ -2520,6 +2522,111 @@
                             "duplicable": false,
                             "fields": [],
                             "order": 84,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "MarkdownCustomize",
+                            "required": null,
+                            "description": "$[Classes] $multiple $help[Select the defaults to change]",
+                            "configuration": {
+                                "description": "",
+                                "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Select": {
+                                        "args": [
+                                            "Classes"
+                                        ],
+                                        "default": null
+                                    },
+                                    "Multiple": {}
+                                },
+                                "extensions": {}
+                            },
+                            "condition": "=Markdown",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "Markdown"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [
+                                {
+                                    "id": null,
+                                    "name": "Classes",
+                                    "required": null,
+                                    "description": "$text $default(text-justify text-gray-700) Default: text-justify text-gray-700",
+                                    "configuration": {
+                                        "description": "Default: text-justify text-gray-700",
+                                        "keys": {
+                                            "Default": {
+                                                "args": {
+                                                    "value": "text-justify text-gray-700"
+                                                }
+                                            }
+                                        },
+                                        "extensions": {
+                                            "$text": {}
+                                        }
+                                    },
+                                    "condition": "=Classes",
+                                    "visibilityCondition": {
+                                        "type": "Equal",
+                                        "value": [
+                                            "Classes"
+                                        ],
+                                        "matcher": {
+                                            "type": "Parent"
+                                        }
+                                    },
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 86,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": "text-justify text-gray-700"
+                                }
+                            ],
+                            "order": 85,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "Content",
+                            "required": null,
+                            "description": "$markdown",
+                            "configuration": {
+                                "description": "",
+                                "keys": {},
+                                "extensions": {
+                                    "$markdown": {}
+                                }
+                            },
+                            "condition": "=Markdown",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "Markdown"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [],
+                            "order": 87,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null

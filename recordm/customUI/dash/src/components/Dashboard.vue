@@ -5,8 +5,11 @@
         </div>
         
         <div>
-            <div :class="width + ' ' + grid">
-                <Board v-for="(board,i) in boards" :board="board" :key="board.instanceId+'-'+i" />
+            <div :class="width + ' ' + grid" >
+                <template  v-for="(board,i) in boards">
+                    <Modal v-if="isModal(board) && board.Board == activeModal" :board="board" :key="board.instanceId + '-modal-' + i"  @show-modal="toggleModal" />
+                    <Board v-else-if="!isModal(board)" :board="board" :key="board.instanceId + '-' + i" @show-modal="toggleModal" />
+                </template>
             </div>
         </div>
         <div v-if="dashboard.dashboardContext.user.isSystem" style="position: absolute;bottom: 5px;right: 5px;">
@@ -20,15 +23,20 @@
 </template>
 
 <script>
-    import Board from './Board.vue'
-    import ComponentStatePersistence from "@/model/ComponentStatePersistence"
+import Board from './Board.vue'
+import Modal from './Modal.vue'
+import ComponentStatePersistence from "@/model/ComponentStatePersistence"
+
 
     export default {
-        components: { Board },
+        components: { Board, Modal },
         props: {
           dashboard: Object,
-          menu: Array
+          menu: Array,
         },
+        data: () => ({
+          activeModal : String
+        }),
         created() {
             this.statePersistence = []
         },
@@ -65,6 +73,14 @@
                 return (newContent) => {
                     this.$set(this.dashboard.dashboardContext.vars, varName, newContent)
                 }
+            },
+            toggleModal(payload) {
+                this.activeModal = payload
+            },
+            isModal(board) {
+                const options = board['BoardCustomize'][0]['BoardCustomize']
+                if (options)
+                    return options.split("\u0000").indexOf("IsModal") !== -1
             }
         }
     }

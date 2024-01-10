@@ -72,6 +72,26 @@ function parseDashboard(raw_dashboard) {
     raw_dashboard.fields.reduce(collect, dash);
 
     const ComponentsTemplates = {
+        "Mermaid" : {
+            "MermaidCustomize" : [{
+                "LinkClasses" : "",
+                "DiagramClasses" : ""
+            }],
+            "Process" : "",
+        },        
+        "Markdown": {
+            "Content" : "",
+            "MarkdownCustomize": [{
+                "MarkdownClasses" : "",
+                "Mode" : ""
+            }]
+        },
+        "ModalActivator" : {
+            "ModalActivatorCustomize" : [{
+                "ModalActivatorClasses" : ""
+            }],
+            "ModalBoardName": "",
+        },
         "Label": {
             "LabelCustomize": [{
                 "LabelClasses": "",
