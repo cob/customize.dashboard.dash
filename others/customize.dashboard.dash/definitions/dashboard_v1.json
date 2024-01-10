@@ -576,7 +576,7 @@
                     "id": null,
                     "name": "BoardCustomize",
                     "required": null,
-                    "description": "$[Classes,Image] $multiple $help[Select the defaults to change]",
+                    "description": "$[Classes,Image,IsModal] $multiple $help[Select the defaults to change]",
                     "configuration": {
                         "description": "",
                         "keys": {
@@ -588,7 +588,8 @@
                             "Select": {
                                 "args": [
                                     "Classes",
-                                    "Image"
+                                    "Image",
+                                    "IsModal"
                                 ],
                                 "default": null
                             },
@@ -2528,7 +2529,168 @@
                         },
                         {
                             "id": null,
-                            "name": "MarkdownCustomize",
+                            "name": "Process",
+                            "required": null,
+                            "description": "$ref(Business Processes, *)",
+                            "configuration": {
+                                "description": "",
+                                "keys": {
+                                    "Reference": {
+                                        "args": {
+                                            "query": "*",
+                                            "definition": "Business Processes"
+                                        }
+                                    }
+                                },
+                                "extensions": {}
+                            },
+                            "condition": "=Mermaid",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "Mermaid"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [],
+                            "order": 85,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "MermaidCustomize",
+                            "required": null,
+                            "description": "$[LinkClasses,DiagramClasses] $multiple $help[Select the defaults to change]",
+                            "configuration": {
+                                "description": "",
+                                "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Select": {
+                                        "args": [
+                                            "LinkClasses",
+                                            "DiagramClasses"
+                                        ],
+                                        "default": null
+                                    },
+                                    "Multiple": {}
+                                },
+                                "extensions": {}
+                            },
+                            "condition": "=Mermaid",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "Mermaid"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [
+                                {
+                                    "id": null,
+                                    "name": "LinkClasses",
+                                    "required": null,
+                                    "description": "$text",
+                                    "configuration": {
+                                        "description": "",
+                                        "keys": {},
+                                        "extensions": {
+                                            "$text": {}
+                                        }
+                                    },
+                                    "condition": "=LinkClasses",
+                                    "visibilityCondition": {
+                                        "type": "Equal",
+                                        "value": [
+                                            "LinkClasses"
+                                        ],
+                                        "matcher": {
+                                            "type": "Parent"
+                                        }
+                                    },
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 87,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": null
+                                },
+                                {
+                                    "id": null,
+                                    "name": "DiagramClasses",
+                                    "required": null,
+                                    "description": "$text",
+                                    "configuration": {
+                                        "description": "",
+                                        "keys": {},
+                                        "extensions": {
+                                            "$text": {}
+                                        }
+                                    },
+                                    "condition": "=DiagramClasses",
+                                    "visibilityCondition": {
+                                        "type": "Equal",
+                                        "value": [
+                                            "DiagramClasses"
+                                        ],
+                                        "matcher": {
+                                            "type": "Parent"
+                                        }
+                                    },
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 88,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": null
+                                }
+                            ],
+                            "order": 86,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "ModalBoardName",
+                            "required": null,
+                            "description": "Name of the board will be shown as clickable text",
+                            "configuration": {
+                                "description": "Name of the board will be shown as clickable text",
+                                "keys": {},
+                                "extensions": {}
+                            },
+                            "condition": "=ModalActivator",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "ModalActivator"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [],
+                            "order": 89,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "ModalActivatorCustomize",
                             "required": null,
                             "description": "$[Classes] $multiple $help[Select the defaults to change]",
                             "configuration": {
@@ -2542,6 +2704,83 @@
                                     "Select": {
                                         "args": [
                                             "Classes"
+                                        ],
+                                        "default": null
+                                    },
+                                    "Multiple": {}
+                                },
+                                "extensions": {}
+                            },
+                            "condition": "=ModalActivator",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "ModalActivator"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [
+                                {
+                                    "id": null,
+                                    "name": "ModalActivatorClasses",
+                                    "required": null,
+                                    "description": "$text $default(cursor-pointer text-blue-400 text-sm underline) default: cursor-pointer text-blue-400 text-sm underline ",
+                                    "configuration": {
+                                        "description": "default: cursor-pointer text-blue-400 text-sm underline",
+                                        "keys": {
+                                            "Default": {
+                                                "args": {
+                                                    "value": "cursor-pointer text-blue-400 text-sm underline"
+                                                }
+                                            }
+                                        },
+                                        "extensions": {
+                                            "$text": {}
+                                        }
+                                    },
+                                    "condition": "=Classes",
+                                    "visibilityCondition": {
+                                        "type": "Equal",
+                                        "value": [
+                                            "Classes"
+                                        ],
+                                        "matcher": {
+                                            "type": "Parent"
+                                        }
+                                    },
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 91,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": "cursor-pointer text-blue-400 text-sm underline"
+                                }
+                            ],
+                            "order": 90,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "MarkdownCustomize",
+                            "required": null,
+                            "description": "$[Classes,Mode] $multiple $help[Select the defaults to change]",
+                            "configuration": {
+                                "description": "",
+                                "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Select": {
+                                        "args": [
+                                            "Classes",
+                                            "Mode"
                                         ],
                                         "default": null
                                     },
@@ -2563,9 +2802,9 @@
                             "fields": [
                                 {
                                     "id": null,
-                                    "name": "Classes",
+                                    "name": "MarkdownClasses",
                                     "required": null,
-                                    "description": "$text $default(text-justify text-gray-700) Default: text-justify text-gray-700",
+                                    "description": "$text $default(text-justify text-gray-700) Default: text-justify text-gray-700 ",
                                     "configuration": {
                                         "description": "Default: text-justify text-gray-700",
                                         "keys": {
@@ -2591,13 +2830,50 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 86,
+                                    "order": 93,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": "text-justify text-gray-700"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "Mode",
+                                    "required": null,
+                                    "description": "$[*Light,Dark] $radio ",
+                                    "configuration": {
+                                        "description": "",
+                                        "keys": {
+                                            "Select": {
+                                                "args": [
+                                                    "Light",
+                                                    "Dark"
+                                                ],
+                                                "default": "Light"
+                                            }
+                                        },
+                                        "extensions": {
+                                            "$radio": {}
+                                        }
+                                    },
+                                    "condition": "=Mode",
+                                    "visibilityCondition": {
+                                        "type": "Equal",
+                                        "value": [
+                                            "Mode"
+                                        ],
+                                        "matcher": {
+                                            "type": "Parent"
+                                        }
+                                    },
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 94,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": "Light"
                                 }
                             ],
-                            "order": 85,
+                            "order": 92,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -2626,7 +2902,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 87,
+                            "order": 95,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
