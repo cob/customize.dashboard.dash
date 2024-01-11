@@ -78,7 +78,7 @@ function parseDashboard(raw_dashboard) {
                 "DiagramClasses" : ""
             }],
             "Process" : "",
-        },        
+        },
         "Markdown": {
             "Content" : "",
             "MarkdownCustomize": [{
@@ -142,7 +142,8 @@ function parseDashboard(raw_dashboard) {
                 "KibanaClasses": "",
                 "OutputVarKibana": "",
                 "InputVarKibana": [{}],
-                "InputQueryKibana": ""
+                "InputQueryKibana": "",
+                "KibanaTimeField": ""
             }],
             "ShareLink": "",
         },

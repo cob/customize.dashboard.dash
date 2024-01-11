@@ -30,6 +30,7 @@
             shareLink()   { return this.component['ShareLink']   || "" },
             classes()     { return this.options['KibanaClasses'] || "" },
             fixedQuery()  { return this.options['InputQueryKibana']|| "" },
+            kibanaTimeField()  { return this.options['KibanaTimeField']|| "" },
             inputs()      { return this.options['InputVarKibana'].map(v => v['InputVarKibana']) },
             inputFilter() {
               let filters = this.inputs.filter(v => this.component.vars[v]).map(v => this.component.vars[v]);
@@ -47,11 +48,11 @@
                 } else {
                     // Ajusta tamanho do iFrame, de acordo com a dimensão do conteúdo, quando a aplicação estiver pronta
                     if (!this.iFrame.contentWindow.document.getElementsByClassName("application").length && !this.iFrame.contentWindow.document.getElementsByClassName("dashboardViewport").length) {
-                        //Ainda está a carregar, espera mais um pouco 
+                        //Ainda está a carregar, espera mais um pouco
                         setTimeout( () => this.updateIFrameStyle(), 100)
                     } else {
                         // Visualizações ainda vai estar a carregar e o tamanho vai variando
-                        // Ir actualizando de 100ms em 100ms até 3s (SlowestLoading estimado), 
+                        // Ir actualizando de 100ms em 100ms até 3s (SlowestLoading estimado),
                         // para ter um comportamento optimizado tão instantânio qt possível
                         const SlowestLoading = 3000
                         for(let t = 100; t < SlowestLoading; t += 100) setTimeout(() => {
@@ -76,8 +77,18 @@
                 }
             },
             processKibanaEvent(event) {
+                if (!event || !event.data || !event.data.fromKibana) return;
+
+                let timeQuery = ""
+                let filtersQuery = ""
+
+                if (this.kibanaTimeField && event.data.time) {
+                  if (event.data.time.min) timeQuery += `${this.kibanaTimeField}:>=${event.data.time.min} `;
+                  if (event.data.time.max) timeQuery += `${this.kibanaTimeField}:<${event.data.time.max} `;
+                }
+
                 // Só vale a pena reagir aos eventos de mudança de filtro no Kibana
-                if(event && event.data && event.data.filters) {
+                if(event.data.filters) {
                     var filters = []
                     for (let filter of event.data.filters) {
                         let queryStr = "";
@@ -113,21 +124,24 @@
 
                         if (enabled) filters.push(negateStr + "(" + queryStr + ")");
                     }
-                    this.outputFilter = filters.length > 0 ? filters.join(" AND ") : ""
-                    this.$set(this.component.vars, this.outputVar, this.outputFilter)
+
+                    filtersQuery = filters.length > 0 ? filters.join(" AND ") : ""
                 }
+
+                this.outputFilter = `${filtersQuery} ${timeQuery}`;
+                this.$set(this.component.vars, this.outputVar, this.outputFilter)
             },
             updateKibanaQuery() {
                 if(!this.iFrame || !this.iFrame.contentWindow || !this.iFrame.contentWindow.document.head || !this.iFrame.contentWindow.document.getElementsByClassName("kbnTopNavMenu__wrapper").length) {
                     //O Kibana ainda não está pronto. Voltar a tentar em 100ms
                     setTimeout(this.updateKibanaQuery, 100)
                 } else if(this.inputFilter) {
-                    
+
                     if(this.iFrame.contentWindow.document.getElementsByClassName("euiLoadingChart").length > 0) {
                         //O Kibana já está pronto mas ainda está a carregar dados. Voltar a tentar em 100ms
                         setTimeout(this.updateKibanaQuery, 100)
                     } else {
-                        this.iFrame.contentWindow.postMessage({"query":{ "query_string":{ "query": this.inputFilter || "*" } }}, '*');                  
+                        this.iFrame.contentWindow.postMessage({"query":{ "query_string":{ "query": this.inputFilter || "*" } }}, '*');
                     }
                 }
             }
