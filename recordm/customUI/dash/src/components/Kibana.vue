@@ -83,8 +83,17 @@
                 let filtersQuery = ""
 
                 if (this.kibanaTimeField && event.data.time) {
-                  if (event.data.time.min) timeQuery += `${this.kibanaTimeField}:>=${event.data.time.min} `;
-                  if (event.data.time.max) timeQuery += `${this.kibanaTimeField}:<${event.data.time.max} `;
+                  // Sometimes the kibana will send expresssions like "now\/d+2d" or "2024-02-08T15:56:48.425Z"
+                  // When it is an expression like "now\/d+2d" Date.parse will return NaN
+
+                  let minDate = Date.parse(event.data.time.min)
+                  if (isNaN(minDate)) minDate = event.data.time.min
+
+                  let maxDate = Date.parse(event.data.time.max)
+                  if (isNaN(maxDate)) maxDate = event.data.time.max
+
+                  if (event.data.time.min) timeQuery += `${this.kibanaTimeField}:>=${minDate} `;
+                  if (event.data.time.max) timeQuery += `${this.kibanaTimeField}:<${maxDate} `;
                 }
 
                 // Só vale a pena reagir aos eventos de mudança de filtro no Kibana
