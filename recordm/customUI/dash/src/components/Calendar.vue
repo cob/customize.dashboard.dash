@@ -270,7 +270,16 @@
 
               const title = esInstance[descriptionEventField] || [esInstance.id]
               const startDate = parseInt(esInstance[startDateField][0], 10)
-              const endDate = endDateField && esInstance[endDateField] ? parseInt(esInstance[endDateField][0], 10) : null
+
+              let endDate = null;
+              if (endDateField) {
+                if (endDateField !== startDateField && esInstance[endDateField]) {
+                  endDate = parseInt(esInstance[endDateField][0], 10);
+
+                } else if (endDateField === startDateField) {
+                  endDate = startDate + 1000;
+                }
+              }
 
               let color
               if(stateField && stateField.startsWith("#")) {

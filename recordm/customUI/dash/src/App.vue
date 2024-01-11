@@ -356,7 +356,6 @@
             }
 
             const expression = `specifiedContext= ${specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, "\"") : "{}"}`;
-            console.debug(expression);
             eval(expression);
 
           } catch (e) {
