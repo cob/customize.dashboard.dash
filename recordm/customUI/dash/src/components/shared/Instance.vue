@@ -5,8 +5,8 @@
     </a>
     <div class='details flex flex-col flex-wrap justify-start'>
       <div class='flex flex-row mr-4 field-group max-w-xs'
-           v-for='(description,i) in instanceDescriptions' 
-           :key="i" 
+           v-for='(description,i) in instanceDescriptions'
+           :key="i"
       >
         <div class='whitespace-nowrap mr-1 text-gray-400 field'>{{ description.name }}:</div>
         <div class='whitespace-nowrap text-ellipsis overflow-hidden value' v-html="description.value"></div>
@@ -43,24 +43,26 @@ export default {
         return null
 
       } else {
-        return this.esInstance._definitionInfo.instanceDescription
-            .filter(fieldDefinition => this.esInstance[toEsFieldName(fieldDefinition.name)])
-            .map(fieldDefinition => {
-              let value = getValue(this.esInstance, fieldDefinition).join(', ')
-              if (fieldDefinition.description.indexOf("$datetime") >= 0) {
-                value = cob.utils.time.getLocalDateTimeFromTimeStamp(value * 1, cob.app.getLocale());
+        let objects = this.esInstance._definitionInfo.instanceDescription
+          .filter(fieldDefinition => this.esInstance[toEsFieldName(fieldDefinition.name)])
+          .map(fieldDefinition => {
+            let value = getValue(this.esInstance, fieldDefinition).join(', ')
+            if (fieldDefinition.description.indexOf("$datetime") >= 0) {
+              value = cob.utils.time.getLocalDateTimeFromTimeStamp(value * 1, cob.app.getLocale());
 
-              } else if (fieldDefinition.description.indexOf("$date") >= 0) {
-                value = cob.utils.time.getLocalDateFromTimeStamp(value * 1, cob.app.getLocale());
+            } else if (fieldDefinition.description.indexOf("$date") >= 0) {
+              value = cob.utils.time.getLocalDateFromTimeStamp(value * 1, cob.app.getLocale());
 
-              } else if (fieldDefinition.description.indexOf("$link") >= 0) {
-                value = "<a href='" + getValue(this.esInstance, fieldDefinition) + "'>link</a>"
-              }
-              return {
-                name: fieldDefinition.name,
-                value: value
-              }
-            });
+            } else if (fieldDefinition.description.indexOf("$link") >= 0) {
+              value = "<a href='" + getValue(this.esInstance, fieldDefinition) + "'>link</a>"
+            }
+            return JSON.stringify({
+              name: fieldDefinition.name,
+              value: value
+            })
+          });
+
+        return [...new Set(objects)].map(el => JSON.parse(el));
       }
     },
   }
