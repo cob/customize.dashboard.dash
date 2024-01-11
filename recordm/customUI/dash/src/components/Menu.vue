@@ -83,8 +83,10 @@
               return
             }
 
-            statePersistence.content = statePersistence.content !== filterValue ? filterValue : ""
-            this.$set(this.component.vars, filterVarName, filterValue)
+            const finalValue = statePersistence.content !== filterValue ? filterValue : ""
+
+            statePersistence.content = finalValue
+            this.$set(this.component.vars, filterVarName, finalValue)
           },
           activateFromPersistenceChange(filterVarName) {
             return (newContent) => {this.$set(this.component.vars, filterVarName, newContent)}
