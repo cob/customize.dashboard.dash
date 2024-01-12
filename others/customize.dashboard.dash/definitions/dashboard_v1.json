@@ -947,7 +947,7 @@
                   "id": null,
                   "name": "TextCustomize",
                   "required": null,
-                  "description": "$[Classes,Icon,Attention,Visibility] $multiple $help[Select the defaults to change] ",
+                  "description": "$[Classes,Icon,Attention,Visibility,Filter] $multiple $help[Select the defaults to change]",
                   "configuration": {
                     "description": "",
                     "keys": {
