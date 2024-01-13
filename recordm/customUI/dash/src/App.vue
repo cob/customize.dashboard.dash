@@ -233,7 +233,7 @@
         }
         userInfo.groupsQuery = userInfo.groups.length && userInfo.groups.map(g => "\"" + g.name + "\"").join(" OR ")
 
-        const currentUserScope = userInfo.groups.find && (userInfo.groups.find((grp) => grp.name.indexOf(SCOPE_ACCESS_PERMISSION_KEYWORD) === 0));
+        const currentUserScope = userInfo.groups && (userInfo.groups.find((grp) => grp.name.indexOf(SCOPE_ACCESS_PERMISSION_KEYWORD) === 0));
         if(currentUserScope) {
           userInfo.groupsQuery = userInfo.groupsQuery.replaceAll(currentUserScope.name.substring(SCOPE_ACCESS_PERMISSION_KEYWORD.length),"_SCOPE_")
         }
@@ -391,6 +391,7 @@
             dashboard.dashboardProcessor(dashboard.dashboardContext)
               .replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]") // Every last comma in array are removed. Ssupport UP TO 3 consequently commas
               .replaceAll(/(,(\s*))+/g, ",$2") //  Also remove double comma in the resulting arrays (maintain the spaces in case normal text with commas)
+              .replaceAll(/(?<!\\)\n/g, "\\n") // escapes newlines
           )
 
           for( let i = dashboard.boardQueries.length; i > 0 ; i-- ) {
