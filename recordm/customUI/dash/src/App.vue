@@ -233,7 +233,7 @@
         }
         userInfo.groupsQuery = userInfo.groups.length && userInfo.groups.map(g => "\"" + g.name + "\"").join(" OR ")
 
-        const currentUserScope = userInfo.groups && (userInfo.groups.find((grp) => grp.name.indexOf(SCOPE_ACCESS_PERMISSION_KEYWORD) === 0));
+        const currentUserScope = userInfo.groups.find && (userInfo.groups.find((grp) => grp.name.indexOf(SCOPE_ACCESS_PERMISSION_KEYWORD) === 0));
         if(currentUserScope) {
           userInfo.groupsQuery = userInfo.groupsQuery.replaceAll(currentUserScope.name.substring(SCOPE_ACCESS_PERMISSION_KEYWORD.length),"_SCOPE_")
         }
