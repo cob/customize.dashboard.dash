@@ -87,10 +87,10 @@
                   // When it is an expression like "now\/d+2d" Date.parse will return NaN
 
                   let minDate = Date.parse(event.data.time.min)
-                  if (isNaN(minDate)) minDate = event.data.time.min
+                  if (isNaN(minDate)) minDate = event.data.time.min.replace('/', '\\/')
 
                   let maxDate = Date.parse(event.data.time.max)
-                  if (isNaN(maxDate)) maxDate = event.data.time.max
+                  if (isNaN(maxDate)) maxDate = event.data.time.max.replace('/', '\\/')
 
                   if (event.data.time.min) timeQuery += `${this.kibanaTimeField}:>=${minDate} `;
                   if (event.data.time.max) timeQuery += `${this.kibanaTimeField}:<${maxDate} `;
