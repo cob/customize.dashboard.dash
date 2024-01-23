@@ -1,10 +1,10 @@
 <template>
     <div ref="modal" class="relative z-10" aria-labelledby="modal-title" role="dialog" id="modal-pc" aria-modal="true">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div class="flex min-h-full  items-center justify-center text-center ">
-                <div class="relative transform min-w-[80%] rounded-lg bg-white text-left shadow-xl transition-all">
-                    <div class="m-4 relative">
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto" @click="$emit('show-modal', false)" >
+            <div class="flex min-h-full  items-center justify-center text-center "  >
+                <div class="relative transform min-w-[50%] max-w-[80%] rounded-lg bg-white text-left shadow-xl transition-all" @click.stop >
+                    <div class="m-4 relative" >
                         <div class="overflow-y-scroll h-[70vh]">
                             <template v-for="(item, i) in components">
                                 <Markdown v-if="item['Component'] === 'Markdown'" :component="item" :key="i" />
