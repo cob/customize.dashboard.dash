@@ -99,6 +99,7 @@ function parseDashboard(raw_dashboard) {
                 "ModalActivatorClasses" : ""
             }],
             "ModalBoardName": "",
+            "ModalActivatorText": ""
         },
         "Label": {
             "LabelCustomize": [{
