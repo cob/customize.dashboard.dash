@@ -11,6 +11,7 @@
             <Calendar  v-if="item['Component'] === 'Calendar'"  :component="item" :key="i" />
             <List      v-if="item['Component'] === 'List'"      :component="item" :key="i" />
             <Activator v-if="item['Component'] === 'ModalActivator'" :component="item" :key="i" @show-modal="d => $emit('show-modal', d)"/>
+            <Slides    v-if="item['Component'] === 'Slides'"      :component="item" :key="i" />    
         </template>
     </div>
 </template>
@@ -25,10 +26,11 @@
     import List   from './List.vue'
     import Mermaid from './Mermaid.vue'
     import Activator from './Activator.vue'
-import Markdown from './Markdown.vue'
+    import Markdown from './Markdown.vue'
+    import Slides from './Slides.vue'
 
     export default {
-        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown },
+        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown, Slides },
         props: {
           board: Object
         },

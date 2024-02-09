@@ -16,6 +16,7 @@
                                 <Filtro v-if="item['Component'] === 'Filter'" :component="item" :key="i" />
                                 <Calendar v-if="item['Component'] === 'Calendar'" :component="item" :key="i" />
                                 <List v-if="item['Component'] === 'List'" :component="item" :key="i" />
+                                <Slides v-if="item['Component'] === 'Slides'" :component="item" :key="i" />    
                             </template>
                         </div>
                         <div class="mt-2">
@@ -43,9 +44,10 @@ import Filtro from './Filter.vue';
 import Calendar from './Calendar.vue';
 import List from './List.vue';
 import Markdown from './Markdown.vue';
+import Slides from './Slides.vue';
 
 export default {
-    components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Markdown },
+    components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Markdown, Slides },
     props: {
         board: Object
     },

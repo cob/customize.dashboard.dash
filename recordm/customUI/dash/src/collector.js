@@ -86,6 +86,12 @@ function parseDashboard(raw_dashboard) {
                 "Mode" : ""
             }]
         },
+        "Slides": {
+            "Content" : "",
+            "SlidesCustomize": [{
+                "SlidesClasses" : ""
+            }]
+        },
         "ModalActivator" : {
             "ModalActivatorCustomize" : [{
                 "ModalActivatorClasses" : ""
