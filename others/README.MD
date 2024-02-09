@@ -2,6 +2,17 @@
 
 ### Definition Upgrades:
 
+#### 6.28.0
+* New Fields in definiton Dashboard-Solutions
+* changes in "chooser" dashboard instance: 2 ways to do the update
+  * remove Chooser dashboard instance and import the new from `dashboard_chooser_0.28.0.xlsx` 
+  * OR look for "imagem" and "text_color" in the chooser instance of an updated server and copy the new values for the server being updated
+```
+NOVOS CAMPOS:
+Imagem -> Default:none $image 
+Text Color
+```
+
 #### 6.27.0
 * New Option ShowImport in List
 ```
