@@ -1,7 +1,7 @@
 {
   "id": null,
   "name": "Dashboard_v1",
-  "description": "@COB v6.25.0",
+  "description": "@COB v6.27.0",
   "duplicable": null,
   "state": "enabled",
   "fieldDefinitions": [
@@ -162,13 +162,13 @@
           "configuration": {
             "description": "",
             "keys": {
+              "InstanceDescription": {},
               "AutoRefField": {
                 "args": {
                   "source_field": "Solution",
                   "field_name": "Ordem"
                 }
-              },
-              "InstanceDescription": {}
+              }
             },
             "extensions": {}
           },
@@ -514,16 +514,16 @@
       "configuration": {
         "description": "",
         "keys": {
+          "InstanceDescription": {},
+          "Link": {
+            "args": {}
+          },
           "AutoTextJoin": {
             "args": [
               "'/recordm/index.html#/cob.custom-resource/'",
               "id",
               "'/dash'"
             ]
-          },
-          "InstanceDescription": {},
-          "Link": {
-            "args": {}
           }
         },
         "extensions": {}
@@ -947,7 +947,7 @@
                   "id": null,
                   "name": "TextCustomize",
                   "required": null,
-                  "description": "$[Classes,Icon,Attention,Visibility,Filter] $multiple $help[Select the defaults to change]",
+                  "description": "$[Classes,Icon,Attention,Visibility,Filter] $multiple $help[Select the defaults to change] ",
                   "configuration": {
                     "description": "",
                     "keys": {
@@ -962,7 +962,8 @@
                           "Classes",
                           "Icon",
                           "Attention",
-                          "Visibility"
+                          "Visibility",
+                          "Filter"
                         ],
                         "default": null
                       }
@@ -2285,7 +2286,7 @@
                   "id": null,
                   "name": "Definition",
                   "required": "mandatory",
-                  "description": "$definition ",
+                  "description": "$definition",
                   "configuration": {
                     "description": "",
                     "keys": {},
@@ -2306,7 +2307,7 @@
                   "id": null,
                   "name": "DateStartEventField",
                   "required": "mandatory",
-                  "description": "Name of the definition date field that represents the beginning of the event ",
+                  "description": "Name of the definition date field that represents the beginning of the event",
                   "configuration": {
                     "description": "Name of the definition date field that represents the beginning of the event",
                     "keys": {},
@@ -2325,7 +2326,7 @@
                   "id": null,
                   "name": "DateEndEventField",
                   "required": null,
-                  "description": "Name of the definition date field that represents the end of the event ",
+                  "description": "Name of the definition date field that represents the end of the event",
                   "configuration": {
                     "description": "Name of the definition date field that represents the end of the event",
                     "keys": {},
@@ -2344,7 +2345,7 @@
                   "id": null,
                   "name": "DescriptionEventField",
                   "required": "mandatory",
-                  "description": "Name of the definition field to use as the event description ",
+                  "description": "Name of the definition field to use as the event description",
                   "configuration": {
                     "description": "Name of the definition field to use as the event description",
                     "keys": {},
@@ -2363,7 +2364,7 @@
                   "id": null,
                   "name": "StateEventField",
                   "required": null,
-                  "description": "Name of the field to calculate the color for the event. If not defined it will use always the same color for all events ",
+                  "description": "Name of the field to calculate the color for the event. If not defined it will use always the same color for all events",
                   "configuration": {
                     "description": "Name of the field to calculate the color for the event. If not defined it will use always the same color for all events",
                     "keys": {},
@@ -2382,7 +2383,7 @@
                   "id": null,
                   "name": "EventsQuery",
                   "required": null,
-                  "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition ",
+                  "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition",
                   "configuration": {
                     "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition",
                     "keys": {},
@@ -2407,7 +2408,7 @@
               "id": null,
               "name": "ListCustomize",
               "required": null,
-              "description": "$[InputVar,SetDefaultView,ShowViews,ShowActions,CreateAndDelete] $multiple $help[Select the defaults to change]",
+              "description": "$[InputVar,SetDefaultView,ShowViews,ShowActions,ShowImport,CreateAndDelete] $multiple $help[Select the defaults to change]",
               "configuration": {
                 "description": "",
                 "keys": {
@@ -2423,6 +2424,7 @@
                       "SetDefaultView",
                       "ShowViews",
                       "ShowActions",
+                      "ShowImport",
                       "CreateAndDelete"
                     ],
                     "default": null
@@ -2558,6 +2560,40 @@
             },
             {
               "id": null,
+              "name": "Process",
+              "required": null,
+              "description": "$ref(Business Processes, *)",
+              "configuration": {
+                "description": "",
+                "keys": {
+                  "Reference": {
+                    "args": {
+                      "query": "*",
+                      "definition": "Business Processes"
+                    }
+                  }
+                },
+                "extensions": {}
+              },
+              "condition": "=Mermaid",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Mermaid"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 86,
+              "rootField": false,
+              "restricted": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
               "name": "MermaidCustomize",
               "required": null,
               "description": "$[LinkClasses,DiagramClasses] $multiple $help[Select the defaults to change]",
@@ -2616,7 +2652,7 @@
                   },
                   "duplicable": false,
                   "fields": [],
-                  "order": 87,
+                  "order": 88,
                   "rootField": false,
                   "restricted": false,
                   "defaultValue": null
@@ -2645,47 +2681,13 @@
                   },
                   "duplicable": false,
                   "fields": [],
-                  "order": 88,
+                  "order": 89,
                   "rootField": false,
                   "restricted": false,
                   "defaultValue": null
                 }
               ],
-              "order": 86,
-              "rootField": false,
-              "restricted": false,
-              "defaultValue": null
-            },
-            {
-              "id": null,
-              "name": "Process",
-              "required": null,
-              "description": "$ref(Business Processes, *)",
-              "configuration": {
-                "description": "",
-                "keys": {
-                  "Reference": {
-                    "args": {
-                      "query": "*",
-                      "definition": "Business Processes"
-                    }
-                  }
-                },
-                "extensions": {}
-              },
-              "condition": "=Mermaid",
-              "visibilityCondition": {
-                "type": "Equal",
-                "value": [
-                  "Mermaid"
-                ],
-                "matcher": {
-                  "type": "Parent"
-                }
-              },
-              "duplicable": false,
-              "fields": [],
-              "order": 89,
+              "order": 87,
               "rootField": false,
               "restricted": false,
               "defaultValue": null
@@ -2795,6 +2797,33 @@
             },
             {
               "id": null,
+              "name": "ModalActivatorText",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=ModalActivator",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "ModalActivator"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 93,
+              "rootField": false,
+              "restricted": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
               "name": "MarkdownCustomize",
               "required": null,
               "description": "$[Classes,Mode] $multiple $help[Select the defaults to change]",
@@ -2859,7 +2888,7 @@
                   },
                   "duplicable": false,
                   "fields": [],
-                  "order": 94,
+                  "order": 95,
                   "rootField": false,
                   "restricted": false,
                   "defaultValue": "text-justify text-gray-700"
@@ -2896,13 +2925,13 @@
                   },
                   "duplicable": false,
                   "fields": [],
-                  "order": 95,
+                  "order": 96,
                   "rootField": false,
                   "restricted": false,
                   "defaultValue": "Light"
                 }
               ],
-              "order": 93,
+              "order": 94,
               "rootField": false,
               "restricted": false,
               "defaultValue": null
@@ -2931,7 +2960,7 @@
               },
               "duplicable": false,
               "fields": [],
-              "order": 96,
+              "order": 97,
               "rootField": false,
               "restricted": false,
               "defaultValue": null
