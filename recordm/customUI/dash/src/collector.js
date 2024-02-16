@@ -86,6 +86,14 @@ function parseDashboard(raw_dashboard) {
                 "Mode" : ""
             }]
         },
+        "Slides": {
+            "Content" : "",
+            "SlidesCustomize": [{
+                "SlidesClasses" : "",
+                "ConcurrentScript":"",
+                "Arg": [{}]
+            }]
+        },
         "ModalActivator" : {
             "ModalActivatorCustomize" : [{
                 "ModalActivatorClasses" : ""
