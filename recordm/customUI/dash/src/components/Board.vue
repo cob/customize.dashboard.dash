@@ -11,7 +11,7 @@
             <Calendar  v-if="item['Component'] === 'Calendar'"  :component="item" :key="i" />
             <List      v-if="item['Component'] === 'List'"      :component="item" :key="i" />
             <Activator v-if="item['Component'] === 'ModalActivator'" :component="item" :key="i" @show-modal="d => $emit('show-modal', d)"/>
-            <Slides    v-if="item['Component'] === 'Slides'"      :component="item" :key="i" />    
+            <Slides    v-if="item['Component'] === 'Slides'"      :component="item" :key="i" v-on="$listeners"/>    
         </template>
     </div>
 </template>
