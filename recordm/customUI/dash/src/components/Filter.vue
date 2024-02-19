@@ -37,7 +37,7 @@
             options()         { return this.component['FilterCustomize'][0] },
             outputVar()       { return this.component['OutputVarFilter'] || "" },
             placeholder()     { return this.options['Placeholder']       || "Pesquisar ..." },
-            selectedOptions() { return this.options['FilterCustomize'].split("\u0000") || [] },
+            selectedOptions() { return (this.options['FilterCustomize'] || "").split("\u0000") },
             showButton()      { return this.selectedOptions.indexOf("noButton") === -1 },
             classes()         { return this.options['FilterClasses']     || "w-full max-w-xs resize-none min-h-min h-min border border-slate-300 rounded-md py-2 px-2 outline-slate-300 leading-5" },
         },
