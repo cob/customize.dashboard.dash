@@ -2964,6 +2964,174 @@
               "rootField": false,
               "restricted": false,
               "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "SlidesCustomize",
+              "required": null,
+              "description": "$[Classes,EndOfContentTrigger] $multiple $help[Select the defaults to change] $help['EndOfContentTrigger' to configure end of slides update. False if you want to ONLY SHOW contents]",
+              "configuration": {
+                "description": "",
+                "keys": {
+                  "Select": {
+                    "args": [
+                      "Classes",
+                      "EndOfContentTrigger"
+                    ],
+                    "default": null
+                  },
+                  "Help": {
+                    "args": [
+                      "'EndOfContentTrigger'",
+                      "to configure end of slides update. False if you want to ONLY SHOW contents"
+                    ]
+                  },
+                  "Multiple": {}
+                },
+                "extensions": {}
+              },
+              "condition": "=Slides",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Slides"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [
+                {
+                  "id": null,
+                  "name": "SlidesClasses",
+                  "required": null,
+                  "description": "$text $default(text-justify text-gray-700) Default: text-justify text-gray-700 ",
+                  "configuration": {
+                    "description": "Default: text-justify text-gray-700",
+                    "keys": {
+                      "Default": {
+                        "args": {
+                          "value": "text-justify text-gray-700"
+                        }
+                      }
+                    },
+                    "extensions": {
+                      "$text": {}
+                    }
+                  },
+                  "condition": "=Classes",
+                  "visibilityCondition": {
+                    "type": "Equal",
+                    "value": [
+                      "Classes"
+                    ],
+                    "matcher": {
+                      "type": "Parent"
+                    }
+                  },
+                  "duplicable": false,
+                  "fields": [],
+                  "order": 98,
+                  "restricted": false,
+                  "rootField": false,
+                  "defaultValue": "text-justify text-gray-700"
+                },
+                {
+                  "id": null,
+                  "name": "ConcurrentScript",
+                  "required": null,
+                  "description": "$help[If you don't specify a concurrent script, Slides will ONLY show the content.]",
+                  "configuration": {
+                    "description": "",
+                    "keys": {
+                      "Help": {
+                        "args": [
+                          "If you don't specify a concurrent script",
+                          "Slides will ONLY show the content."
+                        ]
+                      }
+                    },
+                    "extensions": {}
+                  },
+                  "condition": "=EndOfContentTrigger",
+                  "visibilityCondition": {
+                    "type": "Equal",
+                    "value": [
+                      "EndOfContentTrigger"
+                    ],
+                    "matcher": {
+                      "type": "Parent"
+                    }
+                  },
+                  "duplicable": false,
+                  "fields": [],
+                  "order": 99,
+                  "restricted": false,
+                  "rootField": false,
+                  "defaultValue": null
+                },
+                {
+                  "id": null,
+                  "name": "Arg",
+                  "required": null,
+                  "description": null,
+                  "configuration": {
+                    "description": null,
+                    "keys": {},
+                    "extensions": {}
+                  },
+                  "condition": "=EndOfContentTrigger",
+                  "visibilityCondition": {
+                    "type": "Equal",
+                    "value": [
+                      "EndOfContentTrigger"
+                    ],
+                    "matcher": {
+                      "type": "Parent"
+                    }
+                  },
+                  "duplicable": true,
+                  "fields": [],
+                  "order": 100,
+                  "restricted": false,
+                  "rootField": false,
+                  "defaultValue": null
+                }
+              ],
+              "order": 97,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "Content",
+              "required": null,
+              "description": "$markdown",
+              "configuration": {
+                "description": "",
+                "keys": {},
+                "extensions": {
+                  "$markdown": {}
+                }
+              },
+              "condition": "=Slides",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Slides"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 101,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
             }
           ],
           "order": 24,
