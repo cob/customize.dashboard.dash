@@ -2,6 +2,31 @@
 
 ### Definition Upgrades:
 
+#### 6.29.0
+
+* `App.vue`, `Board.vue`, `Dashboard.vue` will now pass "refreshQuery" events down to children. Required by `Slides.vue`.
+* Added new Slides component that can parse Markdown and turn it into a presentation, using RevealJS
+  * Supports fullscreen (F), overview mode (O) and arrow keys.
+  * Includes EndOfContentTrigger customization that dynamically receives arguments and the name of a concurrent script - allowing the creation of custom groovy scripts that run when the content is marked as seen.
+
+* Changed Dashboard definition:
+  * Added Slides component
+  * Removed ref from mermaid
+  * Added label field to activator
+
+```
+* Board > Component > [=Slides] Content : $markdown
+* Board > Component > [=Slides] SlidesCustomize : $[Classes,EndOfContentTrigger] $multiple
+* Board > Component > [=Slides] SlidesCustomize > [=Classes] SlideClasses : $text  $default(text-justify text-gray-700) Default: text-justify text-gray-700
+* Board > Component > [=Slides] SlidesCustomize > [=EndOfContentTrigger] ConcurrentScript 
+* Board > Component > [=Slides] SlidesCustomize > [=EndOfContentTrigger] (Duplicable) Arg   
+* Board > Component > [=Mermaid] Process : $help[Instance ID of the business process]
+* Removed comment from ModalBoardName in ModalActivator
+* Board > Component > [=ModalActivator] ModalBoardName : ""
+* Board > Component > [=ModalActivator] ModalActivatorText
+``` 
+
+
 #### 6.28.0
 * New Fields in definiton Dashboard-Solutions
 * changes in "chooser" dashboard instance: 2 ways to do the update
