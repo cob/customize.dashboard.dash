@@ -1,8 +1,10 @@
 <template>
-    <div v-if="loaded" ref="mermaid">
-    </div>
-    <div v-else class="flex justify-center items-center w-full h-full">
-        <Waiting2/>
+    <div class="h-full w-full">
+        <div v-show="rendered" ref="mermaid" class="mermaid-diagram-scaled">
+        </div>
+        <div v-if="!rendered"  class="flex justify-center items-center w-full h-full">
+            <Waiting2/>
+        </div>
     </div>
 </template>
 
@@ -13,9 +15,7 @@ import { rmGetInstance } from '@cob/rest-api-wrapper';
 export default {
     props: { component: Object },
     data: () => ({
-        fld: String,
-        def: String,
-        loaded: false,
+        rendered: false,
     }),
     computed: {
         bprocess()          { return this.component['Process']; },
@@ -23,22 +23,21 @@ export default {
         linkClasses()       { return this.options['LinkClasses'] || "" },
         mermaidClasses()    { return "text-transparent " + (this.options['DiagramClasses'] || "") },
     },
-    watch: {
-        loaded :  function(val) {
-            if(val) 
-                this.$nextTick( () => {
-                    const lics = this.linkClasses.split(' ')
-                    const mcs = this.mermaidClasses.split(' ')
-                    embedMermaid(this.bprocess, this.def, this.fld, $(this.$refs.mermaid), undefined, lics, mcs)})
-        }
-    },
     created() {
-        rmGetInstance(this.bprocess).then(resp => {
-            this.loaded = true;
-            
-            this.def = resp.fields[0].fields.find( f => f.fieldDefinition.name == "Specific Data").value
-            this.fld = resp.fields[0].fields.find( f => f.fieldDefinition.name == "State Field").value            
-        });
+        rmGetInstance(this.bprocess)
+            .then(resp => {
+                const def = resp.fields[0].fields.find( f => f.fieldDefinition.name == "Specific Data").value
+                const fld = resp.fields[0].fields.find( f => f.fieldDefinition.name == "State Field").value            
+                return [ def, fld ]
+            })
+            .then(([def, fld]) => {
+                const lics = this.linkClasses
+                const mcs = this.mermaidClasses
+                this.$nextTick( () => {
+                    embedMermaid(this.bprocess, def, fld, this.$refs.mermaid, undefined, lics, mcs)
+                    .then( () => this.rendered = true )
+                })
+            });
     },
     components: { Waiting2 }
 } 

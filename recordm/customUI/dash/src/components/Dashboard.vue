@@ -8,7 +8,7 @@
             <div :class="width + ' ' + grid" >
                 <template  v-for="(board,i) in boards">
                     <Modal v-if="isModal(board) && board.Board == activeModal" :board="board" :key="board.instanceId + '-modal-' + i"  @show-modal="toggleModal" />
-                    <Board v-else-if="!isModal(board)" :board="board" :key="board.instanceId + '-' + i" @show-modal="toggleModal" />
+                    <Board v-else-if="!isModal(board)" :board="board" :key="board.instanceId + '-' + i" @show-modal="toggleModal" v-on="$listeners"/>
                 </template>
             </div>
         </div>

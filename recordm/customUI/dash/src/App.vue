@@ -1,7 +1,7 @@
 <template>
   <div id="cobDashApp" class="h-full w-full">
     <div v-if="error || chooserError" class="text-center my-20 text-2xl "> {{ error }} <br> {{ chooserError }} </div>
-    <Dashboard v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" />
+    <Dashboard v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" @refresh="updateQueries"/>
 
     <Refresh :updating="processingFlag" @refresh="updateQueries" class="fixed top-16 left-1" />
   </div>
