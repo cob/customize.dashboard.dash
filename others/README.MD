@@ -2,6 +2,13 @@
 
 ### Definition Upgrades:
 
+#### 6.29.1
+Dashboard-V1
+* New Option Slides in List
+  ALTERADOS:
+  Component -> $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown] $instanceDescription $style[singleColumn]  $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides] $instanceDescription $style[singleColumn]
+* 
+
 #### 6.29.0
 
 * `App.vue`, `Board.vue`, `Dashboard.vue` will now pass "refreshQuery" events down to children. Required by `Slides.vue`.
