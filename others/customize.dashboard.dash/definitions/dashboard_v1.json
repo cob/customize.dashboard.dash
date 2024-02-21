@@ -675,7 +675,7 @@
                     "id": null,
                     "name": "Component",
                     "required": null,
-                    "description": "$[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown] $instanceDescription $style[singleColumn] ",
+                    "description": "$[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides] $instanceDescription $style[singleColumn] ",
                     "configuration": {
                         "description": "",
                         "keys": {
