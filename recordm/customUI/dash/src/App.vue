@@ -392,6 +392,7 @@
               .replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]") // Every last comma in array are removed. Ssupport UP TO 3 consequently commas
               .replaceAll(/(,(\s*))+/g, ",$2") //  Also remove double comma in the resulting arrays (maintain the spaces in case normal text with commas)
               .replaceAll(/(?<!\\)\n/g, "\\n") // escapes newlines
+              .replaceAll(/	/g,"\\t") //escapes literal tabs
           )
 
           for( let i = dashboard.boardQueries.length; i > 0 ; i-- ) {
