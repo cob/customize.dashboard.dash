@@ -21,4 +21,4 @@ dashboard_chooser_0.28.0.xlsx (this one substitutes the chooser dashboard; delet
 
 ### Definition Upgrades:
 
-See [readme](./others/README.MD)
+See [readme](./others/customize.dashboard.dash/README.MD)
