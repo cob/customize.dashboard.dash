@@ -2937,7 +2937,7 @@
                         },
                         {
                             "id": null,
-                            "name": "Content",
+                            "name": "MDContent",
                             "required": null,
                             "description": "$markdown",
                             "configuration": {
