@@ -2,6 +2,13 @@
 
 ### Definition Upgrades:
 
+#### 6.29.2
+Dashboard-V1
+```
+RENAME :
+ Board > Component > [=Markdown] Content -> MDContent
+```
+
 #### 6.29.1
 Dashboard-V1
 * New Option Slides in List
