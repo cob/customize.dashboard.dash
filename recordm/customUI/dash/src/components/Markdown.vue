@@ -10,8 +10,16 @@ export default {
     },
     computed: {
         options() { return this.component['MarkdownCustomize'][0] },
-        parsed()  { return marked.parse(this.component["MDContent"]) },
-        classes() { return this.options['MarkdownClasses'] || "" },
+        parsed()  {
+          const content = this.component["MDContent"]
+
+          if(content && content !== "")
+            return marked.parse(content)
+
+          console.error("empty content in markdown component!")
+          return ""
+        },
+      classes() { return this.options['MarkdownClasses'] || "" },
         mode()    { return this.options['Mode'] || "Light" },
 
     }
