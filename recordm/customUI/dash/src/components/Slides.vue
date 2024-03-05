@@ -46,7 +46,6 @@ export default {
             shadow-sm transform hover:translate-x-0.5 p-2 bg-emerald-300 hover:bg-emerald-500`;
         },
         // To use a single direct content
-        //markdownContent() { return this.component["Content"] || "### Loading Content" },
         markdownContent: {
             get() {
                 return this.component["Content"] || loading_message;

@@ -80,7 +80,7 @@ function parseDashboard(raw_dashboard) {
             "Process" : "",
         },
         "Markdown": {
-            "Content" : "",
+            "MDContent" : "",
             "MarkdownCustomize": [{
                 "MarkdownClasses" : "",
                 "Mode" : ""

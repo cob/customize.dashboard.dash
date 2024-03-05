@@ -4,7 +4,7 @@
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
             <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
                 <div class="flex min-h-full  items-center justify-center text-center ">
-                    <div :class="`relative transform shadow-xl transition-all p-4 overflow-y-scroll ${this.classes}`">
+                    <div :class="`relative transform shadow-xl transition-all p-4 ${this.classes}`">
                         <template v-for="(item, i) in components">
                             <Markdown v-if="item['Component'] === 'Markdown'" :component="item" :key="i" />
                             <Mermaid v-if="item['Component'] === 'Mermaid'" :component="item" :key="i" />
@@ -52,7 +52,7 @@ export default {
     computed: {
         options() { return this.board['BoardCustomize'][0] },
         components() { return this.board['Component'] },
-        classes() { return this.options['BoardClasses'] || "min-w-[80%] h-[70vh] rounded-lg bg-white text-left" },
+        classes() { return this.options['BoardClasses'] || "min-w-[80%] h-[70vh] rounded-lg bg-white text-left overflow-y-scroll" },
         boards() { return this.dashboard['Board'] },
     },
     mounted() {
