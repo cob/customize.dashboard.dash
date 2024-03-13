@@ -44,6 +44,7 @@
     data: () => ({
       rmEventSources: [], // Array with a DashInfo(...) for each event source spec
       createDefinitionId: null,
+      currentActiveView: null,
 
       monthTitle: null,
       yearTitle: null,
@@ -82,7 +83,7 @@
     created() {
         this.calendarOptions.initialView = this.eventView[0]
         this.calendarOptions.headerToolbar.right = this.eventView.join(",")
-
+        this.currentActiveView = this.eventView[0]
         this.statePersistence = new ComponentStatePersistence(this.component.id, this.updateCalendarBasedOnPersistedStateChange)
 
         // Setup a dashInfo placeholder for each event source, initially with a zero result query ( "-*") so it has a fast response
@@ -165,6 +166,7 @@
       eventView()            { return this.options['EventViews'] && this.options['EventViews'].split(',') || ['dayGridWeek','dayGridMonth','listMonth'] },
       outputVar()            { return this.options['OutputVarCalendar'] || '' },
       dayMaxEvents()         { return parseInt(this.options['MaxVisibleDayEvents'], 10) || MAX_VISIBLE_DAY_EVENTS },
+      strictMode()           {return this.options['StrictMode'] === 'TRUE' || false},
 
       // Calendar component model
       eventSources()         { return this.component['Events'] },
@@ -174,15 +176,26 @@
 
       queries() {
         let queries = []
-        if (this.dateRange) { // Only calculate queries after having a dateRange set by the calendar
-          for(let i in this.eventSources) {
+        if (this.dateRange && this.initialDate) { // Only calculate queries after having a dateRange set by the calendar
+          for(let i in this.eventSources) {  
+            if (this.strictMode && "dayGridMonth" === this.currentActiveView ){ //check if the grid view is dayMonthGridView
+              if (this.dateRange[0].getMonth() < this.initialDate.getMonth()) {
+                this.dateRange[0] = (new Date(this.dateRange[0].getFullYear(), this.initialDate.getMonth()))
+              }
+              if (this.dateRange[1].getMonth() > this.initialDate.getMonth()) {
+                this.dateRange[1] = (new Date(this.dateRange[1].getFullYear(),this.initialDate.getMonth()+1,0))
+                this.dateRange[1].setHours(23,59,59);
+              } 
+            }
+            let startDate = this.dateRange[0].getTime()
+            let endDate = this.dateRange[1].getTime()
             // Calculate date range query part
             let startField = toEsFieldName(this.eventSources[i]['DateStartEventField'])
             let endField   = toEsFieldName(this.eventSources[i]['DateEndEventField'])
-            let dateRangeQuery = `(${startField}:[${this.dateRange[0].getTime()} TO ${this.dateRange[1].getTime()}])`
+            let dateRangeQuery = `(${startField}:[${startDate} TO ${endDate}])`
             if (endField) {
-              dateRangeQuery += ` OR (${endField}:[${this.dateRange[0].getTime()} TO ${this.dateRange[1].getTime()}])`
-              dateRangeQuery += ` OR (${startField}:<${this.dateRange[0].getTime()} AND ${endField}:>=${this.dateRange[1].getTime()})`
+              dateRangeQuery += ` OR (${endField}:[${startDate} TO ${endDate}])`
+              dateRangeQuery += ` OR (${startField}:<${startDate} AND ${endField}:>=${endDate})`
             }
 
             // Calculate final query
@@ -194,7 +207,7 @@
             queries.push(finalQuery)
 
             // If set, the 'outputVar' should be a query reflecting the current date range displayed on the calendar. Since we can use only one date_field for the query we opt to use the first(0) "Event Source" specs
-            if (i===0 && this.outputVar) this.$set(this.component.vars, this.outputVar, dateRangeQuery)
+            if (i==0 && this.outputVar) this.$set(this.component.vars, this.outputVar, dateRangeQuery)
           }
         }
         return queries
@@ -252,11 +265,11 @@
       },
 
       updatePersistedStateBasedOnCalendarChange() {
-        const activeView = this.calendarApi.view.type
+        this.currentActiveView = this.calendarApi.view.type
         const currentDate = this.calendarApi.getDate()
         const newState = { }
         if(JSON.stringify(currentDate) !== JSON.stringify(this.initialDate)) newState.initialDate = `${currentDate.getFullYear()}-${("0" + (currentDate.getMonth() + 1)).slice(-2)}-01`
-        if(activeView !== this.calendarOptions.initialView) newState.activeView = activeView
+        if(this.currentActiveView !== this.calendarOptions.initialView) newState.activeView = this.currentActiveView
         if(newState.initialDate || newState.activeView ) this.statePersistence.content = newState
       },
 

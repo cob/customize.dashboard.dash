@@ -172,7 +172,8 @@ function parseDashboard(raw_dashboard) {
                 "MaxVisibleDayEvents": "",
                 "AllowCreateInstances":"",
                 "CreateDefinition":"",
-                "EventViews":""
+                "EventViews":"",
+                "StrictMode":""
             }],
             "Events": [{
                 "Definition": "",
