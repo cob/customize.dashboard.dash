@@ -34,7 +34,7 @@ export default {
                 const lics = this.linkClasses
                 const mcs = this.mermaidClasses
                 this.$nextTick( () => {
-                    embedMermaid(this.bprocess, def, fld, this.$refs.mermaid, undefined, lics, mcs)
+                    embedMermaid(this.bprocess, def, fld, this.$refs.mermaid, {linkClasses : lics, mermaidClasses: mcs})
                     .then( () => this.rendered = true )
                 })
             });
