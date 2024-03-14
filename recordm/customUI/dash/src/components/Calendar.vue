@@ -44,7 +44,6 @@
     data: () => ({
       rmEventSources: [], // Array with a DashInfo(...) for each event source spec
       createDefinitionId: null,
-      currentActiveView: null,
 
       monthTitle: null,
       yearTitle: null,
@@ -83,13 +82,8 @@
     created() {
         this.calendarOptions.initialView = this.eventView[0]
         this.calendarOptions.headerToolbar.right = this.eventView.join(",")
-        this.currentActiveView = this.eventView[0]
-        this.statePersistence = new ComponentStatePersistence(this.component.id, this.updateCalendarBasedOnPersistedStateChange)
 
-        // Setup a dashInfo placeholder for each event source, initially with a zero result query ( "-*") so it has a fast response
-        for(let i in this.eventSources) {
-          this.rmEventSources.push( instancesList( this.eventSources[i]['Definition'], "-*", 800, 0, "", {validity: 60}) )
-        }
+        this.statePersistence = new ComponentStatePersistence(this.component.id, this.updateCalendarBasedOnPersistedStateChange)
 
         // If configured get the definition id to allow instance creation
         if(this.createDefinition) {
@@ -166,7 +160,7 @@
       eventView()            { return this.options['EventViews'] && this.options['EventViews'].split(',') || ['dayGridWeek','dayGridMonth','listMonth'] },
       outputVar()            { return this.options['OutputVarCalendar'] || '' },
       dayMaxEvents()         { return parseInt(this.options['MaxVisibleDayEvents'], 10) || MAX_VISIBLE_DAY_EVENTS },
-      strictMode()           {return this.options['StrictMode'] === 'TRUE' || false},
+      // strictMode()           {return this.options['StrictMode'] === 'TRUE' || false},
 
       // Calendar component model
       eventSources()         { return this.component['Events'] },
@@ -178,29 +172,24 @@
         let queries = []
         
         if (this.dateRange) { // Only calculate queries after having a dateRange set by the calendar
-          
-          if (this.initialDate && this.strictMode && "dayGridMonth" === this.currentActiveView ){ //check if the grid view is dayMonthGridView
-            if (this.dateRange[0].getMonth() < this.initialDate.getMonth()) {
-              this.dateRange[0] = (new Date(this.dateRange[0].getFullYear(), this.initialDate.getMonth()))
-            }
-            if (this.dateRange[1].getMonth() > this.initialDate.getMonth()) {
-              this.dateRange[1] = (new Date(this.dateRange[1].getFullYear(),this.initialDate.getMonth()+1,0))
-              this.dateRange[1].setHours(23,59,59);
-            } 
-          }
-
           let startDate = this.dateRange[0].getTime()
           let endDate = this.dateRange[1].getTime()
+
+          // if ("dayGridMonth" === this.calendarApi.view.type && this.strictMode){ //check if the grid view is dayMonthGridView
+          //   startDate = new Date(this.calendarApi.getDate()).getTime()
+          //   endDate = new Date(this.calendarApi.getDate().getFullYear(),this.calendarApi.getDate().getMonth()+1,1).getTime()
+          // }
           
           for(let i in this.eventSources) {  
             // Calculate date range query part
             let startField = toEsFieldName(this.eventSources[i]['DateStartEventField'])
             let endField   = toEsFieldName(this.eventSources[i]['DateEndEventField'])
-            let dateRangeQuery = `(${startField}:[${startDate} TO ${endDate}])`
+            let dateRangeQuery = `${startField}:[${startDate} TO ${endDate-1}]`
             if (endField) {
-              dateRangeQuery += ` OR (${endField}:[${startDate} TO ${endDate}])`
-              dateRangeQuery += ` OR (${startField}:<${startDate} AND ${endField}:>=${endDate})`
+              dateRangeQuery += ` OR ${endField}:[${startDate+1} TO ${endDate-1}]`
+              dateRangeQuery += ` OR (${startField}:<${startDate} AND ${endField}:>=${endDate-1})`
             }
+            dateRangeQuery = `(${dateRangeQuery})`
 
             // Calculate final query
             const eventQuery = this.eventSources[i]['EventsQuery'] || '*'
@@ -239,10 +228,14 @@
       queries: function(newQueries) {
         this.calendarApi.setOption('noEventsContent', {html: '<div>&nbsp;</div>'})
         for (var i=0; i<newQueries.length; i++) {
-          this.rmEventSources[i].changeArgs({query: newQueries[i]})
+          if(this.rmEventSources.length) {
+            this.rmEventSources[i].changeArgs({query: newQueries[i]})
+          } else {
+            this.rmEventSources.push( instancesList( this.eventSources[i]['Definition'], newQueries[i], 800, 0, "", {validity: 60}) )              
+          }
         }
       },
-
+      
       allResults: function(esInstances) {
         const newCalendarEvents = this.buildCalendarEvents(esInstances)
         const calendarApi = this.calendarApi
@@ -269,11 +262,11 @@
       },
 
       updatePersistedStateBasedOnCalendarChange() {
-        this.currentActiveView = this.calendarApi.view.type
+        const activeView = this.calendarApi.view.type
         const currentDate = this.calendarApi.getDate()
         const newState = { }
-        if(JSON.stringify(currentDate) !== JSON.stringify(this.initialDate)) newState.initialDate = `${currentDate.getFullYear()}-${("0" + (currentDate.getMonth() + 1)).slice(-2)}-01`
-        if(this.currentActiveView !== this.calendarOptions.initialView) newState.activeView = this.currentActiveView
+        if(JSON.stringify(currentDate) !== JSON.stringify(this.initialDate)) newState.initialDate = currentDate.dateFormat("Y-m-d")
+        if(activeView !== this.calendarOptions.initialView) newState.activeView = activeView
         if(newState.initialDate || newState.activeView ) this.statePersistence.content = newState
       },
 
