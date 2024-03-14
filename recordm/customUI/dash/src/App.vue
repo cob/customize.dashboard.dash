@@ -28,6 +28,9 @@
   const SCOPE_ACCESS_PERMISSION_KEYWORD = "ACESSO ";
 
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
+  Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); }); 
+  Handlebars.registerHelper('or', function(arg1, arg2) { return (arg1 || arg2); });
+  Handlebars.registerHelper('not', function(arg) {return (!arg); } )
 
   export default {
     name: 'App',
@@ -387,13 +390,14 @@
         const buildDashboard = (dashboard) => {
           if(DEBUG.app) console.log("DASH:  APP: 5.4: loadDashboard: buildDashboard: dashboard=",dashboard)
 
-          let dash = JSON.parse(
-            dashboard.dashboardProcessor(dashboard.dashboardContext)
-              .replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]").replaceAll(/,\s*]/g, "]") // Every last comma in array are removed. Ssupport UP TO 3 consequently commas
-              .replaceAll(/(,(\s*))+/g, ",$2") //  Also remove double comma in the resulting arrays (maintain the spaces in case normal text with commas)
-              .replaceAll(/(?<!\\)\n/g, "\\n") // escapes newlines
-              .replaceAll(/	/g,"\\t") //escapes literal tabs
-          )
+          let dashStr = dashboard.dashboardProcessor(dashboard.dashboardContext)
+          while(dashStr.match(/,\s*]/)) {
+            dashStr = dashStr.replaceAll(/,\s*]/g, "]") // Every last comma in array are removed
+          }
+          dashStr = dashStr.replaceAll(/(,(\s*))+/g, ",$2") //  Also remove double comma in the resulting arrays (maintain the spaces in case normal text with commas)
+          dashStr = dashStr.replaceAll(/(?<!\\)\n/g, "\\n") // escapes newlines
+          dashStr = dashStr.replaceAll(/	/g,"\\t") //escapes literal tabs
+          let dash = JSON.parse(dashStr)
 
           for( let i = dashboard.boardQueries.length; i > 0 ; i-- ) {
             let dashInfoItem = dashboard.boardQueries.pop()
