@@ -176,19 +176,23 @@
 
       queries() {
         let queries = []
-        if (this.dateRange && this.initialDate) { // Only calculate queries after having a dateRange set by the calendar
-          for(let i in this.eventSources) {  
-            if (this.strictMode && "dayGridMonth" === this.currentActiveView ){ //check if the grid view is dayMonthGridView
-              if (this.dateRange[0].getMonth() < this.initialDate.getMonth()) {
-                this.dateRange[0] = (new Date(this.dateRange[0].getFullYear(), this.initialDate.getMonth()))
-              }
-              if (this.dateRange[1].getMonth() > this.initialDate.getMonth()) {
-                this.dateRange[1] = (new Date(this.dateRange[1].getFullYear(),this.initialDate.getMonth()+1,0))
-                this.dateRange[1].setHours(23,59,59);
-              } 
+        
+        if (this.dateRange) { // Only calculate queries after having a dateRange set by the calendar
+          
+          if (this.initialDate && this.strictMode && "dayGridMonth" === this.currentActiveView ){ //check if the grid view is dayMonthGridView
+            if (this.dateRange[0].getMonth() < this.initialDate.getMonth()) {
+              this.dateRange[0] = (new Date(this.dateRange[0].getFullYear(), this.initialDate.getMonth()))
             }
-            let startDate = this.dateRange[0].getTime()
-            let endDate = this.dateRange[1].getTime()
+            if (this.dateRange[1].getMonth() > this.initialDate.getMonth()) {
+              this.dateRange[1] = (new Date(this.dateRange[1].getFullYear(),this.initialDate.getMonth()+1,0))
+              this.dateRange[1].setHours(23,59,59);
+            } 
+          }
+
+          let startDate = this.dateRange[0].getTime()
+          let endDate = this.dateRange[1].getTime()
+          
+          for(let i in this.eventSources) {  
             // Calculate date range query part
             let startField = toEsFieldName(this.eventSources[i]['DateStartEventField'])
             let endField   = toEsFieldName(this.eventSources[i]['DateEndEventField'])
