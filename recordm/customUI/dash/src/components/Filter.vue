@@ -40,10 +40,22 @@
             selectedOptions() { return (this.options['FilterCustomize'] || "").split("\u0000") },
             showButton()      { return this.selectedOptions.indexOf("noButton") === -1 },
             classes()         { return this.options['FilterClasses']     || "w-full max-w-xs resize-none min-h-min h-min border border-slate-300 rounded-md py-2 px-2 outline-slate-300 leading-5" },
+            esEscape()        { return this.selectedOptions.indexOf("EscapeSpecialChars") !== -1 },
         },
         watch: {
             activeContent(newActiveContent) {
               let cleanContent = newActiveContent.replace(/\n/g,' ').trim()
+
+              if (this.esEscape) {
+                cleanContent = cleanContent
+                    .replace(/[\*\+\-=~><\"\?^\${}\(\)\:\!\/[\]\\\s]/g, '\\$&') // replace single character special characters
+                    .replace(/\|\|/g, '\\||') // replace ||
+                    .replace(/\&\&/g, '\\&&') // replace &&
+                    .replace(/AND/g, '\\A\\N\\D') // replace AND
+                    .replace(/OR/g, '\\O\\R') // replace OR
+                    .replace(/NOT/g, '\\N\\O\\T') // replace NOT
+              }
+
               let esFilter = cleanContent ? cleanContent : ""
               this.$set(this.component.vars, this.outputVar, esFilter)
             },
