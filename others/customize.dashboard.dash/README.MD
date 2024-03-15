@@ -6,7 +6,7 @@
 Dashboard-V1
 * New Option `PlainTextMode` in Filter and help text change
   ALTERADOS:
-  `FilterCustomize : $[Classes,noButton,Placeholder,PlainTextMode] $multiple $help[Select the defaults to change<br><br><b>PlainTextMode:</b> Escapes ElasticSearch chars in the filter]`
+  `FilterCustomize : $[Classes,noButton,Placeholder,EscapeSpecialChars] $multiple $help[Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter]`
 *
 
 #### 6.29.2

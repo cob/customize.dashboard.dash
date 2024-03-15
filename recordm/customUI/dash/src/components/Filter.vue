@@ -40,7 +40,7 @@
             selectedOptions() { return (this.options['FilterCustomize'] || "").split("\u0000") },
             showButton()      { return this.selectedOptions.indexOf("noButton") === -1 },
             classes()         { return this.options['FilterClasses']     || "w-full max-w-xs resize-none min-h-min h-min border border-slate-300 rounded-md py-2 px-2 outline-slate-300 leading-5" },
-            esEscape()        { return this.selectedOptions.indexOf("PlainTextMode") !== -1 },
+            esEscape()        { return this.selectedOptions.indexOf("EscapeSpecialChars") !== -1 },
         },
         watch: {
             activeContent(newActiveContent) {
