@@ -92,8 +92,8 @@
                   let maxDate = Date.parse(event.data.time.max)
                   if (isNaN(maxDate)) maxDate = event.data.time.max.replace('/', '\\/')
 
-                  if (event.data.time.min) timeQuery += `${this.kibanaTimeField}:>=${minDate} `;
-                  if (event.data.time.max) timeQuery += `${this.kibanaTimeField}:<${maxDate} `;
+                  if (event.data.time.min) timeQuery += `${this.kibanaTimeField}.date:>=${minDate} `;
+                  if (event.data.time.max) timeQuery += `${this.kibanaTimeField}.date:<${maxDate} `;
                 }
 
                 // Só vale a pena reagir aos eventos de mudança de filtro no Kibana
