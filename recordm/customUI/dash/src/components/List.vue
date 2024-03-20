@@ -20,7 +20,10 @@
         computed: {
             containerId() {return `simple-search-${Date.now()}`;},
             options()         { return this.component['ListCustomize'][0] },
-            selectedOptions() { return this.options['ListCustomize'].split("\u0000") || [] },
+            selectedOptions() {
+              if (!this.options["ListCustomize"]) return [];
+              return this.options["ListCustomize"].split("\u0000");
+            },
             definition()      { return this.component['ListDefinition']      || "" },
             query()           { return this.component['ListQuery']      || "" },
             classes()         { return this.options['ListClasses'] || "text-center font-bold pb-2 " },
