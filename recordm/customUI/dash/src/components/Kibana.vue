@@ -90,7 +90,12 @@
                   if (isNaN(minDate)) minDate = event.data.time.min.replace('/', '\\/')
 
                   let maxDate = Date.parse(event.data.time.max)
-                  if (isNaN(maxDate)) maxDate = event.data.time.max.replace('/', '\\/')
+                  let includeMaxDate = false
+                  if (isNaN(maxDate)) {
+                    maxDate = event.data.time.max.replace('/', '\\/')
+                  } else {
+                    includeMaxDate = true;
+                  }
 
                   // Keep it retro compatible
                   const timeField = this.kibanaTimeField.trim().endsWith(".date")
@@ -102,7 +107,7 @@
 
                   } else {
                     if (event.data.time.min) timeQuery += `${timeField}:>=${minDate} `;
-                    if (event.data.time.max) timeQuery += `${timeField}:<${maxDate} `;
+                    if (event.data.time.max) timeQuery += `${timeField}:${includeMaxDate ? "<=" : "<"}${maxDate} `;
                   }
                 }
 
