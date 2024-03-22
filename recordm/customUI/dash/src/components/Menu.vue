@@ -29,11 +29,12 @@
           statePersistencesMap: {}
         }),
         created() {
-          this.lines.forEach(l => {
-            if(!this.statePersistencesMap[l.filterVarName]) {
-                this.statePersistencesMap[l.filterVarName] = new ComponentStatePersistence(l.filterVarName, this.activateFromPersistenceChange(l.filterVarName))
-            }
-          });
+          this.updatePersistenceMap(this.lines)
+        },
+        watch: {
+          lines(newLines) {
+            this.updatePersistenceMap(newLines)
+          }
         },
         beforeDestroy() {
           Object.keys(this.statePersistencesMap)
@@ -76,6 +77,13 @@
             },
         },
         methods: {
+          updatePersistenceMap(lines) {
+            lines.forEach(l => {
+              if(!this.statePersistencesMap[l.filterVarName]) {
+                this.statePersistencesMap[l.filterVarName] = new ComponentStatePersistence(l.filterVarName, this.activateFromPersistenceChange(l.filterVarName))
+              }
+            });
+          },
           activateFromInputChange(filterVarName, filterValue) {
             const statePersistence = this.statePersistencesMap[filterVarName];
             if (!statePersistence) {
