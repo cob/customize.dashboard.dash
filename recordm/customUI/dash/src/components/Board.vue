@@ -12,6 +12,7 @@
             <List      v-if="item['Component'] === 'List'"      :component="item" :key="i" />
             <Activator v-if="item['Component'] === 'ModalActivator'" :component="item" :key="i" @show-modal="d => $emit('show-modal', d)"/>
             <Slides    v-if="item['Component'] === 'Slides'"      :component="item" :key="i" v-on="$listeners" @show-modal="d => $emit('show-modal', d)"/>    
+            <Hierarchy v-if="item['Component'] === 'Hierarchy'" :component="item" />
         </template>
     </div>
 </template>
@@ -28,9 +29,10 @@
     import Activator from './Activator.vue'
     import Markdown from './Markdown.vue'
     import Slides from './Slides.vue'
+import Hierarchy from './Hierarchy.vue'
 
     export default {
-        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown, Slides },
+        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown, Slides, Hierarchy },
         props: {
           board: Object
         },
