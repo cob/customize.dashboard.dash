@@ -228,7 +228,7 @@
       queries: function(newQueries) {
         this.calendarApi.setOption('noEventsContent', {html: '<div>&nbsp;</div>'})
         for (var i=0; i<newQueries.length; i++) {
-          if(this.rmEventSources.length < i) {
+          if( i < this.rmEventSources.length ) {
             this.rmEventSources[i].changeArgs({query: newQueries[i]})
           } else {
             this.rmEventSources.push( instancesList( this.eventSources[i]['Definition'], newQueries[i], 800, 0, "", {validity: 60}) )              
