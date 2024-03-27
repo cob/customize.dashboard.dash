@@ -2,7 +2,7 @@
     <div>
         <div class="flex flex-row justify-start ">
             <span class="flex-grow" > 
-                <span class="cursor-pointer" :class="{ 'text-red-500 font-bold' : isSelected, 'text-slate-600' : !isSelected, 'font-bold' : isSelectedParent}" @click="updateVar">{{ title }}</span>
+                <span class="cursor-pointer" :id="instance._id" :class="{ 'text-red-500 font-bold hierarchy-selected' : isSelected, 'text-slate-600' : !isSelected, 'font-bold' : isSelectedParent}" @click="updateVar">{{ title }}</span>
             </span>
             <span v-if="tree[instance._id]" @click="toggle">
                 <FolderClosed class="cursor-pointer" v-if="collapsed" />
@@ -17,7 +17,6 @@
                     :instance="instances[child]"
                     :tree="tree"
                     :instances="instances"
-                    :contentField="contentField"
                     class="pl-5  border-l"
                     :class="{
                         'border-slate-300' : !childIsSelected(child),
@@ -52,7 +51,6 @@ export default {
     props: {
         selectedPath : Array,
         setOutput: Function,
-        contentField: String,
         instance: Object,
         tree: Object,
         instances: Object
@@ -62,8 +60,7 @@ export default {
             this.collapsed = !this.collapsed
         },
         updateVar() {
-            const content = this.instance._source[this.contentField]
-            this.setOutput(content, this.instance._id)
+            this.setOutput(this.instance._id)
         },
         childIsSelected(id) {
             return this.childrenSelectedPath && this.childrenSelectedPath.length == 1 && this.childrenSelectedPath[0] == id
