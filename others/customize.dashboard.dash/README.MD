@@ -2,6 +2,24 @@
 
 ### Definition Upgrades:
 
+#### 6.33.0
+Dashboard-V1
+- New Component `Hierarchy` allows the hierarchical display of instances. Instances of the hierarchy must have a parent field `$ref` that points to the same instance. This displays the structure similarly to a sidebar. Each element can be clicked, and the selected instance is placed in the given output variable.
+  
+``` 
+ALTERED
+Board > Component : $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides] $instanceDescription $style[singleColumn] -> $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides,Hierarchy] $instanceDescription $style[singleColumn]
+
+NEW
+Board > Component > [=Hierarchy] DefinitionNameHierarchy (Mandatory)
+Board > Component > [=Hierarchy] ParentFieldName (Mandatory)
+Board > Component > [=Hierarchy] OutputVarHierarchy (Mandatory)
+Board > Component > [=Hierarchy] FilterHierarchy
+Board > Component > [=Hierarchy] InputVarHierarchy
+Board > Component > [=Hierarchy] SortFieldName
+Board > Component > [=Hierarchy] HierarchyCustomize > [=Classes] HierarchyNodeClasses
+``` 
+
 #### 6.32.0
 Dashboard-V1
 - Added Event Field " TooltipTemplate". This allows us to dynamically control the format of the tooltip with HTML template, with piped-handlebars ({|{) for loops/access to variables.
