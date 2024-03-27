@@ -191,6 +191,13 @@ function parseDashboard(raw_dashboard) {
             }],
             "ListDefinition": "",
             "ListQuery": ""
+        },
+        "Hierarchy" : {
+            "FilterHierarchy" : "",
+            "InputVarHierarchy" : "",
+            "DefinitionNameHierarchy" : "",
+            "ParentFieldName" : "",
+            "OutputVarHierarchy" : "",
         }
     }
 
