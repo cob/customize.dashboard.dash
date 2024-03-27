@@ -42,6 +42,12 @@ export default {
         this.instances = args.instances
         this.tops = args.tops
 
+        const firstID = args.tops[0]
+
+        this.selectedPath = [firstID]
+        this.$set(this.component.vars, this.outputVar, this.instances[firstID]._source)
+
+
         this.originalTops = args.tops
         this.originalTree = args.tree
 
