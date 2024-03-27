@@ -2,6 +2,25 @@
 
 ### Definition Upgrades:
 
+
+#### 6.XXXX
+Dashboard-V1
+- New Component `Hierarchy` allows the hierarchical display of instances. Instances of the hierarchy must have a parent field `$ref` that points to the same instance. This displays the structure similarly to a sidebar. Each element can be clicked, and the selected instance is placed in the given output variable.
+  
+``` 
+ALTERED
+Board > Component : $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides] $instanceDescription $style[singleColumn] -> $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides,Hierarchy] $instanceDescription $style[singleColumn]
+
+NEW
+Board > Component > [=Hierarchy] DefinitionNameHierarchy (Mandatory)
+Board > Component > [=Hierarchy] ParentFieldName (Mandatory)
+Board > Component > [=Hierarchy] OutputVarHierarchy (Mandatory)
+Board > Component > [=Hierarchy] FilterHierarchy
+Board > Component > [=Hierarchy] InputVarHierarchy
+``` 
+
+
+
 #### 6.30.0
 Dashboard-V1
 * New Option `EscapeSpecialChars` in Filter component and help text change
