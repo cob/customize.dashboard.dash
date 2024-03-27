@@ -19,9 +19,9 @@ import Handlebars from 'handlebars'
 export default {
     components: { HierarchyNode },
     data: () => ({
-        tree: {},
-        instances: {},
-        tops: [],
+        tree: undefined,
+        instances: undefined,
+        tops: undefined,
         selectedPath: undefined,
         originalTops: [],
         originalTree: {}
@@ -38,24 +38,29 @@ export default {
     },
     async created() {
         const args = await this.createFullTree()
-        this.tree = args.tree
         this.instances = args.instances
-        this.tops = args.tops
-
-        const firstID = args.tops[0]
-
-        this.selectedPath = [firstID]
-        this.$set(this.component.vars, this.outputVar, this.instances[firstID]._source)
-
-
         this.originalTops = args.tops
         this.originalTree = args.tree
-
+        
+        await this.updateTree()
+        
+        const firstID = this.tops[0]
+        
+        this.selectedPath = [firstID]
+        this.$set(this.component.vars, this.outputVar, this.instances[firstID]._source)
 
     },
     watch: {
         async input() {
+            if(!this.instances)
+                return
+      
             this.selectedPath = []
+            this.updateTree()
+        }
+    },
+    methods: {
+        async updateTree() {
             if(this.input) {
                 const args = await this.sweepTreeTops(this.instances, this.input)
                 this.tree = args.tree 
@@ -65,9 +70,7 @@ export default {
                 this.tree = this.originalTree
             }
 
-        }
-    },
-    methods: {
+        },
         parentOf(instances, id) { const inst = instances[id]._source[this.parentField]; return inst ? inst[0] : undefined },
         pathToRoot(instances, id) {
             const path = [id]
