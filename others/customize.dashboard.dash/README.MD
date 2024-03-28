@@ -2,6 +2,13 @@
 
 ### Definition Upgrades:
 
+#### 6.31.0
+Dashboard-V1
+- Updated description of the field "StateEventField" in calendar events:
+```
+Board > Component > [=Calendar] Events > StateEventField : 'Name of the field to calculate the color for the event. If not defined it will use always the same color for all events. If starts with "#" that hex color will be used. If starts with "bg:" then it'll fill the background of that day with the color.'
+```
+
 #### 6.30.0
 Dashboard-V1
 * New Option `EscapeSpecialChars` in Filter component and help text change
