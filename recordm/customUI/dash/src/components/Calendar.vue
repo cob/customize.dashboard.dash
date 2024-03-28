@@ -111,6 +111,19 @@
       calendarApi.setOption('select', this.redirectToNewInstance)
       calendarApi.setOption('viewDidMount', this.updatePersistedStateBasedOnCalendarChange)
 
+      calendarApi.setOption('eventDidMount', (arg) => {
+        if (arg.event.extendedProps.hasBG){
+            // we don't put the background on saturdays and sundays as this 
+            // feture was originally made to represent holidays
+            $(arg.el).parents(":not(.fc-day-sat,.fc-day-sun) > .fc-daygrid-day-frame")
+                .css("background-color", arg.event.backgroundColor)
+
+            // In list view, it places the background on the list item of the event
+            if(arg.el.classList.contains("fc-list-event"))
+                $(arg.el).css("background-color", arg.event.backgroundColor)
+        }
+    })
+
       const lazyEventsLoader = debounce((dateInfo) => {
         this.debouncing = false
         this.updatePersistedStateBasedOnCalendarChange()
@@ -291,13 +304,28 @@
                 }
               }
 
+              let hasBG = false
               let color
-              if(stateField && stateField.startsWith("#")) {
-                color = stateField
-              } else if(!stateField || !esInstance[stateField]) {
-                color = DEFAULT_EVENT_COLOR
+
+
+              if (stateField) {
+                let base = stateField
+
+                // pre-processing of color field name
+                if (stateField.startsWith("bg:")) {
+                  hasBG = true
+                  base = stateField.slice(3)
+                }
+
+                // actual setting of color
+                if (base.startsWith("#"))
+                  color = base
+                else if (esInstance[base])
+                  color = this.textToRGB(esInstance[base][0])
+                else
+                  color = DEFAULT_EVENT_COLOR
               } else {
-                color = this.textToRGB(esInstance[stateField][0])
+                color = DEFAULT_EVENT_COLOR
               }
 
               return {
@@ -314,6 +342,7 @@
                 // field for use in callbacks like event render hooks. Any non-standard properites are moved into the
                 // extendedProps hash during event parsing.
                 esInstance,
+                hasBG
               }
             })
       },
