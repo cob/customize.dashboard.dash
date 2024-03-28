@@ -435,4 +435,8 @@
       width: 100% !important
   }
 
+  .fc-day-sat .fc-daygrid-day-frame,
+  .fc-day-sun .fc-daygrid-day-frame {
+    background-color: #d0cfcf;
+  }
 </style>
