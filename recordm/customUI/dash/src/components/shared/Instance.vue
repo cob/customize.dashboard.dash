@@ -3,8 +3,8 @@
     <a :href='instanceUrl' class='max-w-fit mb-4 text-sky-500 uppercase no-underline hover:underline js-instance-label main-info'>
       {{ instanceLabel }}
     </a>
-    <div class='details flex flex-col flex-wrap justify-start'>
-      <div class='flex flex-row mr-4 field-group max-w-xs'
+    <div class='details flex flex-col overflow-y-scroll pb-2 flex-wrap justify-start'>
+      <div class='flex flex-row mr-4 field-group'
            v-for='(description,i) in instanceDescriptions'
            :key="i"
       >

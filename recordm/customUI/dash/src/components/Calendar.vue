@@ -329,6 +329,7 @@
           placement: listViewActive ? 'right' : 'top',
           interactive: true,
           trigger: 'click',
+          maxWidth: '700px',
           offset: [0, 10],
           appendTo: document.getElementsByClassName("fc-view")[0],
           zIndex: 10000, // +1 unit higher than the " .fc .fc-popover"
