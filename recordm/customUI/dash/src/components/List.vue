@@ -32,6 +32,7 @@
             queryWithFilter() { return (this.query + " " + this.inputFilter.trim()) },
         },
         watch: {
+          query() { this.updateQuery() },
           queryWithFilter() { this.updateQuery() }
         },
         methods: {
