@@ -5,9 +5,13 @@
 
     <div>
       <div class='mb-4 text-center text-4xl'>{{ monthTitle }} {{ yearTitle }}</div>
-      <FullCalendar ref='fullCalendar' :options='calendarOptions'/>
-    </div>
-
+      <FullCalendar ref='fullCalendar' :options='calendarOptions'> 
+        <template #eventContent='arg' v-if="usesHandlebars">
+          <div class="overflow-x-hidden w-full" v-html="arg.event.title" v-if="arg.event.extendedProps.useCustom"/>
+          <CalendarDayEvent :event="arg" :color="arg.backgroundColor" v-else/>
+        </template>
+      </FullCalendar>
+    </div> 
   </div>
 </template>
 
@@ -27,6 +31,8 @@
   import Instance from "@/components/shared/Instance";
   import Vue from "vue";
   import ComponentStatePersistence from "@/model/ComponentStatePersistence";
+  import Handlebars from 'handlebars'
+  import CalendarDayEvent from './CalendarDayEvent.vue'
 
   const DEFAULT_EVENT_COLOR = '#0e7bbe'
   const MAX_VISIBLE_DAY_EVENTS = 3
@@ -35,6 +41,7 @@
     components: {
       FullCalendar,
       Waiting,
+      CalendarDayEvent
     },
 
     props: {
@@ -225,16 +232,22 @@
           const rmEventSource = this.rmEventSources[i]
           if (rmEventSource.results && rmEventSource.results.value) {
             for(let result of rmEventSource.results.value) {
-              result["DESCRIPTION FIELD"] = toEsFieldName(this.eventSources[i]['DescriptionEventField'])
+              const descritpionIsHandlebars = this.isHandlebars(this.eventSources[i]['DescriptionEventField'])
+              const description = this.eventSources[i]['DescriptionEventField']
+
+              result["DESCRIPTION FIELD"] = descritpionIsHandlebars ? description : toEsFieldName(description)
               result["STATE FIELD"]       = toEsFieldName(this.eventSources[i]['StateEventField'])
               result["START DATE FIELD"]  = toEsFieldName(this.eventSources[i]['DateStartEventField'])
               result["END DATE FIELD"]    = toEsFieldName(this.eventSources[i]['DateEndEventField'])
+              result["TOOLTIP TEMPLATE"]  = this.eventSources[i]['TooltipTemplate']
+              result["DESC IS HANDLEBARS"]= descritpionIsHandlebars
               results.push(result)
             }
           }
         }
         return results
-      }
+      },
+    usesHandlebars() { return this.eventSources.some( i => this.isHandlebars(i['DescriptionEventField']))}
     },
 
     watch: {
@@ -265,6 +278,7 @@
     },
 
     methods: {
+      isHandlebars(text) { return text.includes("{|{") },
       updateCalendarBasedOnPersistedStateChange(newContent = {}) {
         if(!this.calendarApi) {
           setTimeout(() => this.updateCalendarBasedOnPersistedStateChange(newContent),100)
@@ -283,6 +297,15 @@
         if(newState.initialDate || newState.activeView ) this.statePersistence.content = newState
       },
 
+      isSingleDay(start, end) {
+          const start_date = new Date(start);
+          start_date.setDate(start_date.getDate() + 1)
+          const end_date = new Date(end); 
+          return start_date.getDate() == end_date.getDate() &&
+                 start_date.getMonth() == end_date.getMonth() &&
+                 start_date.getFullYear() == end_date.getFullYear()
+        },         
+
       buildCalendarEvents(instances) {
         return instances
             .map(esInstance => {
@@ -291,7 +314,6 @@
               const descriptionEventField = esInstance["DESCRIPTION FIELD"]
               const stateField            = esInstance["STATE FIELD"]
 
-              const title = esInstance[descriptionEventField] || [esInstance.id]
               const startDate = parseInt(esInstance[startDateField][0], 10)
 
               let endDate = null;
@@ -305,6 +327,13 @@
               }
 
               let hasBG = false
+            const toShortString = (date) => `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
+
+              // useful for handlebars
+              esInstance["_is_single_day"] = this.isSingleDay(startDate, endDate)
+              esInstance["_start_date_string"] = toShortString(new Date(startDate))
+              esInstance["_end_date_string"] = toShortString(new Date(endDate))
+
               let color
 
 
@@ -328,19 +357,31 @@
                 color = DEFAULT_EVENT_COLOR
               }
 
+            let actualtitle  
+            const isHandles = esInstance["DESC IS HANDLEBARS"]
+            if(isHandles ) {
+              const convertedToHandlebars = descriptionEventField.replaceAll("{|{","{{").replaceAll("}|}","}}")
+              const template = Handlebars.compile(convertedToHandlebars)
+              actualtitle = template(esInstance)
+            } else {
+              const title = esInstance[descriptionEventField] || [esInstance.id]
+              actualtitle = title[0] + (title.length > 1 ? `(${title.length})` : '')
+            }
+
               return {
                 id: `calendar-event-${esInstance.id}`,
-                title: title[0] + (title.length > 1 ? `(${title.length})` : ''),
+                title: actualtitle,
                 start: startDate,
                 end: endDate,
                 allDay: false,
-                backgroundColor: color,
-
+                backgroundColor: isHandles  ? "transparent" : color,
+                borderColor: isHandles ? "transparent" : color, 
                 // from: https://fullcalendar.io/docs/event-object
                 // In addition to the fields above, you may also include your own non-standard fields in each Event object.
                 // FullCalendar will not modify or delete these fields. For example, developers often include a description
                 // field for use in callbacks like event render hooks. Any non-standard properites are moved into the
                 // extendedProps hash during event parsing.
+                useCustom: isHandles,
                 esInstance,
                 hasBG
               }
@@ -350,8 +391,19 @@
       buildTooltipInstance(el, esInstance, listViewActive) {
         const calendarApi = this.$refs.fullCalendar.getApi()
 
+
+        let tooltipComponent 
+        const tooltipTemplate = esInstance["TOOLTIP TEMPLATE"]
+        if(tooltipTemplate && tooltipTemplate != "") {
+            const convertedToHandlebars = tooltipTemplate.replaceAll("{|{","{{").replaceAll("}|}","}}")
+            const template = Handlebars.compile(convertedToHandlebars)
+            tooltipComponent = template(esInstance)
+        } else {
+          tooltipComponent = new Vue(Object.assign({propsData: {esInstance}}, Instance)).$mount().$el
+        }
+
         return tippy(el, {
-          content: new Vue(Object.assign({propsData: {esInstance}}, Instance)).$mount().$el,
+          content: tooltipComponent,
           allowHTML: true,
           delay: 100,
           duration: 0,
