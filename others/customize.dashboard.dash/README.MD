@@ -2,6 +2,13 @@
 
 ### Definition Upgrades:
 
+#### 6.32.0
+Dashboard-V1
+- Added Event Field " TooltipTemplate". This allows us to dynamically control the format of the tooltip with HTML template, with piped-handlebars ({|{) for loops/access to variables.
+```
+Board > Component > [=Calendar] Events > TooltipTemplate : $text
+```
+
 #### 6.31.0
 Dashboard-V1
 - Updated description of the field "StateEventField" in calendar events:
