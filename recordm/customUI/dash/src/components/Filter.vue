@@ -70,10 +70,10 @@
             },
             resize() {
                 const { textarea } = this.$refs;
-                if(this.inputContent && ( textarea.textLength >= textarea.cols || this.inputContent.split("\n").length > 1) ) {
+                if(textarea && this.inputContent && ( textarea.textLength >= textarea.cols || this.inputContent.split("\n").length > 1) ) {
                     textarea.style.height = "auto";
                     textarea.style.height = (textarea.scrollHeight + 2) + 'px'; // Os 14px são do padding acrescentado
-                } else {
+                } else if(textarea) {
                     textarea.style.height = "40px";
                 }
             }
