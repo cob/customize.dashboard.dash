@@ -18,10 +18,7 @@
                     :tree="tree"
                     :instances="instances"
                     :nodeClasses="nodeClasses"
-                    class="pl-5  border-l"
-                    :class="{
-                        'border-slate-300' : !childIsSelected(child),
-                        'border-red-400 border-l-2' : childIsSelected(child) }" />
+                    :class="computeClassesForChildren(child)" />
             </template>
         </div>
     </div>
@@ -50,7 +47,8 @@ export default {
             const selectedClasses = this.isSelected ? this.nodeClasses.split(' ') : ['text-slate-600']
             const selectedParentClasses = this.isSelectedParent ? ["font-bold"] : []
             return [...baseClasses, ...selectedClasses, ...selectedParentClasses]
-        }
+        },        
+        
     },
     data: () => ({
         collapsed: true
@@ -64,6 +62,11 @@ export default {
         nodeClasses: String
     },
     methods: {
+        computeClassesForChildren(child) {
+            const baseClasses = ["pl-4","border-l-2"]
+            const selectedClasses = this.childIsSelected(child) ? ['border-slate-700','border-l-2'] : ['border-slate-300']
+            return [...baseClasses, ...selectedClasses]
+        },
         toggle() {
             this.collapsed = !this.collapsed
         },
