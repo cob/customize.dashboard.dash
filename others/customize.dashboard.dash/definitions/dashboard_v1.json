@@ -3324,16 +3324,22 @@
               "id": null,
               "name": "HierarchyCustomize",
               "required": null,
-              "description": "$[Classes]",
+              "description": "$[Classes] $multiple $help[Select the defaults to change]",
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Classes"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
