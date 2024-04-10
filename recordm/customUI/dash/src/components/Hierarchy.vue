@@ -36,7 +36,7 @@ export default {
         filter() { return this.component["FilterHierarchy"] || "*" }, // QueryFilter
         inputVar() { return this.component["InputVarHierarchy"] },
         input() { return this.component.vars[this.inputVar] },
-        hierarchyNodeClasses() { return this.options['HierarchyNodeClasses'] || "text-red-500 font-bold hierarchy-selected " }
+        hierarchyNodeClasses() { return this.options['HierarchyNodeClasses'] + " hierarchy-selected " || "text-red-500 font-bold hierarchy-selected " }
     },
     async created() {
         const args = await this.createFullTree()

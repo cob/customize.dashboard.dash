@@ -3359,13 +3359,13 @@
                   "id": null,
                   "name": "HierarchyNodeClasses",
                   "required": null,
-                  "description": "$text $default(text-red-500 font-bold hierarchy-selected) Default: ttext-red-500 font-bold hierarchy-selected",
+                  "description": "$text $default(text-red-500 font-bold) Default: ttext-red-500 font-bold",
                   "configuration": {
-                    "description": "Default: ttext-red-500 font-bold hierarchy-selected",
+                    "description": "Default: text-red-500 font-bold",
                     "keys": {
                       "Default": {
                         "args": {
-                          "value": "text-red-500 font-bold hierarchy-selected"
+                          "value": "text-red-500 font-bold"
                         }
                       }
                     },
