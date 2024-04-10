@@ -2,7 +2,7 @@
     <div>
         <div class="flex flex-row justify-start ">
             <span class="flex-grow" > 
-                <span class="cursor-pointer" :id="instance._id" :class="{ 'text-red-500 font-bold hierarchy-selected' : isSelected, 'text-slate-600' : !isSelected, 'font-bold' : isSelectedParent}" @click="updateVar">{{ title }}</span>
+                <span class="cursor-pointer" :id="instance._id" :class="computedClasses" @click="updateVar">{{ title }}</span>
             </span>
             <span v-if="tree[instance._id]" @click="toggle">
                 <FolderClosed class="cursor-pointer" v-if="collapsed" />
@@ -17,6 +17,7 @@
                     :instance="instances[child]"
                     :tree="tree"
                     :instances="instances"
+                    :nodeClasses="nodeClasses"
                     class="pl-5  border-l"
                     :class="{
                         'border-slate-300' : !childIsSelected(child),
@@ -43,7 +44,13 @@ export default {
         },
         childrenSelectedPath() { return this.selectedPath ? this.selectedPath.slice(1) : this.selectedPath  },
         isSelected() { return this.selectedPath && this.selectedPath.length == 1 && this.selectedPath[0] == this.instance._id},
-        isSelectedParent() { return !this.isSelected && this.selectedPath && this.selectedPath.includes(this.instance._id) } 
+        isSelectedParent() { return !this.isSelected && this.selectedPath && this.selectedPath.includes(this.instance._id) },
+        computedClasses() { //compute classes according to computed state (isSelected, etc)
+            const baseClasses = ["cursor-pointer"]
+            const selectedClasses = this.isSelected ? this.nodeClasses.split(' ') : ['text-slate-600']
+            const selectedParentClasses = this.isSelectedParent ? ["font-bold"] : []
+            return [...baseClasses, ...selectedClasses, ...selectedParentClasses]
+        }
     },
     data: () => ({
         collapsed: true
@@ -53,7 +60,8 @@ export default {
         setOutput: Function,
         instance: Object,
         tree: Object,
-        instances: Object
+        instances: Object,
+        nodeClasses: String
     },
     methods: {
         toggle() {

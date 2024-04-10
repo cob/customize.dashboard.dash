@@ -193,10 +193,14 @@ function parseDashboard(raw_dashboard) {
             "ListQuery": ""
         },
         "Hierarchy" : {
+            "HierarchyCustomize": [{
+                "HierarchyNodeClasses": "",
+            }],
             "FilterHierarchy" : "",
             "InputVarHierarchy" : "",
             "DefinitionNameHierarchy" : "",
             "ParentFieldName" : "",
+            "SortFieldName" : "",
             "OutputVarHierarchy" : "",
         }
     }
