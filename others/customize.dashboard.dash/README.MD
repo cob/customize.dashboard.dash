@@ -2,7 +2,7 @@
 
 ### Definition Upgrades:
 
-#### 6.XX.X
+#### 6.33.0
 Dashboard-V1
 - New Component `Hierarchy` allows the hierarchical display of instances. Instances of the hierarchy must have a parent field `$ref` that points to the same instance. This displays the structure similarly to a sidebar. Each element can be clicked, and the selected instance is placed in the given output variable.
   
