@@ -1,7 +1,7 @@
 {
   "id": null,
   "name": "Dashboard_v1",
-  "description": "@COB v6.32.0",
+  "description": "@COB v6.33.0",
   "duplicable": null,
   "state": "enabled",
   "fieldDefinitions": [
@@ -34,13 +34,13 @@
       "configuration": {
         "description": "",
         "keys": {
+          "InstanceDescription": {},
           "Reference": {
             "args": {
               "query": "*",
               "definition": "Dashboard-Solutions"
             }
-          },
-          "InstanceDescription": {}
+          }
         },
         "extensions": {
           "$groupEdit": {}
@@ -162,13 +162,13 @@
           "configuration": {
             "description": "",
             "keys": {
+              "InstanceDescription": {},
               "AutoRefField": {
                 "args": {
                   "source_field": "Solution",
                   "field_name": "Ordem"
                 }
-              },
-              "InstanceDescription": {}
+              }
             },
             "extensions": {}
           },
@@ -195,10 +195,10 @@
       "configuration": {
         "description": "",
         "keys": {
-          "InstanceLabel": {},
           "Expanded": {
             "args": {}
-          }
+          },
+          "InstanceLabel": {}
         },
         "extensions": {}
       },
@@ -242,10 +242,10 @@
       "configuration": {
         "description": "",
         "keys": {
+          "InstanceDescription": {},
           "Number": {
             "args": {}
-          },
-          "InstanceDescription": {}
+          }
         },
         "extensions": {}
       },
@@ -266,6 +266,11 @@
       "configuration": {
         "description": "",
         "keys": {
+          "Help": {
+            "args": [
+              "Select the defaults to change"
+            ]
+          },
           "Select": {
             "args": [
               "Classes",
@@ -278,12 +283,7 @@
             ],
             "default": null
           },
-          "Multiple": {},
-          "Help": {
-            "args": [
-              "Select the defaults to change"
-            ]
-          }
+          "Multiple": {}
         },
         "extensions": {}
       },
@@ -580,6 +580,11 @@
           "configuration": {
             "description": "",
             "keys": {
+              "Help": {
+                "args": [
+                  "Select the defaults to change"
+                ]
+              },
               "Select": {
                 "args": [
                   "Classes",
@@ -588,12 +593,7 @@
                 ],
                 "default": null
               },
-              "Multiple": {},
-              "Help": {
-                "args": [
-                  "Select the defaults to change"
-                ]
-              }
+              "Multiple": {}
             },
             "extensions": {}
           },
@@ -675,10 +675,11 @@
           "id": null,
           "name": "Component",
           "required": null,
-          "description": "$[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides] $instanceDescription $style[singleColumn] ",
+          "description": "$[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides,Hierarchy] $instanceDescription $style[singleColumn] ",
           "configuration": {
             "description": "",
             "keys": {
+              "InstanceDescription": {},
               "Select": {
                 "args": [
                   "Label",
@@ -691,11 +692,11 @@
                   "Mermaid",
                   "ModalActivator",
                   "Markdown",
-                  "Slides"
+                  "Slides",
+                  "Hierarchy"
                 ],
                 "default": null
-              },
-              "InstanceDescription": {}
+              }
             },
             "extensions": {
               "$style": {
@@ -717,6 +718,11 @@
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Classes",
@@ -724,12 +730,7 @@
                     ],
                     "default": null
                   },
-                  "Multiple": {},
-                  "Help": {
-                    "args": [
-                      "Select the defaults to change"
-                    ]
-                  }
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -852,18 +853,18 @@
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Classes"
                     ],
                     "default": null
                   },
-                  "Multiple": {},
-                  "Help": {
-                    "args": [
-                      "Select the defaults to change"
-                    ]
-                  }
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -952,6 +953,11 @@
                   "configuration": {
                     "description": "",
                     "keys": {
+                      "Help": {
+                        "args": [
+                          "Select the defaults to change"
+                        ]
+                      },
                       "Select": {
                         "args": [
                           "Classes",
@@ -962,12 +968,7 @@
                         ],
                         "default": null
                       },
-                      "Multiple": {},
-                      "Help": {
-                        "args": [
-                          "Select the defaults to change"
-                        ]
-                      }
+                      "Multiple": {}
                     },
                     "extensions": {}
                   },
@@ -1168,6 +1169,11 @@
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Classes",
@@ -1175,12 +1181,7 @@
                     ],
                     "default": null
                   },
-                  "Multiple": {},
-                  "Help": {
-                    "args": [
-                      "Select the defaults to change"
-                    ]
-                  }
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -1294,6 +1295,11 @@
                   "configuration": {
                     "description": "",
                     "keys": {
+                      "Help": {
+                        "args": [
+                          "Select the defaults to change"
+                        ]
+                      },
                       "Select": {
                         "args": [
                           "LineClasses",
@@ -1301,12 +1307,7 @@
                         ],
                         "default": null
                       },
-                      "Multiple": {},
-                      "Help": {
-                        "args": [
-                          "Select the defaults to change"
-                        ]
-                      }
+                      "Multiple": {}
                     },
                     "extensions": {}
                   },
@@ -1426,6 +1427,11 @@
                       "configuration": {
                         "description": "",
                         "keys": {
+                          "Help": {
+                            "args": [
+                              "Select the defaults to change"
+                            ]
+                          },
                           "Select": {
                             "args": [
                               "Classes",
@@ -1436,12 +1442,7 @@
                             ],
                             "default": null
                           },
-                          "Multiple": {},
-                          "Help": {
-                            "args": [
-                              "Select the defaults to change"
-                            ]
-                          }
+                          "Multiple": {}
                         },
                         "extensions": {}
                       },
@@ -1645,6 +1646,11 @@
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Classes",
@@ -1655,12 +1661,7 @@
                     ],
                     "default": null
                   },
-                  "Multiple": {},
-                  "Help": {
-                    "args": [
-                      "Select the defaults to change"
-                    ]
-                  }
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -1854,6 +1855,11 @@
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Classes",
@@ -1863,12 +1869,7 @@
                     ],
                     "default": null
                   },
-                  "Multiple": {},
-                  "Help": {
-                    "args": [
-                      "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
-                    ]
-                  }
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2014,6 +2015,11 @@
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Classes",
@@ -2023,12 +2029,7 @@
                     ],
                     "default": null
                   },
-                  "Multiple": {},
-                  "Help": {
-                    "args": [
-                      "Select the defaults to change"
-                    ]
-                  }
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2141,17 +2142,17 @@
                   "configuration": {
                     "description": "",
                     "keys": {
+                      "Default": {
+                        "args": {
+                          "value": "FALSE"
+                        }
+                      },
                       "Select": {
                         "args": [
                           "TRUE",
                           "FALSE"
                         ],
                         "default": null
-                      },
-                      "Default": {
-                        "args": {
-                          "value": "FALSE"
-                        }
                       }
                     },
                     "extensions": {}
@@ -2437,6 +2438,11 @@
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "InputVar",
@@ -2448,12 +2454,7 @@
                     ],
                     "default": null
                   },
-                  "Multiple": {},
-                  "Help": {
-                    "args": [
-                      "Select the defaults to change"
-                    ]
-                  }
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2624,6 +2625,11 @@
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "LinkClasses",
@@ -2631,12 +2637,7 @@
                     ],
                     "default": null
                   },
-                  "Multiple": {},
-                  "Help": {
-                    "args": [
-                      "Select the defaults to change"
-                    ]
-                  }
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2724,18 +2725,18 @@
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Classes"
                     ],
                     "default": null
                   },
-                  "Multiple": {},
-                  "Help": {
-                    "args": [
-                      "Select the defaults to change"
-                    ]
-                  }
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2854,6 +2855,11 @@
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Classes",
@@ -2861,12 +2867,7 @@
                     ],
                     "default": null
                   },
-                  "Multiple": {},
-                  "Help": {
-                    "args": [
-                      "Select the defaults to change"
-                    ]
-                  }
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2997,6 +2998,12 @@
               "configuration": {
                 "description": "",
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "'EndOfContentTrigger'",
+                      "to configure end of slides update. False if you want to ONLY SHOW contents"
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Classes",
@@ -3004,13 +3011,7 @@
                     ],
                     "default": null
                   },
-                  "Multiple": {},
-                  "Help": {
-                    "args": [
-                      "'EndOfContentTrigger'",
-                      "to configure end of slides update. False if you want to ONLY SHOW contents"
-                    ]
-                  }
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -3153,6 +3154,244 @@
               "duplicable": false,
               "fields": [],
               "order": 103,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "InputVarHierarchy",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 104,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "OutputVarHierarchy",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 105,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "ParentFieldName",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 106,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "SortFieldName",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 107,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "DefinitionNameHierarchy",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 108,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "FilterHierarchy",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 109,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "HierarchyCustomize",
+              "required": null,
+              "description": "$[Classes] $multiple $help[Select the defaults to change]",
+              "configuration": {
+                "description": "",
+                "keys": {
+                  "Help": {
+                    "args": [
+                      "Select the defaults to change"
+                    ]
+                  },
+                  "Select": {
+                    "args": [
+                      "Classes"
+                    ],
+                    "default": null
+                  },
+                  "Multiple": {}
+                },
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [
+                {
+                  "id": null,
+                  "name": "HierarchyNodeClasses",
+                  "required": null,
+                  "description": "$text $default(text-red-500 font-bold) Default: ttext-red-500 font-bold",
+                  "configuration": {
+                    "description": "Default: text-red-500 font-bold",
+                    "keys": {
+                      "Default": {
+                        "args": {
+                          "value": "text-red-500 font-bold"
+                        }
+                      }
+                    },
+                    "extensions": {
+                      "$text": {}
+                    }
+                  },
+                  "condition": "=Classes",
+                  "visibilityCondition": {
+                    "type": "Equal",
+                    "value": [
+                      "Classes"
+                    ],
+                    "matcher": {
+                      "type": "Parent"
+                    }
+                  },
+                  "duplicable": false,
+                  "fields": [],
+                  "order": 111,
+                  "restricted": false,
+                  "rootField": false,
+                  "defaultValue": "text-red-500 font-bold hierarchy-selected"
+                }
+              ],
+              "order": 110,
               "restricted": false,
               "rootField": false,
               "defaultValue": null
