@@ -28,7 +28,7 @@
   const SCOPE_ACCESS_PERMISSION_KEYWORD = "ACESSO ";
 
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
-  Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); }); 
+  Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); });
   Handlebars.registerHelper('or', function(arg1, arg2) { return (arg1 || arg2); });
   Handlebars.registerHelper('not', function(arg) {return (!arg); } )
 
@@ -238,7 +238,8 @@
 
         const currentUserScope = userInfo.groups.find && (userInfo.groups.find((grp) => grp.name.indexOf(SCOPE_ACCESS_PERMISSION_KEYWORD) === 0));
         if(currentUserScope) {
-          userInfo.groupsQuery = userInfo.groupsQuery.replaceAll(currentUserScope.name.substring(SCOPE_ACCESS_PERMISSION_KEYWORD.length),"_SCOPE_")
+          userInfo.scope = currentUserScope.name.substring(SCOPE_ACCESS_PERMISSION_KEYWORD.length)
+          userInfo.groupsQuery = userInfo.groupsQuery.replaceAll(userInfo.scope, "_SCOPE_")
         }
 
         userInfo.isSystem = userInfo.groups.length && userInfo.groups.map(g => g.name).indexOf("System") >= 0
