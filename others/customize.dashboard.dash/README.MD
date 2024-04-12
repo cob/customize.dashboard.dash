@@ -11,13 +11,14 @@ ALTERED
 Board > Component : $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides] $instanceDescription $style[singleColumn] -> $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides,Hierarchy] $instanceDescription $style[singleColumn]
 
 NEW
+Board > Component > [=Hierarchy] HierarchyCustomize : $[Classes] $multiple $help[Select the defaults to change]
+Board > Component > [=Hierarchy] HierarchyCustomize > [=Classes] HierarchyNodeClasses : $[Classes] $multiple $help[Select the defaults to change]
 Board > Component > [=Hierarchy] InputVarHierarchy
 Board > Component > [=Hierarchy] OutputVarHierarchy
 Board > Component > [=Hierarchy] ParentFieldName 
 Board > Component > [=Hierarchy] SortFieldName
 Board > Component > [=Hierarchy] DefinitionNameHierarchy 
 Board > Component > [=Hierarchy] FilterHierarchy
-Board > Component > [=Hierarchy] HierarchyCustomize > [=Classes] HierarchyNodeClasses : $[Classes] $multiple $help[Select the defaults to change]
 ``` 
 
 #### 6.32.0
