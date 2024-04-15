@@ -42,7 +42,8 @@ import ComponentStatePersistence from "@/model/ComponentStatePersistence"
         },
         beforeDestroy() {
             this.vars.forEach(varName => {
-                this.statePersistence[varName].stop()
+                //TODO: fix - sometimes we get this.vars with [null]. We currently test but this shouldn't happen
+                this.statePersistence[varName] && this.statePersistence[varName].stop()
             });
         },
         computed: {
