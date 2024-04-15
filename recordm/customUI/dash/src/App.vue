@@ -25,6 +25,7 @@
 
   const DASHBOARD_DEF = "Dashboard_v1"
   const DASHBOARD_CHOOSER = "CHOOSER"
+  const CHOOSERFLAG = "MODULE>"
   const SCOPE_ACCESS_PERMISSION_KEYWORD = "ACESSO ";
 
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
@@ -77,9 +78,10 @@
 
     computed: {
       dashboardQuery() {
+        let dashboardName = this.dashboardName.startsWith(CHOOSERFLAG) ? this.dashboardName.substring(CHOOSERFLAG.length) : this.dashboardName;
         const accessQuery = this.userInfo.isSystem ? "" : " (groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )"
-        const nameQuery = "( solution_menu.raw:\"" + this.dashboardName + "\"" + " OR name.raw:\"" + this.dashboardName + "\" ) "
-        const query =  "(" + nameQuery + accessQuery + ") OR id:\"" + this.dashboardName + "\""
+        const nameQuery = "( solution_menu.raw:\"" + dashboardName + "\"" + " OR name.raw:\"" + dashboardName + "\" ) "
+        const query =  "(" + nameQuery + accessQuery + ")" + ( this.dashboardName.startsWith(CHOOSERFLAG) ? "" : " OR id:\"" + dashboardName + "\"" ) 
         if(DEBUG.app) console.log("DASH:  APP: 1.4: dashboardQuery: username='", this.userInfo.username,"'. urlDashPart=", this.urlDashPart, " query=", query)
         return query
       },
@@ -196,7 +198,7 @@
             this.error = "Error: dashboard '" + this.dashboardName + "' was not found for your user"
             this.activeDashKey = null
 
-          } else if (newList.length === 1 && (this.dashboardName == newList[0].name[0] || this.dashboardName == newList[0].id) ) {
+          } else if (newList.length === 1 && (this.dashboardName == newList[0].name[0] || this.dashboardName == newList[0].id || !this.dashboardName.startsWith(CHOOSERFLAG) )) {
             if(DEBUG.app) console.log("DASH:  APP: 4: dashboardsRequested.value: list of 1. loadDashboard for dashRequestResults=",newList[0].id)
             this.loadDashboard(newList[0], newList);
 
@@ -463,7 +465,7 @@
             // Start by adding a menu entry to show the CHOOSER with all the dashboards available
             menu.push({
               name: '<i class="fa-solid fa-table-cells-large"></i>',
-              href: "#/cob.custom-resource/" + newSiblings[0].solution_menu[0] + "/dash",
+              href: "#/cob.custom-resource/" + CHOOSERFLAG + newSiblings[0].solution_menu[0] + "/dash",
               active: this.dashboardChooser.value && newDashEs.id === this.dashboardChooser.value[0].id
             })
 
