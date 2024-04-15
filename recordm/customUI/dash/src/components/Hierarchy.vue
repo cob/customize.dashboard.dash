@@ -1,8 +1,8 @@
 <template>
     <div>
         <template v-for="top of tops">
-            <HierarchyNode :selectedPath="selectedPath" :setOutput="setOutput" :instance="instances[top]" :tree="tree"
-                :instances="instances" :nodeClasses="hierarchyNodeClasses"/>
+            <HierarchyNode class="pb-1" :selectedPath="selectedPath" :setOutput="setOutput" :instance="instances[top]"
+                :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" />
         </template>
         <template v-if="tops && tops.length == 0">
             No results
@@ -36,7 +36,8 @@ export default {
         filter() { return this.component["FilterHierarchy"] || "*" }, // QueryFilter
         inputVar() { return this.component["InputVarHierarchy"] },
         input() { return this.component.vars[this.inputVar] },
-        hierarchyNodeClasses() { return this.options['HierarchyNodeClasses'] + " hierarchy-selected " || "text-red-500 font-bold hierarchy-selected " }
+        hierarchyNodeClasses() { return this.options['HierarchyNodeClasses'] + " hierarchy-selected " || "text-red-500 font-bold hierarchy-selected" },
+        instanceFieldName() { return this.component["InstanceFieldNameHierarchy"] || undefined }
     },
     async created() {
         const args = await this.createFullTree()
@@ -49,7 +50,12 @@ export default {
         const firstID = this.tops[0]
 
         this.selectedPath = [firstID]
-        this.$set(this.component.vars, this.outputVar, this.instances[firstID]._source)
+        if (this.instanceFieldName && this.instances[firstID]._source[this.instanceFieldName]) {
+            let fieldValue = this.instances[firstID]._source[this.instanceFieldName]
+            this.$set(this.component.vars, this.outputVar, fieldValue === Array ? fieldValue[0] : fieldValue)
+        } else {
+            this.$set(this.component.vars, this.outputVar, this.instances[firstID]._source)
+        }
 
     },
     watch: {
@@ -85,11 +91,17 @@ export default {
         },
         setOutput(id) {
             this.selectedPath = this.pathToRoot(this.instances, id)
-            this.$set(this.component.vars, this.outputVar, this.instances[id]._source)
+            if (this.instanceFieldName && this.instances[id]._source[this.instanceFieldName]) {
+                let fieldValue = this.instances[id]._source[this.instanceFieldName]
+                this.$set(this.component.vars, this.outputVar, fieldValue === Array ? fieldValue[0] : fieldValue)
+            } else {
+                this.$set(this.component.vars, this.outputVar, this.instances[id]._source)
+            }
+
         },
         async createFullTree() {
-            const results = await rmDefinitionSearch(this.definitionName, this.filter, 0, 100, 
-            this.sortField ? this.sortField : "", "true")
+            const results = await rmDefinitionSearch(this.definitionName, this.filter, 0, 100,
+                this.sortField ? this.sortField : "", "true")
 
 
             const tops = []
@@ -111,8 +123,8 @@ export default {
             return { tree: tree, tops: tops, instances: instances }
         },
         async sweepTreeTops(instances, input) {
-            const results = await rmDefinitionSearch(this.definitionName, this.filter + " " + input, 0, 100, 
-            this.sortField ? this.sortField : "", "true")
+            const results = await rmDefinitionSearch(this.definitionName, this.filter + " " + input, 0, 100,
+                this.sortField ? this.sortField : "", "true")
 
             const newTree = {}
             const newTops = new Set()

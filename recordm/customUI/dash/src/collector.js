@@ -197,6 +197,7 @@ function parseDashboard(raw_dashboard) {
                 "HierarchyNodeClasses": "",
             }],
             "FilterHierarchy" : "",
+            "InstanceFieldNameHierarchy":"",
             "InputVarHierarchy" : "",
             "DefinitionNameHierarchy" : "",
             "ParentFieldName" : "",

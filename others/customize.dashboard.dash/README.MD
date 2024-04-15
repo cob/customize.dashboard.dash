@@ -2,6 +2,20 @@
 
 ### Definition Upgrades:
 
+#### 6.34.1
+Dashboard-V1
+- Added new `InstanceFieldNameHierarchy` field to Hierarchy component. This field lets the user specify the name of a field that should be used to set the OutputVarHierarchy's value. If this field is not specified, the Hierarchy component will output the entire instance object instead.
+- Corrected default values in `HierarchyNodeClasses` (removed wrong "hierarchy selected " class).
+- Corrected a field description in the README's previous version (6.33.0 - HierarchyNodeClasses)
+
+```
+ALTERED 
+Board > Component > [=Hierarchy] HierarchyCustomize > [=Classes] HierarchyNodeClasses : $text $default(text-red-500 font-bold  hierarchy-selected) Default: text-red-500 font-bold  hierarchy-selected ---> Board > Component > [=Hierarchy] HierarchyCustomize > [=Classes] HierarchyNodeClasses : $text $default(text-red-500 font-bold) Default: text-red-500 font-bold
+
+NEW
+Board > Component > [=Hierarchy] > InstanceFieldNameHierarchy : $help[You can specify a instance's field name to output its value instead of the entire object.]
+```
+
 #### 6.33.0
 Dashboard-V1
 - New Component `Hierarchy` allows the hierarchical display of instances. Instances of the hierarchy must have a parent field `$ref` that points to the same instance. This displays the structure similarly to a sidebar. Each element can be clicked, and the selected instance is placed in the given output variable.
@@ -12,7 +26,7 @@ Board > Component : $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,Moda
 
 NEW
 Board > Component > [=Hierarchy] HierarchyCustomize : $[Classes] $multiple $help[Select the defaults to change]
-Board > Component > [=Hierarchy] HierarchyCustomize > [=Classes] HierarchyNodeClasses : $[Classes] $multiple $help[Select the defaults to change]
+Board > Component > [=Hierarchy] HierarchyCustomize > [=Classes] HierarchyNodeClasses : $text $default(text-red-500 font-bold  hierarchy-selected) Default: text-red-500 font-bold  hierarchy-selected
 Board > Component > [=Hierarchy] InputVarHierarchy
 Board > Component > [=Hierarchy] OutputVarHierarchy
 Board > Component > [=Hierarchy] ParentFieldName 
