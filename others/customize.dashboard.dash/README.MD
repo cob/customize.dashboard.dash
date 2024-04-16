@@ -10,7 +10,7 @@ Dashboard-V1
 
 ```
 ALTERED 
-Board > Component > [=Hierarchy] HierarchyCustomize > [=Classes] HierarchyNodeClasses : $text $default(text-red-500 font-bold  hierarchy-selected) Default: text-red-500 font-bold  hierarchy-selected ---> Board > Component > [=Hierarchy] HierarchyCustomize > [=Classes] HierarchyNodeClasses : $text $default(text-red-500 font-bold) Default: text-red-500 font-bold
+Board > Component > [=Hierarchy] HierarchyCustomize > [=Classes] HierarchyNodeClasses : $text $default(text-red-500 font-bold) Default: text-red-500 font-bold
 
 NEW
 Board > Component > [=Hierarchy] > InstanceFieldNameHierarchy : $help[You can specify a instance's field name to output its value instead of the entire object.]
@@ -19,10 +19,10 @@ Board > Component > [=Hierarchy] > InstanceFieldNameHierarchy : $help[You can sp
 #### 6.33.0
 Dashboard-V1
 - New Component `Hierarchy` allows the hierarchical display of instances. Instances of the hierarchy must have a parent field `$ref` that points to the same instance. This displays the structure similarly to a sidebar. Each element can be clicked, and the selected instance is placed in the given output variable.
-  
+
 ``` 
 ALTERED
-Board > Component : $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides] $instanceDescription $style[singleColumn] -> $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides,Hierarchy] $instanceDescription $style[singleColumn]
+Board > Component: $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides,Hierarchy] $instanceDescription $style[singleColumn]
 
 NEW
 Board > Component > [=Hierarchy] HierarchyCustomize : $[Classes] $multiple $help[Select the defaults to change]
@@ -37,16 +37,16 @@ Board > Component > [=Hierarchy] FilterHierarchy
 
 #### 6.32.0
 Dashboard-V1
-- Added Event Field " TooltipTemplate". This allows us to dynamically control the format of the tooltip with HTML template, with piped-handlebars ({|{) for loops/access to variables.
+- Added Event Field "TooltipTemplate". This allows us to dynamically control the format of the tooltip with HTML template, with piped-handlebars ({|{) for loops/access to variables.
 ```
-Board > Component > [=Calendar] Events > TooltipTemplate : $text
+* Board > Component > [=Calendar] Events > TooltipTemplate : $text
 ```
 
 #### 6.31.0
 Dashboard-V1
 - Updated description of the field "StateEventField" in calendar events:
 ```
-Board > Component > [=Calendar] Events > StateEventField : 'Name of the field to calculate the color for the event. If not defined it will use always the same color for all events. If starts with "#" that hex color will be used. If starts with "bg:" then it'll fill the background of that day with the color.'
+* Board > Component > [=Calendar] Events > StateEventField : Name of the field to calculate the color for the event. If not defined it will use always the same color for all events. If starts with "#" that hex color will be used. If starts with "bg:" then it'll fill the background of that day with the color
 ```
 
 #### 6.30.0
@@ -54,7 +54,7 @@ Dashboard-V1
 * New Option `EscapeSpecialChars` in Filter component and help text change
 
 ```
-FilterCustomize : $[Classes,noButton,Placeholder,EscapeSpecialChars] $multiple $help[Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter]
+* Board > Component > [=Filter] FilterCustomize : $[Classes,noButton,Placeholder,EscapeSpecialChars] $multiple $help[Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter]
 ```
 
 
@@ -62,15 +62,16 @@ FilterCustomize : $[Classes,noButton,Placeholder,EscapeSpecialChars] $multiple $
 Dashboard-V1
 ```
 RENAME :
- Board > Component > [=Markdown] Content -> MDContent
+* Board > Component > [=Markdown] Content -> MDContent
 ```
 
 #### 6.29.1
 Dashboard-V1
 * New Option Slides in List
-  ALTERADOS:
-  Component -> $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown] $instanceDescription $style[singleColumn]  $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides] $instanceDescription $style[singleColumn]
-*
+
+```
+* Board > Component : $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown] $instanceDescription $style[singleColumn]  $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides] $instanceDescription $style[singleColumn]
+```
 
 #### 6.29.0
 
