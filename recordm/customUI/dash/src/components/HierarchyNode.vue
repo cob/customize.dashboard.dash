@@ -1,12 +1,14 @@
 <template>
     <div>
         <div class="flex flex-row justify-start ">
-            <span class="flex-grow" > 
-                <span class="cursor-pointer" :id="instance._id" :class="computedClasses" @click="updateVar">{{ title }}</span>
-            </span>
             <span v-if="tree[instance._id]" @click="toggle">
                 <FolderClosed class="cursor-pointer" v-if="collapsed" />
                 <FolderOpen class="cursor-pointer" v-else />
+            </span>
+            <span class="pl-5" v-else @click="toggle">
+            </span>
+            <span class="flex-grow" > 
+                <span class="cursor-pointer" :id="instance._id" :class="computedClasses" @click="updateVar">{{ title }}</span>
             </span>
         </div>
         <div :class="{ hidden: collapsed }">
