@@ -100,7 +100,7 @@ export default {
 
         },
         async createFullTree() {
-            const results = await rmDefinitionSearch(this.definitionName, this.filter, 0, 100,
+            const results = await rmDefinitionSearch(this.definitionName, this.filter, 0, 1000,
                 this.sortField ? this.sortField : "", "true")
 
 
@@ -123,7 +123,7 @@ export default {
             return { tree: tree, tops: tops, instances: instances }
         },
         async sweepTreeTops(instances, input) {
-            const results = await rmDefinitionSearch(this.definitionName, this.filter + " " + input, 0, 100,
+            const results = await rmDefinitionSearch(this.definitionName, this.filter + " " + input, 0, 1000,
                 this.sortField ? this.sortField : "", "true")
 
             const newTree = {}
