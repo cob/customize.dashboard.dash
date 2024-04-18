@@ -17,6 +17,7 @@
                             <List v-if="item['Component'] === 'List'" :component="item" :key="i" />
                             <Slides v-if="item['Component'] === 'Slides'" :component="item" :key="i"
                                 @show-modal="d => $emit('show-modal', d)" v-on="$listeners" />
+                            <Hierarchy v-if="item['Component'] === 'Hierarchy'" :component="item" :key="i"/>
                         </template>
                         <button type="button" class="rounded-lg bg-red-600 right-4 top-4 absolute cursor-pointer"
                             @click="$emit('show-modal', undefined)"> <svg xmlns="http://www.w3.org/2000/svg" fill="none"

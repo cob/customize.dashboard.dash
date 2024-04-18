@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="flex flex-row justify-start cursor-pointer items-center "  @click="toggle" >
+        <div class="flex flex-row justify-start cursor-pointer items-center" @click="updateVar" >
             <span v-if="tree[instance._id]">
                 <FolderClosed  v-if="collapsed" />
                 <FolderOpen v-else />
@@ -9,11 +9,11 @@
                 
             </span>
             <span class="flex-grow" > 
-                <span :id="instance._id" :class="computedClasses" @click="updateVar">{{ title }}</span>
+                <span :id="instance._id" :class="computedClasses">{{ title }}</span>
             </span>
         </div>
         <div :class="{ hidden: collapsed }">
-            <template v-for="child of tree[instance._id]">
+            <template v-for="(child, i) in tree[instance._id]" >
                 <HierarchyNode 
                     :displayField="displayField"
                     :selectedPath="childrenSelectedPath"
@@ -22,7 +22,9 @@
                     :tree="tree"
                     :instances="instances"
                     :nodeClasses="nodeClasses"
-                    :class="computeClassesForChildren(child)" />
+                    :class="computeClassesForChildren(child)" 
+                    :key="i"
+                    />
             </template>
         </div>
     </div>
@@ -75,6 +77,7 @@ export default {
             this.collapsed = !this.collapsed
         },
         updateVar() {
+            this.toggle()
             this.setOutput(this.instance._id)
         },
         childIsSelected(id) {

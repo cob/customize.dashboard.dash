@@ -1,8 +1,8 @@
 <template>
     <div>
-        <template v-for="top of tops">
+        <template v-for="(top, i) in tops">
             <HierarchyNode class="pb-1" :selectedPath="selectedPath" :setOutput="setOutput" :instance="instances[top]"
-                :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" :displayField="displayField"/>
+                :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" :displayField="displayField" :key="i" />
         </template>
         <template v-if="tops && tops.length == 0">
             No results
