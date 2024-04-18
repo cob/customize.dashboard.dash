@@ -202,6 +202,7 @@ function parseDashboard(raw_dashboard) {
             "DefinitionNameHierarchy" : "",
             "ParentFieldName" : "",
             "SortFieldName" : "",
+            "DisplayFieldHierarchy" : "",
             "OutputVarHierarchy" : "",
         }
     }

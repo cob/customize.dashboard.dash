@@ -1,19 +1,21 @@
 <template>
     <div>
-        <div class="flex flex-row justify-start ">
-            <span v-if="tree[instance._id]" @click="toggle">
-                <FolderClosed class="cursor-pointer" v-if="collapsed" />
-                <FolderOpen class="cursor-pointer" v-else />
+        <div class="flex flex-row justify-start cursor-pointer items-center "  @click="toggle" >
+            <span v-if="tree[instance._id]">
+                <FolderClosed  v-if="collapsed" />
+                <FolderOpen v-else />
             </span>
-            <span class="pl-5" v-else @click="toggle">
+            <span class="rounded-full ml-3 w-1 h-1 bg-black mr-2"  v-else>
+                
             </span>
             <span class="flex-grow" > 
-                <span class="cursor-pointer" :id="instance._id" :class="computedClasses" @click="updateVar">{{ title }}</span>
+                <span :id="instance._id" :class="computedClasses" @click="updateVar">{{ title }}</span>
             </span>
         </div>
         <div :class="{ hidden: collapsed }">
             <template v-for="child of tree[instance._id]">
                 <HierarchyNode 
+                    :displayField="displayField"
                     :selectedPath="childrenSelectedPath"
                     :setOutput="setOutput"
                     :instance="instances[child]"
@@ -38,7 +40,7 @@ export default {
     components: { FolderClosed, FolderOpen },
     computed: {
         title() {
-            const labelField = toEsFieldName(this.instance._source._definitionInfo.instanceLabel[0].name )
+           const labelField =  toEsFieldName(this.displayField ? this.displayField : this.instance._source._definitionInfo.instanceLabel[0].name)
             return this.instance._source[labelField][0]
         },
         childrenSelectedPath() { return this.selectedPath ? this.selectedPath.slice(1) : this.selectedPath  },
@@ -47,8 +49,7 @@ export default {
         computedClasses() { //compute classes according to computed state (isSelected, etc)
             const baseClasses = ["cursor-pointer"]
             const selectedClasses = this.isSelected ? this.nodeClasses.split(' ') : ['text-slate-600']
-            const selectedParentClasses = this.isSelectedParent ? ["font-bold"] : []
-            return [...baseClasses, ...selectedClasses, ...selectedParentClasses]
+            return [...baseClasses, ...selectedClasses]
         },        
         
     },
@@ -61,7 +62,8 @@ export default {
         instance: Object,
         tree: Object,
         instances: Object,
-        nodeClasses: String
+        nodeClasses: String,
+        displayField: String
     },
     methods: {
         computeClassesForChildren(child) {

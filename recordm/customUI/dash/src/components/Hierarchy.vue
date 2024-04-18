@@ -2,7 +2,7 @@
     <div>
         <template v-for="top of tops">
             <HierarchyNode class="pb-1" :selectedPath="selectedPath" :setOutput="setOutput" :instance="instances[top]"
-                :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" />
+                :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" :displayField="displayField"/>
         </template>
         <template v-if="tops && tops.length == 0">
             No results
@@ -29,6 +29,7 @@ export default {
         component: Object
     }, computed: {
         options() { return this.component['HierarchyCustomize'][0] },
+        displayField() { return this.component['DisplayFieldHierarchy']},
         definitionName() { return this.component["DefinitionNameHierarchy"] },
         parentField() { return toEsFieldName(this.component["ParentFieldName"]) },
         sortField() { return toEsFieldName(this.component["SortFieldName"]) },
