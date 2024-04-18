@@ -2,6 +2,15 @@
 
 ### Definition Upgrades:
 
+#### 6.35.0 
+Dashboard-V1
+- Added new `DisplayFieldHierarchy` field to Hierarchy component. This allows the user to display a specific field in the listing of hierarchies. It can be left empy, in which case the component defauls to the instance label.
+
+```
+NEW 
+Board > Component > [=Hierarchy] > DisplayFieldHierarchy 
+```
+
 #### 6.34.1
 Dashboard-V1
 - Added new `InstanceFieldNameHierarchy` field to Hierarchy component. This field lets the user specify the name of a field that should be used to set the OutputVarHierarchy's value. If this field is not specified, the Hierarchy component will output the entire instance object instead.

@@ -1,7 +1,7 @@
 {
   "id": null,
   "name": "Dashboard_v1",
-  "description": "@COB v6.34.1",
+  "description": "@COB v6.35.0",
   "duplicable": null,
   "state": "enabled",
   "fieldDefinitions": [
@@ -34,13 +34,13 @@
       "configuration": {
         "description": "",
         "keys": {
-          "InstanceDescription": {},
           "Reference": {
             "args": {
               "query": "*",
               "definition": "Dashboard-Solutions"
             }
-          }
+          },
+          "InstanceDescription": {}
         },
         "extensions": {
           "$groupEdit": {}
@@ -162,13 +162,13 @@
           "configuration": {
             "description": "",
             "keys": {
-              "InstanceDescription": {},
               "AutoRefField": {
                 "args": {
                   "source_field": "Solution",
                   "field_name": "Ordem"
                 }
-              }
+              },
+              "InstanceDescription": {}
             },
             "extensions": {}
           },
@@ -195,10 +195,10 @@
       "configuration": {
         "description": "",
         "keys": {
+          "InstanceLabel": {},
           "Expanded": {
             "args": {}
-          },
-          "InstanceLabel": {}
+          }
         },
         "extensions": {}
       },
@@ -242,10 +242,10 @@
       "configuration": {
         "description": "",
         "keys": {
-          "InstanceDescription": {},
           "Number": {
             "args": {}
-          }
+          },
+          "InstanceDescription": {}
         },
         "extensions": {}
       },
@@ -266,7 +266,6 @@
       "configuration": {
         "description": "",
         "keys": {
-          "Multiple": {},
           "Help": {
             "args": [
               "Select the defaults to change"
@@ -283,7 +282,8 @@
               "Context"
             ],
             "default": null
-          }
+          },
+          "Multiple": {}
         },
         "extensions": {}
       },
@@ -514,9 +514,6 @@
       "configuration": {
         "description": "",
         "keys": {
-          "Link": {
-            "args": {}
-          },
           "InstanceDescription": {},
           "AutoTextJoin": {
             "args": [
@@ -524,6 +521,9 @@
               "id",
               "'/dash'"
             ]
+          },
+          "Link": {
+            "args": {}
           }
         },
         "extensions": {}
@@ -580,7 +580,6 @@
           "configuration": {
             "description": "",
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
@@ -593,7 +592,8 @@
                   "IsModal"
                 ],
                 "default": null
-              }
+              },
+              "Multiple": {}
             },
             "extensions": {}
           },
@@ -718,7 +718,6 @@
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
@@ -730,7 +729,8 @@
                       "Image"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -853,7 +853,6 @@
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
@@ -864,7 +863,8 @@
                       "Classes"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -953,7 +953,6 @@
                   "configuration": {
                     "description": "",
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
@@ -968,7 +967,8 @@
                           "Filter"
                         ],
                         "default": null
-                      }
+                      },
+                      "Multiple": {}
                     },
                     "extensions": {}
                   },
@@ -1169,7 +1169,6 @@
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
@@ -1181,7 +1180,8 @@
                       "InputVar"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -1295,7 +1295,6 @@
                   "configuration": {
                     "description": "",
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
@@ -1307,7 +1306,8 @@
                           "TitleClasses"
                         ],
                         "default": null
-                      }
+                      },
+                      "Multiple": {}
                     },
                     "extensions": {}
                   },
@@ -1427,7 +1427,6 @@
                       "configuration": {
                         "description": "",
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
@@ -1442,7 +1441,8 @@
                               "Unit"
                             ],
                             "default": null
-                          }
+                          },
+                          "Multiple": {}
                         },
                         "extensions": {}
                       },
@@ -1646,7 +1646,6 @@
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
@@ -1661,7 +1660,8 @@
                       "TimeField"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -1855,7 +1855,6 @@
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
@@ -1869,7 +1868,8 @@
                       "EscapeSpecialChars"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2015,7 +2015,6 @@
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
@@ -2029,7 +2028,8 @@
                       "Settings"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2438,7 +2438,6 @@
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
@@ -2454,7 +2453,8 @@
                       "CreateAndDelete"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2625,7 +2625,6 @@
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
@@ -2637,7 +2636,8 @@
                       "DiagramClasses"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2725,7 +2725,6 @@
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
@@ -2736,7 +2735,8 @@
                       "Classes"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2855,7 +2855,6 @@
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
@@ -2867,7 +2866,8 @@
                       "Mode"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -2998,7 +2998,6 @@
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "'EndOfContentTrigger'",
@@ -3011,7 +3010,8 @@
                       "EndOfContentTrigger"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -3160,208 +3160,12 @@
             },
             {
               "id": null,
-              "name": "InputVarHierarchy",
-              "required": null,
-              "description": null,
-              "configuration": {
-                "description": null,
-                "keys": {},
-                "extensions": {}
-              },
-              "condition": "=Hierarchy",
-              "visibilityCondition": {
-                "type": "Equal",
-                "value": [
-                  "Hierarchy"
-                ],
-                "matcher": {
-                  "type": "Parent"
-                }
-              },
-              "duplicable": false,
-              "fields": [],
-              "order": 104,
-              "restricted": false,
-              "rootField": false,
-              "defaultValue": null
-            },
-            {
-              "id": null,
-              "name": "OutputVarHierarchy",
-              "required": null,
-              "description": null,
-              "configuration": {
-                "description": null,
-                "keys": {},
-                "extensions": {}
-              },
-              "condition": "=Hierarchy",
-              "visibilityCondition": {
-                "type": "Equal",
-                "value": [
-                  "Hierarchy"
-                ],
-                "matcher": {
-                  "type": "Parent"
-                }
-              },
-              "duplicable": false,
-              "fields": [],
-              "order": 105,
-              "restricted": false,
-              "rootField": false,
-              "defaultValue": null
-            },
-            {
-              "id": null,
-              "name": "ParentFieldName",
-              "required": null,
-              "description": null,
-              "configuration": {
-                "description": null,
-                "keys": {},
-                "extensions": {}
-              },
-              "condition": "=Hierarchy",
-              "visibilityCondition": {
-                "type": "Equal",
-                "value": [
-                  "Hierarchy"
-                ],
-                "matcher": {
-                  "type": "Parent"
-                }
-              },
-              "duplicable": false,
-              "fields": [],
-              "order": 106,
-              "restricted": false,
-              "rootField": false,
-              "defaultValue": null
-            },
-            {
-              "id": null,
-              "name": "SortFieldName",
-              "required": null,
-              "description": null,
-              "configuration": {
-                "description": null,
-                "keys": {},
-                "extensions": {}
-              },
-              "condition": "=Hierarchy",
-              "visibilityCondition": {
-                "type": "Equal",
-                "value": [
-                  "Hierarchy"
-                ],
-                "matcher": {
-                  "type": "Parent"
-                }
-              },
-              "duplicable": false,
-              "fields": [],
-              "order": 107,
-              "restricted": false,
-              "rootField": false,
-              "defaultValue": null
-            },
-            {
-              "id": null,
-              "name": "DefinitionNameHierarchy",
-              "required": null,
-              "description": null,
-              "configuration": {
-                "description": null,
-                "keys": {},
-                "extensions": {}
-              },
-              "condition": "=Hierarchy",
-              "visibilityCondition": {
-                "type": "Equal",
-                "value": [
-                  "Hierarchy"
-                ],
-                "matcher": {
-                  "type": "Parent"
-                }
-              },
-              "duplicable": false,
-              "fields": [],
-              "order": 108,
-              "restricted": false,
-              "rootField": false,
-              "defaultValue": null
-            },
-            {
-              "id": null,
-              "name": "FilterHierarchy",
-              "required": null,
-              "description": null,
-              "configuration": {
-                "description": null,
-                "keys": {},
-                "extensions": {}
-              },
-              "condition": "=Hierarchy",
-              "visibilityCondition": {
-                "type": "Equal",
-                "value": [
-                  "Hierarchy"
-                ],
-                "matcher": {
-                  "type": "Parent"
-                }
-              },
-              "duplicable": false,
-              "fields": [],
-              "order": 109,
-              "restricted": false,
-              "rootField": false,
-              "defaultValue": null
-            },
-            {
-              "id": null,
-              "name": "InstanceFieldNameHierarchy",
-              "required": null,
-              "description": "$help[You can specify a instance's field name to output its value instead of the entire object.]",
-              "configuration": {
-                "description": "",
-                "keys": {
-                  "Help": {
-                    "args": [
-                      "You can specify a instance's field name to output its value instead of the entire object."
-                    ]
-                  }
-                },
-                "extensions": {}
-              },
-              "condition": "=Hierarchy",
-              "visibilityCondition": {
-                "type": "Equal",
-                "value": [
-                  "Hierarchy"
-                ],
-                "matcher": {
-                  "type": "Parent"
-                }
-              },
-              "duplicable": false,
-              "fields": [],
-              "order": 110,
-              "restricted": false,
-              "rootField": false,
-              "defaultValue": null
-            },
-            {
-              "id": null,
               "name": "HierarchyCustomize",
               "required": null,
               "description": "$[Classes] $multiple $help[Select the defaults to change]",
               "configuration": {
                 "description": "",
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
@@ -3372,7 +3176,8 @@
                       "Classes"
                     ],
                     "default": null
-                  }
+                  },
+                  "Multiple": {}
                 },
                 "extensions": {}
               },
@@ -3418,13 +3223,235 @@
                   },
                   "duplicable": false,
                   "fields": [],
-                  "order": 112,
+                  "order": 105,
                   "restricted": false,
                   "rootField": false,
                   "defaultValue": "text-red-500 font-bold"
                 }
               ],
+              "order": 104,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "InputVarHierarchy",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 106,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "OutputVarHierarchy",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 107,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "ParentFieldName",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 108,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "SortFieldName",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 109,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "DefinitionNameHierarchy",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 110,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "FilterHierarchy",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
               "order": 111,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "DisplayFieldHierarchy",
+              "required": null,
+              "description": null,
+              "configuration": {
+                "description": null,
+                "keys": {},
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 112,
+              "restricted": false,
+              "rootField": false,
+              "defaultValue": null
+            },
+            {
+              "id": null,
+              "name": "InstanceFieldNameHierarchy",
+              "required": null,
+              "description": "$help[You can specify a instance's field name to output its value instead of the entire object.]",
+              "configuration": {
+                "description": "",
+                "keys": {
+                  "Help": {
+                    "args": [
+                      "You can specify a instance's field name to output its value instead of the entire object."
+                    ]
+                  }
+                },
+                "extensions": {}
+              },
+              "condition": "=Hierarchy",
+              "visibilityCondition": {
+                "type": "Equal",
+                "value": [
+                  "Hierarchy"
+                ],
+                "matcher": {
+                  "type": "Parent"
+                }
+              },
+              "duplicable": false,
+              "fields": [],
+              "order": 113,
               "restricted": false,
               "rootField": false,
               "defaultValue": null
