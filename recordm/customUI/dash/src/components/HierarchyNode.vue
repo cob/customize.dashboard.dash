@@ -5,14 +5,12 @@
                 <FolderClosed  v-if="collapsed" />
                 <FolderOpen v-else />
             </span>
-            <span class="rounded-full ml-3 w-1 h-1 bg-black mr-2"  v-else>
-                
-            </span>
-            <span class="flex-grow" > 
+            <span :class="iconClasses"  v-else/>
+            <span class="flex-grow leading-6" > 
                 <span :id="instance._id" :class="computedClasses">{{ title }}</span>
             </span>
         </div>
-        <div :class="{ hidden: collapsed }">
+        <div :class="{ hidden: collapsed }" class="ml-2">
             <template v-for="(child, i) in tree[instance._id]" >
                 <HierarchyNode 
                     :displayField="displayField"
@@ -52,7 +50,12 @@ export default {
             const baseClasses = ["cursor-pointer"]
             const selectedClasses = this.isSelected ? this.nodeClasses.split(' ') : ['text-slate-600']
             return [...baseClasses, ...selectedClasses]
-        },        
+        },   
+        iconClasses() { 
+            const baseClasses = ["fa-circle", "ml-[6px]", "pr-2", "text-[9px]" ]
+            const selectedClass = this.isSelected ? [...this.nodeClasses.split(' '), "fa-solid"] : ["fa-regular"]
+            return [...baseClasses, selectedClass]
+        }    
         
     },
     data: () => ({
@@ -69,8 +72,9 @@ export default {
     },
     methods: {
         computeClassesForChildren(child) {
-            const baseClasses = ["pl-4","border-l-2"]
-            const selectedClasses = this.childIsSelected(child) ? ['border-slate-700','border-l-2'] : ['border-slate-300']
+            const baseClasses = ["pl-1","border-l-2"]
+            // const selectedClasses = this.childIsSelected(child) ? ['border-slate-700'] : ['border-slate-300']
+            const selectedClasses =  ['border-slate-300']
             return [...baseClasses, ...selectedClasses]
         },
         toggle() {

@@ -1,5 +1,8 @@
 <template>
     <div>
+        <button class="float-right text-[10px] uppercase text-slate-400 hover:text-slate-500 border-slate-200  hover:border-slate-300 hover:shadow-none  py-0 px-1 rounded-sm" @click="clear" >
+            Limpar
+        </button> <br/>
         <template v-for="(top, i) in tops">
             <HierarchyNode class="pb-1" :selectedPath="selectedPath" :setOutput="setOutput" :instance="instances[top]"
                 :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" :displayField="displayField" :key="i" />
@@ -47,24 +50,13 @@ export default {
         this.originalTree = args.tree
 
         await this.updateTree()
-
-        const firstID = this.tops[0]
-
-        this.selectedPath = [firstID]
-        if (this.instanceFieldName && this.instances[firstID]._source[this.instanceFieldName]) {
-            let fieldValue = this.instances[firstID]._source[this.instanceFieldName]
-            this.$set(this.component.vars, this.outputVar, fieldValue === Array ? fieldValue[0] : fieldValue)
-        } else {
-            this.$set(this.component.vars, this.outputVar, this.instances[firstID]._source)
-        }
-
     },
     watch: {
         async input() {
             if (!this.instances)
                 return
 
-            this.selectedPath = []
+            this.selectedPath = undefined
             this.updateTree()
         },
     },
@@ -90,6 +82,8 @@ export default {
             }
             return path
         },
+        clear() { this.$set(this.component.vars, this.outputVar, undefined); this.selectedPath = undefined},
+                
         setOutput(id) {
             this.selectedPath = this.pathToRoot(this.instances, id)
             if (this.instanceFieldName && this.instances[id]._source[this.instanceFieldName]) {
