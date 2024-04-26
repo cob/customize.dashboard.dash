@@ -307,7 +307,7 @@
           return {
             user: this.userInfo,
             arg: this.hashArg.content,
-            name: this.dashboardName,
+            name: this.dashboardName.startsWith(CHOOSERFLAG) ? this.dashboardName.substring(CHOOSERFLAG.length) : this.dashboardName,
             vars: { version: 0 }
           };
         }
