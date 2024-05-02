@@ -268,7 +268,7 @@
         if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: called with newDashEs=",newDashEs," requestResultList=", requestResultList)
 
         //Calculate the key to use on a cache for each different combination of 1)url arguments AND 2) result list of IDs
-        const key = this.dashboardArg + requestResultList.map(d => d.id).join("-")
+        const key = this.dashboardArg + requestResultList.map(d => d.id).join("-") + JSON.stringify(this.userInfo)
         const dashKey = "H" + sha256(key).toString().replace("=", "_")
 
         const compileDashboard = (dashboardParsed) => {
