@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import ComponentStatePersistence from "@/model/ComponentStatePersistence";
 import { rmDefinitionSearch } from '@cob/rest-api-wrapper'
 import { toEsFieldName } from '@cob/rest-api-wrapper/src/utils/ESHelper';
 import HierarchyNode from './HierarchyNode.vue';
@@ -21,6 +22,7 @@ import HierarchyNode from './HierarchyNode.vue';
 export default {
     components: { HierarchyNode },
     data: () => ({
+        statePersistence: Object, 
         tree: undefined,
         instances: undefined,
         tops: undefined,
@@ -50,6 +52,10 @@ export default {
         this.originalTree = args.tree
 
         await this.updateTree()
+        this.statePersistence = new ComponentStatePersistence(this.component.id, this.activateFromPersistentChange)
+    },
+    beforeDestroy() {
+            this.statePersistence.stop()
     },
     watch: {
         async input() {
@@ -82,9 +88,10 @@ export default {
             }
             return path
         },
-        clear() { this.$set(this.component.vars, this.outputVar, undefined); this.selectedPath = undefined},
+        clear() { this.$set(this.component.vars, this.outputVar, undefined); this.selectedPath = undefined; this.statePersistence.content = ""},
                 
         setOutput(id) {
+            this.statePersistence.content = id 
             this.selectedPath = this.pathToRoot(this.instances, id)
             if (this.instanceFieldName && this.instances[id]._source[this.instanceFieldName]) {
                 let fieldValue = this.instances[id]._source[this.instanceFieldName]
@@ -92,7 +99,10 @@ export default {
             } else {
                 this.$set(this.component.vars, this.outputVar, this.instances[id]._source)
             }
-
+        },
+        activateFromPersistentChange(newID) {
+            if(newID)
+                this.setOutput(newID) 
         },
         async createFullTree() {
             const results = await rmDefinitionSearch(this.definitionName, this.filter, 0, 1000,

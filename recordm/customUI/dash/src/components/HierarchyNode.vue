@@ -10,7 +10,7 @@
                 <span :id="instance._id" :class="computedClasses">{{ title }}</span>
             </span>
         </div>
-        <div :class="{ hidden: collapsed }" class="ml-2">
+        <div :class="{ hidden: collapsed && !isSelectedParent }" class="ml-2">
             <template v-for="(child, i) in tree[instance._id]" >
                 <HierarchyNode 
                     :displayField="displayField"
@@ -61,6 +61,12 @@ export default {
     data: () => ({
         collapsed: true
     }),
+    watch: {
+        isSelectedParent(newV, oldV) {
+            if(!newV && oldV && !this.isSelected)
+                this.collapsed = false 
+        }
+    },
     props: {
         selectedPath : Array,
         setOutput: Function,
