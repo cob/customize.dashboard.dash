@@ -18,7 +18,7 @@
           }
         },
         computed: {
-            containerId() {return `simple-search-${Date.now()}`;},
+            containerId() {return `simple-search-${this._uid}`;},
             options()         { return this.component['ListCustomize'][0] },
             selectedOptions() {
               if (!this.options["ListCustomize"]) return [];
