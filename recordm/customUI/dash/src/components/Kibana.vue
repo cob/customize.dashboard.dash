@@ -56,7 +56,8 @@
                         // para ter um comportamento optimizado tão instantânio qt possível
                         const SlowestLoading = 3000
                         for(let t = 100; t < SlowestLoading; t += 100) setTimeout(() => {
-                            this.iFrame.style.minHeight = this.iFrame.contentWindow.document.body.scrollHeight + "px"
+                            if(this.iFrame.contentWindow)
+                                this.iFrame.style.minHeight = this.iFrame.contentWindow.document.body.scrollHeight + "px"
                         }, t)
                     }
 
