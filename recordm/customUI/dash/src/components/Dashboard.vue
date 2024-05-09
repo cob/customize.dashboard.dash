@@ -42,10 +42,9 @@ import ComponentStatePersistence from "@/model/ComponentStatePersistence"
             this.statePersistence = []
         },
         beforeDestroy() {
-            this.vars.forEach(varName => {
-                //TODO: fix - sometimes we get this.vars with [null]. We currently test but this shouldn't happen
-                this.statePersistence[varName] && this.statePersistence[varName].stop()
-            });
+            Object.keys(this.vars).forEach (
+                //TODO: fix - sometimes we get this.vars with [null]. We currently test but this shouldn't happen       
+                v => this.statePersistence[v] && this.statePersistence[v].stop())  
         },
         computed: {
             options() { return this.dashboard['DashboardCustomize'][0] },
@@ -53,20 +52,25 @@ import ComponentStatePersistence from "@/model/ComponentStatePersistence"
             classes() { return this.options['DashboardClasses'] || "h-full bg-cover bg-center overflow-auto p-3" },
             width()   { return this.options['Width']            || "max-w-6xl mx-auto" },
             grid()    { return this.options['Grid']             || "grid grid-flow-row-dense md:grid-cols-12" },
-            vars()    { return this.options['VarName'].map(v => v['VarName']) },
+            vars()    { return this.options['Variables'].reduce( (vars, v) => {vars[v['Name']] = v['Initial Value']; return vars}, {}) },
             image()   { return this.options['Image'] ? "background-image: url(" + this.options['Image'] +  ");" : "" }
         },
         watch: {
-            vars(newVars,oldVars) {
-                // for (let varName of oldVars) {
-                //     if (varName == null) continue
-                //     this.statePersistence[varName].stop()
-                // };                
-                for (let varName of newVars) {
-                    if (varName == null) continue
-                    this.statePersistence[varName] = new ComponentStatePersistence(varName, this.activateFromPersistenceChange(varName))
-                    this.dashboard.dashboardContext.vars[varName] = this.statePersistence[varName].content
-                };
+            vars(newVars) {
+                Object.entries(newVars).forEach( entry => {
+                    const name = entry[0]
+                    const value = entry[1]
+                    
+                    if(!this.statePersistence[name])
+                        this.statePersistence[name] = new ComponentStatePersistence(name, this.activateFromPersistenceChange(name))
+                    
+                    if(name && value && !this.statePersistence[name].content) {
+                        this.statePersistence[name].content = value 
+                        this.dashboard.dashboardContext.vars[name] = this.statePersistence[name].content
+                    }
+
+                   
+                })
             }
 
         },

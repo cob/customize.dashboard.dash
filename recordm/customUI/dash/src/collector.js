@@ -56,7 +56,10 @@ function parseDashboard(raw_dashboard) {
             "DashboardClasses": "",
             "Image": "",
             "GroupAccess": [{}],
-            "VarName": [{}],
+            "Variables": [{
+                "Name" : "", 
+                "Initial Value" : "",
+            }],
             "Context": ""
         }],
         "Board": [{
