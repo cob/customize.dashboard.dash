@@ -2,6 +2,20 @@
 
 ### Definition Upgrades:
 
+#### 6.39.0
+
+Dashboard-V1
+- Changed the `Vars` field in the dashboard for a duplicable group `Variables` with two child fields: `Name` and `Initial Value`. These define the initial value the variable will be associated to when the dashboard loads for the first time. 
+```
+ALTERED
+DashboardCustomize [=Vars] > Variables (Duplicable) $group 
+DashboardCustomize [=Vars] > Variables (Duplicable) > Name 
+DashboardCustomize [=Vars] > Variables (Duplicable) > Initial Value
+
+REMOVED 
+DashboardCustomize [=Vars] > VarName 
+```
+
 #### 6.35.0 
 Dashboard-V1
 - Added new `DisplayFieldHierarchy` field to Hierarchy component. This allows the user to display a specific field in the listing of hierarchies. It can be left empy, in which case the component defauls to the instance label.
