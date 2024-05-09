@@ -5,8 +5,17 @@ const SCOPE_ACCESS_PERMISSION_KEYWORD = "ACESSO ";
 
 cob.custom.customize.push(function (core, utils, _ui) {
 
-   // -------------------- -------------------- -------------------- -------------------- -------------------- 
-   // Custom getDefaultModuleUri that returns last showed dashboard if it exists as entry page
+   /**
+    * -------------------- -------------------- -------------------- --------------------
+    Custom getDefaultModuleUri that returns last showed dashboard if it exists as entry page
+
+    Suports using lastDash overrides via `custom-info=last-dash-override` properties in web.properties
+    Spaces must be replaced by _ in the props.
+    Example:
+    custom-info=last-dash-override
+    custom-info.last-dash-override.Seleccionar_Empresa=Compras
+    custom-info.last-dash-override.2013960=Compras
+    **/
    cob.custom.getDefaultModuleUri = function () {
       if (core.getCurrentLoggedInUser() === 'anonymous') {
          return "login";
@@ -16,7 +25,16 @@ cob.custom.customize.push(function (core, utils, _ui) {
 
       if (options && options.length > 0) {
          // Check for stored last dashboard page (recorded in dash component at every request) 
-         const lastDash = localStorage.getItem(core.getCurrentLoggedInUser() + "-lastDash")
+         let lastDash = localStorage.getItem(core.getCurrentLoggedInUser() + "-lastDash")
+
+         let overrides = core.getAppInfoModel().customInfo["last-dash-override"]
+         if (lastDash && overrides) {
+            //example if(lastDash == "Seleccionar Empresa") lastDash = "Compras"
+            overrides.forEach(item => {
+               if (lastDash.replaceAll(' ', '_') === item.key) lastDash = item.value;
+            });
+         }
+
          // Use the previous page in this browser localStorage, if we have one, OR the first menu entry 
          return lastDash ? "cob.custom-resource/" + lastDash + "/dash" : options[0].href;
 
