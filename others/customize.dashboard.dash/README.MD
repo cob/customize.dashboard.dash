@@ -9,7 +9,7 @@ Dashboard-V1
 ```
 ALTERED
 DashboardCustomize [=Vars] > Variables (Duplicable) $group 
-DashboardCustomize [=Vars] > Variables (Duplicable) > Name 
+DashboardCustomize [=Vars] > Variables (Duplicable) > VarName 
 DashboardCustomize [=Vars] > Variables (Duplicable) > Initial Value
 
 REMOVED 

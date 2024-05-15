@@ -52,7 +52,7 @@ import ComponentStatePersistence from "@/model/ComponentStatePersistence"
             classes() { return this.options['DashboardClasses'] || "h-full bg-cover bg-center overflow-auto p-3" },
             width()   { return this.options['Width']            || "max-w-6xl mx-auto" },
             grid()    { return this.options['Grid']             || "grid grid-flow-row-dense md:grid-cols-12" },
-            vars()    { return this.options['Variables'].reduce( (vars, v) => {vars[v['Name']] = v['Initial Value']; return vars}, {}) },
+            vars()    { return this.options['Variables'].reduce( (vars, v) => {vars[v['VarName']] = v['Initial Value']; return vars}, {}) },
             image()   { return this.options['Image'] ? "background-image: url(" + this.options['Image'] +  ");" : "" }
         },
         watch: {
