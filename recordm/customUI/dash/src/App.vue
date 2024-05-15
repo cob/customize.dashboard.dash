@@ -28,10 +28,92 @@
   const CHOOSERFLAG = "MODULE>"
   const SCOPE_ACCESS_PERMISSION_KEYWORD = "ACESSO ";
 
+  const formatDate = (date) => date.toISOString()
+
+
+  function paging(direction, current, size, limit) {
+    if(typeof current == 'string'){
+      // handle date 
+      const n = parseInt(size.slice(0, -1))*direction
+      const order = size.slice(-1).toLowerCase()
+      const date = new Date(current)
+      date.setHours(15) //timezone things, quickfix for now
+
+
+      if(order === 'd'){ // days 
+        date.setDate( date.getDate() + n)     
+      }if(order === 'w'){ // weeks  
+        date.setDate( date.getDate() + n*7)        
+      }if(order === 'm'){ // months 
+        date.setMonth( date.getMonth() + n) 
+      }if(order === 'y'){ // years  
+        date.setFullYear( date.getFullYear() + n)
+      } 
+
+      if(limit) {
+        const limitDate = new Date(limit)
+        limitDate.setHours(15)
+        if( direction < 0 && limitDate > date)
+          return formatDate(limitDate)
+        if( direction > 0 && limitDate < date)
+          return formatDate(limitDate)
+      }
+
+      return formatDate(date)
+    } else {
+      // handle number 
+      const shifted = current + size*direction
+      if((direction > 0 && limit && shifted > limit) || 
+         (direction < 0 && limit && shifted < limit ))
+        return limit 
+      return shifted  
+    }}
+
+
+
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
   Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); });
   Handlebars.registerHelper('or', function(arg1, arg2) { return (arg1 || arg2); });
   Handlebars.registerHelper('not', function(arg) {return (!arg); } )
+  Handlebars.registerHelper('dateInfo', function(datestring, kw) {
+    const date = new Date(datestring)
+
+    if(!datestring)
+      return ""
+
+    if(kw == "LastDateOfYear") {
+      const firstOfYear = new Date(date.getFullYear(), 11, 31);   
+      return formatDate(firstOfYear)  
+    }
+    if(kw == "FirstDateOfYear") {
+      const firstOfYear = new Date(date.getFullYear(), 0, 1);   
+      return formatDate(firstOfYear)  
+    }
+    if(kw == "LastDateOfMonth") {
+      const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);   
+      const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
+      return formatDate(lastDayOfMonth)
+    }if(kw == "FirstDateOfMonth") {
+      const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+      return formatDate(firstDay)  
+    }if(kw == "MonthText") {
+      const month = date.toLocaleString("pt", { month: 'short' })
+      return month.charAt(0).toUpperCase() + month.slice(1, -1)
+    }if(kw == "FullYear") {
+      return date.getFullYear()
+    }
+  })
+  Handlebars.registerHelper('today', function() {
+    const today = new Date() 
+    return formatDate(today)
+  } )
+  Handlebars.registerHelper('nextPage', function(current, size, limit=undefined) {
+    return paging(1, current, size, limit)
+  })
+  Handlebars.registerHelper('prevPage', function(current, size, limit=undefined) {
+    return paging(-1, current, size, limit)
+  })
+
 
   export default {
     name: 'App',
