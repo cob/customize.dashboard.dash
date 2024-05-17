@@ -75,32 +75,47 @@
   Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); });
   Handlebars.registerHelper('or', function(arg1, arg2) { return (arg1 || arg2); });
   Handlebars.registerHelper('not', function(arg) {return (!arg); } )
-  Handlebars.registerHelper('dateInfo', function(datestring, kw) {
+  Handlebars.registerHelper('dateInfo', function(datestring, keyword) {
     const date = new Date(datestring)
 
     if(!datestring)
       return ""
 
-    if(kw == "LastDateOfYear") {
-      const firstOfYear = new Date(date.getFullYear(), 11, 31);   
+    if(keyword == "LastDateOfYear") {
+      const firstOfYear = new Date(date.getFullYear(), 11, 31, 23, 59);   
       return formatDate(firstOfYear)  
     }
-    if(kw == "FirstDateOfYear") {
+    if(keyword == "FirstDateOfYear") {
       const firstOfYear = new Date(date.getFullYear(), 0, 1);   
       return formatDate(firstOfYear)  
     }
-    if(kw == "LastDateOfMonth") {
+    if(keyword == "LastDateOfMonth") {
       const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);   
       const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
       return formatDate(lastDayOfMonth)
-    }if(kw == "FirstDateOfMonth") {
+    }if(keyword == "FirstDateOfMonth") {
       const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
       return formatDate(firstDay)  
-    }if(kw == "MonthText") {
+    }if(keyword == "MonthText") {
       const month = date.toLocaleString("pt", { month: 'short' })
       return month.charAt(0).toUpperCase() + month.slice(1, -1)
-    }if(kw == "FullYear") {
+    }if(keyword == "FullYear") {
       return date.getFullYear()
+    }  if(keyword == "MonthIndexAt1") {
+      return date.getMonth() + 1 
+    } if(keyword == "FirstEpochOfYear") {
+      const firstOfYear = new Date(date.getFullYear(), 0, 1);   
+      return firstOfYear.getTime()
+    } if(keyword == "LastEpochOfYear") {
+      const lastOfYear = new Date(date.getFullYear(), 11, 31, 23, 59);   
+      return lastOfYear.getTime()
+    } if (keyword == "FirstEpochOfMonth") {
+      const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+      return firstDay.getTime()
+    } if(keyword == "LastEpochOfMonth") {
+      const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1, 23, 59);   
+      const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
+      return lastDayOfMonth.getTime()
     }
   })
   Handlebars.registerHelper('today', function() {
