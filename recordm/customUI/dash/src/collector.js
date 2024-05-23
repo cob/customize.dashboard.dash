@@ -185,6 +185,7 @@ function parseDashboard(raw_dashboard) {
                 "DescriptionEventField": "",
                 "StateEventField": "",
                 "EventsQuery": "",
+                "TooltipTemplate":""
             }],
         },
         "List": {
