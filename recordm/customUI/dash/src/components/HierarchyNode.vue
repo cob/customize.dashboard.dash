@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="flex flex-row justify-start cursor-pointer items-center" @click="updateVar" >
+        <div class="flex flex-row justify-start cursor-pointer items-start" @click="updateVar" >
             <span v-if="tree[instance._id]">
-                <FolderClosed  v-if="collapsed" />
+                <FolderClosed  v-if="collapsed && !isSelectedParent" />
                 <FolderOpen v-else />
             </span>
             <span :class="iconClasses"  v-else/>
