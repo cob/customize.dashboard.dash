@@ -115,6 +115,23 @@ export default {
                 instances[instance._id] = instance
             }
 
+
+            const compareNodesByChildren = (a, b) => {
+                const childrenOfA = tree[a] ? tree[a].length : 0
+                const childrenOfB = tree[b] ? tree[b].length : 0
+                if( childrenOfA == 0 && childrenOfB > 0)
+                    return 1 
+                if (childrenOfA > 0 && childrenOfB == 0)
+                    return -1 
+                if ( (childrenOfA == 0 && childrenOfB == 0) || (childrenOfA > 0 && childrenOfB > 0 ))
+                    return 0
+
+                return  childrenOfB - childrenOfA
+            }
+
+            tops.sort( this.compareNodesByChildren )
+            Object.values(tree).forEach( c =>  c.sort( compareNodesByChildren ) )
+
             return { tree: tree, tops: tops, instances: instances }
         },
         async sweepTreeTops(instances, input) {
