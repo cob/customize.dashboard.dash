@@ -2,6 +2,14 @@
 
 ### Definition Upgrades:
 
+#### 6.40.0
+Dashboard-V1
+- Added a new `AllDay` field to the `Calendar`'s `Events`. If you specify *True* the Events will render as *All Day Events*, meaning they'll be filled (with background) instead of using only a colored dot. If False is specified, it will use the Calendar's default All Day behavior (rendering a colored dot when end_date-start_date < 24h).
+```
+NEW 
+Board > Component > [=Calendar] Events > AllDay : $[True,*False] True if events occupy all day. False if otherwise.
+```
+
 #### 6.39.0
 
 Dashboard-V1

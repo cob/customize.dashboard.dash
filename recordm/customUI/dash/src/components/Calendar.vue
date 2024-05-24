@@ -241,6 +241,7 @@
               result["END DATE FIELD"]    = toEsFieldName(this.eventSources[i]['DateEndEventField'])
               result["TOOLTIP TEMPLATE"]  = this.eventSources[i]['TooltipTemplate']
               result["DESC IS HANDLEBARS"]= descritpionIsHandlebars
+              result["IS ALL DAY"] = this.eventSources[i]['AllDay']
               results.push(result)
             }
           }
@@ -313,6 +314,7 @@
               const endDateField          = esInstance["END DATE FIELD"]
               const descriptionEventField = esInstance["DESCRIPTION FIELD"]
               const stateField            = esInstance["STATE FIELD"]
+              const is_all_day = esInstance["IS ALL DAY"].toLowerCase() === "true"
 
               const startDate = parseInt(esInstance[startDateField][0], 10)
 
@@ -373,7 +375,7 @@
                 title: actualtitle,
                 start: startDate,
                 end: endDate,
-                allDay: false,
+                allDay: is_all_day,
                 backgroundColor: isHandles  ? "transparent" : color,
                 borderColor: isHandles ? "transparent" : color, 
                 // from: https://fullcalendar.io/docs/event-object
