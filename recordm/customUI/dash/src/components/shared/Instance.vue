@@ -30,12 +30,14 @@ export default {
     },
 
     instanceLabel() {
-      if (!this.esInstance._definitionInfo.instanceLabel || !this.esInstance._definitionInfo.instanceLabel.length) {
+      const instanceLabelInfo = this.esInstance._definitionInfo.instanceLabel;
+      if (!instanceLabelInfo || !instanceLabelInfo.length) {
         return this.esInstance.id
-      } else {
-        const fieldDefinition = this.esInstance._definitionInfo.instanceLabel[0];
-        return getValue(this.esInstance, fieldDefinition)[0]
-      }
+      } 
+
+      const fieldDefinition = instanceLabelInfo[0];
+      let instanceLabelValue = getValue(this.esInstance, fieldDefinition)
+      return instanceLabelValue ? instanceLabelValue[0] : this.esInstance.id;
     },
 
     instanceDescriptions() {
