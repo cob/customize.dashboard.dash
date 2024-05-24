@@ -315,6 +315,7 @@
               const descriptionEventField = esInstance["DESCRIPTION FIELD"]
               const stateField            = esInstance["STATE FIELD"]
               const is_all_day = esInstance["IS ALL DAY"].toLowerCase() === "true"
+              let instance_all_day = is_all_day
 
               const startDate = parseInt(esInstance[startDateField][0], 10)
 
@@ -370,12 +371,25 @@
               actualtitle = title[0] + (title.length > 1 ? `(${title.length})` : '')
             }
 
+            let fc_start_date, fc_end_date
+            fc_start_date = startDate
+            fc_end_date = endDate
+
+            // Get the start and end date, convert them to UTC and use the UTC dates
+            // to render the events in the calendar. 
+            if (instance_all_day) {
+              let start_date = new Date(startDate);
+              let end_date = new Date(endDate);
+              fc_start_date = new Date(Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate())) 
+              fc_end_date = new Date(Date.UTC(end_date.getFullYear(), end_date.getMonth(), end_date.getDate()+1) )
+            }
+
               return {
                 id: `calendar-event-${esInstance.id}`,
                 title: actualtitle,
-                start: startDate,
-                end: endDate,
-                allDay: is_all_day,
+                start: fc_start_date,
+                end: fc_end_date,
+                allDay: instance_all_day, 
                 backgroundColor: isHandles  ? "transparent" : color,
                 borderColor: isHandles ? "transparent" : color, 
                 // from: https://fullcalendar.io/docs/event-object
