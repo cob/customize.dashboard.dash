@@ -2,6 +2,28 @@
 
 ### Definition Upgrades:
 
+#### 6.41.0
+Dashboard-V1
+- Added `Behaviour` option to LineCustomize for the Totals Component. When choosing this option, you can choose the Line's behaviour in `LineBehaviour`: 
+  - Listing -> The line acts as a regular/normal Totals' line;
+  - Link -> Receives a custom link to replace the default HREF in each Value for that specific Line. Can also be used to run javascript by prefixing code w/ "javascript:";
+  - Filter -> Allows us to specify a var name and its respective value, so we can use an entire Line as a Filter button.
+    - `FilterTotalVarName` is used to specify the name of a variable to be stored in the dashboard.
+    - `FilterTotalValue` is used to specify the value to be passed to the variable specified in `FilterTotalVarName`.
+
+```
+ALTERED
+Board > Component [=Totals] > Totals > Line > LineCustomize : $[LineClasses,TitleClasses,Behaviour] $multiple $help[Select the defaults to change]
+
+NEW
+Board > Component [=Totals] > Totals > Line > LineCustomize [=Behaviour] > LineBehaviour : $[*Listing,Filter,Link] $help[Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard.]
+
+Board > Component [=Totals] > Totals > Line > LineCustomize [=Behaviour] > LineBehaviour [=Filter] > FilterTotalVarName : The filter variable name
+Board > Component [=Totals] > Totals > Line > LineCustomize [=Behaviour] > LineBehaviour [=Filter]  > FilterTotalValue : The value of the filter $text
+
+Board > Component [=Totals] > Totals > Line > LineCustomize [=Behaviour] > LineBehaviour [=Link] > LineLink
+```
+
 #### 6.40.0
 Dashboard-V1
 - Added a new `AllDay` field to the `Calendar`'s `Events`. If you specify *True* the Events will render as *All Day Events*, meaning they'll be filled (with background) instead of using only a colored dot. If False is specified, it will use the Calendar's default All Day behavior (rendering a colored dot when end_date-start_date < 24h).

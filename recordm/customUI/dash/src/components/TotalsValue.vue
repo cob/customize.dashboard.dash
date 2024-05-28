@@ -34,7 +34,7 @@
 
     export default {
         components: { Attention },
-        props: { valueData: Object },
+        props: { valueData: Object, clicker : Function, hasVars : Boolean, customLink : String},
         computed: {
             options()          { return this.valueData['ValueCustomize'][0] },
             view()             { return this.options['View'] },
@@ -43,7 +43,11 @@
             unit()             { return this.options['Unit'] },
             state()            { return this.valueData.dash_info && this.valueData.dash_info.state || "" },
             updating()         { return this.state === "updating" || this.state === "loading" },
-            link()             { return this.valueData.dash_info.href ? this.valueData.dash_info.href + (this.view ? "&av=" + this.view : "") : "#"},
+            link()             { 
+                if (this.hasVars) { return false } 
+                if (this.customLink) { return this.customLink }
+                return this.valueData.dash_info.href ? this.valueData.dash_info.href + (this.view ? "&av=" + this.view : "") : "#"
+            },
             value() {
                 if(this.valueData.dash_info.state === "loading") return "L"
                 if(this.valueData.dash_info.state === "error") return "E"
@@ -70,6 +74,10 @@
                     }
                 } 
                 
+                if (this.hasVars) {
+                    classes += " cursor-pointer"
+                } 
+
                 return classes.split(/\s/).map(c => specialClasses[c] || c ).join(" ") 
             }
         }

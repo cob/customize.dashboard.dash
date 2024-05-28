@@ -135,6 +135,7 @@ function parseDashboard(raw_dashboard) {
                 "LineCustomize": [{
                     "LineClasses": "",
                     "TitleClasses": "",
+                    "Behaviour":"",
                 }],
                 "Value": [{
                     "ValueCustomize": [{
@@ -146,6 +147,11 @@ function parseDashboard(raw_dashboard) {
                     }],
                     "Style Value": "",
                     "Arg": [{}]
+                }],
+                "LineBehaviour": [{
+                    "FilterTotalVarName":"",
+                    "FilterTotalValue":"",
+                    "LineLink":""
                 }]
             }],
         },
