@@ -9,7 +9,7 @@
             <Kibana    v-if="item['Component'] === 'Kibana'"    :component="item" :key="i" />
             <Filtro    v-if="item['Component'] === 'Filter'"    :component="item" :key="i" />
             <Calendar  v-if="item['Component'] === 'Calendar'"  :component="item" :key="i" />
-            <List      v-if="item['Component'] === 'List'"      :component="item" :key="i" />
+            <List      v-if="item['Component'] === 'List'"      :component="item" :key="i" v-on="$listeners" :refreshFlag="refreshFlag"/>
             <Activator v-if="item['Component'] === 'ModalActivator'" :component="item" :key="i" @show-modal="d => $emit('show-modal', d)"/>
             <Slides    v-if="item['Component'] === 'Slides'"      :component="item" :key="i" v-on="$listeners" @show-modal="d => $emit('show-modal', d)"/>    
             <Hierarchy v-if="item['Component'] === 'Hierarchy'" :component="item" :key="i"/>
@@ -34,7 +34,8 @@ import Hierarchy from './Hierarchy.vue'
     export default {
         components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown, Slides, Hierarchy },
         props: {
-          board: Object
+          board: Object,
+          refreshFlag: Number
         },
         computed: {
             options()    { return this.board['BoardCustomize'][0] },

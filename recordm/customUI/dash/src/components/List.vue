@@ -4,7 +4,10 @@
 
 <script>
     export default {
-        props: { component: Object },
+        props: { 
+          component: Object,
+          refreshFlag: Number 
+        },
         data: () => ({
             simpleSearch: null
         }),
@@ -50,7 +53,12 @@
                   }
                   this.simpleSearch = new cob.components.SimpleSearch(cob.app, `#${this.containerId}`, this.definition, this.queryWithFilter, simpleSearchOptions);
                 }
+            },
+            refresh_list() {
+              if(this.simpleSearch) {
+                this.simpleSearch.refresh()
             }
+          }
         },
    }
 </script>

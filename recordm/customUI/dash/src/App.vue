@@ -1,7 +1,7 @@
 <template>
   <div id="cobDashApp" class="h-full w-full">
     <div v-if="error || chooserError" class="text-center my-20 text-2xl "> {{ error }} <br> {{ chooserError }} </div>
-    <Dashboard v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" @refresh="updateQueries"/>
+    <Dashboard v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" @refresh="updateQueries" :refreshFlag="refreshFlag"/>
 
     <Refresh :updating="processingFlag" @refresh="updateQueries" class="fixed top-16 left-1" />
   </div>
@@ -163,7 +163,8 @@
       dashboardsCached: {},
       dashboardsRequested: [],
       stopContextWatcher: null,
-      hashArg: ""
+      hashArg: "",
+      refreshFlag:0
     }),
 
     created() {
@@ -369,7 +370,7 @@
       },
 
       updateQueries(forceRefresh = true) {
-
+        this.refreshFlag++
         let dashKey = this.activeDashKey
         if(DEBUG.app) console.log("DASH:  APP: 5.5.1: updateQueries: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
         if (forceRefresh) {

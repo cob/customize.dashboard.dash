@@ -7,8 +7,8 @@
         <div>
             <div :class="width + ' ' + grid" >
                 <template  v-for="(board,i) in boards">
-                    <Modal v-if="isModal(board) && board.Board == activeModal" :board="board" :key="board.instanceId + '-modal-' + i"  @show-modal="toggleModal" v-on="$listeners"/>
-                    <Board v-else-if="!isModal(board)" :board="board" :key="board.instanceId + '-' + i" @show-modal="toggleModal" v-on="$listeners"/>
+                    <Modal v-if="isModal(board) && board.Board == activeModal" :board="board" :key="board.instanceId + '-modal-' + i"  @show-modal="toggleModal" v-on="$listeners" :refreshFlag="refreshFlag"/>
+                    <Board v-else-if="!isModal(board)" :board="board" :key="board.instanceId + '-' + i" @show-modal="toggleModal" v-on="$listeners" :refreshFlag="refreshFlag"/>
                 </template>
             </div>
         </div>
@@ -34,6 +34,7 @@ import ComponentStatePersistence from "@/model/ComponentStatePersistence"
         props: {
           dashboard: Object,
           menu: Array,
+          refreshFlag: Number
         },
         data: () => ({
           activeModal : String
