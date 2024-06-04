@@ -36,7 +36,8 @@
         },
         watch: {
           query() { this.updateQuery() },
-          queryWithFilter() { this.updateQuery() }
+          queryWithFilter() { this.updateQuery() },
+          refreshFlag() { this.refresh_list() }
         },
         methods: {
             updateQuery() {
