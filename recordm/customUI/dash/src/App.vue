@@ -30,15 +30,20 @@
 
   const formatDate = (date) => date.toISOString()
 
+  function isNumeric(str) {
+    if (typeof str != "string") return false
+    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)
+          !isNaN(parseFloat(str)) // and ensure strings of whitespace fail
+  }
 
   function paging(direction, current, size, limit) {
-    if(typeof current == 'string'){
+    if (current) { // var may not be initialized when dash is mounted/rendered...
+      if( !isNumeric(current) ){
       // handle date 
       const n = parseInt(size.slice(0, -1))*direction
       const order = size.slice(-1).toLowerCase()
       const date = new Date(current)
       date.setHours(15) //timezone things, quickfix for now
-
 
       if(order === 'd'){ // days 
         date.setDate( date.getDate() + n)     
@@ -62,19 +67,34 @@
       return formatDate(date)
     } else {
       // handle number 
-      const shifted = current + size*direction
+      let aux_current = parseInt(current)
+      const shifted = aux_current + size*direction
       if((direction > 0 && limit && shifted > limit) || 
          (direction < 0 && limit && shifted < limit ))
         return limit 
       return shifted  
-    }}
-
+    }
+    }
+  }
 
 
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
   Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); });
   Handlebars.registerHelper('or', function(arg1, arg2) { return (arg1 || arg2); });
   Handlebars.registerHelper('not', function(arg) {return (!arg); } )
+  Handlebars.registerHelper('add', function(arg1,arg2) { return ((arg1?arg1*1:0) + arg2*1); });
+  Handlebars.registerHelper('greaterOrEq', function(arg1,arg2,options) {  
+    if (arg1*1 >= arg2*1){
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }});
+  Handlebars.registerHelper('lesserOrEq', function(arg1,arg2,options) {  
+    if (arg1*1 <= arg2*1){
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }});
   Handlebars.registerHelper('dateInfo', function(datestring, keyword) {
     const date = new Date(datestring)
 
