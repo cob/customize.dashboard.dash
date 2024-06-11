@@ -77,6 +77,15 @@
     }
   }
 
+  Handlebars.registerHelper('isNaked', function () { return cob.app.getSettings().mode() === "naked" });
+  Handlebars.registerHelper('includes', function (arg1, arg2, caseInsensitive) { 
+    if(arg1.length > 0) {arg1 = arg1[0]} //hack for when handlerbars passes a list with a single value
+    if(arg2.length > 0) {arg2 = arg2[0]} // of the string we want in it 
+    if(caseInsensitive == true) {
+      return arg1.toLowerCase().includes(arg2.toLowerCase())
+    }
+    return  (arg1.includes(arg2) ) 
+  });
   Handlebars.registerHelper('concat', function (arg1, arg2) { return  (arg1.concat(arg2) ) });
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
   Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); });
