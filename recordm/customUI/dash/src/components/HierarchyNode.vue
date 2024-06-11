@@ -7,8 +7,6 @@
             </span>
             <span :class="iconClasses"  v-else/>
             <span class="flex-grow leading-6" > 
-            <span :class="iconClasses"  v-else/>
-            <span class="flex-grow leading-6" > 
                 <span :id="instance._id" :class="computedClasses">{{ title }}</span>
             </span>
         </div>
@@ -63,9 +61,7 @@ export default {
             const baseClasses = ["fa-circle", "ml-[6px]", "pr-2", "text-[9px]" ]
             const selectedClass = this.isSelected ? [...this.nodeClasses.split(' '), "fa-solid"] : ["fa-regular"]
             return [...baseClasses, selectedClass]
-        }    
-        
-    },
+        },    
     data: () => ({
         collapsed: true
     }),
@@ -86,9 +82,6 @@ export default {
     },
     methods: {
         computeClassesForChildren(child) {
-            const baseClasses = ["pl-1","border-l-2"]
-            // const selectedClasses = this.childIsSelected(child) ? ['border-slate-700'] : ['border-slate-300']
-            const selectedClasses =  ['border-slate-300']
             const baseClasses = ["pl-1","border-l-2"]
             // const selectedClasses = this.childIsSelected(child) ? ['border-slate-700'] : ['border-slate-300']
             const selectedClasses =  ['border-slate-300']
