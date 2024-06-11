@@ -2,7 +2,7 @@
     <div>
         <button class="float-right text-[10px] uppercase text-slate-400 hover:text-slate-500 border-slate-200  hover:border-slate-300 hover:shadow-none  py-0 px-1 rounded-sm" @click="clear" >
             Limpar
-        </button> <br/>
+        </button>
         <template v-for="(top, i) in tops">
             <HierarchyNode class="pb-1" :selectedPath="selectedPath" :setOutput="setOutput" :instance="instances[top]"
                 :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" :displayField="displayField" :key="i" />
@@ -124,6 +124,23 @@ export default {
                     tops.push(instance._id)
                 instances[instance._id] = instance
             }
+
+
+            const compareNodesByChildren = (a, b) => {
+                const childrenOfA = tree[a] ? tree[a].length : 0
+                const childrenOfB = tree[b] ? tree[b].length : 0
+                if( childrenOfA == 0 && childrenOfB > 0)
+                    return 1 
+                if (childrenOfA > 0 && childrenOfB == 0)
+                    return -1 
+                if ( (childrenOfA == 0 && childrenOfB == 0) || (childrenOfA > 0 && childrenOfB > 0 ))
+                    return 0
+
+                return  childrenOfB - childrenOfA
+            }
+
+            tops.sort( this.compareNodesByChildren )
+            Object.values(tree).forEach( c =>  c.sort( compareNodesByChildren ) )
 
             return { tree: tree, tops: tops, instances: instances }
         },
