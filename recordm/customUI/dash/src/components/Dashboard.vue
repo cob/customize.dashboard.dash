@@ -57,8 +57,16 @@ import ComponentStatePersistence from "@/model/ComponentStatePersistence"
             image()   { return this.options['Image'] ? "background-image: url(" + this.options['Image'] +  ");" : "" }
         },
         watch: {
-            vars(newVars) {
-                Object.entries(newVars).forEach( entry => {
+            dashboard(old, neww) { 
+                if(old.instanceId == neww.instanceId) return;
+                this.statePersistence = {}
+                this.updateVars(this.vars)
+            },
+            vars(newVars) { this.updateVars(newVars) }
+        },
+        methods: {
+            updateVars(vars)  {
+                Object.entries(vars).forEach( entry => {
                     const name = entry[0]
                     const value = entry[1]
                     
@@ -70,12 +78,9 @@ import ComponentStatePersistence from "@/model/ComponentStatePersistence"
                         this.dashboard.dashboardContext.vars[name] = this.statePersistence[name].content
                     }
 
-                   
+                  
                 })
-            }
-
-        },
-        methods: {
+              },
             activateFromPersistenceChange(varName) {
                 return (newContent) => {
                     this.$set(this.dashboard.dashboardContext.vars, varName, newContent)
