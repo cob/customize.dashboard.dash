@@ -76,7 +76,6 @@ export default {
                 this.tops = this.originalTops
                 this.tree = this.originalTree
             }
-
         },
         parentOf(instances, id) { const inst = instances[id]._source[this.parentField]; return inst ? inst[0] : undefined },
         pathToRoot(instances, id) {
@@ -139,7 +138,7 @@ export default {
                 return  childrenOfB - childrenOfA
             }
 
-            tops.sort( this.compareNodesByChildren )
+            tops.sort( compareNodesByChildren )
             Object.values(tree).forEach( c =>  c.sort( compareNodesByChildren ) )
 
             return { tree: tree, tops: tops, instances: instances }
@@ -168,6 +167,24 @@ export default {
             Object.entries(newTree).forEach(([k, v]) => tree[k] = Array.from(v))
             const tops = Array.from(newTops)
 
+            const compareNodesByChildren = (a, b) => {
+                const childrenOfA = tree[a] ? tree[a].length : 0
+                const childrenOfB = tree[b] ? tree[b].length : 0
+                if( childrenOfA == 0 && childrenOfB > 0)
+                    return 1 
+                if (childrenOfA > 0 && childrenOfB == 0)
+                    return -1 
+                if ( (childrenOfA == 0 && childrenOfB == 0) || (childrenOfA > 0 && childrenOfB > 0 )) {
+                    if (this.sortField) {
+                        return this.instances[a]._source[this.sortField][0].localeCompare(this.instances[b]._source[this.sortField][0])
+                    } 
+                    return 0
+                }
+                return childrenOfB - childrenOfA
+            }
+
+            tops.sort( compareNodesByChildren )
+            Object.values(tree).forEach( c =>  c.sort( compareNodesByChildren ) )
 
             return { tree: tree, tops: tops }
         }
