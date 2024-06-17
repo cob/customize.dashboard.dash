@@ -77,6 +77,8 @@
     }
   }
 
+  Handlebars.registerHelper("screenSm", function() { return window.matchMedia("(max-width: 640px)").matches;})
+  Handlebars.registerHelper("screenMd", function() {return window.matchMedia("(max-width: 768px)").matches;})
   Handlebars.registerHelper('isNaked', function () { return cob.app.getSettings().mode() === "naked" });
   Handlebars.registerHelper('includes', function (arg1, arg2, caseInsensitive) { 
     if(arg1.length > 0) {arg1 = arg1[0]} //hack for when handlerbars passes a list with a single value
