@@ -1,12 +1,12 @@
 <template>
     <div>
-        <div class="flex flex-row justify-start cursor-pointer items-start" @click="updateVar" >
+        <div class="flex flex-row justify-start cursor-pointer items-start">
             <span v-if="tree[instance._id]">
-                <FolderClosed  v-if="collapsed && !isSelectedParent" />
-                <FolderOpen v-else />
+                <FolderClosed  v-if="collapsed && !isSelectedParent" @click="toggle" />
+                <FolderOpen v-else @click="toggle" />
             </span>
             <span :class="iconClasses"  v-else/>
-            <span class="flex-grow leading-6" > 
+            <span class="flex-grow leading-6"  @click="updateVar" > 
                 <span :id="instance._id" :class="computedClasses">{{ title }}</span>
             </span>
         </div>
@@ -85,7 +85,10 @@ export default {
             this.collapsed = !this.collapsed
         },
         updateVar() {
-            this.toggle()
+            if(this.isSelected) 
+                this.toggle()
+            else 
+                this.collapsed = false
             this.setOutput(this.instance._id)
         },
         childIsSelected(id) {
