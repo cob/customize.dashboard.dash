@@ -1,16 +1,16 @@
 <template>
     <div>
         <div class="flex flex-row justify-start cursor-pointer items-start">
-            <span v-if="tree[instance._id]"  @click="toggle">
+            <span v-if="instance && tree[instance._id]"  @click="toggle">
                 <FolderClosed  v-if="collapsed && !isSelectedParent" />
                 <FolderOpen v-else />
             </span>
             <span :class="iconClasses"  v-else/>
-            <span class="flex-grow leading-6"  @click="updateVar" > 
+            <span v-if="instance && instances[instance._id]" class="flex-grow leading-6"  @click="updateVar" > 
                 <span :id="instance._id" :class="computedClasses">{{ title }}</span>
             </span>
         </div>
-        <div :class="{ hidden: collapsed && !isSelectedParent }" class="ml-2">
+        <div  v-if="instance" :class="{ hidden: collapsed && !isSelectedParent }" class="ml-2">
             <template v-for="(child, i) in tree[instance._id]" >
                 <HierarchyNode 
                     :displayField="displayField"
@@ -44,7 +44,7 @@ export default {
             return this.instance._source[labelField][0]
         },
         childrenSelectedPath() { return this.selectedPath ? this.selectedPath.slice(1) : this.selectedPath  },
-        isSelected() { return this.selectedPath && this.selectedPath.length == 1 && this.selectedPath[0] == this.instance._id},
+        isSelected() { return this.selectedPath && this.selectedPath.length == 1 && this.selectedPath[0] == this.instance._id },
         isSelectedParent() { return !this.isSelected && this.selectedPath && this.selectedPath.includes(this.instance._id) },
         computedClasses() { //compute classes according to computed state (isSelected, etc)
             const baseClasses = ["cursor-pointer"]

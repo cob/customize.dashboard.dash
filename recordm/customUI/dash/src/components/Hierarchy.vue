@@ -31,7 +31,8 @@ export default {
         originalTree: {}
     }),
     props: {
-        component: Object
+        component: Object,
+        refreshFlag: Number
     }, computed: {
         options() { return this.component['HierarchyCustomize'][0] },
         displayField() { return this.component['DisplayFieldHierarchy']},
@@ -63,8 +64,18 @@ export default {
                 return
 
             this.selectedPath = undefined
-            this.updateTree()
+            await this.updateTree()
         },
+        async refreshFlag() {
+            // Fully "reset" component
+            this.statePersistence.stop()
+            const args = await this.createFullTree()
+            this.instances = args.instances
+            this.originalTops = args.tops
+            this.originalTree = args.tree
+            await this.updateTree()
+            this.statePersistence = new ComponentStatePersistence(this.component.id, this.activateFromPersistentChange)
+        }
     },
     methods: {
         async updateTree() {

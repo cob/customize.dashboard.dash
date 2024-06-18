@@ -30,7 +30,8 @@ const loading_message = "### Loading Content"
 
 export default {
     props: {
-        component: Object
+        component: Object,
+        refreshFlag: Number
     },
     data: () => ({
         reachedEnd: false,
@@ -124,6 +125,11 @@ export default {
                 this.reachedEnd = false;
             }
         },
+        refreshFlag() {
+            this.prepareReveal();
+            this.status = "loaded";
+            this.reachedEnd = false;
+        }
     },
     mounted() {
         this.prepareReveal();
