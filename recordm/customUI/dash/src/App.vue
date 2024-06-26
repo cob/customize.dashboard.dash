@@ -3,7 +3,7 @@
     <div v-if="error || chooserError" class="text-center my-20 text-2xl "> {{ error }} <br> {{ chooserError }} </div>
     <Dashboard v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" @refresh="updateQueries" :refreshFlag="refreshFlag"/>
 
-    <Refresh :updating="processingFlag" @refresh="updateQueries" class="fixed top-16 left-1" />
+    <Refresh :updating="processingFlag" @refresh="updateQueries" :class="this.refreshClasses" />
   </div>
 </template>
 
@@ -238,6 +238,15 @@
           setTimeout(() => cobDashAppOld.remove(), 10)
         }
         return (this.dashboardsCached[this.activeDashKey])
+      },
+
+      
+      refreshClasses() {
+        let defaultClasses = "fixed top-16 left-1"
+        if (cob.app.getSettings().mode() === "naked") {
+          return "fixed left-[5px] top-[5px] "
+        } 
+        return defaultClasses
       }
     },
 
