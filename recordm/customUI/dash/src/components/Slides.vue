@@ -35,7 +35,7 @@ export default {
     },
     data: () => ({
         reachedEnd: false,
-        myDeck: null,
+        myDeck: undefined,
         status: "loading_component",
     }),
     computed: {
