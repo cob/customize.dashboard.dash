@@ -98,7 +98,6 @@ details.cob-submenu > summary.activeSolution a {
         color: #fbfbfb !important;
     }
     .collapse details.cob-submenu {
-        overflow: auto;
         max-height: 300px;
     }
     .nav-collapse .details.cob-submenu .dropdown-menu {
