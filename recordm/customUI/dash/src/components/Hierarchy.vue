@@ -28,12 +28,12 @@ export default {
         tops: undefined,
         selectedPath: undefined,
         originalTops: [],
-        originalTree: {}
+        originalTree: {},
     }),
     props: {
-        component: Object,
-        refreshFlag: Number
-    }, computed: {
+        component: Object
+    }, 
+    computed: {
         options() { return this.component['HierarchyCustomize'][0] },
         displayField() { return this.component['DisplayFieldHierarchy']},
         definitionName() { return this.component["DefinitionNameHierarchy"] },
@@ -44,7 +44,25 @@ export default {
         inputVar() { return this.component["InputVarHierarchy"] },
         input() { return this.component.vars[this.inputVar] },
         hierarchyNodeClasses() { return this.options['HierarchyNodeClasses'] + " hierarchy-selected " || "text-red-500 font-bold hierarchy-selected" },
-        instanceFieldName() { return this.component["InstanceFieldNameHierarchy"] || undefined }
+        instanceFieldName() { return this.component["InstanceFieldNameHierarchy"] || undefined },
+        dashResults() {
+            if(this.component.dash_info.state === "loading") return []
+            if(this.component.dash_info.state === "error") return []
+            if(typeof(this.component.dash_info.value) == "undefined") {
+                return []
+            } else {
+                return this.component.dash_info.value
+            }
+        },
+        dashResultsInput() {
+            if(this.component.dash_info_inputs.state === "loading") return []
+            if(this.component.dash_info_inputs.state === "error") return []
+            if(typeof(this.component.dash_info_inputs.value) == "undefined") {
+                return []
+            } else {
+                return this.component.dash_info_inputs.value
+            }
+        },
     },
     async created() {
         const args = await this.createFullTree()
@@ -66,15 +84,31 @@ export default {
             this.selectedPath = undefined
             await this.updateTree()
         },
-        async refreshFlag() {
-            // Fully "reset" component
-            this.statePersistence.stop()
-            const args = await this.createFullTree()
-            this.instances = args.instances
-            this.originalTops = args.tops
-            this.originalTree = args.tree
-            await this.updateTree()
-            this.statePersistence = new ComponentStatePersistence(this.component.id, this.activateFromPersistentChange)
+        async dashResults(newRes, oldRes) {
+            if (newRes.length > 0 && (oldRes == undefined || oldRes.length == 0) ) {
+                if (this.component.dash_info.state === "ready" || this.component.dash_info.state === "cache") {
+                    const args = await this.createFullTree()
+                    this.instances = args.instances
+                    this.originalTops = args.tops
+                    this.originalTree = args.tree
+
+                    await this.updateTree()
+
+                    if(this.statePersistence.content){   
+                        this.setOutput(this.statePersistence.content)
+                    }
+                }
+                }
+        },
+        async dashResultsInput(newRes, oldRes) {
+            if (this.input) {
+                if (this.component.dash_info.state === "ready" || this.component.dash_info.state === "cache") {
+                    const args = await this.sweepTreeTops(this.instances, this.input)
+                    this.tree = args.tree
+                    this.tops = args.tops
+                }
+
+            }
         }
     },
     methods: {
@@ -88,12 +122,12 @@ export default {
                 this.tree = this.originalTree
             }
         },
-        parentOf(instances, id) { const inst = instances[id]._source[this.parentField]; return inst ? inst[0] : undefined },
+        parentOf(instances, id) { const inst = instances[id][this.parentField]; return inst ? inst[0] : undefined },
         pathToRoot(instances, id) {
-            const path = [id]
+            const path = [parseInt(id)]
             let current = this.parentOf(instances, id)
             while (current) {
-                path.unshift(current)
+                path.unshift(parseInt(current))
                 current = this.parentOf(instances, current)
             }
             return path
@@ -103,20 +137,19 @@ export default {
         setOutput(id) {
             this.statePersistence.content = id 
             this.selectedPath = this.pathToRoot(this.instances, id)
-            if (this.instanceFieldName && this.instances[id]._source[this.instanceFieldName]) {
-                let fieldValue = this.instances[id]._source[this.instanceFieldName]
+            if (this.instanceFieldName && this.instances[id][this.instanceFieldName]) {
+                let fieldValue = this.instances[id][this.instanceFieldName]
                 this.$set(this.component.vars, this.outputVar, fieldValue === Array ? fieldValue[0] : fieldValue)
             } else {
-                this.$set(this.component.vars, this.outputVar, this.instances[id]._source)
+                this.$set(this.component.vars, this.outputVar, this.instances[id])
             }
         },
         activateFromPersistentChange(newID) {
-            if(newID)
+            if(newID && this.dashResults.length > 0)
                 this.setOutput(newID) 
         },
         async createFullTree() {
-            const results = await rmDefinitionSearch(this.definitionName, this.filter, 0, 1000,
-                this.sortField ? this.sortField : "", "true")
+            const results = this.dashResults
 
 
             const tops = []
@@ -125,14 +158,14 @@ export default {
 
             const pushOrAdd = (k, v) => k in tree ? tree[k].push(v) : tree[k] = [v]
 
-            for (const instance of results.hits.hits) {
+            for (const instance of results) {
 
-                const parent = instance._source[this.parentField]
+                const parent = instance[this.parentField] 
                 if (parent)
-                    pushOrAdd(parent, instance._id)
+                    pushOrAdd(parent, instance.id)
                 else
-                    tops.push(instance._id)
-                instances[instance._id] = instance
+                    tops.push(instance.id)
+                instances[instance.id] = instance
             }
 
 
@@ -155,16 +188,15 @@ export default {
             return { tree: tree, tops: tops, instances: instances }
         },
         async sweepTreeTops(instances, input) {
-            const results = await rmDefinitionSearch(this.definitionName, this.filter + " " + input, 0, 1000,
-                this.sortField ? this.sortField : "", "true")
+            const results = this.dashResultsInput
 
             const newTree = {}
             const newTops = new Set()
 
             const pushOrAdd = (k, v) => k in newTree ? newTree[k].add(v) : newTree[k] = new Set([v])
 
-            for (const instance of results.hits.hits) {
-                const path = this.pathToRoot(instances, instance._id)
+            for (const instance of results) { 
+                const path = this.pathToRoot(instances, instance.id)
                 newTops.add(path[0])
 
                 for (let i = 1; i < path.length; i++) {
@@ -187,7 +219,7 @@ export default {
                     return -1 
                 if ( (childrenOfA == 0 && childrenOfB == 0) || (childrenOfA > 0 && childrenOfB > 0 )) {
                     if (this.sortField) {
-                        return this.instances[a]._source[this.sortField][0].localeCompare(this.instances[b]._source[this.sortField][0])
+                        return this.instances[a][this.sortField][0].localeCompare(this.instances[b][this.sortField][0])
                     } 
                     return 0
                 }

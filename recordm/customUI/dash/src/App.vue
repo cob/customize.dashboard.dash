@@ -581,6 +581,16 @@
                     return v
                   })
                 }
+              } else if (c.Component == "Hierarchy") {
+                let sortOpt = c.SortFieldName ? c.SortFieldName: ""
+                c.dash_info = DashFunctions.instancesList(c.DefinitionNameHierarchy, c.FilterHierarchy, 1000, 0, sortOpt, "true", { validity: 300 } )
+                
+                c.dash_info_inputs = { value: [], state: "ready" }
+                if (c.InputVarHierarchy && c.vars[c.InputVarHierarchy]) {
+                  let inputQuery = c.vars[c.InputVarHierarchy]
+                  c.dash_info_inputs = DashFunctions.instancesList(c.DefinitionNameHierarchy, c.FilterHierarchy + " " + inputQuery, 1000, 0, sortOpt, "true", { validity: 300 } )
+                }
+                
               }
             }
           }

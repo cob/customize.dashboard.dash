@@ -1,17 +1,17 @@
 <template>
     <div>
         <div class="flex flex-row justify-start cursor-pointer items-start">
-            <span v-if="instance && tree[instance._id]"  @click="toggle">
+            <span v-if="instance && tree[instance.id]"  @click="toggle">
                 <FolderClosed  v-if="collapsed && !isSelectedParent" />
                 <FolderOpen v-else />
             </span>
             <span :class="iconClasses"  v-else/>
-            <span v-if="instance && instances[instance._id]" class="flex-grow leading-6"  @click="updateVar" > 
-                <span :id="instance._id" :class="computedClasses">{{ title }}</span>
+            <span v-if="instance && instances[instance.id]" class="flex-grow leading-6"  @click="updateVar" > 
+                <span :id="instance.id" :class="computedClasses">{{ title }}</span>
             </span>
         </div>
         <div  v-if="instance" :class="{ hidden: collapsed && !isSelectedParent }" class="ml-2">
-            <template v-for="(child, i) in tree[instance._id]" >
+            <template v-for="(child, i) in tree[instance.id]" >
                 <HierarchyNode 
                     :displayField="displayField"
                     :selectedPath="childrenSelectedPath"
@@ -40,12 +40,12 @@ export default {
     components: { FolderClosed, FolderOpen },
     computed: {
         title() {
-           const labelField =  toEsFieldName(this.displayField ? this.displayField : this.instance._source._definitionInfo.instanceLabel[0].name)
-            return this.instance._source[labelField][0]
+           const labelField =  toEsFieldName(this.displayField ? this.displayField : this.instance._definitionInfo.instanceLabel[0].name)
+            return this.instance[labelField][0]
         },
         childrenSelectedPath() { return this.selectedPath ? this.selectedPath.slice(1) : this.selectedPath  },
-        isSelected() { return this.selectedPath && this.selectedPath.length == 1 && this.selectedPath[0] == this.instance._id },
-        isSelectedParent() { return !this.isSelected && this.selectedPath && this.selectedPath.includes(this.instance._id) },
+        isSelected() { return this.selectedPath && this.selectedPath.length == 1 && this.selectedPath[0] == this.instance.id },
+        isSelectedParent() { return !this.isSelected && this.selectedPath && this.selectedPath.includes(this.instance.id) },
         computedClasses() { //compute classes according to computed state (isSelected, etc)
             const baseClasses = ["cursor-pointer"]
             const selectedClasses = this.isSelected ? this.nodeClasses.split(' ') : ['text-slate-600']
@@ -89,7 +89,7 @@ export default {
                 this.toggle()
             else 
                 this.collapsed = false
-            this.setOutput(this.instance._id)
+            this.setOutput(this.instance.id)
         },
         childIsSelected(id) {
             return this.childrenSelectedPath && this.childrenSelectedPath.length == 1 && this.childrenSelectedPath[0] == id
