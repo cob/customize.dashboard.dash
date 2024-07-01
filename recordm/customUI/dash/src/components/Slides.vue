@@ -60,7 +60,16 @@ export default {
         concurrentScript() { return this.component["SlidesCustomize"][0]["ConcurrentScript"]; },
         concurrentArgs() { return this.component['SlidesCustomize'][0]['Arg'] || {}; }
     },
-    methods: {
+    methods: {        
+        destroyReveal() {
+            try {
+                if (this.myDeck) {
+                    this.myDeck.destroy();
+                }
+            } catch(e) {
+                this.myDeck = undefined
+            }
+        },  
         closeModal() {
             this.$emit('show-modal', undefined);
         },
@@ -81,9 +90,7 @@ export default {
             });
         },
         prepareReveal() {
-            if (this.myDeck) {
-                this.myDeck.destroy();
-            }
+            this.destroyReveal()
             // Reveal does DOM manipulation, so we need to "recreate" the original
             // DOM structure so that Reveal can find it, and re-parse and create
             // the presentation with the actual markdown content
@@ -135,7 +142,7 @@ export default {
         this.prepareReveal();
     },
     unmount() {
-        this.myDeck.destroy();
+        this.destroyReveal()
     },
     components: { Waiting2 }
 }
