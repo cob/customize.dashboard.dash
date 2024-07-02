@@ -130,6 +130,13 @@
           hour12: false,
         };
       return new Intl.DateTimeFormat(undefined, options).format(date)
+    } if (keyword == "FullTime") {
+      let options = {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: false,
+        };
+      return new Intl.DateTimeFormat(undefined, options).format(date)
     } else {
       return "No date."
     }
