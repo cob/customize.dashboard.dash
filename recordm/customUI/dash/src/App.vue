@@ -106,6 +106,34 @@
     } else {
       return options.inverse(this);
     }});
+  Handlebars.registerHelper('dateInfoTimestamp', function(timestamp, keyword) {
+    if(!timestamp)
+      return "No date."
+
+    const date = new Date(timestamp * 1)
+
+    if (keyword == "FullDateTime") {
+      let options = {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "numeric",
+          minute: "numeric",
+          hour12: false,
+        };
+      return new Intl.DateTimeFormat(undefined, options).format(date)
+    } if (keyword == "FullDate") {
+      let options = {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour12: false,
+        };
+      return new Intl.DateTimeFormat(undefined, options).format(date)
+    } else {
+      return "No date."
+    }
+  })
   Handlebars.registerHelper('dateInfo', function(datestring, keyword) {
     const date = new Date(datestring)
 
@@ -147,7 +175,13 @@
       const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1, 23, 59);   
       const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
       return lastDayOfMonth.getTime()
-    }
+    } if(keyword == "FirstEpochOfDay") {
+      const atMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0);
+      return atMidnight.getTime()   
+    } if(keyword == "LastEpochOfDay") {
+      const atEleven = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59);
+      return atEleven.getTime()
+    } 
   })
   Handlebars.registerHelper('today', function() {
     const today = new Date() 
