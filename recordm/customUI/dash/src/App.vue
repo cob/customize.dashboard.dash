@@ -77,6 +77,18 @@
     }
   }
 
+  Handlebars.registerHelper("listFilter", function(list, field, value, first) {
+    const filteredList = []
+    for(const obj of list) {
+      if (obj[field][0] === value) {
+        if(first  === 'true') { //returns only the first match
+          return [obj]
+        }
+        filteredList.push(obj)
+      }
+    }
+    return filteredList.length > 0 ? filteredList : null;
+  })
   Handlebars.registerHelper("screenSm", function() { return window.matchMedia("(max-width: 640px)").matches;})
   Handlebars.registerHelper("screenMd", function() {return window.matchMedia("(max-width: 768px)").matches;})
   Handlebars.registerHelper('isNaked', function () { return cob.app.getSettings().mode() === "naked" });
