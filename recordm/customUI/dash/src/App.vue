@@ -77,6 +77,20 @@
     }
   }
 
+  Handlebars.registerHelper("listSort", function(list, field, dir) {
+    const isAscending = dir.toLowerCase() === 'asc';
+    if(list) {
+      return list.sort((a, b) => {
+        if (a[field] < b[field]) {
+            return isAscending ? -1 : 1;
+        } else if (a[field] > b[field]) {
+            return isAscending ? 1 : -1;
+        } else {
+            return 0;
+        }
+    });
+    }
+  })
   Handlebars.registerHelper("listFilter", function(list, field, value, first) {
     const filteredList = []
     for(const obj of list) {
