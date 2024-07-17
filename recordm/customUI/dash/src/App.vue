@@ -575,6 +575,15 @@
 
           // Build final context with all components
           let context = specifiedContext || {}
+
+          //IMPORTANT: this does not work for httpGet and httpPost
+          const keys = Object.keys(context)
+          for (const index in keys) {
+            const key = keys[index]
+            if (dashboard.dashboardContext && dashboard.dashboardContext[key]) {
+              context[key] = dashboard.dashboardContext[key]
+            }
+          }
           context = { dashboardId: dashboard.id, ...baseContext, ...context }
           // Add a copy of dashboardsRequested result in case we need Chooser to display alternatives
           context.dashboards = this.dashboardsRequested.value.slice().reverse();
