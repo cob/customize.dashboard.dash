@@ -94,7 +94,7 @@
   Handlebars.registerHelper("listFilter", function(list, field, value, first) {
     const filteredList = []
     for(const obj of list) {
-      if (obj[field][0] === value) {
+      if (obj[field] && obj[field][0] === value) {
         if(first  === 'true') { //returns only the first match
           return [obj]
         }
