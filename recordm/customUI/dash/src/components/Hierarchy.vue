@@ -85,7 +85,7 @@ export default {
             await this.updateTree()
         },
         async dashResults(newRes, oldRes) {
-            if (newRes.length > 0 && (oldRes == undefined || oldRes.length == 0) ) {
+            if (newRes.length > 0 && newRes !== oldRes ) {
                 if (this.component.dash_info.state === "ready" || this.component.dash_info.state === "cache") {
                     const args = await this.createFullTree()
                     this.instances = args.instances
@@ -101,7 +101,7 @@ export default {
                 }
         },
         async dashResultsInput(newRes, oldRes) {
-            if (this.input) {
+            if (this.input || this.filter !== "*") {
                 if (this.component.dash_info.state === "ready" || this.component.dash_info.state === "cache") {
                     const args = await this.sweepTreeTops(this.instances, this.input)
                     this.tree = args.tree
@@ -113,7 +113,7 @@ export default {
     },
     methods: {
         async updateTree() {
-            if (this.input) {
+            if (this.input || this.filter !== "*") {
                 const args = await this.sweepTreeTops(this.instances, this.input)
                 this.tree = args.tree
                 this.tops = args.tops
