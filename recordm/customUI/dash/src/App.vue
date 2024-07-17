@@ -132,6 +132,12 @@
     } else {
       return options.inverse(this);
     }});
+  Handlebars.registerHelper('greaterThan', function(arg1,arg2) {
+    return ((arg1?arg1*1:0) > arg2*1); 
+  });
+  Handlebars.registerHelper('lessThan', function(arg1,arg2) {
+    return ((arg1?arg1*1:0) < arg2*1); 
+  });
   Handlebars.registerHelper('dateInfoTimestamp', function(timestamp, keyword) {
     if(!timestamp)
       return "No date."
