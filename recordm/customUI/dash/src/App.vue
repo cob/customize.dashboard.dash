@@ -619,12 +619,22 @@
             dashInfoItem.stopUpdates()
           }
 
+          // Dash drag context
+          dash.dashboardContext.dragContext = {
+            draggedItem: undefined,
+            srcZone: undefined,
+            srcZonePoint:  undefined,
+            dstZonePoint: undefined,
+            droppedOnZone:  false,
+          }
+
           // Add extra info to structure
           dash.dashboardContext = dashboard.dashboardContext
           for (let b of dash["Board"]) {
             for (let c of b.Component) {
               c.vars = dashboard.dashboardContext.vars
 
+              c.dashDragContext = dash.dashboardContext.dragContext
               if (c.Component === "Menu") {
                 c.Text.forEach(t => {
                   // If Attention is configured for this menu line then add attention status as user check
