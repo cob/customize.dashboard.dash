@@ -91,18 +91,20 @@
     });
     }
   })
-  Handlebars.registerHelper("listFilter", function(list, field, value, first) {
-    const filteredList = []
-    for(const obj of list) {
-      if (obj[field] && obj[field][0] === value) {
-        if(first  === 'true') { //returns only the first match
+Handlebars.registerHelper("listFilter", function (list, field, value, first) {
+  const filteredList = []
+  if (list) {
+    for (const obj of list) {
+      if (obj[field] && obj[field][0] == value) {
+        if (first === 'true') { //returns only the first match
           return [obj]
         }
         filteredList.push(obj)
       }
     }
-    return filteredList.length > 0 ? filteredList : null;
-  })
+  }
+  return filteredList.length > 0 ? filteredList : null;
+})
   Handlebars.registerHelper("screenSm", function() { return window.matchMedia("(max-width: 640px)").matches;})
   Handlebars.registerHelper("screenMd", function() {return window.matchMedia("(max-width: 768px)").matches;})
   Handlebars.registerHelper('isNaked', function () { return cob.app.getSettings().mode() === "naked" });
@@ -248,7 +250,16 @@
       dashboardsRequested: [],
       stopContextWatcher: null,
       hashArg: "",
-      refreshFlag:0
+      refreshFlag:0,
+
+      // Drag and drop
+      handleDropRefs: new Map(),
+      handleDragOverRefs: new Map(),
+      draggedItem: undefined,
+      srcZone: undefined,
+      srcZonePoint: undefined,
+      dstZonePoint: undefined,
+      droppedOnZone: false,
     }),
 
     created() {
@@ -271,8 +282,20 @@
       this.resumeEventListner = $('section.custom-resource').on('resume',this.resumeListener)
     },
 
+    mounted() {
+      //this.setupDragAndDrop()
+      this.startDragDropListeners()
+    },
+
+    updated() {
+      //this.setupDragAndDrop()
+      this.stopDragDropListeners()
+      this.startDragDropListeners()
+    },
+
     beforeDestroy() {
       if(DEBUG.app) console.log("DASH:  APP: 9: beforeDestroy: Stop all watchers and updates")
+      this.stopDragDropListeners()
       this.resumeEventListner.off('resume')
       this.hashArg.stop()
       this.stopActiveDash()
@@ -427,6 +450,194 @@
     },
 
     methods: {
+
+      // Parse dragItem and dropZone data attributes and classes with prefixes dragItem dropZone
+      // and builds dictionary to send to concurrent as args
+      parseDataFields(dataFields) {
+        const fieldsObject = {};
+        for (const attr of dataFields) {
+          if (attr.name.startsWith('data-')) {
+            const key = attr.name.slice(5); // Remove "data-" prefix
+            fieldsObject[key] = attr.value;
+          }
+        }
+        return fieldsObject;
+      },
+      parseClasses(classList) {
+        const fieldsObject = {};
+        classList.forEach(cls => {
+          if (cls.startsWith('dropZone')) {
+            const [key, value] = cls.substring('dropZone'.length).split('-');
+            if (key && value) {
+              fieldsObject[key] = value;
+            }
+          }
+          if (cls.startsWith('dragItem')) {
+            const [key, value] = cls.substring('dragItem'.length).split('-');
+            if (key && value) {
+              fieldsObject[key] = value;
+            }
+          }
+        })
+        return fieldsObject
+      },
+
+      // Call concurrent on drop event
+      handleDropConcurrent(fields_values, concurrent) {
+        axios.post(`/integrationm/concurrent/${concurrent}`,
+          fields_values).then(() => {
+            console.log("Need to refresh :)")
+          })
+      },
+
+      // Drag and drop event handlers
+      handleDragStart(e) {
+        this.draggedItem = e.target;
+        this.srcZone = this.draggedItem.parentNode;
+        this.srcZonePoint = this.draggedItem.nextElementSibling;
+        this.droppedOnZone = false;
+        this.draggedItem.classList.add("dragging");
+      },
+      handleDragEnd(e) {
+        this.draggedItem.style.visibility = ""
+        this.draggedItem.classList.remove("dragging")
+        if (this.droppedOnZone != true) {
+          this.putDraggedItemOn(this.srcZone, this.srcZonePoint)
+        }
+      },
+      handleDragOver(e, dropZone) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move"
+      },
+      handleDragEnter(e) {
+        if (e && e.target && e.target.classList.contains("dropZone")) {
+          e.target.classList.add("bg-stone-500")
+          this.draggedItem.style.visibility = ""
+        }
+      },
+      handleDragLeave(e) {
+        if (e && e.target && !e.fromElement.classList.contains("dragItem")) {
+          e.target.classList.remove("bg-stone-500")
+        }
+      },
+      handleDragDrop(e, dropZone) {
+        e.preventDefault();
+        dropZone.classList.remove("bg-stone-500")
+        this.dstZonePoint = this.getCurrentPoint(dropZone, e.clientY);
+        this.putDraggedItemOn(dropZone, this.dstZonePoint)
+        this.draggedItem.style.visibility = ""
+        this.draggedItem.classList.remove("dragging")
+        this.droppedOnZone = true;
+
+        // Parse dropzone data and classes
+        let dropZone_data_attributes = this.parseDataFields(dropZone.attributes)
+        let dropZone_class_data_attributes = this.parseClasses(dropZone.classList)
+        // Parse dragitme data and classes
+        let dragItem_data_attributes = this.parseDataFields(this.draggedItem.attributes)
+        let dragItem_class_data_attributes = this.parseClasses(this.draggedItem.classList)
+
+        // Merge dictionaries and call concurrent
+        let params = Object.assign(dropZone_data_attributes, dropZone_class_data_attributes,
+          dragItem_data_attributes, dragItem_class_data_attributes
+        )
+        console.log("test drop concurrent params", params)
+        this.handleDropConcurrent(params, "digal_update_hours")
+      },
+
+      // For every dragItem and dropZone we remove (to prevent memory leaks) and add drag-related listeners
+      setupDragAndDrop() {
+        const dragItems = document.querySelectorAll(`.dragItem`);
+        for (let dragItem of dragItems) {
+          // removes dragitem events
+          dragItem.removeEventListener("dragstart", this.handleDragStart)
+          dragItem.removeEventListener("dragend", this.handleDragEnd)
+          // add dragitem events
+          dragItem.addEventListener("dragstart", this.handleDragStart);
+          dragItem.addEventListener("dragend", this.handleDragEnd);
+        }
+
+        /* events fired on the drop targets */
+        const dropZones = document.querySelectorAll(`.dropZone`);
+        for (let dropZone of dropZones) {
+          const boundHandleDragOver = (e) => this.handleDragOver(e, dropZone);
+          const boundHandleDragDrop = (e) => this.handleDragDrop(e, dropZone)
+
+          // Remove dropzone events - use reference map for dragover and drop
+          dropZone.removeEventListener("dragover", this.handleDragOverRefs.get(dropZone));
+          dropZone.removeEventListener("dragenter", this.handleDragEnter);
+          dropZone.removeEventListener("dragleave", this.handleDragLeave);
+          dropZone.removeEventListener("drop", this.handleDropRefs.get(dropZone));
+
+          // Add handleFuncs references to respective maps for future listener removal
+          this.handleDragOverRefs.set(dropZone, boundHandleDragOver)
+          this.handleDropRefs.set(dropZone, boundHandleDragDrop);
+          // Add dropzone events
+          dropZone.addEventListener("dragover", boundHandleDragOver, false);
+          dropZone.addEventListener("dragenter", this.handleDragEnter);
+          dropZone.addEventListener("dragleave", this.handleDragLeave);
+          dropZone.addEventListener("drop", boundHandleDragDrop);
+        }
+      },
+      startDragDropListeners() {
+        const dragItems = document.querySelectorAll(`.dragItem`);
+        for (let dragItem of dragItems) {
+          dragItem.addEventListener("dragstart", this.handleDragStart);
+          dragItem.addEventListener("dragend", this.handleDragEnd);
+        }
+
+        const dropZones = document.querySelectorAll(`.dropZone`);
+        for (let dropZone of dropZones) {
+          const boundHandleDragOver = (e) => this.handleDragOver(e, dropZone);
+          const boundHandleDragDrop = (e) => this.handleDragDrop(e, dropZone)
+
+          // Add handleFuncs references to respective maps for future listener removal
+          this.handleDragOverRefs.set(dropZone, boundHandleDragOver)
+          this.handleDropRefs.set(dropZone, boundHandleDragDrop);
+
+          dropZone.addEventListener("dragover", boundHandleDragOver, false);
+          dropZone.addEventListener("dragenter", this.handleDragEnter);
+          dropZone.addEventListener("dragleave", this.handleDragLeave);
+          dropZone.addEventListener("drop", boundHandleDragDrop);
+        }
+      },
+      stopDragDropListeners() {
+        const dragItems = document.querySelectorAll(`.dragItem`);
+        for (let dragItem of dragItems) {
+          dragItem.removeEventListener("dragstart", this.handleDragStart)
+          dragItem.removeEventListener("dragend", this.handleDragEnd)
+        }
+
+        /* events fired on the drop targets */
+        const dropZones = document.querySelectorAll(`.dropZone`);
+        for (let dropZone of dropZones) {
+          dropZone.removeEventListener("dragover", this.handleDragOverRefs.get(dropZone));
+          dropZone.removeEventListener("dragenter", this.handleDragEnter);
+          dropZone.removeEventListener("dragleave", this.handleDragLeave);
+
+          dropZone.removeEventListener("drop", this.handleDropRefs.get(dropZone));
+        }
+      },
+      getCurrentPoint(dropZone, y) {
+        const draggableElements = [...dropZone.querySelectorAll(".dragItem:not(.dragging)")];
+        return draggableElements.reduce((closestElement, element) => {
+          const elementBox = element.getBoundingClientRect();
+          const offset = y - elementBox.top - elementBox.height / 2;
+          if (offset < 0 && offset > closestElement.offset) {
+            return { offset: offset, element: element };
+          } else {
+            return closestElement;
+          }
+        }, { offset: Number.NEGATIVE_INFINITY }).element
+      },
+      putDraggedItemOn(zone, dstZonePoint) {
+        if (dstZonePoint == null) {
+          //zone.appendChild(this.draggedItem);
+          zone.insertAdjacentElement("beforeend", this.draggedItem);
+        } else {
+          //zone.insertBefore(this.draggedItem, dstZonePoint);
+          dstZonePoint.insertAdjacentElement("beforeend", this.draggedItem);
+        }
+      },
       resumeListener(e, params) {
         //Recheck user (the user might have changed or his groups might have changed after previous load)
         umLoggedin().then(userInfo => {
@@ -467,7 +678,7 @@
         let dashKey = this.activeDashKey
         if(DEBUG.app) console.log("DASH:  APP: 5.5.1: updateQueries: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
         if (forceRefresh) {
-          this.dashboardsCached[dashKey].dashboardBaseContext.version++
+          this.dashboardsCached[dashKey].dashboardBaseContext.vars.version++
           this.dashboardsRequested.update({force:true})
         }
         if (this.dashboardsCached[dashKey].solutionSiblings) this.dashboardsCached[dashKey].solutionSiblings.startUpdates({forceUpdate:forceRefresh})
@@ -519,19 +730,18 @@
             user: this.userInfo,
             arg: this.hashArg.content,
             name: this.dashboardName.startsWith(CHOOSERFLAG) ? this.dashboardName.substring(CHOOSERFLAG.length) : this.dashboardName,
-            vars: { },
-            version: 0
+            vars: { version: 0 }
           };
         }
 
-        const baseContextWatcher = (newBaseContext) => {
-          const newBaseContextString = JSON.stringify(newBaseContext)
-          if(this.dashboardsCached[dashKey].dashboardBaseContextString == newBaseContextString ) {
+        const baseContextVarsWatcher = (newBaseContextVars) => {
+          const newBaseContextVarsString = JSON.stringify(newBaseContextVars)
+          if(this.dashboardsCached[dashKey].dashboardBaseContextVarsString == newBaseContextVarsString ) {
             return
           } else {
-            this.dashboardsCached[dashKey].dashboardBaseContextString = newBaseContextString
+            this.dashboardsCached[dashKey].dashboardBaseContextVarsString = newBaseContextVarsString
           }
-          if(DEBUG.app) console.log("DASH:  APP: 5.2.1: loadDashboard: baseContextWatcher: context changed for '", this.dashboardsCached[dashKey].id + "/" + newDashEs.name,"'. newBaseContext.vars=",JSON.stringify(newBaseContext))
+          if(DEBUG.app) console.log("DASH:  APP: 5.2.1: loadDashboard: baseContextVarsWatcher: context changed for '", this.dashboardsCached[dashKey].id + "/" + newDashEs.name,"'. newBaseContext.vars=",JSON.stringify(newBaseContextVars))
 
           const newContext = getContext(this.dashboardsCached[dashKey])
           this.$set(this.dashboardsCached[dashKey], "dashboardContext", newContext);
@@ -619,7 +829,10 @@
             dashInfoItem.stopUpdates()
           }
 
-          // Dash drag context
+          // Add extra info to structure
+          dash.dashboardContext = dashboard.dashboardContext
+
+          // TEST
           dash.dashboardContext.dragContext = {
             draggedItem: undefined,
             srcZone: undefined,
@@ -628,12 +841,9 @@
             droppedOnZone:  false,
           }
 
-          // Add extra info to structure
-          dash.dashboardContext = dashboard.dashboardContext
           for (let b of dash["Board"]) {
             for (let c of b.Component) {
               c.vars = dashboard.dashboardContext.vars
-
               c.dashDragContext = dash.dashboardContext.dragContext
               if (c.Component === "Menu") {
                 c.Text.forEach(t => {
@@ -719,7 +929,7 @@
           if(DEBUG.app) console.log("DASH:  APP: 5.5: loadDashboard: activateDash: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
 
           // Restart context and sibling Watchers before
-          this.dashboardsCached[dashKey].stopBaseContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardBaseContext", baseContextWatcher, { deep: true });
+          this.dashboardsCached[dashKey].stopBaseContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardBaseContext.vars", baseContextVarsWatcher, { deep: true });
           this.dashboardsCached[dashKey].stopContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardContext", contextWatcher, { deep: true });
           this.dashboardsCached[dashKey].stopSiblingsWatcher = this.$watch("dashboardsCached." + dashKey + ".solutionSiblings.value", siblingsWatcher, { deep: true });
 
