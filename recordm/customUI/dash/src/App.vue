@@ -589,7 +589,18 @@
           const keys = Object.keys(context)
           for (const index in keys) {
             const key = keys[index]
-            if (dashboard.dashboardContext && dashboard.dashboardContext[key]) {
+            if (dashboard.dashboardContext && dashboard.dashboardContext[key] 
+              && (
+                JSON.stringify(context[key]) == JSON.stringify(dashboard.dashboardContext[key]) 
+                ||
+                ( 
+                  JSON.stringify(context[key].getterArgs) == JSON.stringify(dashboard.dashboardContext[key].getterArgs) 
+                  && context[key].currentState 
+                  && context[key].currentState != "cached" 
+                  && context[key].currentState != "ready"
+                )
+              )
+            ) {
               context[key] = dashboard.dashboardContext[key]
             }
           }
