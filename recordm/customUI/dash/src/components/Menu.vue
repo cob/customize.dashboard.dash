@@ -15,6 +15,7 @@
 <script>
 import ComponentStatePersistence from "@/model/ComponentStatePersistence";
 import Attention from './Attention.vue'
+import { C } from "@fullcalendar/core/internal-common";
 
 export default {
   components: { Attention },
@@ -94,10 +95,28 @@ export default {
       }
       return fieldsObject;
     },
-    handleDropConcurrent(rmId, fields_values, concurrent) {
+    parseClasses(classList) {
+      const fieldsObject = {};
+      classList.forEach(cls => {
+        if (cls.startsWith('dropZone')) {
+          const [key, value] = cls.substring('dropZone'.length).split('-');
+          if (key && value) {
+            fieldsObject[key] = value;
+          }
+        }
+        if (cls.startsWith('dragItem')) {
+          const [key, value] = cls.substring('dragItem'.length).split('-');
+          if (key && value) {
+            fieldsObject[key] = value;
+          }
+        }
+      })
+      return fieldsObject
+    },
+    handleDropConcurrent(fields_values, concurrent) {
       axios.post(`/integrationm/concurrent/${concurrent}`,
         fields_values).then(() => {
-          ui.notification.showInfo("Pedido Alterado! <br> Clique no refresh para atualizar a página.", false);
+          console.log("Need to refresh :)")
         })
     },
     handleDragStart(e) {
@@ -116,8 +135,7 @@ export default {
     },
     handleDragOver(e, dropZone) {
       e.preventDefault();
-      //this.component.dashDragContext.dstZonePoint = this.getCurrentPoint(dropZone, e.clientY);
-      //this.putDraggedItemOn(dropZone,this.component.dashDragContext.dstZonePoint)
+      e.dataTransfer.dropEffect = "move"
     },
     handleDragEnter(e) {
       if (e && e.target && e.target.classList.contains("dropZone")) {
@@ -139,8 +157,19 @@ export default {
       this.component.dashDragContext.draggedItem.classList.remove("dragging")
       this.component.dashDragContext.droppedOnZone = true;
 
-      let data_attributes = this.parseDataFields(dropZone.attributes)
-      this.handleDropConcurrent(data_attributes)
+      // Parse dropzone data and classes
+      let dropZone_data_attributes = this.parseDataFields(dropZone.attributes)
+      let dropZone_class_data_attributes = this.parseClasses(dropZone.classList)
+      // Parse dragitme data and classes
+      let dragItem_data_attributes = this.parseDataFields(this.component.dashDragContext.draggedItem.attributes)
+      let dragItem_class_data_attributes = this.parseClasses(this.component.dashDragContext.draggedItem.classList)
+
+      // Merge dictionaries and call concurrent
+      let params = Object.assign(dropZone_data_attributes, dropZone_class_data_attributes,
+      dragItem_data_attributes, dragItem_class_data_attributes
+      )
+      console.log("test drop concurrent params", params)
+      this.handleDropConcurrent(params, "digal_update_hours")
     },
     setupDragAndDrop() {
       const dragItems = document.querySelectorAll(`#menu${this._uid} .dragItem`);
@@ -159,20 +188,19 @@ export default {
         const boundHandleDragOver = (e) => this.handleDragOver(e, dropZone);
         const boundHandleDragDrop = (e) => this.handleDragDrop(e, dropZone)
 
-        // Remove dropzone events
+        // Remove dropzone events - use reference map for dragover and drop
         dropZone.removeEventListener("dragover", this.handleDragOverRefs.get(dropZone));
         dropZone.removeEventListener("dragenter", this.handleDragEnter);
         dropZone.removeEventListener("dragleave", this.handleDragLeave);
-
         dropZone.removeEventListener("drop", this.handleDropRefs.get(dropZone));
 
-        // Add dropzone events
+        // Add handleFuncs references to respective maps for future listener removal
         this.handleDragOverRefs.set(dropZone, boundHandleDragOver)
+        this.handleDropRefs.set(dropZone, boundHandleDragDrop);
+        // Add dropzone events
         dropZone.addEventListener("dragover", boundHandleDragOver, false);
         dropZone.addEventListener("dragenter", this.handleDragEnter);
         dropZone.addEventListener("dragleave", this.handleDragLeave);
-
-        this.handleDropRefs.set(dropZone, boundHandleDragDrop);
         dropZone.addEventListener("drop", boundHandleDragDrop);
       }
     },
