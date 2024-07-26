@@ -235,6 +235,43 @@
     return paging(-1, current, size, limit)
   })
 
+  Handlebars.registerHelper('lookupWithDefault', function(obj,key,defaultValue) {
+    return obj[key] ? obj[key] : defaultValue
+  })
+
+  Handlebars.registerHelper('some', function(obj, evalCode) {
+    for (const key in obj) {
+      const code = "((key,val) => " + evalCode + ") (\"" + key + "\", " + obj[key] + ")"   // evalCode example: "key != 'test' && val > 0"
+      const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
+      let evalResult
+      try {
+        evalResult = eval(cleanedCode)
+      } catch (e) {
+        console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
+      }
+      if ( evalResult) {
+        return true
+      }
+    }
+    return false
+  })
+
+  Handlebars.registerHelper('every', function(obj, evalCode) {
+    for (const key in obj) {
+      const code = "((key,val) => " + evalCode + ") (\"" + key + "\", " + obj[key] + ")"   // evalCode example: "key != 'test' && val > 0"
+      const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
+      let evalResult
+      try {
+        evalResult = eval(cleanedCode)
+      } catch (e) {
+        console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
+      }
+      if ( !evalResult) {
+        return false
+      }
+    }
+    return true
+  }) 
 
   export default {
     name: 'App',
