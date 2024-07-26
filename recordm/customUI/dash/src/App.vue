@@ -261,13 +261,13 @@
 
       // Preemptively load the chooser dashboard, to be used in case there's more than one dashboard found for a given name and a given user
       if(DEBUG.app) console.log("DASH:  APP: 1: created: Requesting chooser")
-      this.dashboardChooser = DashFunctions.instancesList(DASHBOARD_DEF, "name.raw:\"" + DASHBOARD_CHOOSER + "\"", 1, 0, "order", "true", { validity: 600 })
+      this.dashboardChooser = DashFunctions.instancesList(DASHBOARD_DEF, "name.raw:\"" + DASHBOARD_CHOOSER + "\"", 1, 0, "order", "true")
 
       // At the initial load we get the dashboard instance name from the custom-resource div's attribute "data-name"
       umLoggedin().then(userInfo => {
         if(DEBUG.app) console.log("DASH:  APP: 1.1: created: Requesting dashs...")
         this.updateRequestData(userInfo, document.getElementsByClassName("custom-resource")[0].getAttribute('data-name') )
-        this.dashboardsRequested = DashFunctions.instancesList(DASHBOARD_DEF, this.dashboardQuery, 99, 0, "order", "false", { validity: 600 })
+        this.dashboardsRequested = DashFunctions.instancesList(DASHBOARD_DEF, this.dashboardQuery, 99, 0, "order", "false")
       })
       // Upon anchor navigation we get the dashboard instance name from the param to the 'resume' callback
       this.resumeEventListner = $('section.custom-resource').on('resume',this.resumeListener)
