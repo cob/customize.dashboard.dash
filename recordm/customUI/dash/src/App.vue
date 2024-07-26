@@ -283,12 +283,10 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
     },
 
     mounted() {
-      //this.setupDragAndDrop()
       this.startDragDropListeners()
     },
 
     updated() {
-      //this.setupDragAndDrop()
       this.stopDragDropListeners()
       this.startDragDropListeners()
     },
@@ -450,7 +448,6 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
     },
 
     methods: {
-
       // Parse dragItem and dropZone data attributes and classes with prefixes dragItem dropZone
       // and builds dictionary to send to concurrent as args
       parseDataFields(dataFields) {
@@ -540,8 +537,12 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
         let params = Object.assign(dropZone_data_attributes, dropZone_class_data_attributes,
           dragItem_data_attributes, dragItem_class_data_attributes
         )
-        console.log("test drop concurrent params", params)
-        this.handleDropConcurrent(params, "digal_update_hours")
+
+        // Get concurrent script name
+        let concur_script = this.dashboardsCached[this.activeDashKey].dashboardParsed.DashboardCustomize[0].DragDropConcurrent
+        if(concur_script) { 
+          this.handleDropConcurrent(params, concur_script)
+        }  
       },
 
       // For every dragItem and dropZone we remove (to prevent memory leaks) and add drag-related listeners
@@ -831,20 +832,9 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
 
           // Add extra info to structure
           dash.dashboardContext = dashboard.dashboardContext
-
-          // TEST
-          dash.dashboardContext.dragContext = {
-            draggedItem: undefined,
-            srcZone: undefined,
-            srcZonePoint:  undefined,
-            dstZonePoint: undefined,
-            droppedOnZone:  false,
-          }
-
           for (let b of dash["Board"]) {
             for (let c of b.Component) {
               c.vars = dashboard.dashboardContext.vars
-              c.dashDragContext = dash.dashboardContext.dragContext
               if (c.Component === "Menu") {
                 c.Text.forEach(t => {
                   // If Attention is configured for this menu line then add attention status as user check

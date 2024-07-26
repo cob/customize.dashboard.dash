@@ -60,7 +60,8 @@ function parseDashboard(raw_dashboard) {
                 "VarName" : "", 
                 "Initial Value" : "",
             }],
-            "Context": ""
+            "Context": "",
+            "DragDropConcurrent":""
         }],
         "Board": [{
             "BoardCustomize": [{
