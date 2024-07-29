@@ -564,7 +564,7 @@
                 })
                 .catch(error => {
                   // Concurrent Error
-                  cob.ui.notification.showError("Invalid drop location. 😔")
+                  cob.ui.notification.showError("Invalid drop location.")
                 })
             }
           }
