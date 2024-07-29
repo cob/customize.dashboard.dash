@@ -326,9 +326,6 @@
       }
     },
 
-    mounted() {
-    },
-
     updated() {
       let activeDash = this.dashboardsCached[this.activeDashKey]
 
@@ -484,10 +481,8 @@
         // Helper functions for DOM manipulation
         activeDragDropInfo.putDraggedItemOn = function(zone, dstZonePoint) {
           if (dstZonePoint == null) {
-            //zone.appendChild(this.draggedItem);
             zone.insertAdjacentElement("beforeend", activeDragDropInfo.draggedItem);
           } else {
-            //zone.insertBefore(this.draggedItem, dstZonePoint);
             dstZonePoint.insertAdjacentElement("beforeend", activeDragDropInfo.draggedItem);
           }
         }
@@ -523,60 +518,56 @@
 
         activeDragDropInfo.handleDragEnter = function (e) {
           if (e && e.target && e.target.classList.contains("dropZone")) {
-            e.target.classList.add("bg-stone-500")
-            activeDragDropInfo.draggedItem.style.visibility = ""
+            // We leave this blank to easily support adding new logic to drag and drop.
           }
         }
 
         activeDragDropInfo.handleDragLeave = function (e) {
-          if (e && e.target && !e.fromElement.classList.contains("dragItem")) {
-            e.target.classList.remove("bg-stone-500")
+          if (e && e.target && e.fromElement.classList && !e.fromElement.classList.contains("dragItem")) {
+            // We leave this blank to easily support adding new logic to drag and drop.
           }
         }
 
         activeDragDropInfo.handleDragOver = function(e, dropZone) {
           e.preventDefault();
           e.dataTransfer.dropEffect = "move"
+          activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
+          activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
         }
 
         activeDragDropInfo.handleDragDrop = function (e, dropZone) {
           e.preventDefault();
-          dropZone.classList.remove("bg-stone-500")
-          activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
-          activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
-          activeDragDropInfo.draggedItem.style.visibility = ""
-          activeDragDropInfo.draggedItem.classList.remove("dragging")
-          activeDragDropInfo.droppedOnZone = true;
+          // If we're dropping in the origin, we ignore it.
+          if (dropZone != activeDragDropInfo.srcZone) {
+            // Parse dropzone data and classes
+            let dropZone_data_attributes = activeDragDropInfo.parseDataFields(dropZone.attributes)
+            let dropZone_class_data_attributes = activeDragDropInfo.parseClasses(dropZone.classList)
+            // Parse dragitem data and classes
+            let dragItem_data_attributes = activeDragDropInfo.parseDataFields(activeDragDropInfo.draggedItem.attributes)
+            let dragItem_class_data_attributes = activeDragDropInfo.parseClasses(activeDragDropInfo.draggedItem.classList)
 
-          // Parse dropzone data and classes
-          let dropZone_data_attributes = activeDragDropInfo.parseDataFields(dropZone.attributes)
-          let dropZone_class_data_attributes = activeDragDropInfo.parseClasses(dropZone.classList)
-          // Parse dragitme data and classes
-          let dragItem_data_attributes = activeDragDropInfo.parseDataFields(activeDragDropInfo.draggedItem.attributes)
-          let dragItem_class_data_attributes = activeDragDropInfo.parseClasses(activeDragDropInfo.draggedItem.classList)
+            // Merge dictionaries and call concurrent
+            let params = Object.assign(dropZone_data_attributes, dropZone_class_data_attributes,
+              dragItem_data_attributes, dragItem_class_data_attributes
+            )
 
-          // Merge dictionaries and call concurrent
-          let params = Object.assign(dropZone_data_attributes, dropZone_class_data_attributes,
-            dragItem_data_attributes, dragItem_class_data_attributes
-          )
-
-          // Get concurrent script name
-          let concur_script = activeDash.dashboardParsed.DashboardCustomize[0].DragDropConcurrent
-          if (concur_script) {
-            activeDragDropInfo.handleDropConcurrent(params, concur_script)
+            // Get concurrent script name
+            let concur_script = activeDash.dashboardParsed.DashboardCustomize[0].DragDropConcurrent
+            if (concur_script) {
+              axios.post(`/integrationm/concurrent/${concur_script}`, params)
+                .then(() => {
+                  // Concurrent 200
+                  activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
+                  activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
+                  activeDragDropInfo.draggedItem.classList.remove("dragging")
+                  activeDragDropInfo.droppedOnZone = true;
+                })
+                .catch(error => {
+                  // Concurrent Error
+                  cob.ui.notification.showError("Invalid drop location. 😔")
+                })
+            }
           }
-        }
-
-        // Function that calls a concurrent script on drop event
-        activeDragDropInfo.handleDropConcurrent = function (fields_values, concurrent) {
-          axios.post(`/integrationm/concurrent/${concurrent}`,
-            fields_values)
-            .then(() => {
-              // 
-            })
-            .catch(error => {
-              console.log("Error calling DragDrop Concurrent.")
-            })
         }
 
         const dragItems = document.querySelectorAll(`.dragItem`);
@@ -588,7 +579,6 @@
 
         const dropZones = document.querySelectorAll(`.dropZone`);
         for (let dropZone of dropZones) {
-          // TODO VER MELHOR FORMA DE MANDAR ISTO PARA DRAGDROPINFO
           const boundHandleDragOver = (e) => activeDragDropInfo.handleDragOver(e, dropZone);
           const boundHandleDragDrop = (e) => activeDragDropInfo.handleDragDrop(e, dropZone)
 
