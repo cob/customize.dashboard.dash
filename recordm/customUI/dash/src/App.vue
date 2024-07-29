@@ -91,7 +91,7 @@
     });
     }
   })
-  Handlebars.registerHelper("listFilter", function (list, field, value, first) {
+  Handlebars.registerHelper("listFilter", function(list, field, value, first) {
     const filteredList = []
     if (list) {
       for (const obj of list) {
