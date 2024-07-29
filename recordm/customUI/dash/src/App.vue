@@ -91,20 +91,20 @@
     });
     }
   })
-Handlebars.registerHelper("listFilter", function (list, field, value, first) {
-  const filteredList = []
-  if (list) {
-    for (const obj of list) {
-      if (obj[field] && obj[field][0] == value) {
-        if (first === 'true') { //returns only the first match
-          return [obj]
+  Handlebars.registerHelper("listFilter", function (list, field, value, first) {
+    const filteredList = []
+    if (list) {
+      for (const obj of list) {
+        if (obj[field] && obj[field][0] == value) {
+          if (first === 'true') { //returns only the first match
+            return [obj]
+          }
+          filteredList.push(obj)
         }
-        filteredList.push(obj)
       }
     }
-  }
-  return filteredList.length > 0 ? filteredList : null;
-})
+    return filteredList.length > 0 ? filteredList : null;
+  })
   Handlebars.registerHelper("screenSm", function() { return window.matchMedia("(max-width: 640px)").matches;})
   Handlebars.registerHelper("screenMd", function() {return window.matchMedia("(max-width: 768px)").matches;})
   Handlebars.registerHelper('isNaked', function () { return cob.app.getSettings().mode() === "naked" });
@@ -251,15 +251,7 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
       stopContextWatcher: null,
       hashArg: "",
       refreshFlag:0,
-
-      // Drag and drop
-      handleDropRefs: new Map(),
-      handleDragOverRefs: new Map(),
-      draggedItem: undefined,
-      srcZone: undefined,
-      srcZonePoint: undefined,
-      dstZonePoint: undefined,
-      droppedOnZone: false,
+      timeoutId: null,
     }),
 
     created() {
@@ -282,18 +274,8 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
       this.resumeEventListner = $('section.custom-resource').on('resume',this.resumeListener)
     },
 
-    mounted() {
-      this.startDragDropListeners()
-    },
-
-    updated() {
-      this.stopDragDropListeners()
-      this.startDragDropListeners()
-    },
-
     beforeDestroy() {
       if(DEBUG.app) console.log("DASH:  APP: 9: beforeDestroy: Stop all watchers and updates")
-      this.stopDragDropListeners()
       this.resumeEventListner.off('resume')
       this.hashArg.stop()
       this.stopActiveDash()
@@ -341,6 +323,24 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
           return "fixed left-[5px] top-[5px] "
         } 
         return defaultClasses
+      }
+    },
+
+    mounted() {
+    },
+
+    updated() {
+      let activeDash = this.dashboardsCached[this.activeDashKey]
+
+      if(activeDash) {
+        if (this.timeoutId) {
+        clearTimeout(this.timeoutId);
+      }
+
+      this.timeoutId = setTimeout(() => {
+        this.stopDragDropListeners(activeDash)
+        this.startDragDropListeners(activeDash)
+      }, 300)
       }
     },
 
@@ -448,195 +448,177 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
     },
 
     methods: {
-      // Parse dragItem and dropZone data attributes and classes with prefixes dragItem dropZone
-      // and builds dictionary to send to concurrent as args
-      parseDataFields(dataFields) {
-        const fieldsObject = {};
-        for (const attr of dataFields) {
-          if (attr.name.startsWith('data-')) {
-            const key = attr.name.slice(5); // Remove "data-" prefix
-            fieldsObject[key] = attr.value;
-          }
-        }
-        return fieldsObject;
-      },
-      parseClasses(classList) {
-        const fieldsObject = {};
-        classList.forEach(cls => {
-          if (cls.startsWith('dropZone')) {
-            const [key, value] = cls.substring('dropZone'.length).split('-');
-            if (key && value) {
-              fieldsObject[key] = value;
-            }
-          }
-          if (cls.startsWith('dragItem')) {
-            const [key, value] = cls.substring('dragItem'.length).split('-');
-            if (key && value) {
-              fieldsObject[key] = value;
-            }
-          }
-        })
-        return fieldsObject
-      },
+      startDragDropListeners(activeDash) {
+        let activeDragDropInfo = activeDash.dashboardDragDropInfo
 
-      // Call concurrent on drop event
-      handleDropConcurrent(fields_values, concurrent) {
-        axios.post(`/integrationm/concurrent/${concurrent}`,
-          fields_values).then(() => {
-            console.log("Need to refresh :)")
+        // Helper functions to parse data from data attributes and prefixed class names
+        activeDragDropInfo.parseDataFields = function (dataFields) {
+          const fieldsObject = {};
+          for (const attr of dataFields) {
+            if (attr.name.startsWith('data-')) {
+              const key = attr.name.slice(5); // Remove "data-" prefix
+              fieldsObject[key] = attr.value;
+            }
+          }
+          return fieldsObject;
+        }
+        activeDragDropInfo.parseClasses = function (classList) {
+          const fieldsObject = {};
+          classList.forEach(cls => {
+            if (cls.startsWith('dropZone')) {
+              const [key, value] = cls.substring('dropZone'.length).split('-');
+              if (key && value) {
+                fieldsObject[key] = value;
+              }
+            }
+            if (cls.startsWith('dragItem')) {
+              const [key, value] = cls.substring('dragItem'.length).split('-');
+              if (key && value) {
+                fieldsObject[key] = value;
+              }
+            }
           })
-      },
-
-      // Drag and drop event handlers
-      handleDragStart(e) {
-        this.draggedItem = e.target;
-        this.srcZone = this.draggedItem.parentNode;
-        this.srcZonePoint = this.draggedItem.nextElementSibling;
-        this.droppedOnZone = false;
-        this.draggedItem.classList.add("dragging");
-      },
-      handleDragEnd(e) {
-        this.draggedItem.style.visibility = ""
-        this.draggedItem.classList.remove("dragging")
-        if (this.droppedOnZone != true) {
-          this.putDraggedItemOn(this.srcZone, this.srcZonePoint)
-        }
-      },
-      handleDragOver(e, dropZone) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "move"
-      },
-      handleDragEnter(e) {
-        if (e && e.target && e.target.classList.contains("dropZone")) {
-          e.target.classList.add("bg-stone-500")
-          this.draggedItem.style.visibility = ""
-        }
-      },
-      handleDragLeave(e) {
-        if (e && e.target && !e.fromElement.classList.contains("dragItem")) {
-          e.target.classList.remove("bg-stone-500")
-        }
-      },
-      handleDragDrop(e, dropZone) {
-        e.preventDefault();
-        dropZone.classList.remove("bg-stone-500")
-        this.dstZonePoint = this.getCurrentPoint(dropZone, e.clientY);
-        this.putDraggedItemOn(dropZone, this.dstZonePoint)
-        this.draggedItem.style.visibility = ""
-        this.draggedItem.classList.remove("dragging")
-        this.droppedOnZone = true;
-
-        // Parse dropzone data and classes
-        let dropZone_data_attributes = this.parseDataFields(dropZone.attributes)
-        let dropZone_class_data_attributes = this.parseClasses(dropZone.classList)
-        // Parse dragitme data and classes
-        let dragItem_data_attributes = this.parseDataFields(this.draggedItem.attributes)
-        let dragItem_class_data_attributes = this.parseClasses(this.draggedItem.classList)
-
-        // Merge dictionaries and call concurrent
-        let params = Object.assign(dropZone_data_attributes, dropZone_class_data_attributes,
-          dragItem_data_attributes, dragItem_class_data_attributes
-        )
-
-        // Get concurrent script name
-        let concur_script = this.dashboardsCached[this.activeDashKey].dashboardParsed.DashboardCustomize[0].DragDropConcurrent
-        if(concur_script) { 
-          this.handleDropConcurrent(params, concur_script)
-        }  
-      },
-
-      // For every dragItem and dropZone we remove (to prevent memory leaks) and add drag-related listeners
-      setupDragAndDrop() {
-        const dragItems = document.querySelectorAll(`.dragItem`);
-        for (let dragItem of dragItems) {
-          // removes dragitem events
-          dragItem.removeEventListener("dragstart", this.handleDragStart)
-          dragItem.removeEventListener("dragend", this.handleDragEnd)
-          // add dragitem events
-          dragItem.addEventListener("dragstart", this.handleDragStart);
-          dragItem.addEventListener("dragend", this.handleDragEnd);
+          return fieldsObject
         }
 
-        /* events fired on the drop targets */
-        const dropZones = document.querySelectorAll(`.dropZone`);
-        for (let dropZone of dropZones) {
-          const boundHandleDragOver = (e) => this.handleDragOver(e, dropZone);
-          const boundHandleDragDrop = (e) => this.handleDragDrop(e, dropZone)
-
-          // Remove dropzone events - use reference map for dragover and drop
-          dropZone.removeEventListener("dragover", this.handleDragOverRefs.get(dropZone));
-          dropZone.removeEventListener("dragenter", this.handleDragEnter);
-          dropZone.removeEventListener("dragleave", this.handleDragLeave);
-          dropZone.removeEventListener("drop", this.handleDropRefs.get(dropZone));
-
-          // Add handleFuncs references to respective maps for future listener removal
-          this.handleDragOverRefs.set(dropZone, boundHandleDragOver)
-          this.handleDropRefs.set(dropZone, boundHandleDragDrop);
-          // Add dropzone events
-          dropZone.addEventListener("dragover", boundHandleDragOver, false);
-          dropZone.addEventListener("dragenter", this.handleDragEnter);
-          dropZone.addEventListener("dragleave", this.handleDragLeave);
-          dropZone.addEventListener("drop", boundHandleDragDrop);
-        }
-      },
-      startDragDropListeners() {
-        const dragItems = document.querySelectorAll(`.dragItem`);
-        for (let dragItem of dragItems) {
-          dragItem.addEventListener("dragstart", this.handleDragStart);
-          dragItem.addEventListener("dragend", this.handleDragEnd);
-        }
-
-        const dropZones = document.querySelectorAll(`.dropZone`);
-        for (let dropZone of dropZones) {
-          const boundHandleDragOver = (e) => this.handleDragOver(e, dropZone);
-          const boundHandleDragDrop = (e) => this.handleDragDrop(e, dropZone)
-
-          // Add handleFuncs references to respective maps for future listener removal
-          this.handleDragOverRefs.set(dropZone, boundHandleDragOver)
-          this.handleDropRefs.set(dropZone, boundHandleDragDrop);
-
-          dropZone.addEventListener("dragover", boundHandleDragOver, false);
-          dropZone.addEventListener("dragenter", this.handleDragEnter);
-          dropZone.addEventListener("dragleave", this.handleDragLeave);
-          dropZone.addEventListener("drop", boundHandleDragDrop);
-        }
-      },
-      stopDragDropListeners() {
-        const dragItems = document.querySelectorAll(`.dragItem`);
-        for (let dragItem of dragItems) {
-          dragItem.removeEventListener("dragstart", this.handleDragStart)
-          dragItem.removeEventListener("dragend", this.handleDragEnd)
-        }
-
-        /* events fired on the drop targets */
-        const dropZones = document.querySelectorAll(`.dropZone`);
-        for (let dropZone of dropZones) {
-          dropZone.removeEventListener("dragover", this.handleDragOverRefs.get(dropZone));
-          dropZone.removeEventListener("dragenter", this.handleDragEnter);
-          dropZone.removeEventListener("dragleave", this.handleDragLeave);
-
-          dropZone.removeEventListener("drop", this.handleDropRefs.get(dropZone));
-        }
-      },
-      getCurrentPoint(dropZone, y) {
-        const draggableElements = [...dropZone.querySelectorAll(".dragItem:not(.dragging)")];
-        return draggableElements.reduce((closestElement, element) => {
-          const elementBox = element.getBoundingClientRect();
-          const offset = y - elementBox.top - elementBox.height / 2;
-          if (offset < 0 && offset > closestElement.offset) {
-            return { offset: offset, element: element };
+        // Helper functions for DOM manipulation
+        activeDragDropInfo.putDraggedItemOn = function(zone, dstZonePoint) {
+          if (dstZonePoint == null) {
+            //zone.appendChild(this.draggedItem);
+            zone.insertAdjacentElement("beforeend", activeDragDropInfo.draggedItem);
           } else {
-            return closestElement;
+            //zone.insertBefore(this.draggedItem, dstZonePoint);
+            dstZonePoint.insertAdjacentElement("beforeend", activeDragDropInfo.draggedItem);
           }
-        }, { offset: Number.NEGATIVE_INFINITY }).element
+        }
+        activeDragDropInfo.getCurrentPoint = function (dropZone, y) {
+          const draggableElements = [...dropZone.querySelectorAll(".dragItem:not(.dragging)")];
+          return draggableElements.reduce((closestElement, element) => {
+            const elementBox = element.getBoundingClientRect();
+            const offset = y - elementBox.top - elementBox.height / 2;
+            if (offset < 0 && offset > closestElement.offset) {
+              return { offset: offset, element: element };
+            } else {
+              return closestElement;
+            }
+          }, { offset: Number.NEGATIVE_INFINITY }).element
+        }
+
+        // Event handlers / listeners
+        activeDragDropInfo.handleDragStart = function (e) {
+          activeDragDropInfo.draggedItem = e.target;
+          activeDragDropInfo.srcZone = activeDragDropInfo.draggedItem.parentNode;
+          activeDragDropInfo.srcZonePoint = activeDragDropInfo.draggedItem.nextElementSibling;
+          activeDragDropInfo.droppedOnZone = false;
+          activeDragDropInfo.draggedItem.classList.add("dragging");
+        }
+
+        activeDragDropInfo.handleDragEnd = function (e) {
+          activeDragDropInfo.draggedItem.style.visibility = ""
+          activeDragDropInfo.draggedItem.classList.remove("dragging")
+          if (activeDragDropInfo.droppedOnZone != true) {
+            activeDragDropInfo.putDraggedItemOn(activeDragDropInfo.srcZone, activeDragDropInfo.srcZonePoint)
+          }        
+        }
+
+        activeDragDropInfo.handleDragEnter = function (e) {
+          if (e && e.target && e.target.classList.contains("dropZone")) {
+            e.target.classList.add("bg-stone-500")
+            activeDragDropInfo.draggedItem.style.visibility = ""
+          }
+        }
+
+        activeDragDropInfo.handleDragLeave = function (e) {
+          if (e && e.target && !e.fromElement.classList.contains("dragItem")) {
+            e.target.classList.remove("bg-stone-500")
+          }
+        }
+
+        activeDragDropInfo.handleDragOver = function(e, dropZone) {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move"
+        }
+
+        activeDragDropInfo.handleDragDrop = function (e, dropZone) {
+          e.preventDefault();
+          dropZone.classList.remove("bg-stone-500")
+          activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
+          activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
+          activeDragDropInfo.draggedItem.style.visibility = ""
+          activeDragDropInfo.draggedItem.classList.remove("dragging")
+          activeDragDropInfo.droppedOnZone = true;
+
+          // Parse dropzone data and classes
+          let dropZone_data_attributes = activeDragDropInfo.parseDataFields(dropZone.attributes)
+          let dropZone_class_data_attributes = activeDragDropInfo.parseClasses(dropZone.classList)
+          // Parse dragitme data and classes
+          let dragItem_data_attributes = activeDragDropInfo.parseDataFields(activeDragDropInfo.draggedItem.attributes)
+          let dragItem_class_data_attributes = activeDragDropInfo.parseClasses(activeDragDropInfo.draggedItem.classList)
+
+          // Merge dictionaries and call concurrent
+          let params = Object.assign(dropZone_data_attributes, dropZone_class_data_attributes,
+            dragItem_data_attributes, dragItem_class_data_attributes
+          )
+
+          // Get concurrent script name
+          let concur_script = activeDash.dashboardParsed.DashboardCustomize[0].DragDropConcurrent
+          if (concur_script) {
+            activeDragDropInfo.handleDropConcurrent(params, concur_script)
+          }
+        }
+
+        // Function that calls a concurrent script on drop event
+        activeDragDropInfo.handleDropConcurrent = function (fields_values, concurrent) {
+          axios.post(`/integrationm/concurrent/${concurrent}`,
+            fields_values)
+            .then(() => {
+              // 
+            })
+            .catch(error => {
+              console.log("Error calling DragDrop Concurrent.")
+            })
+        }
+
+        const dragItems = document.querySelectorAll(`.dragItem`);
+        for (let dragItem of dragItems) {
+          dragItem.addEventListener("dragstart", activeDragDropInfo.handleDragStart);
+          dragItem.addEventListener("dragend", activeDragDropInfo.handleDragEnd);
+        }
+
+
+        const dropZones = document.querySelectorAll(`.dropZone`);
+        for (let dropZone of dropZones) {
+          // TODO VER MELHOR FORMA DE MANDAR ISTO PARA DRAGDROPINFO
+          const boundHandleDragOver = (e) => activeDragDropInfo.handleDragOver(e, dropZone);
+          const boundHandleDragDrop = (e) => activeDragDropInfo.handleDragDrop(e, dropZone)
+
+          // Add handleFuncs references to respective maps for future listener removal
+          activeDragDropInfo.handleDragOverRefs.set(dropZone, boundHandleDragOver)
+          activeDragDropInfo.handleDropRefs.set(dropZone, boundHandleDragDrop);
+
+          dropZone.addEventListener("dragover", boundHandleDragOver, false);
+          dropZone.addEventListener("dragenter", activeDragDropInfo.handleDragEnter);
+          dropZone.addEventListener("dragleave", activeDragDropInfo.handleDragLeave);
+          dropZone.addEventListener("drop", boundHandleDragDrop);
+        }
       },
-      putDraggedItemOn(zone, dstZonePoint) {
-        if (dstZonePoint == null) {
-          //zone.appendChild(this.draggedItem);
-          zone.insertAdjacentElement("beforeend", this.draggedItem);
-        } else {
-          //zone.insertBefore(this.draggedItem, dstZonePoint);
-          dstZonePoint.insertAdjacentElement("beforeend", this.draggedItem);
+      stopDragDropListeners(activeDash) {
+        let activeDragDropInfo = activeDash.dashboardDragDropInfo
+
+        const dragItems = document.querySelectorAll(`.dragItem`);
+        for (let dragItem of dragItems) {
+          dragItem.removeEventListener("dragstart", activeDragDropInfo.handleDragStart)
+          dragItem.removeEventListener("dragend", activeDragDropInfo.handleDragEnd)
+        }
+
+        /* events fired on the drop targets */
+        const dropZones = document.querySelectorAll(`.dropZone`);
+        for (let dropZone of dropZones) {
+          dropZone.removeEventListener("dragover", activeDragDropInfo.handleDragOverRefs.get(dropZone));
+          dropZone.removeEventListener("dragenter", activeDragDropInfo.handleDragEnter);
+          dropZone.removeEventListener("dragleave", activeDragDropInfo.handleDragLeave);
+
+          dropZone.removeEventListener("drop", activeDragDropInfo.handleDropRefs.get(dropZone));
         }
       },
       resumeListener(e, params) {
@@ -952,6 +934,18 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
           cob.app.publish('updated-app-info', { rebuildMenu: true });
         }
 
+        const buildDragDropInfo = () => {
+          return {
+            handleDropRefs: new Map(),
+            handleDragOverRefs: new Map(),
+            draggedItem: undefined,
+            srcZone: undefined,
+            srcZonePoint: undefined,
+            dstZonePoint: undefined,
+            droppedOnZone: false,
+          }
+        }
+
         // Add entry to window.cobSolutions map and ask _menu.js to mark the current active solution
         window.cobSolutions[this.dashboardName] = requestResultList[0].solution_sigla && requestResultList[0].solution_sigla[0]
         window.markActiveSolution()
@@ -962,7 +956,6 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
         if (this.dashboardsCached[dashKey] !== undefined && this.dashboardsCached[dashKey].version === newDashEs.version) {
           if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: dashboard previously processed. Activate newDashId=", newDashEs.id)
           activateDash(true)
-
         } else {
           // If the dashKey property doesn't exist or it changed version then this is the first time we display this dashboard (at this version) and we need to build it from scratch
           if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: first processing of ", newDashEs.id)
@@ -992,6 +985,7 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
                 dash.dashboardContext = getContext(dash);
                 dash.dashboardProcessed = buildDashboard(dash);
                 dash.solutionSiblings = DashFunctions.instancesList(DASHBOARD_DEF, "solution.raw:\"" + solution + "\"" + (this.userInfo.isSystem ? "" : " AND ( groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*)  )" ) , 102, 0, "order", "false", { validity: 600 });
+                dash.dashboardDragDropInfo = buildDragDropInfo()
                 this.$set(this.dashboardsCached, dashKey, dash);
                 activateDash(false)
               }
@@ -1016,6 +1010,7 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
         const activeDash = this.dashboardsCached[this.activeDashKey]
         if (activeDash) {
           if(DEBUG.app) console.log("DASH:  APP: 6: stopActiveDash: stopping watchers and queries for dashboard=", activeDash.id)
+          this.stopDragDropListeners(activeDash)
           activeDash.stopBaseContextWatcher()
           activeDash.stopContextWatcher()
           activeDash.stopSiblingsWatcher()
