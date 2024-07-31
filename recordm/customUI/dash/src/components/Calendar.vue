@@ -202,11 +202,16 @@
               start.setDate(1)
               start.setMonth( start.getMonth() + 1)
               start.setHours(0)
+              start.setMinutes(0)
+              start.setSeconds(0)
             }
             // last day of the month
             let end = new Date(start) 
             end.setMonth( start.getMonth() + 1)
             end.setDate(0) 
+            end.setHours(23)
+            end.setMinutes(59)
+            end.setSeconds(59)
 
             startDate = start.getTime()
             endDate = end.getTime()
