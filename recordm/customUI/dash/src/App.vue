@@ -77,6 +77,43 @@
     }
   }
 
+  function parseStringToMap(str) {
+    const map = {};
+    if(str) {
+      const pairs = str.split(',').map(pair => pair.trim());
+      pairs.forEach(pair => {
+          const [key, ...valueParts] = pair.split(':');
+          const keyTrimmed = key.trim();
+          const valueTrimmed = valueParts.join(':').trim();
+          map[keyTrimmed] = valueTrimmed;
+      });
+    }
+    return map;
+}
+
+Handlebars.registerHelper("pasteInRm", function(objStr) { 
+    if(objStr) {
+      const parsedMap = parseStringToMap(objStr)
+      const fields = Object.entries(parsedMap).map( ([key,value]) => {
+        return {
+          "value": value,
+              "fieldDefinition": {
+                  "name": key
+              }
+        }
+      })
+      const data = {
+        "opts": {
+              "auto-paste-if-empty": true
+          },
+          "fields": fields
+      }
+      let stringifiedString = JSON.stringify(data)
+      return stringifiedString
+    }
+    return ""
+  })
+
   Handlebars.registerHelper("listSort", function(list, field, dir) {
     const isAscending = dir.toLowerCase() === 'asc';
     if(list) {
@@ -550,7 +587,6 @@
             let params = Object.assign(dropZone_data_attributes, dropZone_class_data_attributes,
               dragItem_data_attributes, dragItem_class_data_attributes
             )
-
             // Get concurrent script name
             let concur_script = activeDash.dashboardParsed.DashboardCustomize[0].DragDropConcurrent
             if (concur_script) {
