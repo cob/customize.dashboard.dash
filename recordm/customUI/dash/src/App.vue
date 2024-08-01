@@ -91,7 +91,12 @@
     return map;
 }
 
-Handlebars.registerHelper("pasteInRm", function(objStr) { 
+Handlebars.registerHelper("textJoin", function(...strings) {
+  strings.pop()
+  let test = strings.join(',')
+  return test
+})
+Handlebars.registerHelper("pasteInRm", function(objStr) {
     if(objStr) {
       const parsedMap = parseStringToMap(objStr)
       const fields = Object.entries(parsedMap).map( ([key,value]) => {
