@@ -78,23 +78,20 @@
   }
 
   function parseStringToMap(str) {
-    const map = {};
-    if(str) {
-      const pairs = str.split(',').map(pair => pair.trim());
-      pairs.forEach(pair => {
-          const [key, ...valueParts] = pair.split(':');
-          const keyTrimmed = key.trim();
-          const valueTrimmed = valueParts.join(':').trim();
-          map[keyTrimmed] = valueTrimmed;
-      });
-    }
-    return map;
+  const map = {};
+  if (str) {
+    str.split(',').forEach(pair => {
+      const [key, ...valueParts] = pair.split(':') 
+      const value = valueParts.join(':');
+      map[key] = value;
+    });
+  }
+  return map;
 }
 
 Handlebars.registerHelper("textJoin", function(...strings) {
-  strings.pop()
-  let test = strings.join(',')
-  return test
+  strings.pop() //for some reason the last item is of type Obj, and not an actual param
+  return strings.join(',')
 })
 Handlebars.registerHelper("pasteInRm", function(objStr) {
     if(objStr) {
