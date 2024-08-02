@@ -77,11 +77,11 @@
     }
   }
 
-  function parseStringToMap(str) {
+function parseStringToMap(str) {
   const map = {};
   if (str) {
     str.split(',').forEach(pair => {
-      const [key, ...valueParts] = pair.split(':') 
+      const [key, ...valueParts] = pair.split(':')
       const value = valueParts.join(':');
       map[key] = value;
     });
@@ -89,33 +89,35 @@
   return map;
 }
 
-Handlebars.registerHelper("textJoin", function(...strings) {
-  strings.pop() //for some reason the last item is of type Obj, and not an actual param
-  return strings.join(',')
-})
-Handlebars.registerHelper("pasteInRm", function(objStr) {
-    if(objStr) {
-      const parsedMap = parseStringToMap(objStr)
-      const fields = Object.entries(parsedMap).map( ([key,value]) => {
-        return {
-          "value": value,
-              "fieldDefinition": {
-                  "name": key
-              }
-        }
-      })
-      const data = {
-        "opts": {
-              "auto-paste-if-empty": true
-          },
-          "fields": fields
-      }
-      let stringifiedString = JSON.stringify(data)
-      return stringifiedString
-    }
-    return ""
-  })
 
+Handlebars.registerHelper("pasteInRm", function (...strings) {
+  strings.pop() //for some reason the last item is of type Obj, and not an actual param
+  if (strings.length > 0) {
+    const result = {};
+    for (let i = 0; i < strings.length; i += 2) {
+      const key = strings[i];
+      const value = strings[i + 1];
+      result[key] = value;
+    }
+    const fields = Object.entries(result).map(([key, value]) => {
+      return {
+        "value": value,
+        "fieldDefinition": {
+          "name": key
+        }
+      }
+    })
+    const data = {
+      "opts": {
+        "auto-paste-if-empty": true
+      },
+      "fields": fields
+    }
+    let stringifiedString = JSON.stringify(data)
+    return stringifiedString
+  }
+  return ""
+})
   Handlebars.registerHelper("listSort", function(list, field, dir) {
     const isAscending = dir.toLowerCase() === 'asc';
     if(list) {
