@@ -243,9 +243,10 @@
     for (const key in obj) {
       const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : obj[key]
       const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`   // evalCode example: "key != 'test' && val > 0"
+      const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
       let evalResult
       try {
-        evalResult = eval(code)
+        evalResult = eval(cleanedCode)
       } catch (e) {
         console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
       }
@@ -260,9 +261,10 @@
     for (const key in obj) {
       const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : obj[key]   // evalCode example: "key != 'test' && val > 0"
       const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`
+      const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
       let evalResult
       try {
-        evalResult = eval(code)
+        evalResult = eval(cleanedCode)
       } catch (e) {
         console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
       }
