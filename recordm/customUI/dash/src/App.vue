@@ -241,11 +241,11 @@
 
   Handlebars.registerHelper('some', function(obj, evalCode) {
     for (const key in obj) {
-      const code = "((key,val) => " + evalCode + ") (\"" + key + "\", " + obj[key] + ")"   // evalCode example: "key != 'test' && val > 0"
-      const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
+      const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : obj[key]
+      const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`   // evalCode example: "key != 'test' && val > 0"
       let evalResult
       try {
-        evalResult = eval(cleanedCode)
+        evalResult = eval(code)
       } catch (e) {
         console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
       }
@@ -258,11 +258,11 @@
 
   Handlebars.registerHelper('every', function(obj, evalCode) {
     for (const key in obj) {
-      const code = "((key,val) => " + evalCode + ") (\"" + key + "\", " + obj[key] + ")"   // evalCode example: "key != 'test' && val > 0"
-      const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
+      const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : obj[key]   // evalCode example: "key != 'test' && val > 0"
+      const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`
       let evalResult
       try {
-        evalResult = eval(cleanedCode)
+        evalResult = eval(code)
       } catch (e) {
         console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
       }
