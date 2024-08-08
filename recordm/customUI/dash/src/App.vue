@@ -77,19 +77,6 @@
     }
   }
 
-function parseStringToMap(str) {
-  const map = {};
-  if (str) {
-    str.split(',').forEach(pair => {
-      const [key, ...valueParts] = pair.split(':')
-      const value = valueParts.join(':');
-      map[key] = value;
-    });
-  }
-  return map;
-}
-
-
 Handlebars.registerHelper("pasteInRm", function (...strings) {
   strings.pop() //for some reason the last item is of type Obj, and not an actual param
   if (strings.length > 0) {
@@ -292,7 +279,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
       stopContextWatcher: null,
       hashArg: "",
       refreshFlag:0,
-      timeoutId: null,
+      timeoutId: null, // Used to track update timer debounce
     }),
 
     created() {
@@ -691,7 +678,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
         let dashKey = this.activeDashKey
         if(DEBUG.app) console.log("DASH:  APP: 5.5.1: updateQueries: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
         if (forceRefresh) {
-          this.dashboardsCached[dashKey].dashboardBaseContext.vars.version++
+          this.dashboardsCached[dashKey].dashboardBaseContext.version++
           this.dashboardsRequested.update({force:true})
         }
         if (this.dashboardsCached[dashKey].solutionSiblings) this.dashboardsCached[dashKey].solutionSiblings.startUpdates({forceUpdate:forceRefresh})
@@ -743,18 +730,19 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
             user: this.userInfo,
             arg: this.hashArg.content,
             name: this.dashboardName.startsWith(CHOOSERFLAG) ? this.dashboardName.substring(CHOOSERFLAG.length) : this.dashboardName,
-            vars: { version: 0 }
+            vars: { },
+            version: 0
           };
         }
 
-        const baseContextVarsWatcher = (newBaseContextVars) => {
-          const newBaseContextVarsString = JSON.stringify(newBaseContextVars)
-          if(this.dashboardsCached[dashKey].dashboardBaseContextVarsString == newBaseContextVarsString ) {
+        const baseContextWatcher = (newBaseContext) => {
+          const newBaseContextString = JSON.stringify(newBaseContext)
+          if(this.dashboardsCached[dashKey].dashboardBaseContextString == newBaseContextString ) {
             return
           } else {
-            this.dashboardsCached[dashKey].dashboardBaseContextVarsString = newBaseContextVarsString
+            this.dashboardsCached[dashKey].dashboardBaseContextString = newBaseContextString
           }
-          if(DEBUG.app) console.log("DASH:  APP: 5.2.1: loadDashboard: baseContextVarsWatcher: context changed for '", this.dashboardsCached[dashKey].id + "/" + newDashEs.name,"'. newBaseContext.vars=",JSON.stringify(newBaseContextVars))
+          if(DEBUG.app) console.log("DASH:  APP: 5.2.1: loadDashboard: baseContextWatcher: context changed for '", this.dashboardsCached[dashKey].id + "/" + newDashEs.name,"'. newBaseContext.vars=",JSON.stringify(newBaseContext))
 
           const newContext = getContext(this.dashboardsCached[dashKey])
           this.$set(this.dashboardsCached[dashKey], "dashboardContext", newContext);
@@ -847,6 +835,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
           for (let b of dash["Board"]) {
             for (let c of b.Component) {
               c.vars = dashboard.dashboardContext.vars
+
               if (c.Component === "Menu") {
                 c.Text.forEach(t => {
                   // If Attention is configured for this menu line then add attention status as user check
@@ -931,7 +920,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
           if(DEBUG.app) console.log("DASH:  APP: 5.5: loadDashboard: activateDash: restart watchers and queries for ", this.dashboardsCached[dashKey].id)
 
           // Restart context and sibling Watchers before
-          this.dashboardsCached[dashKey].stopBaseContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardBaseContext.vars", baseContextVarsWatcher, { deep: true });
+          this.dashboardsCached[dashKey].stopBaseContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardBaseContext", baseContextWatcher, { deep: true });
           this.dashboardsCached[dashKey].stopContextWatcher = this.$watch("dashboardsCached." + dashKey + ".dashboardContext", contextWatcher, { deep: true });
           this.dashboardsCached[dashKey].stopSiblingsWatcher = this.$watch("dashboardsCached." + dashKey + ".solutionSiblings.value", siblingsWatcher, { deep: true });
 
