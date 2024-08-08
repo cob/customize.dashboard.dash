@@ -1844,7 +1844,7 @@
                             "id": null,
                             "name": "KibanaCustomize",
                             "required": null,
-                            "description": "$[Classes,InputVar,OutputVar,Query] $multiple $help[Select the defaults to change] ",
+                            "description": "$[Classes,InputVar,OutputVar,Query,TimeField] $multiple $help[Select the defaults to change] ",
                             "configuration": {
                                 "description": null,
                                 "keys": {
@@ -1853,7 +1853,8 @@
                                             "Classes",
                                             "InputVar",
                                             "OutputVar",
-                                            "Query"
+                                            "Query",
+                                            "TimeField"
                                         ],
                                         "default": null
                                     },
@@ -2550,11 +2551,13 @@
                                     "id": null,
                                     "name": "DescriptionEventField",
                                     "required": "mandatory",
-                                    "description": "Name of the definition field to use as the event description ",
+                                    "description": "$text Name of the definition field to use as the event description ",
                                     "configuration": {
                                         "description": "Name of the definition field to use as the event description",
                                         "keys": {},
-                                        "extensions": {}
+                                        "extensions": {
+                                            "$text": {}
+                                        }
                                     },
                                     "condition": null,
                                     "visibilityCondition": null,
@@ -2569,9 +2572,9 @@
                                     "id": null,
                                     "name": "StateEventField",
                                     "required": null,
-                                    "description": "Name of the field to calculate the color for the event. If not defined it will use always the same color for all events. If starts with \"#\" that hex color will be used. If starts with \"bg:\" then it'll fill the background of that day with the color",
+                                    "description": "'Name of the field to calculate the color for the event. If not defined it will use always the same color for all events. If starts with \"#\" that hex color will be used. If starts with \"bg:\" then it'll fill the background of that day with the color.'",
                                     "configuration": {
-                                        "description": "Name of the field to calculate the color for the event. If not defined it will use always the same color for all events. If starts with \"#\" that hex color will be used. If starts with \"bg:\" then it'll fill the background of that day with the color",
+                                        "description": "'Name of the field to calculate the color for the event. If not defined it will use always the same color for all events. If starts with \"#\" that hex color will be used. If starts with \"bg:\" then it'll fill the background of that day with the color.'",
                                         "keys": {},
                                         "extensions": {}
                                     },
@@ -2605,6 +2608,27 @@
                                 },
                                 {
                                     "id": null,
+                                    "name": "TooltipTemplate",
+                                    "required": null,
+                                    "description": "$text",
+                                    "configuration": {
+                                        "description": null,
+                                        "keys": {},
+                                        "extensions": {
+                                            "$text": {}
+                                        }
+                                    },
+                                    "condition": null,
+                                    "visibilityCondition": null,
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 88,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": null
+                                },
+                                {
+                                    "id": null,
                                     "name": "AllDay",
                                     "required": null,
                                     "description": "$[True,*False] True if events occupy all day. False if otherwise.",
@@ -2625,31 +2649,10 @@
                                     "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 88,
-                                    "restricted": false,
-                                    "rootField": false,
-                                    "defaultValue": "False"
-                                },
-                                {
-                                    "id": null,
-                                    "name": "TooltipTemplate",
-                                    "required": null,
-                                    "description": "$text",
-                                    "configuration": {
-                                        "description": null,
-                                        "keys": {},
-                                        "extensions": {
-                                            "$text": {}
-                                        }
-                                    },
-                                    "condition": null,
-                                    "visibilityCondition": null,
-                                    "duplicable": false,
-                                    "fields": [],
                                     "order": 89,
                                     "restricted": false,
                                     "rootField": false,
-                                    "defaultValue": null
+                                    "defaultValue": "False"
                                 }
                             ],
                             "order": 81,
@@ -2813,6 +2816,39 @@
                         },
                         {
                             "id": null,
+                            "name": "Process",
+                            "required": null,
+                            "description": "$help[Instance ID of the business process]",
+                            "configuration": {
+                                "description": null,
+                                "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Instance ID of the business process"
+                                        ]
+                                    }
+                                },
+                                "extensions": {}
+                            },
+                            "condition": "=Mermaid",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "Mermaid"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [],
+                            "order": 95,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
                             "name": "MermaidCustomize",
                             "required": null,
                             "description": "$[LinkClasses,DiagramClasses] $multiple $help[Select the defaults to change]",
@@ -2871,7 +2907,7 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 96,
+                                    "order": 97,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
@@ -2900,46 +2936,13 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 97,
+                                    "order": 98,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 95,
-                            "restricted": false,
-                            "rootField": false,
-                            "defaultValue": null
-                        },
-                        {
-                            "id": null,
-                            "name": "Process",
-                            "required": null,
-                            "description": "$help[Instance ID of the business process]",
-                            "configuration": {
-                                "description": null,
-                                "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Instance ID of the business process"
-                                        ]
-                                    }
-                                },
-                                "extensions": {}
-                            },
-                            "condition": "=Mermaid",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Mermaid"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
-                            "duplicable": false,
-                            "fields": [],
-                            "order": 98,
+                            "order": 96,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3612,18 +3615,12 @@
                         },
                         {
                             "id": null,
-                            "name": "InstanceFieldNameHierarchy",
+                            "name": "DisplayFieldHierarchy",
                             "required": null,
-                            "description": "$help[You can specify a instance's field name to output its value instead of the entire object.]",
+                            "description": null,
                             "configuration": {
                                 "description": null,
-                                "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "You can specify a instance's field name to output its value instead of the entire object."
-                                        ]
-                                    }
-                                },
+                                "keys": {},
                                 "extensions": {}
                             },
                             "condition": "=Hierarchy",
@@ -3645,12 +3642,18 @@
                         },
                         {
                             "id": null,
-                            "name": "DisplayFieldHierarchy",
+                            "name": "InstanceFieldNameHierarchy",
                             "required": null,
-                            "description": null,
+                            "description": "$help[You can specify a instance's field name to output its value instead of the entire object.]",
                             "configuration": {
                                 "description": null,
-                                "keys": {},
+                                "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "You can specify a instance's field name to output its value instead of the entire object."
+                                        ]
+                                    }
+                                },
                                 "extensions": {}
                             },
                             "condition": "=Hierarchy",
