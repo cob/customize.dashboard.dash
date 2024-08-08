@@ -1176,11 +1176,11 @@
                                 },
                                 {
                                     "id": null,
-                                    "name": "FilterValue",
+                                    "name": "FilterVarName",
                                     "required": null,
-                                    "description": "The value of the filter",
+                                    "description": "The filter variable name",
                                     "configuration": {
-                                        "description": "The value of the filter",
+                                        "description": "The filter variable name",
                                         "keys": {},
                                         "extensions": {}
                                     },
@@ -1204,11 +1204,11 @@
                                 },
                                 {
                                     "id": null,
-                                    "name": "FilterVarName",
+                                    "name": "FilterValue",
                                     "required": null,
-                                    "description": "The filter variable name",
+                                    "description": "The value of the filter",
                                     "configuration": {
-                                        "description": "The filter variable name",
+                                        "description": "The value of the filter",
                                         "keys": {},
                                         "extensions": {}
                                     },
