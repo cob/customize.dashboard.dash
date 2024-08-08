@@ -3224,7 +3224,7 @@
                             "id": null,
                             "name": "SlidesCustomize",
                             "required": null,
-                            "description": "$[Classes,EndOfContentTrigger] $multiple",
+                            "description": "$[Classes,EndOfContentTrigger] $multiple $help[Select the defaults to change] $help['EndOfContentTrigger' to configure end of slides update. False if you want to ONLY SHOW contents]",
                             "configuration": {
                                 "description": null,
                                 "keys": {
@@ -3234,6 +3234,12 @@
                                             "EndOfContentTrigger"
                                         ],
                                         "default": null
+                                    },
+                                    "Help": {
+                                        "args": [
+                                            "'EndOfContentTrigger'",
+                                            "to configure end of slides update. False if you want to ONLY SHOW contents"
+                                        ]
                                     },
                                     "Multiple": {}
                                 },
@@ -3253,9 +3259,9 @@
                             "fields": [
                                 {
                                     "id": null,
-                                    "name": "SlideClasses",
+                                    "name": "SlidesClasses",
                                     "required": null,
-                                    "description": "$text  $default(text-justify text-gray-700) Default: text-justify text-gray-700",
+                                    "description": "$text $default(text-justify text-gray-700) Default: text-justify text-gray-700 ",
                                     "configuration": {
                                         "description": "Default: text-justify text-gray-700",
                                         "keys": {
@@ -3290,10 +3296,17 @@
                                     "id": null,
                                     "name": "ConcurrentScript",
                                     "required": null,
-                                    "description": null,
+                                    "description": "$help[If you don't specify a concurrent script, Slides will ONLY show the content.]",
                                     "configuration": {
                                         "description": null,
-                                        "keys": {},
+                                        "keys": {
+                                            "Help": {
+                                                "args": [
+                                                    "If you don't specify a concurrent script",
+                                                    "Slides will ONLY show the content."
+                                                ]
+                                            }
+                                        },
                                         "extensions": {}
                                     },
                                     "condition": "=EndOfContentTrigger",
