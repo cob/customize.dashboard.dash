@@ -1177,7 +1177,7 @@
                                 {
                                     "id": null,
                                     "name": "FilterVarName",
-                                    "required": null,
+                                    "required": "mandatory",
                                     "description": "The filter variable name",
                                     "configuration": {
                                         "description": "The filter variable name",
@@ -1206,11 +1206,13 @@
                                     "id": null,
                                     "name": "FilterValue",
                                     "required": null,
-                                    "description": "The value of the filter",
+                                    "description": "The value of the filter $text",
                                     "configuration": {
                                         "description": "The value of the filter",
                                         "keys": {},
-                                        "extensions": {}
+                                        "extensions": {
+                                            "$text": {}
+                                        }
                                     },
                                     "condition": "TextCustomize=Filter",
                                     "visibilityCondition": {
