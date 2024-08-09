@@ -354,11 +354,11 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
       }
     },
 
-    updated() {
-      let activeDash = this.dashboardsCached[this.activeDashKey]
+  updated() {
+    let activeDash = this.dashboardsCached[this.activeDashKey]
 
-      if(activeDash) {
-        if (this.timeoutId) {
+    if (activeDash) {
+      if (this.timeoutId) {
         clearTimeout(this.timeoutId);
       }
 
@@ -366,8 +366,8 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
         this.stopDragDropListeners(activeDash)
         this.startDragDropListeners(activeDash)
       }, 300)
-      }
-    },
+    }
+  },
 
     watch: {
       // Monitor changes to the status of getting the Dashboard list
