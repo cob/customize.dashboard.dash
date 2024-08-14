@@ -239,40 +239,45 @@
     return obj[key] ? obj[key] : defaultValue
   })
 
-  Handlebars.registerHelper('some', function(obj, evalCode) {
+  function localIterableEval(obj, evalCode, someOrEveryOrFilter,options={defaultValue:false}) {
+    let filter = []
     for (const key in obj) {
       const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : obj[key]
       const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`   // evalCode example: "key != 'test' && val > 0"
       const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
       let evalResult
+      
       try {
         evalResult = eval(cleanedCode)
       } catch (e) {
         console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
       }
-      if ( evalResult) {
-        return true
-      }
-    }
-    return false
-  })
-
-  Handlebars.registerHelper('every', function(obj, evalCode) {
-    for (const key in obj) {
-      const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : obj[key]   // evalCode example: "key != 'test' && val > 0"
-      const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`
-      const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
-      let evalResult
-      try {
-        evalResult = eval(cleanedCode)
-      } catch (e) {
-        console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
-      }
-      if ( !evalResult) {
+      if ( someOrEveryOrFilter == "some") {
+        if (evalResult) return true
+      } else if (someOrEveryOrFilter == "filter") {
+        if (evalResult ){
+          filter.push(evalResult)
+          if (options.firstOnly == "first"){
+            return filter
+          }
+        } 
+      } else if ( !evalResult) { //for every
         return false
       }
     }
-    return true
+    return options.defaultValue
+  }
+
+  Handlebars.registerHelper("filter", function (obj, evalCode, allOrFirst) {
+    return localIterableEval(obj, evalCode,"filter",{defaultValue:[],firstOnly:allOrFirst})
+  })
+
+  Handlebars.registerHelper('some', function(obj, evalCode) {
+    return localIterableEval(obj, evalCode, "some",{defaultValue:false})
+  })
+
+  Handlebars.registerHelper('every', function(obj, evalCode) {
+    return localIterableEval(obj, evalCode, "every",{defaultValue:false})
   }) 
 
   export default {
