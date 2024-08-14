@@ -140,6 +140,7 @@
   Handlebars.registerHelper('lessThan', function(arg1,arg2) {
     return ((arg1?arg1*1:0) < arg2*1); 
   });
+
   Handlebars.registerHelper('dateInfoTimestamp', function(timestamp, keyword) {
     if(!timestamp)
       return "No date."
@@ -171,10 +172,15 @@
           hour12: false,
         };
       return new Intl.DateTimeFormat(undefined, options).format(date)
+    } else if (keyword == "FullWithWeekDay"){
+      return new Intl.DateTimeFormat("pt", { weekday: "long", year: "numeric", month: "long", day: "numeric"}).format(date)
+    } else if (keyword == "WeekDay"){
+      return new Intl.DateTimeFormat("pt", { weekday: "long" }).format(date)
     } else {
       return "No date."
     }
   })
+  
   Handlebars.registerHelper('dateInfo', function(datestring, keyword) {
     const date = new Date(datestring)
 
@@ -196,10 +202,17 @@
     }if(keyword == "FirstDateOfMonth") {
       const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
       return formatDate(firstDay)  
-    }if(keyword == "MonthText") {
+    }
+    if(keyword == "MonthText") {
       const month = date.toLocaleString("pt", { month: 'short' })
       return month.charAt(0).toUpperCase() + month.slice(1, -1)
-    }if(keyword == "FullYear") {
+    } else if (keyword == "FullDateText") {
+      return date.toLocaleString("pt", { weekday: "long", year: "numeric", month: "long", day: "numeric"})
+    } else if (keyword == "WeekDayText") {
+      return date.toLocaleString("pt", { weekday: "long", day: "numeric"})
+    } 
+
+    if(keyword == "FullYear") {
       return date.getFullYear()
     }  if(keyword == "MonthIndexAt1") {
       return date.getMonth() + 1 
@@ -224,10 +237,33 @@
       return atEleven.getTime()
     } 
   })
+  
   Handlebars.registerHelper('today', function() {
     const today = new Date() 
     return formatDate(today)
   } )
+
+  Handlebars.registerHelper('todayTimestamp', function() {
+    return (new Date()).getTime()
+  } )
+
+  Handlebars.registerHelper('compDates', function(dateStrOrStamp1,dateStrOrStamp2,mode="date") {
+    let stamp1 = dateStrOrStamp1 * 1
+    dateStrOrStamp1 = isNaN(stamp1) ? dateStrOrStamp1 : stamp1
+
+    let stamp2 = dateStrOrStamp2 * 1
+    dateStrOrStamp2 = isNaN(stamp2) ? dateStrOrStamp2 : stamp2
+
+    const date1 = new Date(dateStrOrStamp1)
+    const date2 = new Date(dateStrOrStamp2)
+
+    const dateComp = date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth() && date1.getFullYear() == date2.getFullYear()
+    if (mode == "datetime"){
+      return dateComp && date1.getHours() == date2.getHours() && date1.getMinutes() == date2.getMinutes()
+    }
+    return dateComp
+  })
+
   Handlebars.registerHelper('nextPage', function(current, size, limit=undefined) {
     return paging(1, current, size, limit)
   })
