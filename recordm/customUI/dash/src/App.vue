@@ -239,6 +239,10 @@
     return obj[key] ? obj[key] : defaultValue
   })
 
+  Handlebars.registerHelper('createVar', function(varsObject,varName,value) {
+    varsObject[varName] = value
+  }) 
+
   function localIterableEval(obj, evalCode, someOrEveryOrFilter,options={defaultValue:false}) {
     let filter = []
     for (const key in obj) {
