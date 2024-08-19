@@ -180,6 +180,7 @@
       eventView()            { return this.options['EventViews'] && this.options['EventViews'].split(',') || ['dayGridWeek','dayGridMonth','listMonth'] },
       outputVar()            { return this.options['OutputVarCalendar'] || '' },
       dayMaxEvents()         { return parseInt(this.options['MaxVisibleDayEvents'], 10) || MAX_VISIBLE_DAY_EVENTS },
+      cropMonth() { return this.options['CalendarCustomize'].split("\u0000").indexOf("CropMonth") !== -1},
       // strictMode()           {return this.options['StrictMode'] === 'TRUE' || false},
 
       // Calendar component model
@@ -195,6 +196,26 @@
           let startDate = this.dateRange[0].getTime()
           let endDate = this.dateRange[1].getTime()
 
+          if(this.cropMonth) {
+            let start = new Date(this.dateRange[0])
+            if(start.getDate() > 1){
+              start.setDate(1)
+              start.setMonth( start.getMonth() + 1)
+              start.setHours(0)
+              start.setMinutes(0)
+              start.setSeconds(0)
+            }
+            // last day of the month
+            let end = new Date(start) 
+            end.setMonth( start.getMonth() + 1)
+            end.setDate(0) 
+            end.setHours(23)
+            end.setMinutes(59)
+            end.setSeconds(59)
+
+            startDate = start.getTime()
+            endDate = end.getTime()
+          }
           // if ("dayGridMonth" === this.calendarApi.view.type && this.strictMode){ //check if the grid view is dayMonthGridView
           //   startDate = new Date(this.calendarApi.getDate()).getTime()
           //   endDate = new Date(this.calendarApi.getDate().getFullYear(),this.calendarApi.getDate().getMonth()+1,1).getTime()

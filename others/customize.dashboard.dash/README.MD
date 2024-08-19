@@ -2,6 +2,10 @@
 
 ### Definition Upgrades:
 
+#### 6.52.0
+
+- Added `CropMonth` option to CalendarCustomize in the Calendar component. When ticked, this option tells the Calendar component to only use the selected month.  
+
 #### 6.41.0
 Dashboard-V1
 - Added `Behaviour` option to LineCustomize for the Totals Component. When choosing this option, you can choose the Line's behaviour in `LineBehaviour`: 

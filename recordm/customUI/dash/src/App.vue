@@ -263,6 +263,45 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
     return paging(-1, current, size, limit)
   })
 
+  Handlebars.registerHelper('lookupWithDefault', function(obj,key,defaultValue) {
+    return obj[key] ? obj[key] : defaultValue
+  })
+
+  Handlebars.registerHelper('some', function(obj, evalCode) {
+    for (const key in obj) {
+      const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : obj[key]
+      const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`   // evalCode example: "key != 'test' && val > 0"
+      const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
+      let evalResult
+      try {
+        evalResult = eval(cleanedCode)
+      } catch (e) {
+        console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
+      }
+      if ( evalResult) {
+        return true
+      }
+    }
+    return false
+  })
+
+  Handlebars.registerHelper('every', function(obj, evalCode) {
+    for (const key in obj) {
+      const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : obj[key]   // evalCode example: "key != 'test' && val > 0"
+      const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`
+      const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
+      let evalResult
+      try {
+        evalResult = eval(cleanedCode)
+      } catch (e) {
+        console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
+      }
+      if ( !evalResult) {
+        return false
+      }
+    }
+    return true
+  }) 
 
   export default {
     name: 'App',
@@ -290,13 +329,13 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
 
       // Preemptively load the chooser dashboard, to be used in case there's more than one dashboard found for a given name and a given user
       if(DEBUG.app) console.log("DASH:  APP: 1: created: Requesting chooser")
-      this.dashboardChooser = DashFunctions.instancesList(DASHBOARD_DEF, "name.raw:\"" + DASHBOARD_CHOOSER + "\"", 1, 0, "order", "true", { validity: 600 })
+      this.dashboardChooser = DashFunctions.instancesList(DASHBOARD_DEF, "name.raw:\"" + DASHBOARD_CHOOSER + "\"", 1, 0, "order", "true")
 
       // At the initial load we get the dashboard instance name from the custom-resource div's attribute "data-name"
       umLoggedin().then(userInfo => {
         if(DEBUG.app) console.log("DASH:  APP: 1.1: created: Requesting dashs...")
         this.updateRequestData(userInfo, document.getElementsByClassName("custom-resource")[0].getAttribute('data-name') )
-        this.dashboardsRequested = DashFunctions.instancesList(DASHBOARD_DEF, this.dashboardQuery, 99, 0, "order", "false", { validity: 600 })
+        this.dashboardsRequested = DashFunctions.instancesList(DASHBOARD_DEF, this.dashboardQuery, 99, 0, "order", "false")
       })
       // Upon anchor navigation we get the dashboard instance name from the param to the 'resume' callback
       this.resumeEventListner = $('section.custom-resource').on('resume',this.resumeListener)
@@ -793,6 +832,26 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
 
           // Build final context with all components
           let context = specifiedContext || {}
+
+          //IMPORTANT: this does not work for httpGet and httpPost
+          const keys = Object.keys(context)
+          for (const index in keys) {
+            const key = keys[index]
+            if (dashboard.dashboardContext && dashboard.dashboardContext[key] 
+              && (
+                JSON.stringify(context[key]) == JSON.stringify(dashboard.dashboardContext[key]) 
+                ||
+                ( 
+                  JSON.stringify(context[key].getterArgs) == JSON.stringify(dashboard.dashboardContext[key].getterArgs) 
+                  && context[key].currentState 
+                  && context[key].currentState != "cached" 
+                  && context[key].currentState != "ready"
+                )
+              )
+            ) {
+              context[key] = dashboard.dashboardContext[key]
+            }
+          }
           context = { dashboardId: dashboard.id, ...baseContext, ...context }
           // Add a copy of dashboardsRequested result in case we need Chooser to display alternatives
           context.dashboards = this.dashboardsRequested.value.slice().reverse();
