@@ -247,7 +247,7 @@
     return (new Date()).getTime()
   } )
 
-  Handlebars.registerHelper('compDates', function(dateStrOrStamp1,dateStrOrStamp2,mode="date") {
+  Handlebars.registerHelper('compareDates', function(dateStrOrStamp1,dateStrOrStamp2,mode="date") {
     let stamp1 = dateStrOrStamp1 * 1
     dateStrOrStamp1 = isNaN(stamp1) ? dateStrOrStamp1 : stamp1
 
