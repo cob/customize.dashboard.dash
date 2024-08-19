@@ -34,13 +34,13 @@
             "configuration": {
                 "description": null,
                 "keys": {
-                    "InstanceDescription": {},
                     "Reference": {
                         "args": {
                             "query": "*",
                             "definition": "Dashboard-Solutions"
                         }
-                    }
+                    },
+                    "InstanceDescription": {}
                 },
                 "extensions": {
                     "$groupEdit": {}
@@ -242,10 +242,10 @@
             "configuration": {
                 "description": null,
                 "keys": {
-                    "InstanceDescription": {},
                     "Number": {
                         "args": {}
-                    }
+                    },
+                    "InstanceDescription": {}
                 },
                 "extensions": {}
             },
@@ -262,7 +262,7 @@
             "id": null,
             "name": "DashboardCustomize",
             "required": null,
-            "description": "$[Classes,Image,Width,Grid,Access,Vars,Context] $multiple $help[Select the defaults to change] ",
+            "description": "$[Classes,Image,Width,Grid,Access,Vars,Context,DragDrop] $multiple $help[Select the defaults to change] ",
             "configuration": {
                 "description": null,
                 "keys": {
@@ -279,7 +279,8 @@
                             "Grid",
                             "Access",
                             "Vars",
-                            "Context"
+                            "Context",
+                            "DragDrop"
                         ],
                         "default": null
                     },
@@ -540,6 +541,39 @@
                     "rootField": false,
                     "restricted": false,
                     "defaultValue": null
+                },
+                {
+                    "id": null,
+                    "name": "DragDropConcurrent",
+                    "required": null,
+                    "description": "$help[Specify a concurrent script to be executed when dropping draggable items. Currently WIP.]",
+                    "configuration": {
+                        "description": null,
+                        "keys": {
+                            "Help": {
+                                "args": [
+                                    "Specify a concurrent script to be executed when dropping draggable items. Currently WIP."
+                                ]
+                            }
+                        },
+                        "extensions": {}
+                    },
+                    "condition": "=DragDrop",
+                    "visibilityCondition": {
+                        "type": "Equal",
+                        "value": [
+                            "DragDrop"
+                        ],
+                        "matcher": {
+                            "type": "Parent"
+                        }
+                    },
+                    "duplicable": false,
+                    "fields": [],
+                    "order": 20,
+                    "restricted": false,
+                    "rootField": false,
+                    "defaultValue": null
                 }
             ],
             "order": 12,
@@ -714,11 +748,10 @@
                     "id": null,
                     "name": "Component",
                     "required": null,
-                    "description": "$[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides,Hierarchy] $instanceDescription $style[singleColumn] ",
+                    "description": "$[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides,Hierarchy] $instanceDescription $style[singleColumn]",
                     "configuration": {
                         "description": null,
                         "keys": {
-                            "InstanceDescription": {},
                             "Select": {
                                 "args": [
                                     "Label",
@@ -735,7 +768,8 @@
                                     "Hierarchy"
                                 ],
                                 "default": null
-                            }
+                            },
+                            "InstanceDescription": {}
                         },
                         "extensions": {
                             "$style": {
@@ -988,7 +1022,7 @@
                                     "id": null,
                                     "name": "TextCustomize",
                                     "required": null,
-                                    "description": "$[Classes,Icon,Attention,Visibility,Filter] $multiple $help[Select the defaults to change] ",
+                                    "description": "$[Classes,Icon,Attention,Visibility,Filter] $multiple $help[Select the defaults to change]",
                                     "configuration": {
                                         "description": null,
                                         "keys": {
@@ -1680,11 +1714,6 @@
                                     "configuration": {
                                         "description": null,
                                         "keys": {
-                                            "Help": {
-                                                "args": [
-                                                    "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                                                ]
-                                            },
                                             "Select": {
                                                 "args": [
                                                     "Listing",
@@ -1692,6 +1721,11 @@
                                                     "Link"
                                                 ],
                                                 "default": "Listing"
+                                            },
+                                            "Help": {
+                                                "args": [
+                                                    "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                                                ]
                                             }
                                         },
                                         "extensions": {}
@@ -1763,6 +1797,33 @@
                                             "order": 60,
                                             "rootField": false,
                                             "restricted": false,
+                                            "defaultValue": null
+                                        },
+                                        {
+                                            "id": null,
+                                            "name": "FilterTotalVarName",
+                                            "required": null,
+                                            "description": "The filter variable name",
+                                            "configuration": {
+                                                "description": "The filter variable name",
+                                                "keys": {},
+                                                "extensions": {}
+                                            },
+                                            "condition": "=Filter",
+                                            "visibilityCondition": {
+                                                "type": "Equal",
+                                                "value": [
+                                                    "Filter"
+                                                ],
+                                                "matcher": {
+                                                    "type": "Parent"
+                                                }
+                                            },
+                                            "duplicable": false,
+                                            "fields": [],
+                                            "order": 59,
+                                            "restricted": false,
+                                            "rootField": false,
                                             "defaultValue": null
                                         },
                                         {
@@ -2017,7 +2078,7 @@
                             "id": null,
                             "name": "FilterCustomize",
                             "required": null,
-                            "description": "$[Classes,noButton,Placeholder,EscapeSpecialChars] $multiple $help[Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter] ",
+                            "description": "$[Classes,noButton,Placeholder,EscapeSpecialChars] $multiple $help[Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter]",
                             "configuration": {
                                 "description": null,
                                 "keys": {
@@ -2456,7 +2517,7 @@
                                     "id": null,
                                     "name": "Definition",
                                     "required": "mandatory",
-                                    "description": "$definition",
+                                    "description": "$definition ",
                                     "configuration": {
                                         "description": null,
                                         "keys": {},
@@ -2494,11 +2555,11 @@
                                 },
                                 {
                                     "id": null,
-                                    "name": "DateEndEventField",
-                                    "required": null,
-                                    "description": "Name of the definition date field that represents the end of the event",
+                                    "name": "DateStartEventField",
+                                    "required": "mandatory",
+                                    "description": "Name of the definition date field that represents the beginning of the event ",
                                     "configuration": {
-                                        "description": "Name of the definition date field that represents the end of the event",
+                                        "description": "Name of the definition date field that represents the beginning of the event",
                                         "keys": {},
                                         "extensions": {}
                                     },
@@ -2513,9 +2574,28 @@
                                 },
                                 {
                                     "id": null,
+                                    "name": "DateEndEventField",
+                                    "required": null,
+                                    "description": "Name of the definition date field that represents the end of the event ",
+                                    "configuration": {
+                                        "description": "Name of the definition date field that represents the end of the event",
+                                        "keys": {},
+                                        "extensions": {}
+                                    },
+                                    "condition": null,
+                                    "visibilityCondition": null,
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 84,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": null
+                                },
+                                {
+                                    "id": null,
                                     "name": "DescriptionEventField",
                                     "required": "mandatory",
-                                    "description": "$text Name of the definition field to use as the event description",
+                                    "description": "$text Name of the definition field to use as the event description ",
                                     "configuration": {
                                         "description": "Name of the definition field to use as the event description",
                                         "keys": {},
@@ -2555,7 +2635,7 @@
                                     "id": null,
                                     "name": "EventsQuery",
                                     "required": null,
-                                    "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition",
+                                    "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition ",
                                     "configuration": {
                                         "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition",
                                         "keys": {},
@@ -3310,7 +3390,7 @@
                                             "type": "Parent"
                                         }
                                     },
-                                    "duplicable": true,
+                                    "duplicable": false,
                                     "fields": [],
                                     "order": 111,
                                     "rootField": false,
@@ -3391,7 +3471,7 @@
                                     "id": null,
                                     "name": "HierarchyNodeClasses",
                                     "required": null,
-                                    "description": "$text $default(text-red-500 font-bold) Default: text-red-500 font-bold",
+                                    "description": " $text $default(text-red-500 font-bold) Default: text-red-500 font-bold",
                                     "configuration": {
                                         "description": "Default: text-red-500 font-bold",
                                         "keys": {
@@ -3648,6 +3728,39 @@
                             "order": 122,
                             "rootField": false,
                             "restricted": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "InstanceFieldNameHierarchy",
+                            "required": null,
+                            "description": "$help[You can specify a instance's field name to output its value instead of the entire object.]",
+                            "configuration": {
+                                "description": null,
+                                "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "You can specify a instance's field name to output its value instead of the entire object."
+                                        ]
+                                    }
+                                },
+                                "extensions": {}
+                            },
+                            "condition": "=Hierarchy",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "Hierarchy"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [],
+                            "order": 121,
+                            "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         }
                     ],
