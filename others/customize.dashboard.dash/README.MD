@@ -2,6 +2,26 @@
 
 ### Definition Upgrades:
 
+#### 6.54.0
+
+- Dashboard now supports dragging and dropping items.
+    - We control drag and drop using two classes: dragItem and dropZone.
+      - **dragItem** is used on HTML elements we want to be able to drag INTO dropZones.
+      - **dropZone** is used on HTML elements where we want to be able to drop dragItems
+
+  - It also supports a custom concurrent script call, configured in Dashboard Customize's DragDropConcurrent property.
+    - This concurrent will be called everytime a draggable item is DROPPED INSIDE A DROPZONE.
+  - The parameters the concurrent receives are parsed and obtained via both the dragItems and dropZones data-attributes AND / OR classes prefixed with, respectively, 'dragItem' and 'dropZone'.
+
+
+```
+ALTERED
+DashboardCustomize: $[Classes,Image,Width,Grid,Access,Vars,Context] $multiple $help[Select the defaults to change]  -> $[Classes,Image,Width,Grid,Access,Vars,Context,DragDrop] $multiple $help[Select the defaults to change]  
+
+NEW
+DashboardCustomize [=DragDrop] > DragDropConcurrent
+```
+
 #### 6.52.0
 
 - Added `CropMonth` option to CalendarCustomize in the Calendar component. When ticked, this option tells the Calendar component to only use the selected month.  
