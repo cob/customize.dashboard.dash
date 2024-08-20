@@ -144,7 +144,13 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
     }
     return  (arg1.includes(arg2) ) 
   });
-  Handlebars.registerHelper('concat', function (arg1, arg2) { return  (arg1.concat(arg2) ) });
+  Handlebars.registerHelper('concat', function (...args) {
+    let result = ""
+    for(let index = 0; index < args.length-1; index++){
+      result += args[index]
+    }
+    return  result 
+  });
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
   Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); });
   Handlebars.registerHelper('or', function(arg1, arg2) { return (arg1 || arg2); });
