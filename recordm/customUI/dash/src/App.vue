@@ -174,6 +174,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
   Handlebars.registerHelper('lessThan', function(arg1,arg2) {
     return ((arg1?arg1*1:0) < arg2*1); 
   });
+
   Handlebars.registerHelper('dateInfoTimestamp', function(timestamp, keyword) {
     if(!timestamp)
       return "No date."
@@ -205,63 +206,132 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
           hour12: false,
         };
       return new Intl.DateTimeFormat(undefined, options).format(date)
+    } else if (keyword == "FullWithWeekDay"){
+      return new Intl.DateTimeFormat("pt", { weekday: "long", year: "numeric", month: "long", day: "numeric"}).format(date)
+    } else if (keyword == "WeekDay"){
+      return new Intl.DateTimeFormat("pt", { weekday: "long" }).format(date)
     } else {
       return "No date."
     }
   })
+  
   Handlebars.registerHelper('dateInfo', function(datestring, keyword) {
     const date = new Date(datestring)
 
     if(!datestring)
       return ""
 
-    if(keyword == "LastDateOfYear") {
-      const firstOfYear = new Date(date.getFullYear(), 11, 31, 23, 59);   
-      return formatDate(firstOfYear)  
+    switch (keyword) {
+      case "LastDateOfYear":
+        return formatDate(new Date(date.getFullYear(), 11, 31, 23, 59))
+
+      case "FirstDateOfYear":
+        return formatDate(new Date(date.getFullYear(), 0, 1))
+
+      case "LastDateOfMonth":
+        const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);   
+        const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
+        return formatDate(lastDayOfMonth)
+
+      case "FirstDateOfMonth":
+        const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+        return formatDate(firstDay)
+
+      case "MonthText":
+        const month = date.toLocaleString("pt", { month: 'short' })
+        return month.charAt(0).toUpperCase() + month.slice(1, -1)
+
+      case "FullDateText":
+        return date.toLocaleString("pt", { weekday: "long", year: "numeric", month: "long", day: "numeric"})
+
+      case "WeekDayText":
+        return date.toLocaleString("pt", { weekday: "long", day: "numeric"})
+
+      case "FullYear":
+        return date.getFullYear()
+
+      case "MonthIndexAt1":
+        return date.getMonth() + 1
+
+      case "FirstEpochOfYear":
+        const firstOfYear = new Date(date.getFullYear(), 0, 1);   
+        return firstOfYear.getTime()
+
+      case "LastEpochOfYear":
+        const lastOfYear = new Date(date.getFullYear(), 11, 31, 23, 59);   
+        return lastOfYear.getTime()
+
+      case "FirstEpochOfMonth":
+        const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+        return firstDayOfMonth.getTime()
+
+      case "LastEpochOfMonth":
+        const nextMonthFirstDayEpoch = new Date(date.getFullYear(), date.getMonth() + 1, 1, 23, 59);   
+        const lastDayOfMonthEpoch = new Date(nextMonthFirstDayEpoch - 1);
+        return lastDayOfMonthEpoch.getTime()
+
+      case "FirstEpochOfDay":
+        const atMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0);
+        return atMidnight.getTime()
+
+      case "LastEpochOfDay":
+        const atEleven = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59);
+        return atEleven.getTime()
+        
+      default:
+        return undefined
     }
-    if(keyword == "FirstDateOfYear") {
-      const firstOfYear = new Date(date.getFullYear(), 0, 1);   
-      return formatDate(firstOfYear)  
-    }
-    if(keyword == "LastDateOfMonth") {
-      const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);   
-      const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
-      return formatDate(lastDayOfMonth)
-    }if(keyword == "FirstDateOfMonth") {
-      const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
-      return formatDate(firstDay)  
-    }if(keyword == "MonthText") {
-      const month = date.toLocaleString("pt", { month: 'short' })
-      return month.charAt(0).toUpperCase() + month.slice(1, -1)
-    }if(keyword == "FullYear") {
-      return date.getFullYear()
-    }  if(keyword == "MonthIndexAt1") {
-      return date.getMonth() + 1 
-    } if(keyword == "FirstEpochOfYear") {
-      const firstOfYear = new Date(date.getFullYear(), 0, 1);   
-      return firstOfYear.getTime()
-    } if(keyword == "LastEpochOfYear") {
-      const lastOfYear = new Date(date.getFullYear(), 11, 31, 23, 59);   
-      return lastOfYear.getTime()
-    } if (keyword == "FirstEpochOfMonth") {
-      const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
-      return firstDay.getTime()
-    } if(keyword == "LastEpochOfMonth") {
-      const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1, 23, 59);   
-      const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
-      return lastDayOfMonth.getTime()
-    } if(keyword == "FirstEpochOfDay") {
-      const atMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0);
-      return atMidnight.getTime()   
-    } if(keyword == "LastEpochOfDay") {
-      const atEleven = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59);
-      return atEleven.getTime()
-    } 
   })
+  
   Handlebars.registerHelper('today', function() {
     const today = new Date() 
     return formatDate(today)
   } )
+
+  Handlebars.registerHelper('todayTimestamp', function() {
+    return (new Date()).getTime()
+  } )
+
+  function compareDatesAux(dateStrOrStamp1,dateStrOrStamp2,withTime) {
+    let stamp1 = dateStrOrStamp1 * 1
+    dateStrOrStamp1 = isNaN(stamp1) ? dateStrOrStamp1 : stamp1
+
+    let stamp2 = dateStrOrStamp2 * 1
+    dateStrOrStamp2 = isNaN(stamp2) ? dateStrOrStamp2 : stamp2
+
+    const date1 = new Date(dateStrOrStamp1)
+    const date2 = new Date(dateStrOrStamp2)
+
+    let result = undefined
+    if ( date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth() && date1.getFullYear() == date2.getFullYear()){
+      if(withTime){
+        if (date1.getHours() == date2.getHours() && date1.getMinutes() == date2.getMinutes()){
+          result = 0
+        }
+      } else {
+        result = 0
+      }
+    }
+
+    if (result == undefined){
+      if (date1.getTime() > date2.getTime()){
+        result = 1
+      } else if (date1.getTime() < date2.getTime()) {
+        result = -1
+      } else {
+        result = 0
+      }
+    }
+    
+    return result
+  }
+  Handlebars.registerHelper('compareDates', function(dateStrOrStamp1,dateStrOrStamp2) {
+    return compareDatesAux(dateStrOrStamp1,dateStrOrStamp2,false)
+  })
+  Handlebars.registerHelper('compareDateTimes', function(dateStrOrStamp1,dateStrOrStamp2) {
+    return compareDatesAux(dateStrOrStamp1,dateStrOrStamp2,true)
+  })
+
   Handlebars.registerHelper('nextPage', function(current, size, limit=undefined) {
     return paging(1, current, size, limit)
   })
