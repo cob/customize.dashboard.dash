@@ -283,7 +283,7 @@
   Handlebars.registerHelper('compareDates', function(dateStrOrStamp1,dateStrOrStamp2) {
     return compareDatesAux(dateStrOrStamp1,dateStrOrStamp2,false)
   })
-  Handlebars.registerHelper('compareDatesWithTimes', function(dateStrOrStamp1,dateStrOrStamp2) {
+  Handlebars.registerHelper('compareDateTimes', function(dateStrOrStamp1,dateStrOrStamp2) {
     return compareDatesAux(dateStrOrStamp1,dateStrOrStamp2,true)
   })
 
