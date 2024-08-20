@@ -2,6 +2,11 @@
 
 ### Definition Upgrades:
 
+#### 6.54.1
+Novos helpers para datas:
+- todayTimestamp: returns today's date in timestamp
+- compareDates: compares two dates. Returns integer
+- compareDateTimes: Compares dates and times. Returns integer
 #### 6.54.0
 Dashboard-V1
 - Dashboard now supports dragging and dropping items.
