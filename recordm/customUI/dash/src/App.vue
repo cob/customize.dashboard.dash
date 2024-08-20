@@ -247,7 +247,7 @@
     return (new Date()).getTime()
   } )
 
-  Handlebars.registerHelper('compareDates', function(dateStrOrStamp1,dateStrOrStamp2,mode="date") {
+  function compareDatesAux(dateStrOrStamp1,dateStrOrStamp2,withTime) {
     let stamp1 = dateStrOrStamp1 * 1
     dateStrOrStamp1 = isNaN(stamp1) ? dateStrOrStamp1 : stamp1
 
@@ -257,11 +257,34 @@
     const date1 = new Date(dateStrOrStamp1)
     const date2 = new Date(dateStrOrStamp2)
 
-    const dateComp = date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth() && date1.getFullYear() == date2.getFullYear()
-    if (mode == "datetime"){
-      return dateComp && date1.getHours() == date2.getHours() && date1.getMinutes() == date2.getMinutes()
+    let result = undefined
+    if ( date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth() && date1.getFullYear() == date2.getFullYear()){
+      if(withTime){
+        if (date1.getHours() == date2.getHours() && date1.getMinutes() == date2.getMinutes()){
+          result = 0
+        }
+      } else {
+        result = 0
+      }
     }
-    return dateComp
+
+    if (result == undefined){
+      if (date1.getTime() > date2.getTime()){
+        result = 1
+      } else if (date1.getTime() < date2.getTime()) {
+        result = -1
+      } else {
+        result = 0
+      }
+    }
+    
+    return result
+  }
+  Handlebars.registerHelper('compareDates', function(dateStrOrStamp1,dateStrOrStamp2) {
+    return compareDatesAux(dateStrOrStamp1,dateStrOrStamp2,false)
+  })
+  Handlebars.registerHelper('compareDatesWithTimes', function(dateStrOrStamp1,dateStrOrStamp2) {
+    return compareDatesAux(dateStrOrStamp1,dateStrOrStamp2,true)
   })
 
   Handlebars.registerHelper('nextPage', function(current, size, limit=undefined) {
