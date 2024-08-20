@@ -187,55 +187,51 @@
     if(!datestring)
       return ""
 
-    if(keyword == "LastDateOfYear") {
-      const firstOfYear = new Date(date.getFullYear(), 11, 31, 23, 59);   
-      return formatDate(firstOfYear)  
+    switch (keyword) {
+      case "LastDateOfYear":
+        return formatDate(new Date(date.getFullYear(), 11, 31, 23, 59))
+      case "FirstDateOfYear":
+        return formatDate(new Date(date.getFullYear(), 0, 1))
+      case "LastDateOfMonth":
+        const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);   
+        const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
+        return formatDate(lastDayOfMonth)
+      case "FirstDateOfMonth":
+        const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+        return formatDate(firstDay)
+      case "MonthText":
+        const month = date.toLocaleString("pt", { month: 'short' })
+        return month.charAt(0).toUpperCase() + month.slice(1, -1)
+      case "FullDateText":
+        return date.toLocaleString("pt", { weekday: "long", year: "numeric", month: "long", day: "numeric"})
+      case "WeekDayText":
+        return date.toLocaleString("pt", { weekday: "long", day: "numeric"})
+      case "FullYear":
+        return date.getFullYear()
+      case "MonthIndexAt1":
+        return date.getMonth() + 1
+      case "FirstEpochOfYear":
+        const firstOfYear = new Date(date.getFullYear(), 0, 1);   
+        return firstOfYear.getTime()
+      case "LastEpochOfYear":
+        const lastOfYear = new Date(date.getFullYear(), 11, 31, 23, 59);   
+        return lastOfYear.getTime()
+      case "FirstEpochOfMonth":
+        const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+        return firstDayOfMonth.getTime()
+      case "LastEpochOfMonth":
+        const nextMonthFirstDayEpoch = new Date(date.getFullYear(), date.getMonth() + 1, 1, 23, 59);   
+        const lastDayOfMonthEpoch = new Date(nextMonthFirstDayEpoch - 1);
+        return lastDayOfMonthEpoch.getTime()
+      case "FirstEpochOfDay":
+        const atMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0);
+        return atMidnight.getTime()
+      case "LastEpochOfDay":
+        const atEleven = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59);
+        return atEleven.getTime()
+      default:
+        return undefined
     }
-    if(keyword == "FirstDateOfYear") {
-      const firstOfYear = new Date(date.getFullYear(), 0, 1);   
-      return formatDate(firstOfYear)  
-    }
-    if(keyword == "LastDateOfMonth") {
-      const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);   
-      const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
-      return formatDate(lastDayOfMonth)
-    }if(keyword == "FirstDateOfMonth") {
-      const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
-      return formatDate(firstDay)  
-    }
-    if(keyword == "MonthText") {
-      const month = date.toLocaleString("pt", { month: 'short' })
-      return month.charAt(0).toUpperCase() + month.slice(1, -1)
-    } else if (keyword == "FullDateText") {
-      return date.toLocaleString("pt", { weekday: "long", year: "numeric", month: "long", day: "numeric"})
-    } else if (keyword == "WeekDayText") {
-      return date.toLocaleString("pt", { weekday: "long", day: "numeric"})
-    } 
-
-    if(keyword == "FullYear") {
-      return date.getFullYear()
-    }  if(keyword == "MonthIndexAt1") {
-      return date.getMonth() + 1 
-    } if(keyword == "FirstEpochOfYear") {
-      const firstOfYear = new Date(date.getFullYear(), 0, 1);   
-      return firstOfYear.getTime()
-    } if(keyword == "LastEpochOfYear") {
-      const lastOfYear = new Date(date.getFullYear(), 11, 31, 23, 59);   
-      return lastOfYear.getTime()
-    } if (keyword == "FirstEpochOfMonth") {
-      const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
-      return firstDay.getTime()
-    } if(keyword == "LastEpochOfMonth") {
-      const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1, 23, 59);   
-      const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
-      return lastDayOfMonth.getTime()
-    } if(keyword == "FirstEpochOfDay") {
-      const atMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0);
-      return atMidnight.getTime()   
-    } if(keyword == "LastEpochOfDay") {
-      const atEleven = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59);
-      return atEleven.getTime()
-    } 
   })
   
   Handlebars.registerHelper('today', function() {
