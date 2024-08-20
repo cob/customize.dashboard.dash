@@ -147,7 +147,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
   Handlebars.registerHelper('concat', function (...args) {
     let result = ""
     for(let index = 0; index < args.length-1; index++){
-      result += args[index]
+      result = result.concat(args[index])
     }
     return  result 
   });
