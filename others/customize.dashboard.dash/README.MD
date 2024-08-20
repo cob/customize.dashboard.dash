@@ -19,7 +19,7 @@ ALTERED
 DashboardCustomize: $[Classes,Image,Width,Grid,Access,Vars,Context] $multiple $help[Select the defaults to change]  -> $[Classes,Image,Width,Grid,Access,Vars,Context,DragDrop] $multiple $help[Select the defaults to change]  
 
 NEW
-DashboardCustomize [=DragDrop] > DragDropConcurrent
+DashboardCustomize [=DragDrop] > DragDropConcurrent : $help[Specify a concurrent script to be executed when dropping draggable items.]
 ```
 
 #### 6.52.0
