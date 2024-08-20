@@ -190,45 +190,60 @@
     switch (keyword) {
       case "LastDateOfYear":
         return formatDate(new Date(date.getFullYear(), 11, 31, 23, 59))
+
       case "FirstDateOfYear":
         return formatDate(new Date(date.getFullYear(), 0, 1))
+
       case "LastDateOfMonth":
         const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);   
         const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
         return formatDate(lastDayOfMonth)
+
       case "FirstDateOfMonth":
         const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
         return formatDate(firstDay)
+
       case "MonthText":
         const month = date.toLocaleString("pt", { month: 'short' })
         return month.charAt(0).toUpperCase() + month.slice(1, -1)
+
       case "FullDateText":
         return date.toLocaleString("pt", { weekday: "long", year: "numeric", month: "long", day: "numeric"})
+
       case "WeekDayText":
         return date.toLocaleString("pt", { weekday: "long", day: "numeric"})
+
       case "FullYear":
         return date.getFullYear()
+
       case "MonthIndexAt1":
         return date.getMonth() + 1
+
       case "FirstEpochOfYear":
         const firstOfYear = new Date(date.getFullYear(), 0, 1);   
         return firstOfYear.getTime()
+
       case "LastEpochOfYear":
         const lastOfYear = new Date(date.getFullYear(), 11, 31, 23, 59);   
         return lastOfYear.getTime()
+
       case "FirstEpochOfMonth":
         const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
         return firstDayOfMonth.getTime()
+
       case "LastEpochOfMonth":
         const nextMonthFirstDayEpoch = new Date(date.getFullYear(), date.getMonth() + 1, 1, 23, 59);   
         const lastDayOfMonthEpoch = new Date(nextMonthFirstDayEpoch - 1);
         return lastDayOfMonthEpoch.getTime()
+
       case "FirstEpochOfDay":
         const atMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0);
         return atMidnight.getTime()
+
       case "LastEpochOfDay":
         const atEleven = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59);
         return atEleven.getTime()
+        
       default:
         return undefined
     }
