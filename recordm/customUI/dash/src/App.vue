@@ -144,7 +144,13 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
     }
     return  (arg1.includes(arg2) ) 
   });
-  Handlebars.registerHelper('concat', function (arg1, arg2) { return  (arg1.concat(arg2) ) });
+  Handlebars.registerHelper('concat', function (...args) {
+    let result = ""
+    for(let index = 0; index < args.length-1; index++){
+      result = result.concat(args[index])
+    }
+    return  result 
+  });
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
   Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); });
   Handlebars.registerHelper('or', function(arg1, arg2) { return (arg1 || arg2); });
@@ -274,7 +280,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
   function localIterableEval(obj, evalCode, someOrEveryOrFilter,options={defaultValue:false}) {
     let filter = []
     for (const key in obj) {
-      const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : obj[key]
+      const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : `'${obj[key]}'`
       const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`   // evalCode example: "key != 'test' && val > 0"
       const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
       let evalResult
