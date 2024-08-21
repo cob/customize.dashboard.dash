@@ -896,6 +896,24 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
               return dashInfoItem
             }
 
+            function sum(...args) {
+              const dashInfoItem = DashFunctions.fieldSum(...args)
+              dashboard.contextQueries.push(dashInfoItem)
+              return dashInfoItem
+            }
+
+            function average(...args) {
+              const dashInfoItem = DashFunctions.fieldAverage(...args)
+              dashboard.contextQueries.push(dashInfoItem)
+              return dashInfoItem
+            }
+
+            function weightAverage(...args) {
+              const dashInfoItem = DashFunctions.fieldWeightedAverage(...args)
+              dashboard.contextQueries.push(dashInfoItem)
+              return dashInfoItem
+            }
+
             function httpGet(...args) {
               const dashInfoItem = DashFunctions.httpGet(...args);
               dashboard.contextQueries.push(dashInfoItem);
