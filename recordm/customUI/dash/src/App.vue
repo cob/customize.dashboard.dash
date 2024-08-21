@@ -908,7 +908,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
               return dashInfoItem
             }
 
-            function weightAverage(...args) {
+            function weightedAverage(...args) {
               const dashInfoItem = DashFunctions.fieldWeightedAverage(...args)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
