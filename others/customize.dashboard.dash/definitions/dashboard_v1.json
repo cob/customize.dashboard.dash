@@ -22,8 +22,8 @@
             "duplicable": false,
             "fields": [],
             "order": 0,
-            "rootField": true,
             "restricted": false,
+            "rootField": true,
             "defaultValue": null
         },
         {
@@ -34,13 +34,13 @@
             "configuration": {
                 "description": null,
                 "keys": {
+                    "InstanceDescription": {},
                     "Reference": {
                         "args": {
                             "query": "*",
                             "definition": "Dashboard-Solutions"
                         }
-                    },
-                    "InstanceDescription": {}
+                    }
                 },
                 "extensions": {
                     "$groupEdit": {}
@@ -72,8 +72,8 @@
                     "duplicable": false,
                     "fields": [],
                     "order": 2,
-                    "rootField": false,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 },
                 {
@@ -98,8 +98,8 @@
                     "duplicable": false,
                     "fields": [],
                     "order": 3,
-                    "rootField": false,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 },
                 {
@@ -124,8 +124,8 @@
                     "duplicable": false,
                     "fields": [],
                     "order": 4,
-                    "rootField": false,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 },
                 {
@@ -150,8 +150,8 @@
                     "duplicable": false,
                     "fields": [],
                     "order": 5,
-                    "rootField": false,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 },
                 {
@@ -177,14 +177,14 @@
                     "duplicable": false,
                     "fields": [],
                     "order": 6,
-                    "rootField": false,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 }
             ],
             "order": 1,
-            "rootField": true,
             "restricted": false,
+            "rootField": true,
             "defaultValue": null
         },
         {
@@ -195,10 +195,10 @@
             "configuration": {
                 "description": null,
                 "keys": {
-                    "InstanceLabel": {},
                     "Expanded": {
                         "args": {}
-                    }
+                    },
+                    "InstanceLabel": {}
                 },
                 "extensions": {}
             },
@@ -206,9 +206,9 @@
             "visibilityCondition": null,
             "duplicable": false,
             "fields": [],
-            "order": 9,
-            "rootField": true,
+            "order": 7,
             "restricted": false,
+            "rootField": true,
             "defaultValue": null
         },
         {
@@ -229,9 +229,9 @@
             "visibilityCondition": null,
             "duplicable": false,
             "fields": [],
-            "order": 10,
-            "rootField": true,
+            "order": 8,
             "restricted": false,
+            "rootField": true,
             "defaultValue": null
         },
         {
@@ -242,10 +242,10 @@
             "configuration": {
                 "description": null,
                 "keys": {
+                    "InstanceDescription": {},
                     "Number": {
                         "args": {}
-                    },
-                    "InstanceDescription": {}
+                    }
                 },
                 "extensions": {}
             },
@@ -253,9 +253,9 @@
             "visibilityCondition": null,
             "duplicable": false,
             "fields": [],
-            "order": 11,
-            "rootField": true,
+            "order": 9,
             "restricted": false,
+            "rootField": true,
             "defaultValue": null
         },
         {
@@ -322,9 +322,9 @@
                     },
                     "duplicable": false,
                     "fields": [],
-                    "order": 13,
-                    "rootField": false,
+                    "order": 11,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": "h-full bg-cover bg-center overflow-auto p-3"
                 },
                 {
@@ -351,9 +351,9 @@
                     },
                     "duplicable": false,
                     "fields": [],
-                    "order": 14,
-                    "rootField": false,
+                    "order": 12,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 },
                 {
@@ -378,9 +378,9 @@
                     },
                     "duplicable": false,
                     "fields": [],
-                    "order": 15,
-                    "rootField": false,
+                    "order": 13,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 },
                 {
@@ -411,9 +411,9 @@
                     },
                     "duplicable": false,
                     "fields": [],
-                    "order": 16,
-                    "rootField": false,
+                    "order": 14,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": "grid grid-flow-row-dense md:grid-cols-12"
                 },
                 {
@@ -440,9 +440,9 @@
                     },
                     "duplicable": true,
                     "fields": [],
-                    "order": 17,
-                    "rootField": false,
+                    "order": 15,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 },
                 {
@@ -469,9 +469,9 @@
                     },
                     "duplicable": false,
                     "fields": [],
-                    "order": 18,
-                    "rootField": false,
+                    "order": 16,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 },
                 {
@@ -512,9 +512,9 @@
                             "visibilityCondition": null,
                             "duplicable": false,
                             "fields": [],
-                            "order": 20,
-                            "rootField": false,
+                            "order": 18,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -531,15 +531,15 @@
                             "visibilityCondition": null,
                             "duplicable": false,
                             "fields": [],
-                            "order": 21,
-                            "rootField": false,
+                            "order": 19,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         }
                     ],
-                    "order": 19,
-                    "rootField": false,
+                    "order": 17,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 },
                 {
@@ -576,9 +576,9 @@
                     "defaultValue": null
                 }
             ],
-            "order": 12,
-            "rootField": true,
+            "order": 10,
             "restricted": false,
+            "rootField": true,
             "defaultValue": null
         },
         {
@@ -589,17 +589,17 @@
             "configuration": {
                 "description": null,
                 "keys": {
+                    "Link": {
+                        "args": {}
+                    },
+                    "InstanceDescription": {},
                     "AutoTextJoin": {
                         "args": [
                             "'/recordm/index.html#/cob.custom-resource/'",
                             "id",
                             "'/dash'"
                         ]
-                    },
-                    "Link": {
-                        "args": {}
-                    },
-                    "InstanceDescription": {}
+                    }
                 },
                 "extensions": {}
             },
@@ -607,9 +607,9 @@
             "visibilityCondition": null,
             "duplicable": false,
             "fields": [],
-            "order": 22,
-            "rootField": true,
+            "order": 21,
             "restricted": false,
+            "rootField": true,
             "defaultValue": null
         },
         {
@@ -628,9 +628,9 @@
             "visibilityCondition": null,
             "duplicable": false,
             "fields": [],
-            "order": 23,
-            "rootField": true,
+            "order": 22,
             "restricted": false,
+            "rootField": true,
             "defaultValue": null
         },
         {
@@ -706,9 +706,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 26,
-                            "rootField": false,
+                            "order": 25,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": "col-span-12 md:col-span-4 rounded-md border border-gray-300 bg-white bg-opacity-70 p-4 m-1"
                         },
                         {
@@ -733,15 +733,15 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 27,
-                            "rootField": false,
+                            "order": 26,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         }
                     ],
-                    "order": 25,
-                    "rootField": false,
+                    "order": 24,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 },
                 {
@@ -752,6 +752,7 @@
                     "configuration": {
                         "description": null,
                         "keys": {
+                            "InstanceDescription": {},
                             "Select": {
                                 "args": [
                                     "Label",
@@ -768,8 +769,7 @@
                                     "Hierarchy"
                                 ],
                                 "default": null
-                            },
-                            "InstanceDescription": {}
+                            }
                         },
                         "extensions": {
                             "$style": {
@@ -849,9 +849,9 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 30,
-                                    "rootField": false,
+                                    "order": 29,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "text-center font-bold pb-2"
                                 },
                                 {
@@ -878,15 +878,15 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 31,
-                                    "rootField": false,
+                                    "order": 30,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 29,
-                            "rootField": false,
+                            "order": 28,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -913,9 +913,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 32,
-                            "rootField": false,
+                            "order": 31,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -983,15 +983,15 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 34,
-                                    "rootField": false,
+                                    "order": 33,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "flex flex-col gap-y-2"
                                 }
                             ],
-                            "order": 33,
-                            "rootField": false,
+                            "order": 32,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -1079,9 +1079,9 @@
                                             },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 37,
-                                            "rootField": false,
+                                            "order": 36,
                                             "restricted": false,
+                                            "rootField": false,
                                             "defaultValue": "rounded-md border border-gray-300 border-l-2 border-l-sky-600 shadow-sm hover:bg-sky-800 hover:text-white p-2 bg-white"
                                         },
                                         {
@@ -1106,9 +1106,9 @@
                                             },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 38,
-                                            "rootField": false,
+                                            "order": 37,
                                             "restricted": false,
+                                            "rootField": false,
                                             "defaultValue": null
                                         },
                                         {
@@ -1133,15 +1133,15 @@
                                             },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 39,
-                                            "rootField": false,
+                                            "order": 38,
                                             "restricted": false,
+                                            "rootField": false,
                                             "defaultValue": null
                                         }
                                     ],
-                                    "order": 36,
-                                    "rootField": false,
+                                    "order": 35,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1167,9 +1167,9 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 40,
-                                    "rootField": false,
+                                    "order": 39,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1195,9 +1195,9 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 41,
-                                    "rootField": false,
+                                    "order": 40,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1223,15 +1223,15 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 42,
-                                    "rootField": false,
+                                    "order": 41,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 35,
-                            "rootField": false,
+                            "order": 34,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -1300,9 +1300,9 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 44,
-                                    "rootField": false,
+                                    "order": 43,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "w-full table-auto"
                                 },
                                 {
@@ -1327,15 +1327,15 @@
                                     },
                                     "duplicable": true,
                                     "fields": [],
-                                    "order": 45,
-                                    "rootField": false,
+                                    "order": 44,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 43,
-                            "rootField": false,
+                            "order": 42,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -1419,9 +1419,9 @@
                                             },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 48,
-                                            "rootField": false,
+                                            "order": 47,
                                             "restricted": false,
+                                            "rootField": false,
                                             "defaultValue": "text-right transition ease-in-out rounded ring-offset-0 hover:ring-1 ring-stone-300"
                                         },
                                         {
@@ -1454,15 +1454,15 @@
                                             },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 49,
-                                            "rootField": false,
+                                            "order": 48,
                                             "restricted": false,
+                                            "rootField": false,
                                             "defaultValue": "text-left text-stone-600 p-1"
                                         }
                                     ],
-                                    "order": 47,
-                                    "rootField": false,
+                                    "order": 46,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1554,9 +1554,9 @@
                                                     },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 52,
-                                                    "rootField": false,
+                                                    "order": 51,
                                                     "restricted": false,
+                                                    "rootField": false,
                                                     "defaultValue": "Default Info text-sm text-stone-800"
                                                 },
                                                 {
@@ -1581,9 +1581,9 @@
                                                     },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 53,
-                                                    "rootField": false,
+                                                    "order": 52,
                                                     "restricted": false,
+                                                    "rootField": false,
                                                     "defaultValue": null
                                                 },
                                                 {
@@ -1608,9 +1608,9 @@
                                                     },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 54,
-                                                    "rootField": false,
+                                                    "order": 53,
                                                     "restricted": false,
+                                                    "rootField": false,
                                                     "defaultValue": null
                                                 },
                                                 {
@@ -1643,9 +1643,9 @@
                                                     },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 55,
-                                                    "rootField": false,
+                                                    "order": 54,
                                                     "restricted": false,
+                                                    "rootField": false,
                                                     "defaultValue": "fa-solid fa-circle pr-1 animate-pulse text-lg align-middle"
                                                 },
                                                 {
@@ -1670,15 +1670,15 @@
                                                     },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 56,
-                                                    "rootField": false,
+                                                    "order": 55,
                                                     "restricted": false,
+                                                    "rootField": false,
                                                     "defaultValue": null
                                                 }
                                             ],
-                                            "order": 51,
-                                            "rootField": false,
+                                            "order": 50,
                                             "restricted": false,
+                                            "rootField": false,
                                             "defaultValue": null
                                         },
                                         {
@@ -1695,15 +1695,15 @@
                                             "visibilityCondition": null,
                                             "duplicable": true,
                                             "fields": [],
-                                            "order": 57,
-                                            "rootField": false,
+                                            "order": 56,
                                             "restricted": false,
+                                            "rootField": false,
                                             "defaultValue": null
                                         }
                                     ],
-                                    "order": 50,
-                                    "rootField": false,
+                                    "order": 49,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "Label"
                                 },
                                 {
@@ -1714,6 +1714,11 @@
                                     "configuration": {
                                         "description": null,
                                         "keys": {
+                                            "Help": {
+                                                "args": [
+                                                    "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                                                ]
+                                            },
                                             "Select": {
                                                 "args": [
                                                     "Listing",
@@ -1721,11 +1726,6 @@
                                                     "Link"
                                                 ],
                                                 "default": "Listing"
-                                            },
-                                            "Help": {
-                                                "args": [
-                                                    "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                                                ]
                                             }
                                         },
                                         "extensions": {}
@@ -1767,9 +1767,36 @@
                                             },
                                             "duplicable": false,
                                             "fields": [],
-                                            "order": 59,
-                                            "rootField": false,
+                                            "order": 58,
                                             "restricted": false,
+                                            "rootField": false,
+                                            "defaultValue": null
+                                        },
+                                        {
+                                            "id": null,
+                                            "name": "FilterTotalVarName",
+                                            "required": null,
+                                            "description": "The filter variable name",
+                                            "configuration": {
+                                                "description": "The filter variable name",
+                                                "keys": {},
+                                                "extensions": {}
+                                            },
+                                            "condition": "=Filter",
+                                            "visibilityCondition": {
+                                                "type": "Equal",
+                                                "value": [
+                                                    "Filter"
+                                                ],
+                                                "matcher": {
+                                                    "type": "Parent"
+                                                }
+                                            },
+                                            "duplicable": false,
+                                            "fields": [],
+                                            "order": 59,
+                                            "restricted": false,
+                                            "rootField": false,
                                             "defaultValue": null
                                         },
                                         {
@@ -1795,33 +1822,6 @@
                                             "duplicable": false,
                                             "fields": [],
                                             "order": 60,
-                                            "rootField": false,
-                                            "restricted": false,
-                                            "defaultValue": null
-                                        },
-                                        {
-                                            "id": null,
-                                            "name": "FilterTotalVarName",
-                                            "required": null,
-                                            "description": "The filter variable name",
-                                            "configuration": {
-                                                "description": "The filter variable name",
-                                                "keys": {},
-                                                "extensions": {}
-                                            },
-                                            "condition": "=Filter",
-                                            "visibilityCondition": {
-                                                "type": "Equal",
-                                                "value": [
-                                                    "Filter"
-                                                ],
-                                                "matcher": {
-                                                    "type": "Parent"
-                                                }
-                                            },
-                                            "duplicable": false,
-                                            "fields": [],
-                                            "order": 59,
                                             "restricted": false,
                                             "rootField": false,
                                             "defaultValue": null
@@ -1849,20 +1849,20 @@
                                             "duplicable": false,
                                             "fields": [],
                                             "order": 61,
-                                            "rootField": false,
                                             "restricted": false,
+                                            "rootField": false,
                                             "defaultValue": null
                                         }
                                     ],
-                                    "order": 58,
-                                    "rootField": false,
+                                    "order": 57,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "Listing"
                                 }
                             ],
-                            "order": 46,
-                            "rootField": false,
+                            "order": 45,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -1929,8 +1929,8 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 63,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1956,8 +1956,8 @@
                                     "duplicable": true,
                                     "fields": [],
                                     "order": 64,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -1983,8 +1983,8 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 65,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2010,8 +2010,8 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 66,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2037,14 +2037,14 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 67,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
                             "order": 62,
-                            "rootField": false,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -2070,8 +2070,8 @@
                             "duplicable": false,
                             "fields": [],
                             "order": 68,
-                            "rootField": false,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -2137,8 +2137,8 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 70,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2170,14 +2170,14 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 71,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "Pesquisar..."
                                 }
                             ],
                             "order": 69,
-                            "rootField": false,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -2203,8 +2203,8 @@
                             "duplicable": false,
                             "fields": [],
                             "order": 72,
-                            "rootField": false,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -2230,8 +2230,8 @@
                             "duplicable": false,
                             "fields": [],
                             "order": 73,
-                            "rootField": false,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -2298,8 +2298,8 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 75,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2325,8 +2325,8 @@
                                     "duplicable": true,
                                     "fields": [],
                                     "order": 76,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2358,8 +2358,8 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 77,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2370,17 +2370,17 @@
                                     "configuration": {
                                         "description": null,
                                         "keys": {
+                                            "Default": {
+                                                "args": {
+                                                    "value": "FALSE"
+                                                }
+                                            },
                                             "Select": {
                                                 "args": [
                                                     "TRUE",
                                                     "FALSE"
                                                 ],
                                                 "default": null
-                                            },
-                                            "Default": {
-                                                "args": {
-                                                    "value": "FALSE"
-                                                }
                                             }
                                         },
                                         "extensions": {}
@@ -2398,8 +2398,8 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 78,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "FALSE"
                                 },
                                 {
@@ -2425,8 +2425,8 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 79,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2452,8 +2452,8 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 80,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2479,14 +2479,14 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 81,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
                             "order": 74,
-                            "rootField": false,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -2530,8 +2530,8 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 83,
-                                    "rootField": false,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2549,27 +2549,8 @@
                                     "duplicable": false,
                                     "fields": [],
                                     "order": 84,
-                                    "rootField": false,
                                     "restricted": false,
-                                    "defaultValue": null
-                                },
-                                {
-                                    "id": null,
-                                    "name": "DateStartEventField",
-                                    "required": "mandatory",
-                                    "description": "Name of the definition date field that represents the beginning of the event ",
-                                    "configuration": {
-                                        "description": "Name of the definition date field that represents the beginning of the event",
-                                        "keys": {},
-                                        "extensions": {}
-                                    },
-                                    "condition": null,
-                                    "visibilityCondition": null,
-                                    "duplicable": false,
-                                    "fields": [],
-                                    "order": 85,
                                     "rootField": false,
-                                    "restricted": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2586,7 +2567,26 @@
                                     "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 84,
+                                    "order": 85,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": null
+                                },
+                                {
+                                    "id": null,
+                                    "name": "DateStartEventField",
+                                    "required": "mandatory",
+                                    "description": "Name of the definition date field that represents the beginning of the event ",
+                                    "configuration": {
+                                        "description": "Name of the definition date field that represents the beginning of the event",
+                                        "keys": {},
+                                        "extensions": {}
+                                    },
+                                    "condition": null,
+                                    "visibilityCondition": null,
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 86,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
@@ -2607,9 +2607,9 @@
                                     "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 86,
-                                    "rootField": false,
+                                    "order": 87,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2626,9 +2626,9 @@
                                     "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 87,
-                                    "rootField": false,
+                                    "order": 88,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2645,9 +2645,9 @@
                                     "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 88,
-                                    "rootField": false,
+                                    "order": 89,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2666,9 +2666,9 @@
                                     "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 89,
-                                    "rootField": false,
+                                    "order": 90,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2693,15 +2693,15 @@
                                     "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 90,
-                                    "rootField": false,
+                                    "order": 91,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "False"
                                 }
                             ],
                             "order": 82,
-                            "rootField": false,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -2766,9 +2766,9 @@
                                     },
                                     "duplicable": true,
                                     "fields": [],
-                                    "order": 92,
-                                    "rootField": false,
+                                    "order": 93,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2793,15 +2793,15 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 93,
-                                    "rootField": false,
+                                    "order": 94,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 91,
-                            "rootField": false,
+                            "order": 92,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -2826,9 +2826,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 94,
-                            "rootField": false,
+                            "order": 95,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -2853,9 +2853,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 95,
-                            "rootField": false,
+                            "order": 96,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -2886,9 +2886,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 96,
-                            "rootField": false,
+                            "order": 97,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -2951,9 +2951,9 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 98,
-                                    "rootField": false,
+                                    "order": 99,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
@@ -2980,15 +2980,15 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 99,
-                                    "rootField": false,
+                                    "order": 100,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 97,
-                            "rootField": false,
+                            "order": 98,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3056,15 +3056,15 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 101,
-                                    "rootField": false,
+                                    "order": 102,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "cursor-pointer text-blue-400 text-sm underline"
                                 }
                             ],
-                            "order": 100,
-                            "rootField": false,
+                            "order": 101,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3089,9 +3089,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 102,
-                            "rootField": false,
+                            "order": 103,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3116,9 +3116,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 103,
-                            "rootField": false,
+                            "order": 104,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3187,9 +3187,9 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 105,
-                                    "rootField": false,
+                                    "order": 106,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "text-justify text-gray-700"
                                 },
                                 {
@@ -3224,15 +3224,15 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 106,
-                                    "rootField": false,
+                                    "order": 107,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "Light"
                                 }
                             ],
-                            "order": 104,
-                            "rootField": false,
+                            "order": 105,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3259,9 +3259,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 107,
-                            "rootField": false,
+                            "order": 108,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3331,9 +3331,9 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 109,
-                                    "rootField": false,
+                                    "order": 110,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "text-justify text-gray-700"
                                 },
                                 {
@@ -3365,14 +3365,14 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 110,
-                                    "rootField": false,
+                                    "order": 111,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
                                     "id": null,
-                                    "name": "Arg",
+                                    "name": "SlidesArg",
                                     "required": null,
                                     "description": null,
                                     "configuration": {
@@ -3390,17 +3390,17 @@
                                             "type": "Parent"
                                         }
                                     },
-                                    "duplicable": false,
+                                    "duplicable": true,
                                     "fields": [],
-                                    "order": 111,
-                                    "rootField": false,
+                                    "order": 112,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 108,
-                            "rootField": false,
+                            "order": 109,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3427,9 +3427,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 112,
-                            "rootField": false,
+                            "order": 113,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3497,15 +3497,15 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 114,
-                                    "rootField": false,
+                                    "order": 115,
                                     "restricted": false,
+                                    "rootField": false,
                                     "defaultValue": "text-red-500 font-bold"
                                 }
                             ],
-                            "order": 113,
-                            "rootField": false,
+                            "order": 114,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3530,9 +3530,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 115,
-                            "rootField": false,
+                            "order": 116,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3557,9 +3557,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 116,
-                            "rootField": false,
+                            "order": 117,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3584,9 +3584,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 117,
-                            "rootField": false,
+                            "order": 118,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3611,9 +3611,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 118,
-                            "rootField": false,
+                            "order": 119,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3638,9 +3638,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 119,
-                            "rootField": false,
+                            "order": 120,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3665,9 +3665,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 120,
-                            "rootField": false,
+                            "order": 121,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3692,42 +3692,9 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 121,
-                            "rootField": false,
-                            "restricted": false,
-                            "defaultValue": null
-                        },
-                        {
-                            "id": null,
-                            "name": "InstanceFieldNameHierarchy",
-                            "required": null,
-                            "description": "$help[You can specify a instance's field name to output its value instead of the entire object.]",
-                            "configuration": {
-                                "description": null,
-                                "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "You can specify a instance's field name to output its value instead of the entire object."
-                                        ]
-                                    }
-                                },
-                                "extensions": {}
-                            },
-                            "condition": "=Hierarchy",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "Hierarchy"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
-                            "duplicable": false,
-                            "fields": [],
                             "order": 122,
-                            "rootField": false,
                             "restricted": false,
+                            "rootField": false,
                             "defaultValue": null
                         },
                         {
@@ -3758,21 +3725,54 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 121,
+                            "order": 123,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "InstanceFieldNameHierarchy",
+                            "required": null,
+                            "description": "$help[You can specify a instance's field name to output its value instead of the entire object.]",
+                            "configuration": {
+                                "description": null,
+                                "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "You can specify a instance's field name to output its value instead of the entire object."
+                                        ]
+                                    }
+                                },
+                                "extensions": {}
+                            },
+                            "condition": "=Hierarchy",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "Hierarchy"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [],
+                            "order": 124,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
                         }
                     ],
-                    "order": 28,
-                    "rootField": false,
+                    "order": 27,
                     "restricted": false,
+                    "rootField": false,
                     "defaultValue": null
                 }
             ],
-            "order": 24,
-            "rootField": true,
+            "order": 23,
             "restricted": false,
+            "rootField": true,
             "defaultValue": null
         }
     ],

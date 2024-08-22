@@ -58,7 +58,7 @@ export default {
         // Used for multiple presentations compatibility in same page if necessary
         slide_id() { return "slidesId-" + Date.now().toString() + (Math.random() + 1).toString(36).substring(7); },
         concurrentScript() { return this.component["SlidesCustomize"][0]["ConcurrentScript"]; },
-        concurrentArgs() { return this.component['SlidesCustomize'][0]['Arg'] || {}; }
+        concurrentArgs() { return this.component['SlidesCustomize'][0]['SlidesArg'] || {}; }
     },
     methods: {        
         destroyReveal() {
@@ -77,7 +77,7 @@ export default {
             this.status = "confirmingVisualization";
             let args = {};
             args['myArguments'] = this.concurrentArgs.map(myArg => {
-                return myArg['Arg'];
+                return myArg['SlidesArg'];
             });
             axios.post(concurrent_dir + this.concurrentScript, args).then(res => {
                 this.markdownContent = this.loading_message;
