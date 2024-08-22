@@ -635,7 +635,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
           if (dstZonePoint == null) {
             zone.insertAdjacentElement("beforeend", activeDragDropInfo.draggedItem);
           } else {
-            dstZonePoint.insertAdjacentElement("beforeend", activeDragDropInfo.draggedItem);
+            dstZonePoint.insertAdjacentElement("beforebegin", activeDragDropInfo.draggedItem);
           }
         }
         activeDragDropInfo.getCurrentPoint = function (dropZone, y) {
@@ -715,14 +715,28 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
                 })
                 .catch(error => {
                   // Concurrent Error
-                  cob.ui.notification.showError("Invalid drop location.")
+                  let errorMsg = error.response.data.msg
+                  if(errorMsg) {
+                    cob.ui.notification.showError(errorMsg)
+                  } else {
+                    cob.ui.notification.showError("Invalid drop location.")
+                  }
                 })
+            } else {
+                  activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
+                  activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint, true)
+                  activeDragDropInfo.draggedItem.classList.remove("dragging")
+                  activeDragDropInfo.droppedOnZone = true;
             }
           }
         }
 
         const dragItems = document.querySelectorAll(`.dragItem`);
         for (let dragItem of dragItems) {
+          // <a> tags w/ hrefs are draggable by default
+          if(dragItem.nodeName != "A") {
+            dragItem.setAttribute('draggable', true);
+          } 
           dragItem.addEventListener("dragstart", activeDragDropInfo.handleDragStart);
           dragItem.addEventListener("dragend", activeDragDropInfo.handleDragEnd);
         }
