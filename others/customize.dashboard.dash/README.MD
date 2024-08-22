@@ -2,13 +2,16 @@
 
 ### Definition Upgrades:
 
-#### 6.54.2
+#### 6.56.1
 - Fixed conflicting field names: Arg (Totals) VS Arg (Slides)
   - Arg (Slides) field name had to be changed to SlidesArg.
 ```
 ALTERED
 * Board > Component > [=Slides] SlidesCustomize > [=EndOfContentTrigger] (Duplicable) Arg  -> * Board > Component > [=Slides] SlidesCustomize > [=EndOfContentTrigger] (Duplicable) SlidesArg   
 ```
+
+#### 6.56.0
+- Added functions to dashboard context: sum, average e weightedAverage
 
 #### 6.54.1
 Novos helpers para datas:
