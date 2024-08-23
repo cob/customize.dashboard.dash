@@ -734,7 +734,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
         const dragItems = document.querySelectorAll(`.dragItem`);
         for (let dragItem of dragItems) {
           // <a> tags w/ hrefs are draggable by default
-          if(dragItem.nodeName != "A") {
+          if(dragItem.nodeName != "A" || (dragItem.nodeName == "A" && !dragItem.href)) {
             dragItem.setAttribute('draggable', true);
           } 
           dragItem.addEventListener("dragstart", activeDragDropInfo.handleDragStart);
