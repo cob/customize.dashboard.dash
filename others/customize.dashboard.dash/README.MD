@@ -2,6 +2,14 @@
 
 ### Definition Upgrades:
 
+#### 6.56.3
+Removed the following duplicate fields:
+```
+Totals [LineCustomize=Behaviour] > LineBehaviour [=Filter] > **FilterTotalVarName**
+Hierarchy > **InstanceFieldNameHierarchy**
+Calendar > Events > **DateStartEventField**
+```
+
 #### 6.56.1
 - Fixed conflicting field names: Arg (Totals) VS Arg (Slides)
   - Arg (Slides) field name had to be changed to SlidesArg.
