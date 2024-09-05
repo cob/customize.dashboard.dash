@@ -180,7 +180,7 @@
       eventView()            { return this.options['EventViews'] && this.options['EventViews'].split(',') || ['dayGridWeek','dayGridMonth','listMonth'] },
       outputVar()            { return this.options['OutputVarCalendar'] || '' },
       dayMaxEvents()         { return parseInt(this.options['MaxVisibleDayEvents'], 10) || MAX_VISIBLE_DAY_EVENTS },
-      cropMonth() { return this.options['CalendarCustomize'].split("\u0000").indexOf("CropMonth") !== -1},
+      cropMonth()            { return this.options['CalendarCustomize']!=null && this.options['CalendarCustomize'].split("\u0000").indexOf("CropMonth") !== -1},
       // strictMode()           {return this.options['StrictMode'] === 'TRUE' || false},
 
       // Calendar component model
