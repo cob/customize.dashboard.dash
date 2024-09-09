@@ -3,7 +3,7 @@
         <div ref="modal" class="relative z-10" aria-labelledby="modal-title" role="dialog" id="modal-pc" aria-modal="true">
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
             <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-                <div class="flex min-h-full  items-center justify-center text-center ">
+                <div class="flex min-h-full  items-center justify-center text-center " @click.self="closeModal">
                     <div :class="`relative transform shadow-xl transition-all p-4 ${this.classes}`">
                         <template v-for="(item, i) in components">
                             <Markdown v-if="item['Component'] === 'Markdown'" :component="item" :key="i" />
@@ -66,7 +66,11 @@ export default {
         onEsc(e) {
             if (e.key == 'Escape')
                 this.$emit('show-modal', undefined)
-        }
+        },
+        closeModal(e) {
+            e.preventDefault()
+            this.$emit('show-modal', undefined)
+        },
     }
 }
 
