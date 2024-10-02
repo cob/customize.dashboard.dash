@@ -2,6 +2,14 @@
 
 ### Definition Upgrades:
 
+#### 6.57.0
+Extended DragDrop behavior with new keyword `dropZoneHighlight`.
+Attributing this keyword to a DropZone will change the drag and drop behaviour in the following ways:
+- "Live previewing" of dragged item being dropped is turned off - dragging and item will instead highlight the dropzone instead of inserting the child (like a live preview).
+- When dropping, the draggedItem will stay in its original position.
+
+This behavior is intended to be used with concurrent scripts, for cases where the dragged item and dropZones do not have a matching HTML structure - thus we wouldn't want to insert the dragged item as a child in the target dropzone.
+
 #### 6.56.3
 Removed the following duplicate fields:
 ```
