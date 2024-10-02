@@ -5,7 +5,8 @@
         </button>
         <template v-for="(top, i) in tops">
             <HierarchyNode class="pb-1" :selectedPath="selectedPath" :setOutput="setOutput" :instance="instances[top]"
-                :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" :displayField="displayField" :key="i" />
+                :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" :displayField="displayField" :key="i" 
+                :rowClasses="hierarchyRowClasses"/>
         </template>
         <template v-if="tops && tops.length == 0">
             No results
@@ -44,6 +45,7 @@ export default {
         inputVar() { return this.component["InputVarHierarchy"] },
         input() { return this.component.vars[this.inputVar] },
         hierarchyNodeClasses() { return this.options['HierarchyNodeClasses'] + " hierarchy-selected " || "text-red-500 font-bold hierarchy-selected" },
+        hierarchyRowClasses() { return this.options['HierarchyRowClasses']  || "text-stone-600" },
         instanceFieldName() { return this.component["InstanceFieldNameHierarchy"] || undefined },
         dashResults() {
             if(this.component.dash_info.state === "loading") return []
