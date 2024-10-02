@@ -669,23 +669,39 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
         }
 
         activeDragDropInfo.handleDragEnter = function (e) {
-          if (e && e.target && e.target.classList.contains("dropZone")) {
-            // We leave this blank to easily support adding new logic to drag and drop.
+          if (e && e.target) { 
+            if(e.target.classList && e.target.classList.contains("dropZone")) {
+              if(e.target.classList.contains("dropZoneHighlight") && activeDragDropInfo.draggedItem) {
+                e.target.classList.remove("bg-stone-200")
+                e.target.classList.add("bg-stone-400")
+              }
+            }
           }
         }
 
         activeDragDropInfo.handleDragLeave = function (e) {
-          if (e && e.target && e.fromElement.classList && !e.fromElement.classList.contains("dragItem")) {
-            // We leave this blank to easily support adding new logic to drag and drop.
+          if (e && e.target) {
+            if (e.target.classList && e.target.classList.contains("dropZone")) {
+              if (e.target.classList.contains("dropZoneHighlight") && activeDragDropInfo.draggedItem) {
+                e.target.classList.add("bg-stone-200")
+                e.target.classList.remove("bg-stone-400")
+              }
+            }
+
           }
         }
 
         activeDragDropInfo.handleDragOver = function(e, dropZone) {
           e.preventDefault();
           e.dataTransfer.dropEffect = "move"
-          activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
-          activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
+          if(dropZone.classList.contains("dropZoneHighlight")) {
+            // We do nothing for now. We leave this blank for future logic (?)
+          } else {
+            activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
+            activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
+          }
         }
+
 
         activeDragDropInfo.handleDragDrop = function (e, dropZone) {
           e.preventDefault();
@@ -694,13 +710,15 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
             // Parse dropzone data and classes
             let dropZone_data_attributes = activeDragDropInfo.parseDataFields(dropZone.attributes)
             let dropZone_class_data_attributes = activeDragDropInfo.parseClasses(dropZone.classList)
+            let dropZone_html_attributes = {"dropZoneHTMLId" : dropZone.id || -1 }
             // Parse dragitem data and classes
             let dragItem_data_attributes = activeDragDropInfo.parseDataFields(activeDragDropInfo.draggedItem.attributes)
             let dragItem_class_data_attributes = activeDragDropInfo.parseClasses(activeDragDropInfo.draggedItem.classList)
 
             // Merge dictionaries and call concurrent
             let params = Object.assign(dropZone_data_attributes, dropZone_class_data_attributes,
-              dragItem_data_attributes, dragItem_class_data_attributes
+              dragItem_data_attributes, dragItem_class_data_attributes,
+              dropZone_html_attributes
             )
             // Get concurrent script name
             let concur_script = activeDash.dashboardParsed.DashboardCustomize[0].DragDropConcurrent
@@ -708,8 +726,12 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
               axios.post(`/integrationm/concurrent/${concur_script}`, params)
                 .then(() => {
                   // Concurrent 200
-                  activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
-                  activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
+                  if (dropZone != activeDragDropInfo.srcZone && dropZone.classList.contains("dropZoneHighlight")) {
+                    dropZone.classList.remove("!bg-stone-400")
+                  } else {
+                    activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
+                    activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
+                  }
                   activeDragDropInfo.draggedItem.classList.remove("dragging")
                   activeDragDropInfo.droppedOnZone = true;
                 })
@@ -723,8 +745,12 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
                   }
                 })
             } else {
-                  activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
-                  activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint, true)
+              if (dropZone != activeDragDropInfo.srcZone && dropZone.classList.contains("dropZoneHighlight")) {
+                    dropZone.classList.remove("!bg-stone-400")
+                  } else {
+                    activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
+                    activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
+                  }
                   activeDragDropInfo.draggedItem.classList.remove("dragging")
                   activeDragDropInfo.droppedOnZone = true;
             }
