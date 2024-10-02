@@ -724,14 +724,13 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
               axios.post(`/integrationm/concurrent/${concur_script}`, params)
                 .then(() => {
                   // Concurrent 200
-                  activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
-                  activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
-                  activeDragDropInfo.draggedItem.classList.remove("dragging")
-                  if (dropZone.classList.contains("dropZoneHighlight")) {
-                    activeDragDropInfo.draggedItem.classList.add("hidden")
-                    dropZone.classList.remove("bg-stone-400") 
-                    dropZone.classList.add("bg-stone-200") 
+                  if (dropZone != activeDragDropInfo.srcZone && dropZone.classList.contains("dropZoneHighlight")) {
+                    dropZone.classList.remove("!bg-stone-400")
+                  } else {
+                    activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
+                    activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
                   }
+                  activeDragDropInfo.draggedItem.classList.remove("dragging")
                   activeDragDropInfo.droppedOnZone = true;
                 })
                 .catch(error => {
@@ -744,14 +743,13 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
                   }
                 })
             } else {
-                  activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
-                  activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint, true)
-                  activeDragDropInfo.draggedItem.classList.remove("dragging")
-                  if (dropZone.classList.contains("dropZoneHighlight")) {
-                    activeDragDropInfo.draggedItem.classList.add("hidden")
-                    dropZone.classList.remove("bg-stone-400") 
-                    dropZone.classList.add("bg-stone-200") 
+              if (dropZone != activeDragDropInfo.srcZone && dropZone.classList.contains("dropZoneHighlight")) {
+                    dropZone.classList.remove("!bg-stone-400")
+                  } else {
+                    activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
+                    activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
                   }
+                  activeDragDropInfo.draggedItem.classList.remove("dragging")
                   activeDragDropInfo.droppedOnZone = true;
             }
           }
