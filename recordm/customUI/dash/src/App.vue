@@ -710,13 +710,15 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
             // Parse dropzone data and classes
             let dropZone_data_attributes = activeDragDropInfo.parseDataFields(dropZone.attributes)
             let dropZone_class_data_attributes = activeDragDropInfo.parseClasses(dropZone.classList)
+            let dropZone_html_attributes = {"dropZoneHTMLId" : dropZone.id || -1 }
             // Parse dragitem data and classes
             let dragItem_data_attributes = activeDragDropInfo.parseDataFields(activeDragDropInfo.draggedItem.attributes)
             let dragItem_class_data_attributes = activeDragDropInfo.parseClasses(activeDragDropInfo.draggedItem.classList)
 
             // Merge dictionaries and call concurrent
             let params = Object.assign(dropZone_data_attributes, dropZone_class_data_attributes,
-              dragItem_data_attributes, dragItem_class_data_attributes
+              dragItem_data_attributes, dragItem_class_data_attributes,
+              dropZone_html_attributes
             )
             // Get concurrent script name
             let concur_script = activeDash.dashboardParsed.DashboardCustomize[0].DragDropConcurrent
