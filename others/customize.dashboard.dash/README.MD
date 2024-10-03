@@ -2,6 +2,15 @@
 
 ### Definition Upgrades:
 
+#### 6.58.0
+- Extended Hierarchy to support injecting classes in unselected rows/nodes.
+- Fixed Hierarchy bug where we couldn't build the tree if we didn't start from the first level.
+
+```
+NEW
+* Board > Component > [=Hierarchy] HierarchyCustomize > [=Classes] HierarchyRowClasses : [$text $default(text-stone-600) Default: text-stone-600]
+```
+
 #### 6.57.0
 Extended DragDrop behavior with new keyword `dropZoneHighlight`.
 Attributing this keyword to a DropZone will change the drag and drop behaviour in the following ways:
