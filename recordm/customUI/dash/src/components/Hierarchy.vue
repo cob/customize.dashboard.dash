@@ -35,6 +35,7 @@ export default {
         component: Object
     }, 
     computed: {
+        resultIds() { return this.dashResults.map( r => r.id + "" ) },
         options() { return this.component['HierarchyCustomize'][0] },
         displayField() { return this.component['DisplayFieldHierarchy']},
         definitionName() { return this.component["DefinitionNameHierarchy"] },
@@ -124,7 +125,7 @@ export default {
                 this.tree = this.originalTree
             }
         },
-        parentOf(instances, id) { const inst = instances[id][this.parentField]; return inst ? inst[0] : undefined },
+        parentOf(instances, id) { const inst = instances[id][this.parentField]; return inst && this.resultIds.includes(inst[0]) ? inst[0] : undefined },
         pathToRoot(instances, id) {
             const path = [parseInt(id)]
             let current = this.parentOf(instances, id)
@@ -163,7 +164,7 @@ export default {
             for (const instance of results) {
 
                 const parent = instance[this.parentField] 
-                if (parent)
+                if (parent && this.resultIds.includes(instance[this.parentField][0]))
                     pushOrAdd(parent, instance.id)
                 else
                     tops.push(instance.id)
