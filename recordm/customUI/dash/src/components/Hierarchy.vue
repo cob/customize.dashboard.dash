@@ -5,7 +5,8 @@
         </button>
         <template v-for="(top, i) in tops">
             <HierarchyNode class="pb-1" :selectedPath="selectedPath" :setOutput="setOutput" :instance="instances[top]"
-                :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" :displayField="displayField" :key="i" />
+                :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" :displayField="displayField" :key="i" 
+                :rowClasses="hierarchyRowClasses"/>
         </template>
         <template v-if="tops && tops.length == 0">
             No results
@@ -34,6 +35,7 @@ export default {
         component: Object
     }, 
     computed: {
+        resultIds() { return this.dashResults.map( r => r.id + "" ) },
         options() { return this.component['HierarchyCustomize'][0] },
         displayField() { return this.component['DisplayFieldHierarchy']},
         definitionName() { return this.component["DefinitionNameHierarchy"] },
@@ -44,6 +46,7 @@ export default {
         inputVar() { return this.component["InputVarHierarchy"] },
         input() { return this.component.vars[this.inputVar] },
         hierarchyNodeClasses() { return this.options['HierarchyNodeClasses'] + " hierarchy-selected " || "text-red-500 font-bold hierarchy-selected" },
+        hierarchyRowClasses() { return this.options['HierarchyRowClasses']  || "text-stone-600" },
         instanceFieldName() { return this.component["InstanceFieldNameHierarchy"] || undefined },
         dashResults() {
             if(this.component.dash_info.state === "loading") return []
@@ -122,7 +125,7 @@ export default {
                 this.tree = this.originalTree
             }
         },
-        parentOf(instances, id) { const inst = instances[id][this.parentField]; return inst ? inst[0] : undefined },
+        parentOf(instances, id) { const inst = instances[id][this.parentField]; return inst && this.resultIds.includes(inst[0]) ? inst[0] : undefined },
         pathToRoot(instances, id) {
             const path = [parseInt(id)]
             let current = this.parentOf(instances, id)
@@ -161,7 +164,7 @@ export default {
             for (const instance of results) {
 
                 const parent = instance[this.parentField] 
-                if (parent)
+                if (parent && this.resultIds.includes(instance[this.parentField][0]))
                     pushOrAdd(parent, instance.id)
                 else
                     tops.push(instance.id)

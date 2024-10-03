@@ -20,6 +20,7 @@
                     :tree="tree"
                     :instances="instances"
                     :nodeClasses="nodeClasses"
+                    :rowClasses="rowClasses"
                     :class="computeClassesForChildren(child)" 
                     :key="i"
                     />
@@ -47,9 +48,12 @@ export default {
         isSelected() { return this.selectedPath && this.selectedPath.length == 1 && this.selectedPath[0] == this.instance.id },
         isSelectedParent() { return !this.isSelected && this.selectedPath && this.selectedPath.includes(this.instance.id) },
         computedClasses() { //compute classes according to computed state (isSelected, etc)
-            const baseClasses = ["cursor-pointer"]
-            const selectedClasses = this.isSelected ? this.nodeClasses.split(' ') : ['text-slate-600']
-            return [...baseClasses, ...selectedClasses]
+            let baseClasses = this.rowClasses.split(' ') 
+            baseClasses = [...baseClasses, "cursor-pointer","text-stone-600"]
+            if(this.isSelected) {
+                return this.nodeClasses.split(' ') 
+            }
+            return [...baseClasses]
         },   
         iconClasses() { 
             const baseClasses = ["fa-circle", "ml-[6px]", "pr-2", "mt-2", "text-[9px]" ]
@@ -73,6 +77,7 @@ export default {
         tree: Object,
         instances: Object,
         nodeClasses: String,
+        rowClasses: String,
         displayField: String
     },
     methods: {

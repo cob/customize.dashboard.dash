@@ -207,6 +207,7 @@ function parseDashboard(raw_dashboard) {
         "Hierarchy" : {
             "HierarchyCustomize": [{
                 "HierarchyNodeClasses": "",
+                "HierarchyRowClasses": "",
             }],
             "FilterHierarchy" : "",
             "InstanceFieldNameHierarchy":"",
