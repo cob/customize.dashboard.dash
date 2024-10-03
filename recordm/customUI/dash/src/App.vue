@@ -715,11 +715,30 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
             let dragItem_data_attributes = activeDragDropInfo.parseDataFields(activeDragDropInfo.draggedItem.attributes)
             let dragItem_class_data_attributes = activeDragDropInfo.parseClasses(activeDragDropInfo.draggedItem.classList)
 
+            /* BUILD PREV AND NEXT CONTEXT */
+            let surroundingContext = {next:{},prev:{}}
+            if (!dropZone.classList.contains("dropZoneHighlight")) {
+              // We attempt to build the context from the element AFTER the dragged item
+              let nextElem = activeDragDropInfo.draggedItem.nextElementSibling
+              let prevElem = activeDragDropInfo.draggedItem.previousElementSibling
+              if (nextElem) {
+                let nextElem_data_attributes = activeDragDropInfo.parseDataFields(nextElem.attributes)
+                let nextElem_class_attributes = activeDragDropInfo.parseClasses(nextElem.classList)
+                surroundingContext.next = Object.assign(nextElem_data_attributes, nextElem_class_attributes)
+              }
+              if (prevElem) {
+                let prevElem_data_attributes = activeDragDropInfo.parseDataFields(prevElem.attributes)
+                let prevElem_class_attributes = activeDragDropInfo.parseClasses(prevElem.classList)
+                surroundingContext.prev = Object.assign(prevElem_data_attributes, prevElem_class_attributes)
+              }
+            }
+
             // Merge dictionaries and call concurrent
             let params = Object.assign(dropZone_data_attributes, dropZone_class_data_attributes,
               dragItem_data_attributes, dragItem_class_data_attributes,
-              dropZone_html_attributes
+              dropZone_html_attributes, surroundingContext
             )
+            
             // Get concurrent script name
             let concur_script = activeDash.dashboardParsed.DashboardCustomize[0].DragDropConcurrent
             if (concur_script) {
