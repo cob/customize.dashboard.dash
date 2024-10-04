@@ -672,7 +672,6 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
           if (e && e.target) { 
             if(e.target.classList && e.target.classList.contains("dropZone")) {
               if(e.target.classList.contains("dropZoneHighlight") && activeDragDropInfo.draggedItem) {
-                e.target.classList.remove("bg-stone-200")
                 e.target.classList.add("bg-stone-400")
               }
             }
@@ -683,7 +682,6 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
           if (e && e.target) {
             if (e.target.classList && e.target.classList.contains("dropZone")) {
               if (e.target.classList.contains("dropZoneHighlight") && activeDragDropInfo.draggedItem) {
-                e.target.classList.add("bg-stone-200")
                 e.target.classList.remove("bg-stone-400")
               }
             }
