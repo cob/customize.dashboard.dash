@@ -744,7 +744,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
                 .then(() => {
                   // Concurrent 200
                   if (dropZone != activeDragDropInfo.srcZone && dropZone.classList.contains("dropZoneHighlight")) {
-                    dropZone.classList.remove("!bg-stone-400")
+                    dropZone.classList.remove("bg-stone-400")
                   } else {
                     activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
                     activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
@@ -763,7 +763,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
                 })
             } else {
               if (dropZone != activeDragDropInfo.srcZone && dropZone.classList.contains("dropZoneHighlight")) {
-                    dropZone.classList.remove("!bg-stone-400")
+                    dropZone.classList.remove("bg-stone-400")
                   } else {
                     activeDragDropInfo.dstZonePoint = activeDragDropInfo.getCurrentPoint(dropZone, e.clientY);
                     activeDragDropInfo.putDraggedItemOn(dropZone, activeDragDropInfo.dstZonePoint)
