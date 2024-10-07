@@ -704,7 +704,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
         activeDragDropInfo.handleDragDrop = function (e, dropZone) {
           e.preventDefault();
           // If we're dropping in the origin, we ignore it.
-          if (dropZone != activeDragDropInfo.srcZone) {
+          if (dropZone != activeDragDropInfo.srcZone || activeDragDropInfo.draggedItem.classList.contains("dragItemOverrideOrigin")) {
             // Parse dropzone data and classes
             let dropZone_data_attributes = activeDragDropInfo.parseDataFields(dropZone.attributes)
             let dropZone_class_data_attributes = activeDragDropInfo.parseClasses(dropZone.classList)
