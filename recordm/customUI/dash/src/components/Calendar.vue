@@ -4,7 +4,7 @@
     <Waiting :active='updatingFlag || debouncing' :interactable='debouncing'/>
 
     <div>
-      <div class='mb-4 text-center text-4xl'>{{ monthTitle }} {{ yearTitle }}</div>
+      <div v-if="!listYearSelected" class='mb-4 text-center text-4xl'>{{ monthTitle }} {{ yearTitle }}</div>
       <FullCalendar ref='fullCalendar' :options='calendarOptions'> 
         <template #eventContent='arg' v-if="usesHandlebars">
           <div class="overflow-x-hidden w-full" v-html="arg.event.title" v-if="arg.event.extendedProps.useCustom"/>
@@ -37,7 +37,65 @@
   const DEFAULT_EVENT_COLOR = '#0e7bbe'
   const MAX_VISIBLE_DAY_EVENTS = 3
 
+  const defaultHeaderToolbar = {
+    left: 'today prev next',
+    center: '',
+    right: 'dayGridWeek,dayGridMonth,listMonth,multiMonthYear,listYear'
+  }
+
+  const listYearToolBar = {
+    left: `today prev next`,
+    center: '',
+    right: 'dayGridWeek,dayGridMonth,listMonth,multiMonthYear,listYear'
+  }
+
+  function getInputTypeOfDate(date){
+    let monthDay = date.getDate() < 10 ? `0${date.getDate()}` :  date.getDate()
+    let month = date.getMonth()+1 < 10 ? `0${date.getMonth()+1}` :  date.getMonth()+1
+    return `${date.getFullYear()}-${month}-${monthDay}` 
+  }
+
+  function createDatePickerElement(date1,date2) {
+    if(!date2){
+      date2 = new Date()
+    }
+    if(!date1){
+      date1 = new Date(date2.getFullYear()-1,date2.getMonth(),date2.getDate())
+    }
+    
+    let strDate1 = getInputTypeOfDate(date1)
+    let strDate2 = getInputTypeOfDate(date2)
+
+    const htmlString = `<div class="fc-button">
+      <input type="date" value="${strDate1}">
+      <span class="px-1">|</span>
+      <input type="date" value="${strDate2}">
+      </div>`
+
+    let htmlElement = (new DOMParser()).parseFromString(htmlString, "text/html").body.firstChild
+    htmlElement.remove()
+    return htmlElement
+  }
+
+  function orderElementsByDatesAndGetDates(previousDateElement, nextDateElement,defaultRange){
+    let tempDate;
+    let previousDate = new Date(previousDateElement.value)
+    let nextDate = new Date(nextDateElement.value)
+    if(isNaN(previousDate.getTime()) || isNaN(nextDate.getTime()) ){
+      return defaultRange
+    }
+    if(previousDate.getTime()>nextDate.getTime()){
+      tempDate = nextDate
+      nextDate = previousDate
+      previousDate = tempDate
+    }
+    previousDateElement.value=getInputTypeOfDate(previousDate)
+    nextDateElement.value=getInputTypeOfDate(nextDate)
+    return [previousDate,nextDate]
+  }
+ 
   export default {
+      
     components: {
       FullCalendar,
       Waiting,
@@ -49,9 +107,11 @@
     },
 
     data: () => ({
+    
+      datePickerElement: undefined,
       rmEventSources: [], // Array with a DashInfo(...) for each event source spec
       createDefinitionId: null,
-
+      listYearSelected: false,
       monthTitle: null,
       yearTitle: null,
       dateRange: null, // array: [initDate, endDate]
@@ -65,18 +125,33 @@
         locale: navigator.language,
         // Take in consideration updating the initial state value of `activeView` if you change this value
         initialView: 'dayGridWeek',
-        headerToolbar: {
-          left: 'today prev next',
-          center: '',
-          right: 'dayGridWeek,dayGridMonth,listMonth,multiMonthYear'
+        views: {
+          listDay: { buttonText: 'list day' },
+          listWeek: { buttonText: 'list week' },
+          listYear: { buttonText: 'list' },
+          listMonth: {buttonText: 'list month'}
         },
+        headerToolbar:defaultHeaderToolbar,
         height: 'auto',
         contentHeight: 'auto',
         aspectRatio: 2,
         validRange: {
           start: '1970-01-01'
         },
-        noEventsContent: {html: '<div>&nbsp;</div>'}
+        noEventsContent: {html: '<div>&nbsp;</div>'},
+        
+        visibleRange: function(currentDate) {
+          // Generate a new date for manipulating in the next step
+          var startDate = new Date(currentDate.valueOf());
+          var endDate = new Date(currentDate.valueOf());
+
+          // Adjust the start & end dates, respectively
+          startDate.setDate(startDate.getDate() - 1); // One day in the past
+          endDate.setDate(endDate.getDate() + 2); // Two days into the future
+
+          return { start: startDate, end: endDate };
+        }
+
       },
 
       // Need the debouncer to delay the change of the calendar option to make a day selectable because it's impossible
@@ -89,9 +164,9 @@
     created() {
         this.calendarOptions.initialView = this.eventView[0]
         this.calendarOptions.headerToolbar.right = this.eventView.join(",")
-
+        listYearToolBar.right = this.calendarOptions.headerToolbar.right
         this.statePersistence = new ComponentStatePersistence(this.component.id, this.updateCalendarBasedOnPersistedStateChange)
-
+        this.handleListYear()          
         // If configured get the definition id to allow instance creation
         if(this.createDefinition) {
           rmListDefinitions({name: this.createDefinition, includeDisabled: true})
@@ -177,10 +252,10 @@
       inputVarCalendar()     { return this.options['InputVarCalendar'] || [] },
       allowCreateInstances() { return this.options['AllowCreateInstances'] === 'TRUE' || false},
       createDefinition()     { return this.options['CreateDefinition'] },
-      eventView()            { return this.options['EventViews'] && this.options['EventViews'].split(',') || ['dayGridWeek','dayGridMonth','listMonth'] },
+      eventView()            { return this.options['EventViews'] && this.options['EventViews'].split(',') || ['dayGridWeek','dayGridMonth','listYear'] },
       outputVar()            { return this.options['OutputVarCalendar'] || '' },
       dayMaxEvents()         { return parseInt(this.options['MaxVisibleDayEvents'], 10) || MAX_VISIBLE_DAY_EVENTS },
-      cropMonth()            { return this.options['CalendarCustomize']!=null && this.options['CalendarCustomize'].split("\u0000").indexOf("CropMonth") !== -1},
+      cropMonth() { return this.options['CalendarCustomize'].split("\u0000").indexOf("CropMonth") !== -1},
       // strictMode()           {return this.options['StrictMode'] === 'TRUE' || false},
 
       // Calendar component model
@@ -309,10 +384,107 @@
           this.calendarApi.changeView(newContent.activeView ? newContent.activeView : this.calendarOptions.initialView )
         }
       },
+      getCalendarListNavigationButtons(viewThisObject){
+        if (viewThisObject.calendarOptions["customButtons"]){
+          return viewThisObject.calendarOptions["customButtons"]
+        }
 
+        function updateNavigationCalendarDates(prevDate,nextDate) {
+          viewThisObject.datePickerElement.children[0].value = getInputTypeOfDate(prevDate)
+          viewThisObject.datePickerElement.children[2].value = getInputTypeOfDate(nextDate)
+          viewThisObject.dateRange = [prevDate, nextDate]
+        }
+
+        /**
+         * It decreases (previousDateButtonClicked = false) or increases (previousDateButtonClicked = true) 
+         * in both the previousDate and the nextDate mini-calendar the amount of days between them.
+         * @param {*} previousDateButtonClicked true | false
+         */
+        function onNavigationButtonClicked(previousDateButtonClicked) {
+          let prevDate, nextDate
+
+          const previousDateElement = viewThisObject.datePickerElement.children[0]
+          const nextDateElement = viewThisObject.datePickerElement.children[2]
+
+          prevDate = new Date(previousDateElement.value)
+          nextDate = new Date(nextDateElement.value)
+          
+          let diff = nextDate.getTime() - prevDate.getTime()
+
+          if(diff == 0){
+            const ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000
+            diff = ONE_DAY_IN_MILLISECONDS
+            nextDate = new Date(nextDate.getTime() + diff)
+          }
+
+          diff = previousDateButtonClicked ? diff*(-1):diff
+
+          prevDate = new Date(prevDate.getTime()+diff)
+          nextDate = new Date(nextDate.getTime()+diff)
+
+          updateNavigationCalendarDates(prevDate,nextDate)
+        }
+    
+        return {
+          prev: {
+            text: 'prev',
+            click: function() {
+              onNavigationButtonClicked(true)
+            }
+          },
+          next: {
+            text: 'next',
+            click: function() {
+              onNavigationButtonClicked(false)
+            }
+          },
+          today: {
+            text: "today",
+            click: function () {
+              let today = new Date()
+              updateNavigationCalendarDates(today,today)
+            }
+          }
+        }
+      },
+      handleListYear(){
+        if(this.calendarApi && this.calendarApi.view.type == "listYear"){
+          this.listYearSelected = true
+          this.calendarOptions["customButtons"] = this.getCalendarListNavigationButtons(this)
+          this.calendarOptions.headerToolbar = listYearToolBar
+          const toolbarHeader = this.calendarApi.el.querySelector(".fc-header-toolbar").children[0]
+
+          if(this.datePickerElement == undefined){
+            
+            this.datePickerElement = createDatePickerElement(this.calendarApi.view.currentStart,this.calendarApi.view.currentEnd)
+
+            const previousDateElement = this.datePickerElement.children[0]
+            const nextDateElement = this.datePickerElement.children[2]
+
+            previousDateElement.oninput = nextDateElement.oninput = ()=>{
+              this.dateRange = orderElementsByDatesAndGetDates(previousDateElement, nextDateElement, this.dateRange)
+              this.calendarApi.currentDate = this.dateRange[0]
+            }
+          }
+          if(!this.datePickerElement.parentElement){
+            toolbarHeader.children[0].removeAttribute("disabled")
+            toolbarHeader.insertBefore(this.datePickerElement,toolbarHeader.children[2])    
+            this.datePickerElement.children[0].value = getInputTypeOfDate(this.calendarApi.view.currentStart)
+            this.datePickerElement.children[2].value = getInputTypeOfDate(this.calendarApi.view.currentEnd)    
+          }
+        } else {
+          this.listYearSelected = false
+          if(this.datePickerElement){
+            this.datePickerElement.remove()
+          }
+          this.calendarOptions["customButtons"] = undefined
+          this.calendarOptions.headerToolbar = defaultHeaderToolbar
+        }
+      },
       updatePersistedStateBasedOnCalendarChange() {
         const activeView = this.calendarApi.view.type
         const currentDate = this.calendarApi.getDate()
+        this.handleListYear()
         const newState = { }
         if(JSON.stringify(currentDate) !== JSON.stringify(this.initialDate)) newState.initialDate = currentDate.dateFormat("Y-m-d")
         if(activeView !== this.calendarOptions.initialView) newState.activeView = activeView
