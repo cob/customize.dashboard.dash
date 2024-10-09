@@ -2410,9 +2410,9 @@
                                     "id": null,
                                     "name": "EventViews",
                                     "required": null,
-                                    "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth,listMonth",
+                                    "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth,listYear",
                                     "configuration": {
-                                        "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth,listMonth",
+                                        "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth,listYear",
                                         "keys": {},
                                         "extensions": {}
                                     },
