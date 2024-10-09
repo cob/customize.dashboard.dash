@@ -62,14 +62,19 @@
     if(!date1){
       date1 = new Date(date2.getFullYear()-1,date2.getMonth(),date2.getDate())
     }
+    
     let strDate1 = getInputTypeOfDate(date1)
     let strDate2 = getInputTypeOfDate(date2)
 
-    return $(`<div class="fc-button">
+    const htmlString = `<div class="fc-button">
       <input type="date" value="${strDate1}">
       <span class="px-1">|</span>
       <input type="date" value="${strDate2}">
-      </div>`)[0]
+      </div>`
+
+    let htmlElement = (new DOMParser()).parseFromString(htmlString, "text/html").body.firstChild
+    htmlElement.remove()
+    return htmlElement
   }
 
   function orderElementsByDatesAndGetDates(previousDateElement, nextDateElement,defaultRange){
@@ -383,57 +388,61 @@
         if (viewThisObject.calendarOptions["customButtons"]){
           return viewThisObject.calendarOptions["customButtons"]
         }
-        function onNavigationButtonClicked(prev,isToday) {
+
+        function updateNavigationCalendarDates(prevDate,nextDate) {
+          viewThisObject.datePickerElement.children[0].value = getInputTypeOfDate(prevDate)
+          viewThisObject.datePickerElement.children[2].value = getInputTypeOfDate(nextDate)
+          viewThisObject.dateRange = [prevDate, nextDate]
+        }
+
+        /**
+         * It decreases (previousDateButtonClicked = false) or increases (previousDateButtonClicked = true) 
+         * in both the previousDate and the nextDate mini-calendar the amount of days between them.
+         * @param {*} previousDateButtonClicked true | false
+         */
+        function onNavigationButtonClicked(previousDateButtonClicked) {
           let prevDate, nextDate
 
           const previousDateElement = viewThisObject.datePickerElement.children[0]
           const nextDateElement = viewThisObject.datePickerElement.children[2]
 
-          if(isToday){
-            prevDate = new Date()
-            nextDate = new Date(prevDate.getFullYear()+1,prevDate.getMonth(),prevDate.getDate())
-          } else {
-            prevDate = new Date(previousDateElement.value)
-            nextDate = new Date(nextDateElement.value)
-            
-            let diff = nextDate.getTime() - prevDate.getTime()
+          prevDate = new Date(previousDateElement.value)
+          nextDate = new Date(nextDateElement.value)
+          
+          let diff = nextDate.getTime() - prevDate.getTime()
 
-            if(diff == 0){
-              diff = nextDate.getTime() - (new Date(nextDate.getFullYear(),nextDate.getMonth(),nextDate.getDate()-1))
-            }
-
-            diff = prev ? diff*(-1):diff
-
-            prevDate = new Date(prevDate.getTime()+diff)
-            nextDate = new Date(nextDate.getTime()+diff)
+          if(diff == 0){
+            const ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000
+            diff = ONE_DAY_IN_MILLISECONDS
+            nextDate = new Date(nextDate.getTime() + diff)
           }
-          previousDateElement.value = getInputTypeOfDate(prevDate)
-          nextDateElement.value = getInputTypeOfDate(nextDate)
 
-          viewThisObject.dateRange = [prevDate, nextDate]
-        }
+          diff = previousDateButtonClicked ? diff*(-1):diff
 
-        function naviagetToToday(){
-          onNavigationButtonClicked(false,true)
+          prevDate = new Date(prevDate.getTime()+diff)
+          nextDate = new Date(nextDate.getTime()+diff)
+
+          updateNavigationCalendarDates(prevDate,nextDate)
         }
-        
+    
         return {
           prev: {
             text: 'prev',
             click: function() {
-              onNavigationButtonClicked(true,false)
+              onNavigationButtonClicked(true)
             }
           },
           next: {
             text: 'next',
             click: function() {
-              onNavigationButtonClicked(false,false)
+              onNavigationButtonClicked(false)
             }
           },
           today: {
             text: "today",
             click: function () {
-              naviagetToToday()
+              let today = new Date()
+              updateNavigationCalendarDates(today,today)
             }
           }
         }
