@@ -36,21 +36,25 @@
 
   const DEFAULT_EVENT_COLOR = '#0e7bbe'
   const MAX_VISIBLE_DAY_EVENTS = 3
+
   const defaultHeaderToolbar = {
     left: 'today prev next',
     center: '',
     right: 'dayGridWeek,dayGridMonth,listMonth,multiMonthYear,listYear'
   }
+
   const listYearToolBar = {
     left: `today prev next`,
     center: '',
     right: 'dayGridWeek,dayGridMonth,listMonth,multiMonthYear,listYear'
   }
+
   function getInputTypeOfDate(date){
     let monthDay = date.getDate() < 10 ? `0${date.getDate()}` :  date.getDate()
     let month = date.getMonth()+1 < 10 ? `0${date.getMonth()+1}` :  date.getMonth()+1
     return `${date.getFullYear()}-${month}-${monthDay}` 
   }
+
   function createDatePickerElement(date1,date2) {
     if(!date2){
       date2 = new Date()
@@ -375,57 +379,61 @@
           this.calendarApi.changeView(newContent.activeView ? newContent.activeView : this.calendarOptions.initialView )
         }
       },
-      getCustomButtomObject(viewThisObject){
+      getCalendarListNavigationButtons(viewThisObject){
         if (viewThisObject.calendarOptions["customButtons"]){
           return viewThisObject.calendarOptions["customButtons"]
         }
-        function dateChanges(prev,isToday) {
+        function onNavigationButtonClicked(prev,isToday) {
+          let prevDate, nextDate
+
           const previousDateElement = viewThisObject.datePickerElement.children[0]
           const nextDateElement = viewThisObject.datePickerElement.children[2]
 
-          let prevDate, nextDate
-
-          prevDate = new Date(previousDateElement.value)
-          nextDate = new Date(nextDateElement.value)
-          
-          let diff = nextDate.getTime() - prevDate.getTime()
-
-          if(diff == 0){
-            diff = nextDate.getTime() - (new Date(nextDate.getFullYear(),nextDate.getMonth(),nextDate.getDate()-1))
-          }
-
-          diff = prev ? diff*(-1):diff
-
-          prevDate = new Date(prevDate.getTime()+diff)
-          nextDate = new Date(nextDate.getTime()+diff)
-
           if(isToday){
             prevDate = new Date()
-            nextDate = new Date(prevDate.getFullYear()+1,nextDate.getMonth(),nextDate.getDate())
-          } 
+            nextDate = new Date(prevDate.getFullYear()+1,prevDate.getMonth(),prevDate.getDate())
+          } else {
+            prevDate = new Date(previousDateElement.value)
+            nextDate = new Date(nextDateElement.value)
+            
+            let diff = nextDate.getTime() - prevDate.getTime()
+
+            if(diff == 0){
+              diff = nextDate.getTime() - (new Date(nextDate.getFullYear(),nextDate.getMonth(),nextDate.getDate()-1))
+            }
+
+            diff = prev ? diff*(-1):diff
+
+            prevDate = new Date(prevDate.getTime()+diff)
+            nextDate = new Date(nextDate.getTime()+diff)
+          }
           previousDateElement.value = getInputTypeOfDate(prevDate)
           nextDateElement.value = getInputTypeOfDate(nextDate)
 
           viewThisObject.dateRange = [prevDate, nextDate]
+        }
+
+        function naviagetToToday(){
+          onNavigationButtonClicked(false,true)
         }
         
         return {
           prev: {
             text: 'prev',
             click: function() {
-              dateChanges(true,false)
+              onNavigationButtonClicked(true,false)
             }
           },
           next: {
             text: 'next',
             click: function() {
-              dateChanges(false,false)
+              onNavigationButtonClicked(false,false)
             }
           },
           today: {
             text: "today",
             click: function () {
-              dateChanges(false,true)
+              naviagetToToday()
             }
           }
         }
@@ -433,7 +441,7 @@
       handleListYear(){
         if(this.calendarApi && this.calendarApi.view.type == "listYear"){
           this.listYearSelected = true
-          this.calendarOptions["customButtons"] = this.getCustomButtomObject(this)
+          this.calendarOptions["customButtons"] = this.getCalendarListNavigationButtons(this)
           this.calendarOptions.headerToolbar = listYearToolBar
           const toolbarHeader = this.calendarApi.el.querySelector(".fc-header-toolbar").children[0]
 
