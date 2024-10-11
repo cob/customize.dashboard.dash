@@ -2,6 +2,17 @@
 
 ### Definition Upgrades:
 
+#### 6.60.0
+- Added new outputVar to calendar named `outputVarInterval`. The calendar will create a variable with the given name, and will contain two properties:
+  - `startDate`
+  - `endDate`
+These properties represent the visible interval in the dashboard.
+
+```
+NEW
+* Board > Component > [=Calendar] CalendarCustomize > [=OutputVar] OutputVarInterval : $help[You can specify a name for a variable where the Calendar will insert two properties: startDate and endDate - respectively containing the current calendar's period's start and end dates in milliseconds]
+```
+
 #### 6.58.0
 - Extended Hierarchy to support injecting classes in unselected rows/nodes.
 - Fixed Hierarchy bug where we couldn't build the tree if we didn't start from the first level.

@@ -316,7 +316,15 @@
             queries.push(finalQuery)
 
             // If set, the 'outputVar' should be a query reflecting the current date range displayed on the calendar. Since we can use only one date_field for the query we opt to use the first(0) "Event Source" specs
-            if (i==0 && this.outputVar) this.$set(this.component.vars, this.outputVar, dateRangeQuery)
+            if (i==0 && this.outputVar) { this.$set(this.component.vars, this.outputVar, dateRangeQuery) }
+            // If set, the outputVarInterval will be an object
+            if (i==0 && this.outputVarInterval) {
+              let outputVarIntervalObj = {
+                "startDate": `${startDate}`,
+                "endDate": `${endDate-1}`
+              }
+              this.$set(this.component.vars, this.outputVarInterval, outputVarIntervalObj)
+            }
           }
         }
         return queries
