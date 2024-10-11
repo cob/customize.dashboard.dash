@@ -1,7 +1,7 @@
 {
     "id": null,
     "name": "Dashboard_v1",
-    "description": "@COB v6.60.0",
+    "description": "@COB v6.56.3",
     "duplicable": null,
     "state": "enabled",
     "fieldDefinitions": [
@@ -2212,7 +2212,7 @@
                             "id": null,
                             "name": "CalendarCustomize",
                             "required": null,
-                            "description": "$[Classes,InputVar,OutputVar,Settings] $multiple $help[Select the defaults to change]",
+                            "description": "$[Classes,InputVar,OutputVar,Settings,CropMonth] $multiple $help[Select the defaults to change]",
                             "configuration": {
                                 "description": null,
                                 "keys": {
@@ -2221,7 +2221,8 @@
                                             "Classes",
                                             "InputVar",
                                             "OutputVar",
-                                            "Settings"
+                                            "Settings",
+                                            "CropMonth"
                                         ],
                                         "default": null
                                     },
@@ -2582,11 +2583,13 @@
                                     "id": null,
                                     "name": "DescriptionEventField",
                                     "required": "mandatory",
-                                    "description": "Name of the definition field to use as the event description",
+                                    "description": "$text Name of the definition field to use as the event description",
                                     "configuration": {
                                         "description": "Name of the definition field to use as the event description",
                                         "keys": {},
-                                        "extensions": {}
+                                        "extensions": {
+                                            "$text": {}
+                                        }
                                     },
                                     "condition": null,
                                     "visibilityCondition": null,
@@ -3253,7 +3256,7 @@
                             "id": null,
                             "name": "SlidesCustomize",
                             "required": null,
-                            "description": "$[Classes,EndOfContentTrigger] $multiple",
+                            "description": "$[Classes,EndOfContentTrigger] $multiple $help[Select the defaults to change] $help['EndOfContentTrigger' to configure end of slides update. False if you want to ONLY SHOW contents]",
                             "configuration": {
                                 "description": null,
                                 "keys": {
@@ -3264,7 +3267,13 @@
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Multiple": {},
+                                    "Help": {
+                                        "args": [
+                                            "'EndOfContentTrigger'",
+                                            "to configure end of slides update. False if you want to ONLY SHOW contents"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -3319,10 +3328,17 @@
                                     "id": null,
                                     "name": "ConcurrentScript",
                                     "required": null,
-                                    "description": null,
+                                    "description": "$help[If you don't specify a concurrent script, Slides will ONLY show the content.]",
                                     "configuration": {
                                         "description": null,
-                                        "keys": {},
+                                        "keys": {
+                                            "Help": {
+                                                "args": [
+                                                    "If you don't specify a concurrent script",
+                                                    "Slides will ONLY show the content."
+                                                ]
+                                            }
+                                        },
                                         "extensions": {}
                                     },
                                     "condition": "=EndOfContentTrigger",
@@ -3344,7 +3360,7 @@
                                 },
                                 {
                                     "id": null,
-                                    "name": "SlidesArg",
+                                    "name": "Arg",
                                     "required": null,
                                     "description": null,
                                     "configuration": {
