@@ -254,6 +254,7 @@
       createDefinition()     { return this.options['CreateDefinition'] },
       eventView()            { return this.options['EventViews'] && this.options['EventViews'].split(',') || ['dayGridWeek','dayGridMonth','listYear'] },
       outputVar()            { return this.options['OutputVarCalendar'] || '' },
+      outputVarInterval()    { return this.options['OutputVarInterval'] || '' },
       dayMaxEvents()         { return parseInt(this.options['MaxVisibleDayEvents'], 10) || MAX_VISIBLE_DAY_EVENTS },
       cropMonth() { return this.options['CalendarCustomize']!=null && this.options['CalendarCustomize'].split("\u0000").indexOf("CropMonth") !== -1},
       // strictMode()           {return this.options['StrictMode'] === 'TRUE' || false},
