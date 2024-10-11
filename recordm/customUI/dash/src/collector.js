@@ -179,6 +179,7 @@ function parseDashboard(raw_dashboard) {
                 "CalendarClasses": "",
                 "InputVarCalendar": [{}],
                 "OutputVarCalendar": "",
+                "OutputVarInterval": "",
                 "MaxVisibleDayEvents": "",
                 "AllowCreateInstances":"",
                 "CreateDefinition":"",
