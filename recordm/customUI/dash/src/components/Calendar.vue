@@ -4,7 +4,6 @@
     <Waiting :active='updatingFlag || debouncing' :interactable='debouncing'/>
 
     <div>
-      <div v-if="!listYearSelected" class='mb-4 text-center text-4xl'>{{ monthTitle }} {{ yearTitle }}</div>
       <FullCalendar ref='fullCalendar' :options='calendarOptions'> 
         <template #eventContent='arg' v-if="usesHandlebars">
           <div class="overflow-x-hidden w-full" v-html="arg.event.title" v-if="arg.event.extendedProps.useCustom"/>
@@ -40,14 +39,15 @@
   const defaultHeaderToolbar = {
     left: 'today prev next',
     center: '',
-    right: 'dayGridWeek,dayGridMonth,listMonth,multiMonthYear,listYear'
+    right: 'dayGridWeek,dayGridMonth,listMonth,listYear'
   }
 
-  const listYearToolBar = {
-    left: `today prev next`,
-    center: '',
-    right: 'dayGridWeek,dayGridMonth,listMonth,multiMonthYear,listYear'
+  const onlyHeaderToolbar = {
+    left: 'today',
+    center: 'prev next',
+    right: 'dayGridWeek,dayGridMonth'
   }
+
 
   function getInputTypeOfDate(date){
     let monthDay = date.getDate() < 10 ? `0${date.getDate()}` :  date.getDate()
@@ -107,7 +107,7 @@
     },
 
     data: () => ({
-    
+      headerOnly: false,
       datePickerElement: undefined,
       rmEventSources: [], // Array with a DashInfo(...) for each event source spec
       createDefinitionId: null,
@@ -129,9 +129,9 @@
           listDay: { buttonText: 'list day' },
           listWeek: { buttonText: 'list week' },
           listYear: { buttonText: 'list' },
-          listMonth: {buttonText: 'list month'}
+          listMonth: {buttonText: 'list month'},
         },
-        headerToolbar:defaultHeaderToolbar,
+        headerToolbar: defaultHeaderToolbar,
         height: 'auto',
         contentHeight: 'auto',
         aspectRatio: 2,
@@ -139,19 +139,6 @@
           start: '1970-01-01'
         },
         noEventsContent: {html: '<div>&nbsp;</div>'},
-        
-        visibleRange: function(currentDate) {
-          // Generate a new date for manipulating in the next step
-          var startDate = new Date(currentDate.valueOf());
-          var endDate = new Date(currentDate.valueOf());
-
-          // Adjust the start & end dates, respectively
-          startDate.setDate(startDate.getDate() - 1); // One day in the past
-          endDate.setDate(endDate.getDate() + 2); // Two days into the future
-
-          return { start: startDate, end: endDate };
-        }
-
       },
 
       // Need the debouncer to delay the change of the calendar option to make a day selectable because it's impossible
@@ -164,9 +151,11 @@
     created() {
         this.calendarOptions.initialView = this.eventView[0]
         this.calendarOptions.headerToolbar.right = this.eventView.join(",")
-        listYearToolBar.right = this.calendarOptions.headerToolbar.right
         this.statePersistence = new ComponentStatePersistence(this.component.id, this.updateCalendarBasedOnPersistedStateChange)
-        this.handleListYear()          
+        if(this.headerOnly) {
+          this.calendarOptions.headerToolbar = onlyHeaderToolbar
+        }
+        this.handleViewType()          
         // If configured get the definition id to allow instance creation
         if(this.createDefinition) {
           rmListDefinitions({name: this.createDefinition, includeDisabled: true})
@@ -269,7 +258,7 @@
         let queries = []
         
         if (this.dateRange) { // Only calculate queries after having a dateRange set by the calendar
-          let startDate = this.dateRange[0].getTime()
+          let startDate = this.dateRange[0].Time()
           let endDate = this.dateRange[1].getTime()
 
           if(this.cropMonth) {
@@ -438,12 +427,14 @@
           prev: {
             text: 'prev',
             click: function() {
+              console.log("mega bomba prev")
               onNavigationButtonClicked(true)
             }
           },
           next: {
             text: 'next',
             click: function() {
+              console.log("mega bomba next")
               onNavigationButtonClicked(false)
             }
           },
@@ -456,44 +447,67 @@
           }
         }
       },
-      handleListYear(){
-        if(this.calendarApi && this.calendarApi.view.type == "listYear"){
-          this.listYearSelected = true
-          this.calendarOptions["customButtons"] = this.getCalendarListNavigationButtons(this)
-          this.calendarOptions.headerToolbar = listYearToolBar
-          const toolbarHeader = this.calendarApi.el.querySelector(".fc-header-toolbar").children[0]
+      handleViewType() {
+        if (this.calendarApi) {
+          const viewType = this.calendarApi.view.type;
+          const isListYearView = viewType === "listYear";
+          const toolbarHeaderLeft = this.calendarApi.el.querySelector(".fc-header-toolbar").children[0];
+          const toolbarHeaderCenter = this.calendarApi.el.querySelector(".fc-header-toolbar").children[1];
 
-          if(this.datePickerElement == undefined){
-            
-            this.datePickerElement = createDatePickerElement(this.calendarApi.view.currentStart,this.calendarApi.view.currentEnd)
+          const setupDatePicker = () => {
+            if (!this.datePickerElement) {
+              this.datePickerElement = createDatePickerElement(this.calendarApi.view.currentStart, this.calendarApi.view.currentEnd);
+              const previousDateElement = this.datePickerElement.children[0];
+              const nextDateElement = this.datePickerElement.children[2];
+              previousDateElement.oninput = nextDateElement.oninput = () => {
+                this.dateRange = orderElementsByDatesAndGetDates(previousDateElement, nextDateElement, this.dateRange);
+                this.calendarApi.currentDate = this.dateRange[0];
+              };
+            }
+          };
 
-            const previousDateElement = this.datePickerElement.children[0]
-            const nextDateElement = this.datePickerElement.children[2]
-
-            previousDateElement.oninput = nextDateElement.oninput = ()=>{
-              this.dateRange = orderElementsByDatesAndGetDates(previousDateElement, nextDateElement, this.dateRange)
-              this.calendarApi.currentDate = this.dateRange[0]
+          const updateDatePicker = () => {
+            if (this.datePickerElement) {
+              this.datePickerElement.children[0].value = getInputTypeOfDate(this.calendarApi.view.currentStart);
+              this.datePickerElement.children[2].value = getInputTypeOfDate(this.calendarApi.view.currentEnd);
             }
           }
-          if(!this.datePickerElement.parentElement){
-            toolbarHeader.children[0].removeAttribute("disabled")
-            toolbarHeader.insertBefore(this.datePickerElement,toolbarHeader.children[2])    
-            this.datePickerElement.children[0].value = getInputTypeOfDate(this.calendarApi.view.currentStart)
-            this.datePickerElement.children[2].value = getInputTypeOfDate(this.calendarApi.view.currentEnd)    
+
+          const insertDatePicker = (headerElement) => {
+            if (!this.datePickerElement.parentElement) {
+              headerElement.insertAdjacentElement("afterend", this.datePickerElement);
+              this.datePickerElement.children[0].value = getInputTypeOfDate(this.calendarApi.view.currentStart);
+              this.datePickerElement.children[2].value = getInputTypeOfDate(this.calendarApi.view.currentEnd);
+            }
+          };
+
+          if (isListYearView) {
+            this.listYearSelected = true;
+            this.calendarOptions["customButtons"] = this.getCalendarListNavigationButtons(this);
+
+            setupDatePicker();
+            //updateDatePicker()
+            if (!this.datePickerElement.parentElement) {
+              toolbarHeaderLeft.children[0].removeAttribute("disabled");
+              toolbarHeaderLeft.insertBefore(this.datePickerElement, toolbarHeaderLeft.children[2]);
+            }
+          } else if (this.headerOnly) {
+            this.calendarOptions["customButtons"] = this.getCalendarListNavigationButtons(this);
+            setupDatePicker();
+            //updateDatePicker()
+            insertDatePicker(toolbarHeaderCenter.children[0]);
+          } else {
+            this.listYearSelected = false;
+            if (this.datePickerElement) this.datePickerElement.remove();
+            this.calendarOptions["customButtons"] = undefined;
+            this.calendarOptions.headerToolbar = defaultHeaderToolbar;
           }
-        } else {
-          this.listYearSelected = false
-          if(this.datePickerElement){
-            this.datePickerElement.remove()
-          }
-          this.calendarOptions["customButtons"] = undefined
-          this.calendarOptions.headerToolbar = defaultHeaderToolbar
         }
       },
       updatePersistedStateBasedOnCalendarChange() {
         const activeView = this.calendarApi.view.type
         const currentDate = this.calendarApi.getDate()
-        this.handleListYear()
+        this.handleViewType()
         const newState = { }
         if(JSON.stringify(currentDate) !== JSON.stringify(this.initialDate)) newState.initialDate = currentDate.dateFormat("Y-m-d")
         if(activeView !== this.calendarOptions.initialView) newState.activeView = activeView
