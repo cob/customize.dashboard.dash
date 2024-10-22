@@ -5,6 +5,7 @@
 
     <div>
       <FullCalendar ref='fullCalendar' :options='calendarOptions'> 
+        <div v-if="!listYearSelected" class='mb-4 text-center text-4xl'>{{ monthTitle }} {{ yearTitle }}</div>
         <template #eventContent='arg' v-if="usesHandlebars">
           <div class="overflow-x-hidden w-full" v-html="arg.event.title" v-if="arg.event.extendedProps.useCustom"/>
           <CalendarDayEvent :event="arg" :color="arg.backgroundColor" v-else/>
@@ -258,7 +259,7 @@
         let queries = []
         
         if (this.dateRange) { // Only calculate queries after having a dateRange set by the calendar
-          let startDate = this.dateRange[0].Time()
+          let startDate = this.dateRange[0].getTime()
           let endDate = this.dateRange[1].getTime()
 
           if(this.cropMonth) {
