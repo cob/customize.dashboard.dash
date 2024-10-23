@@ -350,13 +350,13 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
   function localIterableEval(obj, evalCode, someOrEveryOrFilter,options={defaultValue:false}) {
     let filter = []
     for (const key in obj) {
-      const val = typeof obj[key] === 'object' ? JSON.stringify(obj[key]) : `'${obj[key]}'`
+      const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : `'${obj[key]}'`
+      evalCode = evalCode.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
       const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`  
-      const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
       let evalResult
       
       try {
-        evalResult = eval(cleanedCode)
+        evalResult = eval(code)
       } catch (e) {
         console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
       }
