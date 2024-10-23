@@ -107,7 +107,7 @@
     },
 
     data: () => ({
-      headerOnly: false,
+      //headerOnly: true,
       datePickerElement: undefined,
       rmEventSources: [], // Array with a DashInfo(...) for each event source spec
       createDefinitionId: null,
@@ -251,6 +251,8 @@
       outputVarInterval()    { return this.options['OutputVarInterval'] || '' },
       dayMaxEvents()         { return parseInt(this.options['MaxVisibleDayEvents'], 10) || MAX_VISIBLE_DAY_EVENTS },
       cropMonth() { return this.options['CalendarCustomize']!=null && this.options['CalendarCustomize'].split("\u0000").indexOf("CropMonth") !== -1},
+      //headerOnly() { return this.options['CalendarCustomize']!=null && this.options['CalendarCustomize'].split("\u0000").indexOf("HeaderOnly") !== -1},
+      headerOnly() { return true},
       // strictMode()           {return this.options['StrictMode'] === 'TRUE' || false},
 
       // Calendar component model
