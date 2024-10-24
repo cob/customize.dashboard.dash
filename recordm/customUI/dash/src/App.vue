@@ -351,12 +351,12 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
     let filter = []
     for (const key in obj) {
       const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : `'${obj[key]}'`
-      const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`   // evalCode example: "key != 'test' && val > 0"
-      const cleanedCode = code.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
+      evalCode = evalCode.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
+      const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`  
       let evalResult
       
       try {
-        evalResult = eval(cleanedCode)
+        evalResult = eval(code)
       } catch (e) {
         console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
       }
