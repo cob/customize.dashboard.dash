@@ -2,6 +2,14 @@
 
 ### Definition Upgrades:
 
+#### 6.61.0
+- Added new `HeaderOnly` option to `CalendarCustomize`. This option will hide the calendar itself, and only the show the time navgiation bar, with arrow keys and date pickers - it will maintain the "view types" for the calendar, which can be used to set time intervals (week, month, etc).
+
+```
+ALTERED
+* Board > Component > [=Calendar] CalendarCustomize : $[Classes,InputVar,OutputVar,Settings,CropMonth] $multiple $help[Select the defaults to change] -> $[Classes,InputVar,OutputVar,Settings,CropMonth,HeaderOnly] $multiple $help[Select the defaults to change]
+```
+
 #### 6.60.0
 - Added new outputVar to calendar named `outputVarInterval`. The calendar will create a variable with the given name, and will contain two properties:
   - `startDate`
