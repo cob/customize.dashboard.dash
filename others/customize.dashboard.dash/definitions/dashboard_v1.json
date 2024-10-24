@@ -1,7 +1,7 @@
 {
     "id": null,
     "name": "Dashboard_v1",
-    "description": "@COB v6.60.0",
+    "description": "@COB v6.61.0",
     "duplicable": null,
     "state": "enabled",
     "fieldDefinitions": [
@@ -589,17 +589,17 @@
             "configuration": {
                 "description": null,
                 "keys": {
+                    "InstanceDescription": {},
+                    "Link": {
+                        "args": {}
+                    },
                     "AutoTextJoin": {
                         "args": [
                             "'/recordm/index.html#/cob.custom-resource/'",
                             "id",
                             "'/dash'"
                         ]
-                    },
-                    "Link": {
-                        "args": {}
-                    },
-                    "InstanceDescription": {}
+                    }
                 },
                 "extensions": {}
             },
@@ -754,7 +754,6 @@
                     "configuration": {
                         "description": null,
                         "keys": {
-                            "InstanceDescription": {},
                             "Select": {
                                 "args": [
                                     "Label",
@@ -771,7 +770,8 @@
                                     "Hierarchy"
                                 ],
                                 "default": null
-                            }
+                            },
+                            "InstanceDescription": {}
                         },
                         "extensions": {
                             "$style": {
@@ -2212,7 +2212,7 @@
                             "id": null,
                             "name": "CalendarCustomize",
                             "required": null,
-                            "description": "$[Classes,InputVar,OutputVar,Settings,CropMonth] $multiple $help[Select the defaults to change]",
+                            "description": "$[Classes,InputVar,OutputVar,Settings,CropMonth,HeaderOnly] $multiple $help[Select the defaults to change]",
                             "configuration": {
                                 "description": null,
                                 "keys": {
@@ -2222,7 +2222,8 @@
                                             "InputVar",
                                             "OutputVar",
                                             "Settings",
-                                            "CropMonth"
+                                            "CropMonth",
+                                            "HeaderOnly"
                                         ],
                                         "default": null
                                     },
@@ -2344,17 +2345,17 @@
                                     "configuration": {
                                         "description": null,
                                         "keys": {
-                                            "Default": {
-                                                "args": {
-                                                    "value": "FALSE"
-                                                }
-                                            },
                                             "Select": {
                                                 "args": [
                                                     "TRUE",
                                                     "FALSE"
                                                 ],
                                                 "default": null
+                                            },
+                                            "Default": {
+                                                "args": {
+                                                    "value": "FALSE"
+                                                }
                                             }
                                         },
                                         "extensions": {}
@@ -2407,9 +2408,9 @@
                                     "id": null,
                                     "name": "EventViews",
                                     "required": null,
-                                    "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth,listYear",
+                                    "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth, listYear",
                                     "configuration": {
-                                        "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth,listYear",
+                                        "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth, listYear",
                                         "keys": {},
                                         "extensions": {}
                                     },
