@@ -66,7 +66,7 @@
     let strDate1 = getInputTypeOfDate(date1)
     let strDate2 = getInputTypeOfDate(date2)
 
-    const htmlString = `<div class="fc-button">
+    const htmlString = `<div class="fc-button !p-0 !text-base">
       <input type="date" value="${strDate1}">
       <span class="px-1">|</span>
       <input type="date" value="${strDate2}">
@@ -152,7 +152,6 @@
         this.calendarOptions.headerToolbar.right = this.eventView.join(",")
         onlyHeaderToolbar.right = this.calendarOptions.headerToolbar.right
         this.statePersistence = new ComponentStatePersistence(this.component.id, this.updateCalendarBasedOnPersistedStateChange)
-        
 
         // If configured get the definition id to allow instance creation
         if(this.createDefinition) {
@@ -177,6 +176,7 @@
       // Hide calendar if we're in header only mode
       if(this.headerOnly) {
         this.calendarApi.el.querySelector(".fc-view-harness").classList.toggle("hidden")
+        document.querySelector(':root').style.setProperty("--fc-button-bg-color","#2c3e5099")
       }
 
       calendarApi.setOption('dayMaxEvents', this.dayMaxEvents === -1 ? false : this.dayMaxEvents)
