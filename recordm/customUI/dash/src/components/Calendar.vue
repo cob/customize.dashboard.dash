@@ -44,7 +44,7 @@
   }
 
   const onlyHeaderToolbar = {
-    left: 'today',
+    left: 'today toggleView',
     center: 'prev next',
     right: 'dayGridWeek,dayGridMonth'
   }
@@ -138,6 +138,23 @@
           start: '1970-01-01'
         },
         noEventsContent: {html: '<div>&nbsp;</div>'},
+        customButtons: {
+          toggleView : {
+                text: "Show",
+                click: function () {
+                  const calendarHarness = document.querySelector(".fc-view-harness")
+                  if(calendarHarness) { calendarHarness.classList.toggle("hidden") }
+                  const thisbutton = document.querySelector(".fc-toggleView-button")
+                  if(thisbutton) {
+                    if(thisbutton.textContent == "Show") {
+                      thisbutton.textContent = "Hide"
+                    } else {
+                      thisbutton.textContent = "Show"
+                    }
+                  }
+                }
+          }
+        }
       },
 
       // Need the debouncer to delay the change of the calendar option to make a day selectable because it's impossible
@@ -176,7 +193,7 @@
       // Hide calendar if we're in header only mode
       if(this.headerOnly) {
         this.calendarApi.el.querySelector(".fc-view-harness").classList.toggle("hidden")
-        document.querySelector(':root').style.setProperty("--fc-button-bg-color","#2c3e5099")
+        //document.querySelector(':root').style.setProperty("--fc-button-bg-color","#2c3e5099")
       }
 
       calendarApi.setOption('dayMaxEvents', this.dayMaxEvents === -1 ? false : this.dayMaxEvents)
@@ -501,7 +518,7 @@
             }
           } else if (this.headerOnly) {
             this.calendarOptions.headerToolbar = {...onlyHeaderToolbar}          
-            this.calendarOptions["customButtons"] = this.getCalendarListNavigationButtons(this);
+            this.calendarOptions["customButtons"] = {...this.getCalendarListNavigationButtons(this)}
             setupDatePicker();
             if(toolbarHeaderCenter && toolbarHeaderCenter.children.length > 0) {
               insertDatePicker(toolbarHeaderCenter.children[0]);
@@ -510,7 +527,7 @@
           } else {
             this.listYearSelected = false;
             if (this.datePickerElement) this.datePickerElement.remove();
-            this.calendarOptions["customButtons"] = undefined;
+            //this.calendarOptions["customButtons"] = undefined;
             this.calendarOptions.headerToolbar = defaultHeaderToolbar;
           }
         }
