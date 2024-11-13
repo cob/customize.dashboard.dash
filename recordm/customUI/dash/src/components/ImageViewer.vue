@@ -1,8 +1,8 @@
 <template>
-    <div class="flex">
+    <div ref="viewerContainer" class="flex">
 
         <div class="flex flex-col  w-7/12">
-            <div v-if="imgSrc" class="flex items-center justify-center pt-2">
+            <div class="flex items-center justify-between pt-2 pb-1">
                 <a
                     class="relative mr-0.5 bg-blue-600 hover:cursor-pointer text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400">
                     <!-- Hidden File Input -->
@@ -15,6 +15,7 @@
                     </label>
                 </a>
 
+                <div class="border-l border-stone-800 h-full"></div>
 
                 <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="zoom(0.2)"
@@ -27,23 +28,27 @@
                     <i class="fa-solid fa-magnifying-glass-minus"></i>
                 </a>
 
-                <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
+                <div class="border-l border-stone-800 h-full"></div>
+                
+                <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1 
                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="setDragMode('move')"
                     title="Ctrl + ?">
                     <i class="fa-solid fa-up-down-left-right"></i>
                 </a>
-                <a class="bg-blue-600 text-stone-200 font-light rounded-r-md border-2 text-sm border-stone-800 px-2 py-1
+                <a class="bg-blue-600 text-stone-200 font-light rounded-r-md border-2 text-sm border-stone-800 px-2 py-1 
                 mr-0.5 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button"
                     @click.prevent="setDragMode('crop')" title="Ctrl + ?">
                     <i class="fa-solid fa-crop-simple"></i>
                 </a>
 
-                <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
+                <div class="border-l border-stone-800 h-full"></div>
+
+                <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1 
                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="move(10, 0)"
                     title="Ctrl + Left">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
-                <a class="bg-blue-600 text-stone-200 font-light border-2 text-sm border-stone-800 px-2 py-1
+                <a class="bg-blue-600 text-stone-200 font-light border-2 text-sm border-stone-800 px-2 py-1 
                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="move(-10, 0)"
                     title="Ctrl + Right">
                     <i class="fa-solid fa-arrow-right"></i>
@@ -59,6 +64,8 @@
                     <i class="fa-solid fa-arrow-down"></i>
                 </a>
 
+                <div class="border-l border-stone-800 h-full"></div>
+
                 <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="rotate(90)"
                     title="Ctrl + ?">
@@ -70,11 +77,7 @@
                     <i class="fa-solid fa-rotate-left"></i>
                 </a>
 
-                <a class="bg-blue-600 text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 px-2 py-1
-                 mr-0.5 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="cropImage"
-                    title="Ctrl + ?">
-                    <i class="fa-solid fa-scissors"></i>
-                </a>
+                <div class="border-l border-stone-800 h-full"></div>
 
                 <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="enableCropper"
@@ -87,6 +90,8 @@
                     <i class="fa-solid fa-lock"></i>
                 </a>
 
+                <div class="border-l border-stone-800 h-full"></div>
+
                 <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="cropCrop"
                     title="Ctrl + ?">
@@ -98,16 +103,34 @@
                     <i class="fa-solid fa-xmark"></i>
                 </a>
 
-                <br />
+                <div class="border-l border-stone-800 h-full"></div>
 
-                <a class="bg-blue-600 text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 p-1
+                <a v-if="debugMode" class="bg-blue-600 text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 p-1
                  mr-0.5 hover:cursor-pointer" href="#" role="button" @click.prevent="reset" title="Ctrl + ?">
                     Reset
                 </a>
 
                 <a class="bg-blue-600 text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 px-2 py-1
-                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="" title="Ctrl + ?">
+                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="togglePreview"
+                    title="Ctrl + ?">
                     <i class="fa-solid fa-eye"></i>
+                </a>
+
+                <a class="bg-blue-600 text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 px-2 py-1
+                 mr-0.5 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="cropImage"
+                    title="Ctrl + ?">
+                    <i class="fa-solid fa-scissors"></i>
+                </a>
+
+                <a v-if="imgSrc" class="bg-blue-600 text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 px-2 py-1
+                 hover:bg-blue-400 hover:cursor-pointer flex items-center" href="#" role="button"
+                    @click.prevent="cropAndRecognize">
+                    OCR
+                </a>
+
+                <a v-if="imgSrc && qrReader" class="bg-blue-600 text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 p-1
+                 mr-0.5 hover:cursor-pointer" href="#" role="button" @click.prevent="cropAndReadCode">
+                    <i class="fa-solid fa-qrcode"></i>
                 </a>
 
 
@@ -140,27 +163,23 @@
                 <vue-cropper class="" v-if="imgSrc" ref="cropper" :src="imgSrc" preview=".preview" :viewMode="2"
                     :dragMode="'move'" :modal="true" :highlight="true" :autoCrop="false" @zoom="handleZoom"
                     @cropmove="handleMove" @ready="onCropperReady" :imgStyle="{ display: 'block', maxWidth: '100%' }" />
+
+                <div v-if="!imgSrc" class="text-center font-semibold text-xl pt-2 text-stone-500">
+                    <i class="fa-regular fa-image"></i> No image to display.
+                </div>
+            </div>
+
+            <hr v-if="showPreview" />
+
+            <div v-if="showPreview" class="w-full flex flex-col items-center">
+                <p class="font-bold">Preview</p>
+                <div class="preview overflow-hidden w-full h-40"></div>
             </div>
 
         </div>
 
 
         <div class="flex flex-col ml-2 w-6/12 items-stretch">
-            <div class="flex gap-x-2">
-                <button v-if="imgSrc" class="font-bold rounded-md border-2 border-stone-800 px-2
-            bg-blue-500 text-stone-200
-            py-1 mt-2 w-full" v-on:click="cropAndRecognize">
-                    Crop & Extract <i class="fa-solid fa-eye"></i>
-                </button>
-                <button v-if="imgSrc && qrReader" class="font-bold rounded-md border-2 border-stone-800 px-2
-            bg-indigo-500 text-stone-200
-            py-1 mt-2 w-full" v-on:click="cropAndReadCode">
-                    Crop & Read QR <i class="fa-solid fa-qrcode"></i>
-                </button>
-            </div>
-
-            <hr class="my-1" />
-
             <Waiting2 v-if="loadingOcr || loadingQr" />
             <div v-if="ocrText" class="grow">
                 <div class="font-bold">Extracted OCR</div>
@@ -175,13 +194,6 @@
             <div v-if="instanceUrl" class="w-full h-full">
                 <iframe :src=instanceUrl class="w-full h-full"></iframe>
             </div>
-
-
-            <div v-if="showPreview && imgSrc" class="w-full flex flex-col items-center">
-                <p class="font-bold">Preview</p>
-                <div class="preview overflow-hidden w-full h-40"></div>
-            </div>
-
 
             <div class="flex">
                 <div v-if="cropBoxData" class="w-6/12"> <span class="font-bold">Crop Box Data</span>
@@ -203,7 +215,6 @@
             </div>
         </div>
     </div>
-
 
 </template>
 
@@ -253,7 +264,6 @@ export default {
     computed: {
         options() { return this.component['ImageViewerCustomize'][0]; },
         classes() { return this.options['ImageViewerClasses'] || ""; },
-        definition() { return "" },
         outputVar() { return this.component["OutputVarImageViewer"] },
         imageUrl() { return this.component["ImageViewerURL"] },
     },
@@ -261,12 +271,30 @@ export default {
         component: Object
     },
     mounted() {
-        window.addEventListener("pocDocUpdate", this.handleEvent);
+        window.addEventListener("keydown", this.handleKeyDown)
+        // Hardcoded event for POC
+        window.addEventListener("pocDocUpdate", this.handleEvent);    
     },
     beforeDestroy() {
+        window.removeEventListener("keydown", this.handleKeyDown)
+        // Hardcoded event for POC
         window.removeEventListener("pocDocUpdate", this.handleEvent);
     },
     methods: {
+        togglePreview() {
+            this.showPreview = !this.showPreview
+            if (this.showPreview) {
+                this.$refs.cropper.replace(this.imgSrc)
+            }
+        },
+        handleKeyDown(event) {
+            // TODO: modify this to support whathver keybinds we want
+            if (event.ctrlKey && event.key === "+") {
+                this.zoom(0.2);
+            } else if (event.ctrlKey && event.key === "-") {
+                this.zoom(-0.2);
+            }
+        },
         handleEvent(event) {
             const key = event.detail.key;
             let storedObject = JSON.parse(localStorage.getItem(key));
