@@ -3923,7 +3923,7 @@
                         },
                         {
                             "id": null,
-                            "name": "InputVarInstanceViewer",
+                            "name": "InstanceIdInputVar",
                             "required": null,
                             "description": "Variable that will contain the instance id",
                             "configuration": {
