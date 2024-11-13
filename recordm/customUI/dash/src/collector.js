@@ -226,6 +226,12 @@ function parseDashboard(raw_dashboard) {
             }],
             "OutputVarImageViewer":"",
             "ImageViewerURL":""
+        },
+        "InstanceViewer" : {
+            "InstanceViewerCustomize": [{
+                "InstanceViewerClasses": ""
+            }],
+            "InstanceIdInputVar":""
         }
     }
 
