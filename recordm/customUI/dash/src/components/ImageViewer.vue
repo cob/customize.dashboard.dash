@@ -339,7 +339,7 @@ export default {
                 const ocrData = await worker.recognize(this.cropImg);
                 this.ocrText = ocrData.data.text
                 console.log("ocr data", this.ocrText, ocrData);
-
+                this.setOutputVar(this.ocrText)
             } catch (exce) {
                 console.log("Error running OCR: ", exce)
             } finally {
