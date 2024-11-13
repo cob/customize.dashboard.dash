@@ -242,10 +242,10 @@
             "configuration": {
                 "description": null,
                 "keys": {
-                    "InstanceDescription": {},
                     "Number": {
                         "args": {}
-                    }
+                    },
+                    "InstanceDescription": {}
                 },
                 "extensions": {}
             },
@@ -266,6 +266,12 @@
             "configuration": {
                 "description": null,
                 "keys": {
+                    "Help": {
+                        "args": [
+                            "Select the defaults to change"
+                        ]
+                    },
+                    "Multiple": {},
                     "Select": {
                         "args": [
                             "Classes",
@@ -278,12 +284,6 @@
                             "DragDrop"
                         ],
                         "default": null
-                    },
-                    "Multiple": {},
-                    "Help": {
-                        "args": [
-                            "Select the defaults to change"
-                        ]
                     }
                 },
                 "extensions": {}
@@ -589,17 +589,17 @@
             "configuration": {
                 "description": null,
                 "keys": {
-                    "InstanceDescription": {},
-                    "Link": {
-                        "args": {}
-                    },
                     "AutoTextJoin": {
                         "args": [
                             "'/recordm/index.html#/cob.custom-resource/'",
                             "id",
                             "'/dash'"
                         ]
-                    }
+                    },
+                    "Link": {
+                        "args": {}
+                    },
+                    "InstanceDescription": {}
                 },
                 "extensions": {}
             },
@@ -655,6 +655,12 @@
                     "configuration": {
                         "description": null,
                         "keys": {
+                            "Help": {
+                                "args": [
+                                    "Select the defaults to change"
+                                ]
+                            },
+                            "Multiple": {},
                             "Select": {
                                 "args": [
                                     "Classes",
@@ -662,12 +668,6 @@
                                     "IsModal"
                                 ],
                                 "default": null
-                            },
-                            "Multiple": {},
-                            "Help": {
-                                "args": [
-                                    "Select the defaults to change"
-                                ]
                             }
                         },
                         "extensions": {}
@@ -750,7 +750,7 @@
                     "id": null,
                     "name": "Component",
                     "required": null,
-                    "description": "$[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides,Hierarchy] $instanceDescription $style[singleColumn]",
+                    "description": "$[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides,Hierarchy,ImageViewer,InstanceViewer] $instanceDescription $style[singleColumn]",
                     "configuration": {
                         "description": null,
                         "keys": {
@@ -767,7 +767,9 @@
                                     "ModalActivator",
                                     "Markdown",
                                     "Slides",
-                                    "Hierarchy"
+                                    "Hierarchy",
+                                    "ImageViewer",
+                                    "InstanceViewer"
                                 ],
                                 "default": null
                             },
@@ -793,18 +795,18 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
                                             "Image"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -928,17 +930,17 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -1024,10 +1026,16 @@
                                     "id": null,
                                     "name": "TextCustomize",
                                     "required": null,
-                                    "description": "$[Classes,Icon,Attention,Visibility,Filter] $multiple $help[Select the defaults to change] ",
+                                    "description": "$[Classes,Icon,Attention,Visibility,Filter] $multiple $help[Select the defaults to change]",
                                     "configuration": {
                                         "description": null,
                                         "keys": {
+                                            "Help": {
+                                                "args": [
+                                                    "Select the defaults to change"
+                                                ]
+                                            },
+                                            "Multiple": {},
                                             "Select": {
                                                 "args": [
                                                     "Classes",
@@ -1037,12 +1045,6 @@
                                                     "Filter"
                                                 ],
                                                 "default": null
-                                            },
-                                            "Multiple": {},
-                                            "Help": {
-                                                "args": [
-                                                    "Select the defaults to change"
-                                                ]
                                             }
                                         },
                                         "extensions": {}
@@ -1206,11 +1208,13 @@
                                     "id": null,
                                     "name": "FilterValue",
                                     "required": null,
-                                    "description": "The value of the filter",
+                                    "description": "The value of the filter $text",
                                     "configuration": {
                                         "description": "The value of the filter",
                                         "keys": {},
-                                        "extensions": {}
+                                        "extensions": {
+                                            "$text": {}
+                                        }
                                     },
                                     "condition": "TextCustomize=Filter",
                                     "visibilityCondition": {
@@ -1244,18 +1248,18 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
                                             "InputVar"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -1370,6 +1374,12 @@
                                     "configuration": {
                                         "description": null,
                                         "keys": {
+                                            "Help": {
+                                                "args": [
+                                                    "Select the defaults to change"
+                                                ]
+                                            },
+                                            "Multiple": {},
                                             "Select": {
                                                 "args": [
                                                     "LineClasses",
@@ -1377,12 +1387,6 @@
                                                     "Behaviour"
                                                 ],
                                                 "default": null
-                                            },
-                                            "Multiple": {},
-                                            "Help": {
-                                                "args": [
-                                                    "Select the defaults to change"
-                                                ]
                                             }
                                         },
                                         "extensions": {}
@@ -1460,131 +1464,6 @@
                                             "restricted": false,
                                             "rootField": false,
                                             "defaultValue": "text-left text-stone-600 p-1"
-                                        },
-                                        {
-                                            "id": null,
-                                            "name": "LineBehaviour",
-                                            "required": null,
-                                            "description": " $[*Listing,Filter,Link] $help[Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard.]",
-                                            "configuration": {
-                                                "description": null,
-                                                "keys": {
-                                                    "Select": {
-                                                        "args": [
-                                                            "Listing",
-                                                            "Filter",
-                                                            "Link"
-                                                        ],
-                                                        "default": "Listing"
-                                                    },
-                                                    "Help": {
-                                                        "args": [
-                                                            "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                                                        ]
-                                                    }
-                                                },
-                                                "extensions": {}
-                                            },
-                                            "condition": "=Behaviour",
-                                            "visibilityCondition": {
-                                                "type": "Equal",
-                                                "value": [
-                                                    "Behaviour"
-                                                ],
-                                                "matcher": {
-                                                    "type": "Parent"
-                                                }
-                                            },
-                                            "duplicable": false,
-                                            "fields": [
-                                                {
-                                                    "id": null,
-                                                    "name": "FilterTotalVarName",
-                                                    "required": null,
-                                                    "description": "The filter variable name",
-                                                    "configuration": {
-                                                        "description": "The filter variable name",
-                                                        "keys": {},
-                                                        "extensions": {}
-                                                    },
-                                                    "condition": "=Filter",
-                                                    "visibilityCondition": {
-                                                        "type": "Equal",
-                                                        "value": [
-                                                            "Filter"
-                                                        ],
-                                                        "matcher": {
-                                                            "type": "Parent"
-                                                        }
-                                                    },
-                                                    "duplicable": false,
-                                                    "fields": [],
-                                                    "order": 50,
-                                                    "restricted": false,
-                                                    "rootField": false,
-                                                    "defaultValue": null
-                                                },
-                                                {
-                                                    "id": null,
-                                                    "name": "FilterTotalValue",
-                                                    "required": null,
-                                                    "description": " The value of the filter $text",
-                                                    "configuration": {
-                                                        "description": "The value of the filter",
-                                                        "keys": {},
-                                                        "extensions": {
-                                                            "$text": {}
-                                                        }
-                                                    },
-                                                    "condition": "=Filter",
-                                                    "visibilityCondition": {
-                                                        "type": "Equal",
-                                                        "value": [
-                                                            "Filter"
-                                                        ],
-                                                        "matcher": {
-                                                            "type": "Parent"
-                                                        }
-                                                    },
-                                                    "duplicable": false,
-                                                    "fields": [],
-                                                    "order": 51,
-                                                    "restricted": false,
-                                                    "rootField": false,
-                                                    "defaultValue": null
-                                                },
-                                                {
-                                                    "id": null,
-                                                    "name": "LineLink",
-                                                    "required": null,
-                                                    "description": null,
-                                                    "configuration": {
-                                                        "description": null,
-                                                        "keys": {},
-                                                        "extensions": {}
-                                                    },
-                                                    "condition": "=Link",
-                                                    "visibilityCondition": {
-                                                        "type": "Equal",
-                                                        "value": [
-                                                            "Link"
-                                                        ],
-                                                        "matcher": {
-                                                            "type": "Parent"
-                                                        }
-                                                    },
-                                                    "duplicable": false,
-                                                    "fields": [],
-                                                    "order": 52,
-                                                    "restricted": false,
-                                                    "rootField": false,
-                                                    "defaultValue": null
-                                                }
-                                            ],
-                                            "order": 49,
-                                            "restricted": false,
-                                            "rootField": false,
-                                            "defaultValue": "Listing"
                                         }
                                     ],
                                     "order": 46,
@@ -1628,6 +1507,12 @@
                                             "configuration": {
                                                 "description": null,
                                                 "keys": {
+                                                    "Help": {
+                                                        "args": [
+                                                            "Select the defaults to change"
+                                                        ]
+                                                    },
+                                                    "Multiple": {},
                                                     "Select": {
                                                         "args": [
                                                             "Classes",
@@ -1637,12 +1522,6 @@
                                                             "Unit"
                                                         ],
                                                         "default": null
-                                                    },
-                                                    "Multiple": {},
-                                                    "Help": {
-                                                        "args": [
-                                                            "Select the defaults to change"
-                                                        ]
                                                     }
                                                 },
                                                 "extensions": {}
@@ -1681,7 +1560,7 @@
                                                     },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 55,
+                                                    "order": 51,
                                                     "restricted": false,
                                                     "rootField": false,
                                                     "defaultValue": "Default Info text-sm text-stone-800"
@@ -1708,7 +1587,7 @@
                                                     },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 56,
+                                                    "order": 52,
                                                     "restricted": false,
                                                     "rootField": false,
                                                     "defaultValue": null
@@ -1735,7 +1614,7 @@
                                                     },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 57,
+                                                    "order": 53,
                                                     "restricted": false,
                                                     "rootField": false,
                                                     "defaultValue": null
@@ -1770,7 +1649,7 @@
                                                     },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 58,
+                                                    "order": 54,
                                                     "restricted": false,
                                                     "rootField": false,
                                                     "defaultValue": "fa-solid fa-circle pr-1 animate-pulse text-lg align-middle"
@@ -1797,13 +1676,13 @@
                                                     },
                                                     "duplicable": false,
                                                     "fields": [],
-                                                    "order": 59,
+                                                    "order": 55,
                                                     "restricted": false,
                                                     "rootField": false,
                                                     "defaultValue": null
                                                 }
                                             ],
-                                            "order": 54,
+                                            "order": 50,
                                             "restricted": false,
                                             "rootField": false,
                                             "defaultValue": null
@@ -1822,16 +1701,142 @@
                                             "visibilityCondition": null,
                                             "duplicable": true,
                                             "fields": [],
+                                            "order": 56,
+                                            "restricted": false,
+                                            "rootField": false,
+                                            "defaultValue": null
+                                        }
+                                    ],
+                                    "order": 49,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": "Label"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "LineBehaviour",
+                                    "required": null,
+                                    "description": "$[*Listing,Filter,Link] $help[Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard.]",
+                                    "configuration": {
+                                        "description": null,
+                                        "keys": {
+                                            "Help": {
+                                                "args": [
+                                                    "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                                                ]
+                                            },
+                                            "Select": {
+                                                "args": [
+                                                    "Listing",
+                                                    "Filter",
+                                                    "Link"
+                                                ],
+                                                "default": "Listing"
+                                            }
+                                        },
+                                        "extensions": {}
+                                    },
+                                    "condition": "LineCustomize=Behaviour",
+                                    "visibilityCondition": {
+                                        "type": "Equal",
+                                        "value": [
+                                            "Behaviour"
+                                        ],
+                                        "matcher": {
+                                            "type": "Name",
+                                            "name": "LineCustomize"
+                                        }
+                                    },
+                                    "duplicable": false,
+                                    "fields": [
+                                        {
+                                            "id": null,
+                                            "name": "FilterTotalValue",
+                                            "required": null,
+                                            "description": "The value of the filter $text",
+                                            "configuration": {
+                                                "description": "The value of the filter",
+                                                "keys": {},
+                                                "extensions": {
+                                                    "$text": {}
+                                                }
+                                            },
+                                            "condition": "=Filter",
+                                            "visibilityCondition": {
+                                                "type": "Equal",
+                                                "value": [
+                                                    "Filter"
+                                                ],
+                                                "matcher": {
+                                                    "type": "Parent"
+                                                }
+                                            },
+                                            "duplicable": false,
+                                            "fields": [],
+                                            "order": 58,
+                                            "restricted": false,
+                                            "rootField": false,
+                                            "defaultValue": null
+                                        },
+                                        {
+                                            "id": null,
+                                            "name": "FilterTotalVarName",
+                                            "required": null,
+                                            "description": "The filter variable name",
+                                            "configuration": {
+                                                "description": "The filter variable name",
+                                                "keys": {},
+                                                "extensions": {}
+                                            },
+                                            "condition": "=Filter",
+                                            "visibilityCondition": {
+                                                "type": "Equal",
+                                                "value": [
+                                                    "Filter"
+                                                ],
+                                                "matcher": {
+                                                    "type": "Parent"
+                                                }
+                                            },
+                                            "duplicable": false,
+                                            "fields": [],
+                                            "order": 59,
+                                            "restricted": false,
+                                            "rootField": false,
+                                            "defaultValue": null
+                                        },
+                                        {
+                                            "id": null,
+                                            "name": "LineLink",
+                                            "required": null,
+                                            "description": null,
+                                            "configuration": {
+                                                "description": null,
+                                                "keys": {},
+                                                "extensions": {}
+                                            },
+                                            "condition": "=Link",
+                                            "visibilityCondition": {
+                                                "type": "Equal",
+                                                "value": [
+                                                    "Link"
+                                                ],
+                                                "matcher": {
+                                                    "type": "Parent"
+                                                }
+                                            },
+                                            "duplicable": false,
+                                            "fields": [],
                                             "order": 60,
                                             "restricted": false,
                                             "rootField": false,
                                             "defaultValue": null
                                         }
                                     ],
-                                    "order": 53,
+                                    "order": 57,
                                     "restricted": false,
                                     "rootField": false,
-                                    "defaultValue": "Label"
+                                    "defaultValue": "Listing"
                                 }
                             ],
                             "order": 45,
@@ -1847,6 +1852,12 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
@@ -1856,12 +1867,6 @@
                                             "TimeField"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -2056,6 +2061,12 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
@@ -2064,12 +2075,6 @@
                                             "EscapeSpecialChars"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -2212,26 +2217,25 @@
                             "id": null,
                             "name": "CalendarCustomize",
                             "required": null,
-                            "description": "$[Classes,InputVar,OutputVar,Settings,CropMonth,HeaderOnly] $multiple $help[Select the defaults to change]",
+                            "description": "$[Classes,InputVar,OutputVar,Settings,CropMonth] $multiple $help[Select the defaults to change]",
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
                                             "InputVar",
                                             "OutputVar",
                                             "Settings",
-                                            "CropMonth",
-                                            "HeaderOnly"
+                                            "CropMonth"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -2345,17 +2349,17 @@
                                     "configuration": {
                                         "description": null,
                                         "keys": {
+                                            "Default": {
+                                                "args": {
+                                                    "value": "FALSE"
+                                                }
+                                            },
                                             "Select": {
                                                 "args": [
                                                     "TRUE",
                                                     "FALSE"
                                                 ],
                                                 "default": null
-                                            },
-                                            "Default": {
-                                                "args": {
-                                                    "value": "FALSE"
-                                                }
                                             }
                                         },
                                         "extensions": {}
@@ -2408,9 +2412,9 @@
                                     "id": null,
                                     "name": "EventViews",
                                     "required": null,
-                                    "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth, listYear",
+                                    "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth,listMonth",
                                     "configuration": {
-                                        "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth, listYear",
+                                        "description": "List of views to show (first is default). Example: dayGridWeek,dayGridMonth,listMonth",
                                         "keys": {},
                                         "extensions": {}
                                     },
@@ -2457,39 +2461,6 @@
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
-                                },
-                                {
-                                    "id": null,
-                                    "name": "OutputVarInterval",
-                                    "required": null,
-                                    "description": "$help[You can specify a name for a variable where the Calendar will insert two properties: startDate and endDate - respectively containing the current calendar's period's start and end dates in milliseconds]",
-                                    "configuration": {
-                                        "description": null,
-                                        "keys": {
-                                            "Help": {
-                                                "args": [
-                                                    "You can specify a name for a variable where the Calendar will insert two properties: startDate and endDate - respectively containing the current calendar's period's start and end dates in milliseconds"
-                                                ]
-                                            }
-                                        },
-                                        "extensions": {}
-                                    },
-                                    "condition": "=OutputVar",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "OutputVar"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
-                                    "duplicable": false,
-                                    "fields": [],
-                                    "order": 81,
-                                    "restricted": false,
-                                    "rootField": false,
-                                    "defaultValue": null
                                 }
                             ],
                             "order": 73,
@@ -2525,13 +2496,32 @@
                                     "id": null,
                                     "name": "Definition",
                                     "required": "mandatory",
-                                    "description": "$definition",
+                                    "description": "$definition ",
                                     "configuration": {
                                         "description": null,
                                         "keys": {},
                                         "extensions": {
                                             "$definition": {}
                                         }
+                                    },
+                                    "condition": null,
+                                    "visibilityCondition": null,
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 82,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": null
+                                },
+                                {
+                                    "id": null,
+                                    "name": "DateStartEventField",
+                                    "required": "mandatory",
+                                    "description": "Name of the definition date field that represents the beginning of the event ",
+                                    "configuration": {
+                                        "description": "Name of the definition date field that represents the beginning of the event",
+                                        "keys": {},
+                                        "extensions": {}
                                     },
                                     "condition": null,
                                     "visibilityCondition": null,
@@ -2544,11 +2534,11 @@
                                 },
                                 {
                                     "id": null,
-                                    "name": "DateStartEventField",
-                                    "required": "mandatory",
-                                    "description": "Name of the definition date field that represents the beginning of the event",
+                                    "name": "DateEndEventField",
+                                    "required": null,
+                                    "description": "Name of the definition date field that represents the end of the event ",
                                     "configuration": {
-                                        "description": "Name of the definition date field that represents the beginning of the event",
+                                        "description": "Name of the definition date field that represents the end of the event",
                                         "keys": {},
                                         "extensions": {}
                                     },
@@ -2563,13 +2553,15 @@
                                 },
                                 {
                                     "id": null,
-                                    "name": "DateEndEventField",
-                                    "required": null,
-                                    "description": "Name of the definition date field that represents the end of the event",
+                                    "name": "DescriptionEventField",
+                                    "required": "mandatory",
+                                    "description": "$text Name of the definition field to use as the event description ",
                                     "configuration": {
-                                        "description": "Name of the definition date field that represents the end of the event",
+                                        "description": "Name of the definition field to use as the event description",
                                         "keys": {},
-                                        "extensions": {}
+                                        "extensions": {
+                                            "$text": {}
+                                        }
                                     },
                                     "condition": null,
                                     "visibilityCondition": null,
@@ -2582,15 +2574,13 @@
                                 },
                                 {
                                     "id": null,
-                                    "name": "DescriptionEventField",
-                                    "required": "mandatory",
-                                    "description": "$text Name of the definition field to use as the event description",
+                                    "name": "StateEventField",
+                                    "required": null,
+                                    "description": "'Name of the field to calculate the color for the event. If not defined it will use always the same color for all events. If starts with \"#\" that hex color will be used. If starts with \"bg:\" then it'll fill the background of that day with the color.'",
                                     "configuration": {
-                                        "description": "Name of the definition field to use as the event description",
+                                        "description": "'Name of the field to calculate the color for the event. If not defined it will use always the same color for all events. If starts with \"#\" that hex color will be used. If starts with \"bg:\" then it'll fill the background of that day with the color.'",
                                         "keys": {},
-                                        "extensions": {
-                                            "$text": {}
-                                        }
+                                        "extensions": {}
                                     },
                                     "condition": null,
                                     "visibilityCondition": null,
@@ -2603,28 +2593,9 @@
                                 },
                                 {
                                     "id": null,
-                                    "name": "StateEventField",
-                                    "required": null,
-                                    "description": "Name of the field to calculate the color for the event. If not defined it will use always the same color for all events. If starts with \"#\" that hex color will be used. If starts with \"bg:\" then it'll fill the background of that day with the color",
-                                    "configuration": {
-                                        "description": "Name of the field to calculate the color for the event. If not defined it will use always the same color for all events. If starts with \"#\" that hex color will be used. If starts with \"bg:\" then it'll fill the background of that day with the color",
-                                        "keys": {},
-                                        "extensions": {}
-                                    },
-                                    "condition": null,
-                                    "visibilityCondition": null,
-                                    "duplicable": false,
-                                    "fields": [],
-                                    "order": 87,
-                                    "restricted": false,
-                                    "rootField": false,
-                                    "defaultValue": null
-                                },
-                                {
-                                    "id": null,
                                     "name": "EventsQuery",
                                     "required": null,
-                                    "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition",
+                                    "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition ",
                                     "configuration": {
                                         "description": "Define a query to restrict the results that will appear in the calendar. Defaults to all records in the definition",
                                         "keys": {},
@@ -2634,7 +2605,7 @@
                                     "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 88,
+                                    "order": 87,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
@@ -2655,7 +2626,7 @@
                                     "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 89,
+                                    "order": 88,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
@@ -2682,13 +2653,13 @@
                                     "visibilityCondition": null,
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 90,
+                                    "order": 89,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": "False"
                                 }
                             ],
-                            "order": 82,
+                            "order": 81,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -2701,6 +2672,12 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "InputVar",
@@ -2711,12 +2688,6 @@
                                             "CreateAndDelete"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -2755,7 +2726,7 @@
                                     },
                                     "duplicable": true,
                                     "fields": [],
-                                    "order": 92,
+                                    "order": 91,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
@@ -2782,13 +2753,13 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 93,
+                                    "order": 92,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 91,
+                            "order": 90,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -2815,7 +2786,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 94,
+                            "order": 93,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -2842,7 +2813,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 95,
+                            "order": 94,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -2875,7 +2846,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 96,
+                            "order": 95,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -2888,18 +2859,18 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "LinkClasses",
                                             "DiagramClasses"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -2940,7 +2911,7 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 98,
+                                    "order": 97,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
@@ -2969,13 +2940,13 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 99,
+                                    "order": 98,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 97,
+                            "order": 96,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -2988,17 +2959,17 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -3045,13 +3016,13 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 101,
+                                    "order": 100,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": "cursor-pointer text-blue-400 text-sm underline"
                                 }
                             ],
-                            "order": 100,
+                            "order": 99,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3078,7 +3049,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 102,
+                            "order": 101,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3105,7 +3076,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 103,
+                            "order": 102,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3118,18 +3089,18 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
                                             "Mode"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -3176,7 +3147,7 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 105,
+                                    "order": 104,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": "text-justify text-gray-700"
@@ -3213,13 +3184,13 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 106,
+                                    "order": 105,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": "Light"
                                 }
                             ],
-                            "order": 104,
+                            "order": 103,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3248,7 +3219,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 107,
+                            "order": 106,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3261,19 +3232,19 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "'EndOfContentTrigger'",
+                                            "to configure end of slides update. False if you want to ONLY SHOW contents"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
                                             "EndOfContentTrigger"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "'EndOfContentTrigger'",
-                                            "to configure end of slides update. False if you want to ONLY SHOW contents"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -3294,7 +3265,7 @@
                                     "id": null,
                                     "name": "SlidesClasses",
                                     "required": null,
-                                    "description": "$text  $default(text-justify text-gray-700) Default: text-justify text-gray-700",
+                                    "description": "$text $default(text-justify text-gray-700) Default: text-justify text-gray-700 ",
                                     "configuration": {
                                         "description": "Default: text-justify text-gray-700",
                                         "keys": {
@@ -3320,7 +3291,7 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 109,
+                                    "order": 108,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": "text-justify text-gray-700"
@@ -3354,14 +3325,14 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 110,
+                                    "order": 109,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
                                 },
                                 {
                                     "id": null,
-                                    "name": "Arg",
+                                    "name": "SlidesArg",
                                     "required": null,
                                     "description": null,
                                     "configuration": {
@@ -3379,15 +3350,15 @@
                                             "type": "Parent"
                                         }
                                     },
-                                    "duplicable": true,
+                                    "duplicable": false,
                                     "fields": [],
-                                    "order": 111,
+                                    "order": 110,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 108,
+                            "order": 107,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3416,7 +3387,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 112,
+                            "order": 111,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3429,17 +3400,17 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes"
                                         ],
                                         "default": null
-                                    },
-                                    "Multiple": {},
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
                                     }
                                 },
                                 "extensions": {}
@@ -3460,7 +3431,7 @@
                                     "id": null,
                                     "name": "HierarchyNodeClasses",
                                     "required": null,
-                                    "description": "$text $default(text-red-500 font-bold) Default: text-red-500 font-bold",
+                                    "description": " $text $default(text-red-500 font-bold) Default: text-red-500 font-bold",
                                     "configuration": {
                                         "description": "Default: text-red-500 font-bold",
                                         "keys": {
@@ -3486,7 +3457,7 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 114,
+                                    "order": 113,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": "text-red-500 font-bold"
@@ -3521,13 +3492,13 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 115,
+                                    "order": 114,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": "text-stone-600"
                                 }
                             ],
-                            "order": 113,
+                            "order": 112,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3554,7 +3525,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 116,
+                            "order": 115,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3581,7 +3552,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 117,
+                            "order": 116,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3608,7 +3579,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 118,
+                            "order": 117,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3635,7 +3606,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 119,
+                            "order": 118,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3662,7 +3633,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 120,
+                            "order": 119,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3689,7 +3660,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 121,
+                            "order": 120,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3716,7 +3687,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 122,
+                            "order": 121,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -3749,7 +3720,230 @@
                             },
                             "duplicable": false,
                             "fields": [],
+                            "order": 122,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "ImageViewerCustomize",
+                            "required": null,
+                            "description": "$[Classes] $multiple",
+                            "configuration": {
+                                "description": null,
+                                "keys": {
+                                    "Select": {
+                                        "args": [
+                                            "Classes"
+                                        ],
+                                        "default": null
+                                    },
+                                    "Multiple": {}
+                                },
+                                "extensions": {}
+                            },
+                            "condition": "=ImageViewer",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "ImageViewer"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [
+                                {
+                                    "id": null,
+                                    "name": "ImageViewerClasses",
+                                    "required": null,
+                                    "description": "$text $default(text-justify text-gray-700) Default: text-justify text-gray-700 ",
+                                    "configuration": {
+                                        "description": "Default: text-justify text-gray-700",
+                                        "keys": {
+                                            "Default": {
+                                                "args": {
+                                                    "value": "text-justify text-gray-700"
+                                                }
+                                            }
+                                        },
+                                        "extensions": {
+                                            "$text": {}
+                                        }
+                                    },
+                                    "condition": "=Classes",
+                                    "visibilityCondition": {
+                                        "type": "Equal",
+                                        "value": [
+                                            "Classes"
+                                        ],
+                                        "matcher": {
+                                            "type": "Parent"
+                                        }
+                                    },
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 124,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": "text-justify text-gray-700"
+                                }
+                            ],
                             "order": 123,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "OutputVarImageViewer",
+                            "required": null,
+                            "description": "Extracted text from OCR or QR Code",
+                            "configuration": {
+                                "description": "Extracted text from OCR or QR Code",
+                                "keys": {},
+                                "extensions": {}
+                            },
+                            "condition": "=ImageViewer",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "ImageViewer"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [],
+                            "order": 125,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "ImageViewerURL",
+                            "required": null,
+                            "description": "Image URL",
+                            "configuration": {
+                                "description": "Image URL",
+                                "keys": {},
+                                "extensions": {}
+                            },
+                            "condition": "=ImageViewer",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "ImageViewer"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [],
+                            "order": 126,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "InstanceViewerCustomize",
+                            "required": null,
+                            "description": "$[Classes] $multiple",
+                            "configuration": {
+                                "description": null,
+                                "keys": {
+                                    "Select": {
+                                        "args": [
+                                            "Classes"
+                                        ],
+                                        "default": null
+                                    },
+                                    "Multiple": {}
+                                },
+                                "extensions": {}
+                            },
+                            "condition": "=InstanceViewer",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "InstanceViewer"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [
+                                {
+                                    "id": null,
+                                    "name": "InstanceViewerClasses",
+                                    "required": null,
+                                    "description": "$text $default(text-justify text-gray-700) Default: text-justify text-gray-700 ",
+                                    "configuration": {
+                                        "description": "Default: text-justify text-gray-700",
+                                        "keys": {
+                                            "Default": {
+                                                "args": {
+                                                    "value": "text-justify text-gray-700"
+                                                }
+                                            }
+                                        },
+                                        "extensions": {
+                                            "$text": {}
+                                        }
+                                    },
+                                    "condition": "=Classes",
+                                    "visibilityCondition": {
+                                        "type": "Equal",
+                                        "value": [
+                                            "Classes"
+                                        ],
+                                        "matcher": {
+                                            "type": "Parent"
+                                        }
+                                    },
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 128,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": "text-justify text-gray-700"
+                                }
+                            ],
+                            "order": 127,
+                            "restricted": false,
+                            "rootField": false,
+                            "defaultValue": null
+                        },
+                        {
+                            "id": null,
+                            "name": "InputVarInstanceViewer",
+                            "required": null,
+                            "description": "Variable that will contain the instance id",
+                            "configuration": {
+                                "description": "Variable that will contain the instance id",
+                                "keys": {},
+                                "extensions": {}
+                            },
+                            "condition": "=InstanceViewer",
+                            "visibilityCondition": {
+                                "type": "Equal",
+                                "value": [
+                                    "InstanceViewer"
+                                ],
+                                "matcher": {
+                                    "type": "Parent"
+                                }
+                            },
+                            "duplicable": false,
+                            "fields": [],
+                            "order": 129,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
