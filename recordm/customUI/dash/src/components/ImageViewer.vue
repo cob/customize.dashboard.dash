@@ -27,23 +27,23 @@
                     <i class="fa-solid fa-magnifying-glass-minus"></i>
                 </a>
 
-                <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1 
+                <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="setDragMode('move')"
                     title="Ctrl + ?">
                     <i class="fa-solid fa-up-down-left-right"></i>
                 </a>
-                <a class="bg-blue-600 text-stone-200 font-light rounded-r-md border-2 text-sm border-stone-800 px-2 py-1 
+                <a class="bg-blue-600 text-stone-200 font-light rounded-r-md border-2 text-sm border-stone-800 px-2 py-1
                 mr-0.5 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button"
                     @click.prevent="setDragMode('crop')" title="Ctrl + ?">
                     <i class="fa-solid fa-crop-simple"></i>
                 </a>
 
-                <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1 
+                <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="move(10, 0)"
                     title="Ctrl + Left">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
-                <a class="bg-blue-600 text-stone-200 font-light border-2 text-sm border-stone-800 px-2 py-1 
+                <a class="bg-blue-600 text-stone-200 font-light border-2 text-sm border-stone-800 px-2 py-1
                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="move(-10, 0)"
                     title="Ctrl + Right">
                     <i class="fa-solid fa-arrow-right"></i>
@@ -147,12 +147,12 @@
 
         <div class="flex flex-col ml-2 w-6/12 items-stretch">
             <div class="flex gap-x-2">
-                <button v-if="imgSrc" class="font-bold rounded-md border-2 border-stone-800 px-2 
+                <button v-if="imgSrc" class="font-bold rounded-md border-2 border-stone-800 px-2
             bg-blue-500 text-stone-200
             py-1 mt-2 w-full" v-on:click="cropAndRecognize">
                     Crop & Extract <i class="fa-solid fa-eye"></i>
                 </button>
-                <button v-if="imgSrc && qrReader" class="font-bold rounded-md border-2 border-stone-800 px-2 
+                <button v-if="imgSrc && qrReader" class="font-bold rounded-md border-2 border-stone-800 px-2
             bg-indigo-500 text-stone-200
             py-1 mt-2 w-full" v-on:click="cropAndReadCode">
                     Crop & Read QR <i class="fa-solid fa-qrcode"></i>
@@ -251,11 +251,11 @@ export default {
         qrReader: false,
     }),
     computed: {
-        options() { return this.component['ViewerCustomize'][0]; },
-        classes() { return this.options['ViewerClasses'] || ""; },
+        options() { return this.component['ImageViewerCustomize'][0]; },
+        classes() { return this.options['ImageViewerClasses'] || ""; },
         definition() { return "" },
-        outputVar() { return this.component["OutputVarViewer"] },
-        imageUrl() { return this.component["ViewerImageURL"] },
+        outputVar() { return this.component["OutputVarImageViewer"] },
+        imageUrl() { return this.component["ImageViewerURL"] },
     },
     props: {
         component: Object
