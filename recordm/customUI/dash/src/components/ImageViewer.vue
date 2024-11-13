@@ -2,7 +2,7 @@
     <div ref="viewerContainer" class="flex">
 
         <div class="flex flex-col  w-full">
-            <div class="flex items-center justify-between pt-2 pb-1">
+            <div class="flex items-center justify-center pt-2 pb-1 gap-x-0.5">
                 <a
                     class="relative mr-0.5 bg-blue-600 hover:cursor-pointer text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400">
                     <!-- Hidden File Input -->
@@ -17,14 +17,14 @@
 
                 <div class="border-l border-stone-800 h-full"></div>
 
-                <div class="flex">
+                <div class="flex  mr-0.5">
                     <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="zoom(0.2)"
                         title="Ctrl + +">
                         <i class="fa-solid fa-magnifying-glass-plus"></i>
                     </a>
                     <a class="bg-blue-600 text-stone-200 font-light rounded-r-md border-2 text-sm border-stone-800 px-2 py-1
-                 mr-0.5 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="zoom(-0.2)"
+                hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="zoom(-0.2)"
                         title="Ctrl + -">
                         <i class="fa-solid fa-magnifying-glass-minus"></i>
                     </a>
@@ -32,14 +32,14 @@
 
                 <div class="border-l border-stone-800 h-full"></div>
 
-                <div class="flex">
+                <div class="flex  mr-0.5">
                     <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1 
                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="setDragMode('move')"
                         title="Ctrl + ?">
                         <i class="fa-solid fa-up-down-left-right"></i>
                     </a>
                     <a class="bg-blue-600 text-stone-200 font-light rounded-r-md border-2 text-sm border-stone-800 px-2 py-1 
-                mr-0.5 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button"
+                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button"
                         @click.prevent="setDragMode('crop')" title="Ctrl + ?">
                         <i class="fa-solid fa-crop-simple"></i>
                     </a>
@@ -47,7 +47,7 @@
 
                 <div class="border-l border-stone-800 h-full"></div>
 
-                <div class="flex">
+                <div class="flex mr-0.5">
                     <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1 
                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="move(10, 0)"
                         title="Ctrl + Left">
@@ -64,7 +64,7 @@
                         <i class="fa-solid fa-arrow-up"></i>
                     </a>
                     <a class="bg-blue-600 text-stone-200 font-light rounded-r-md border-2 text-sm border-stone-800 px-2 py-1
-                 mr-0.5 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="move(0, -10)"
+                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="move(0, -10)"
                         title="Ctrl + Down">
                         <i class="fa-solid fa-arrow-down"></i>
                     </a>
@@ -72,14 +72,14 @@
 
                 <div class="border-l border-stone-800 h-full"></div>
 
-                <div class="flex">
+                <div class="flex mr-0.5">
                     <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="rotate(90)"
                         title="Ctrl + ?">
                         <i class="fa-solid fa-rotate-right"></i>
                     </a>
                     <a class="bg-blue-600 text-stone-200 font-light rounded-r-md border-2 text-sm border-stone-800 px-2 py-1
-                 mr-0.5 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="rotate(-90)"
+                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="rotate(-90)"
                         title="Ctrl + ?">
                         <i class="fa-solid fa-rotate-left"></i>
                     </a>
@@ -87,6 +87,7 @@
 
                 <div class="border-l border-stone-800 h-full"></div>
 
+                <!--
                 <div class="flex">
                     <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="enableCropper"
@@ -99,17 +100,19 @@
                         <i class="fa-solid fa-lock"></i>
                     </a>
                 </div>
-
                 <div class="border-l border-stone-800 h-full"></div>
+                -->
 
-                <div class="flex">
+                
+
+                <div class="flex mr-0.5">
                     <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="cropCrop"
                         title="Ctrl + ?">
                         <i class="fa-solid fa-check"></i>
                     </a>
                     <a class="bg-blue-600 text-stone-200 font-light rounded-r-md border-2 text-sm border-stone-800 px-2 py-1
-                 mr-0.5 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="clearCrop"
+                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="clearCrop"
                         title="Ctrl + ?">
                         <i class="fa-solid fa-xmark"></i>
                     </a>
@@ -117,9 +120,9 @@
 
                 <div class="border-l border-stone-800 h-full"></div>
 
-                <div class="flex">
+                <div class="flex mr-0.5">
                     <a v-if="debugMode" class="bg-blue-600 text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 p-1
-                 mr-0.5 hover:cursor-pointer" href="#" role="button" @click.prevent="reset" title="Ctrl + ?">
+                 hover:cursor-pointer" href="#" role="button" @click.prevent="reset" title="Ctrl + ?">
                         Reset
                     </a>
 
@@ -130,7 +133,7 @@
                     </a>
 
                     <a v-if="imgSrc" class="bg-blue-600 text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 px-2 py-1
-                 mr-0.5 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="cropImage"
+                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="cropImage"
                         title="Ctrl + ?">
                         <i class="fa-solid fa-scissors"></i>
                     </a>
@@ -142,7 +145,7 @@
                     </a>
 
                     <a v-if="imgSrc && qrReader" class="bg-blue-600 text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 p-1
-                 mr-0.5 hover:cursor-pointer" href="#" role="button" @click.prevent="cropAndReadCode">
+                  hover:cursor-pointer" href="#" role="button" @click.prevent="cropAndReadCode">
                         <i class="fa-solid fa-qrcode"></i>
                     </a>
                 </div>
