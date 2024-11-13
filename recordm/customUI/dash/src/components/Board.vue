@@ -14,7 +14,7 @@
             <Slides    v-if="item['Component'] === 'Slides'"      :component="item" :key="i" 
             v-on="$listeners" @show-modal="d => $emit('show-modal', d)" :refreshFlag="refreshFlag"/>    
             <Hierarchy v-if="item['Component'] === 'Hierarchy'" :component="item" :key="i" :refreshFlag="refreshFlag"/>
-            <ImageViewer  v-if="item['Component'] === 'Viewer'"  :component="item" :key="i" />
+            <ImageViewer  v-if="item['Component'] === 'ImageViewer'"  :component="item" :key="i" />
         </template>
     </div>
 </template>
