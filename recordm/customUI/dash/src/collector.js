@@ -218,6 +218,13 @@ function parseDashboard(raw_dashboard) {
             "SortFieldName" : "",
             "DisplayFieldHierarchy" : "",
             "OutputVarHierarchy" : "",
+        },
+        "ImageViewer" : {
+            "ViewerCustomize": [{
+                "ViewerClasses": ""
+            }],
+            "OutputVarViewer":"",
+            "ViewerImageURL":""
         }
     }
 
