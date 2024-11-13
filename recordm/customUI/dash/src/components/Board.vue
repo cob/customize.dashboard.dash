@@ -14,6 +14,7 @@
             <Slides    v-if="item['Component'] === 'Slides'"      :component="item" :key="i" 
             v-on="$listeners" @show-modal="d => $emit('show-modal', d)" :refreshFlag="refreshFlag"/>    
             <Hierarchy v-if="item['Component'] === 'Hierarchy'" :component="item" :key="i" :refreshFlag="refreshFlag"/>
+            <ImageViewer  v-if="item['Component'] === 'Viewer'"  :component="item" :key="i" />
         </template>
     </div>
 </template>
@@ -30,10 +31,11 @@
     import Activator from './Activator.vue'
     import Markdown from './Markdown.vue'
     import Slides from './Slides.vue'
-import Hierarchy from './Hierarchy.vue'
+    import Hierarchy from './Hierarchy.vue'
+    import ImageViewer from './ImageViewer.vue'
 
     export default {
-        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown, Slides, Hierarchy },
+        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown, Slides, Hierarchy, ImageViewer },
         props: {
           board: Object,
           refreshFlag: Number
