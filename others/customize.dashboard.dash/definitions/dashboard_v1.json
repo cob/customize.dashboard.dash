@@ -1,7 +1,7 @@
 {
     "id": null,
     "name": "Dashboard_v1",
-    "description": "@COB v6.61.0",
+    "description": "@COB v6.58.0 w/ Viewer",
     "duplicable": null,
     "state": "enabled",
     "fieldDefinitions": [
@@ -3914,6 +3914,33 @@
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": "text-justify text-gray-700"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "NoInstanceClasses",
+                                    "required": null,
+                                    "description": "w-full text-center text-3xl text-gray-300 font-bold self-center",
+                                    "configuration": {
+                                        "description": "w-full text-center text-3xl text-gray-300 font-bold self-center",
+                                        "keys": {},
+                                        "extensions": {}
+                                    },
+                                    "condition": "=Classes",
+                                    "visibilityCondition": {
+                                        "type": "Equal",
+                                        "value": [
+                                            "Classes"
+                                        ],
+                                        "matcher": {
+                                            "type": "Parent"
+                                        }
+                                    },
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 129,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": null
                                 }
                             ],
                             "order": 127,
@@ -3924,7 +3951,7 @@
                         {
                             "id": null,
                             "name": "InstanceIdInputVar",
-                            "required": null,
+                            "required": "mandatory",
                             "description": "Variable that will contain the instance id",
                             "configuration": {
                                 "description": "Variable that will contain the instance id",
@@ -3943,7 +3970,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 129,
+                            "order": 130,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
