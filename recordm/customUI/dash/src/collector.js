@@ -229,7 +229,8 @@ function parseDashboard(raw_dashboard) {
         },
         "InstanceViewer" : {
             "InstanceViewerCustomize": [{
-                "InstanceViewerClasses": ""
+                "InstanceViewerClasses": "",
+                "NoInstanceClasses": ""
             }],
             "InstanceIdInputVar":""
         }

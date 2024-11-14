@@ -11,10 +11,11 @@
             <Calendar  v-if="item['Component'] === 'Calendar'"  :component="item" :key="i" />
             <List      v-if="item['Component'] === 'List'"      :component="item" :key="i" v-on="$listeners" :refreshFlag="refreshFlag"/>
             <Activator v-if="item['Component'] === 'ModalActivator'" :component="item" :key="i" @show-modal="d => $emit('show-modal', d)"/>
-            <Slides    v-if="item['Component'] === 'Slides'"      :component="item" :key="i" 
-            v-on="$listeners" @show-modal="d => $emit('show-modal', d)" :refreshFlag="refreshFlag"/>    
+            <Slides    v-if="item['Component'] === 'Slides'"      :component="item" :key="i"
+            v-on="$listeners" @show-modal="d => $emit('show-modal', d)" :refreshFlag="refreshFlag"/>
             <Hierarchy v-if="item['Component'] === 'Hierarchy'" :component="item" :key="i" :refreshFlag="refreshFlag"/>
             <ImageViewer  v-if="item['Component'] === 'ImageViewer'"  :component="item" :key="i" />
+          <InstanceViewer  v-if="item['Component'] === 'InstanceViewer'"  :component="item" :key="i" />
         </template>
     </div>
 </template>
@@ -33,9 +34,10 @@
     import Slides from './Slides.vue'
     import Hierarchy from './Hierarchy.vue'
     import ImageViewer from './ImageViewer.vue'
+    import InstanceViewer from "./InstanceViewer.vue";
 
     export default {
-        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown, Slides, Hierarchy, ImageViewer },
+        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown, Slides, Hierarchy, ImageViewer, InstanceViewer },
         props: {
           board: Object,
           refreshFlag: Number
