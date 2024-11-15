@@ -2,7 +2,7 @@
     <div ref="viewerContainer" class="flex">
 
         <div class="flex flex-col  w-full">
-            <div class="flex items-center justify-center pt-2 pb-1 gap-x-0.5">
+            <div class="flex items-center justify-center pt-2 pb-1 gap-x-0.5 flex-wrap">
                 <a
                     class="relative mr-0.5 bg-blue-600 hover:cursor-pointer text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400">
                     <!-- Hidden File Input -->
@@ -14,8 +14,6 @@
                         <i class="fas fa-folder-open"></i>
                     </label>
                 </a>
-
-                <div class="border-l border-stone-800 h-full"></div>
 
                 <div class="flex  mr-0.5">
                     <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
@@ -30,8 +28,6 @@
                     </a>
                 </div>
 
-                <div class="border-l border-stone-800 h-full"></div>
-
                 <div class="flex  mr-0.5">
                     <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1 
                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="setDragMode('move')"
@@ -39,13 +35,11 @@
                         <i class="fa-solid fa-up-down-left-right"></i>
                     </a>
                     <a class="bg-blue-600 text-stone-200 font-light rounded-r-md border-2 text-sm border-stone-800 px-2 py-1 
-                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button"
-                        @click.prevent="setDragMode('crop')" title="Ctrl + ?">
+                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="setDragMode('crop')"
+                        title="Ctrl + ?">
                         <i class="fa-solid fa-crop-simple"></i>
                     </a>
                 </div>
-
-                <div class="border-l border-stone-800 h-full"></div>
 
                 <div class="flex mr-0.5">
                     <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1 
@@ -70,8 +64,6 @@
                     </a>
                 </div>
 
-                <div class="border-l border-stone-800 h-full"></div>
-
                 <div class="flex mr-0.5">
                     <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
                  hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="rotate(90)"
@@ -84,8 +76,6 @@
                         <i class="fa-solid fa-rotate-left"></i>
                     </a>
                 </div>
-
-                <div class="border-l border-stone-800 h-full"></div>
 
                 <!--
                 <div class="flex">
@@ -103,7 +93,7 @@
                 <div class="border-l border-stone-800 h-full"></div>
                 -->
 
-                
+
 
                 <div class="flex mr-0.5">
                     <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
@@ -117,8 +107,6 @@
                         <i class="fa-solid fa-xmark"></i>
                     </a>
                 </div>
-
-                <div class="border-l border-stone-800 h-full"></div>
 
                 <div class="flex mr-0.5">
                     <a v-if="debugMode" class="bg-blue-600 text-stone-200 font-light rounded-md border-2 text-sm border-stone-800 p-1
@@ -462,7 +450,7 @@ export default {
                     setTimeout(() => {
                         let newCropboxData = cropper.getData(true);
                         if (Math.round(newCropboxData.x) !== Math.round(cb_left) || Math.round(newCropboxData.y) !== Math.round(cb_top)) {
-                            let newData = { x: cb_left, y: cb_top, width: cb_width, height: cb_height, rotate: cropperData.rotate }; //
+                            let newData = { x: cb_left, y: cb_top, width: cb_width, height: cb_height, rotate: cropperData.rotate };
                             cropper.initCrop();
                             this.currCropData = newData;
                             this.setData(newData);
@@ -499,53 +487,80 @@ export default {
 
             return { imgLeft, imgTop, imgRight, imgBottom }
         },
-        rotatePoint(x, y, cx, cy, angle) {
-            const radians = angle * (Math.PI / 180); // Convert angle to radians
-            const cos = Math.cos(radians);
-            const sin = Math.sin(radians);
-
-            // Apply rotation formula
-            const xNew = cx + (x - cx) * cos - (y - cy) * sin;
-            const yNew = cy + (x - cx) * sin + (y - cy) * cos;
-
-            return { x: xNew, y: yNew };
-        },
         rotate(deg) {
             const cropper = this.$refs.cropper
             if (!cropper) return;
+
+            let croppedData = cropper.getData(true) // get prev values
+            let imageData = cropper.getImageData()
+            let totalAngle = croppedData.rotate + deg
+            let normalizedAngle = totalAngle % 360;
+            if (normalizedAngle < 0) {
+                normalizedAngle += 360;
+            }
+
+            const isRotationPositive = deg > 0
+
+            // Flip width and height 
+            let rotatedWidth = croppedData.height
+            let rotatedHeight = croppedData.width
+
+            let imgWidth = (croppedData.rotate % 180 == 0) ? imageData.naturalWidth : imageData.naturalHeight
+            let imgHeight = (croppedData.rotate % 180 == 0) ? imageData.naturalHeight : imageData.naturalWidth
+
+            // These are OFFSETS FROM THE CORRESPONDING BORDERS!!!!!!!!!!!
+            let left = croppedData.x
+            let top = croppedData.y
+            let right = imgWidth - left - croppedData.width
+            let bottom = imgHeight - top - croppedData.height
+
+            let newLeft, newTop
+            if (normalizedAngle == 0) {
+                if (isRotationPositive) {
+                    newLeft = bottom
+                    newTop = left
+                } else {
+                    newLeft = top
+                    newTop = right
+                }
+            }
+            if (normalizedAngle == 90) {
+                if (isRotationPositive) {
+                    newLeft = bottom
+                    newTop = left
+                } else {
+                    newLeft = top
+                    newTop = right
+                }
+            }
+            if (normalizedAngle == 180) {
+                if (isRotationPositive) {
+                    newLeft = bottom
+                    newTop = left
+                } else {
+                    newLeft = bottom
+                    newTop = right
+                }
+            }
+            if (normalizedAngle == 270) {
+                if (isRotationPositive) {
+                    newLeft = bottom
+                    newTop = left
+                } else {
+                    newLeft = top
+                    newTop = right
+                }
+            }
+
+            let newX = newLeft
+            let newY = newTop
+
+            this.currCropData = { x: newX, y: newY, width: rotatedWidth, height: rotatedHeight, rotate: totalAngle }
             cropper.rotate(deg);
-
-            /*
-            let { x, y, width, height, rotate } = cropper.getData(true) // get prev values
-            let totalAngle = rotate + deg
-
-            const canvasData = cropper.getCanvasData()
-            let cw = canvasData.naturalWidth
-            let ch = canvasData.naturalHeight
-            let cx = cw / 2
-            let cy = ch / 2
-            console.log("centers", cw, ch, cx, cy)
-
-            let rotatedXY = this.rotatePoint(x, y, cx, cy, deg)
-
-            let newX = rotatedXY.x
-            let newY = rotatedXY.y
-
-            // Adjust the width and height based on 90-degree rotations
-            const rotatedWidth = totalAngle % 180 === 0 ? width : height;
-            const rotatedHeight = totalAngle % 180 === 0 ? height : width;
-
-            console.log("Rotated X,Y", rotatedXY)
-            console.log("Rotated Width Height", rotatedWidth, rotatedHeight)
-
             setTimeout(() => {
-                this.currCropData = { newX, newY, rotatedWidth, rotatedHeight, totalAngle }
-                cropper.initCrop();
                 this.setData(this.currCropData);
-            }, 1000)
-            */
+            }, 20)
         },
-
         // THIS WILL BE REWORKED AND REVIEWED. IGNORE FOR NOW.
         highlightBox(fieldIdx) {
             // Reset cropper state everything
@@ -666,6 +681,9 @@ export default {
         },
 
         // FOR DEBUG
+        getCanvasData() {
+            this.canvasData = JSON.stringify(this.$refs.cropper.getCanvasData())
+        },
         getCropBoxData() {
             this.cropBoxData = JSON.stringify(this.$refs.cropper.getCropBoxData(), null, 4);
         },
@@ -679,6 +697,7 @@ export default {
         setDataText() {
             if (!this.viewData) return;
             this.$refs.cropper.setData(JSON.parse(this.viewData));
+            this.currCropData = JSON.parse(this.viewData)
         },
 
         // OTHER
