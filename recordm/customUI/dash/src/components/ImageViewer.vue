@@ -488,78 +488,65 @@ export default {
             return { imgLeft, imgTop, imgRight, imgBottom }
         },
         rotate(deg) {
-            const cropper = this.$refs.cropper
+            const cropper = this.$refs.cropper;
             if (!cropper) return;
+            const croppedData = cropper.getData(true);  // Get previous values
+            console.log("Rotate CB", croppedData)
 
-            let croppedData = cropper.getData(true) // get prev values
-            let imageData = cropper.getImageData()
-            let totalAngle = croppedData.rotate + deg
-            let normalizedAngle = totalAngle % 360;
-            if (normalizedAngle < 0) {
-                normalizedAngle += 360;
-            }
+            const imageData = cropper.getImageData();
+            const totalAngle = croppedData.rotate + deg;
+            const normalizedAngle = (totalAngle % 360 + 360) % 360; // Ensure normalized angle is positive
 
-            const isRotationPositive = deg > 0
+            const isRotationPositive = deg > 0;
 
-            // Flip width and height 
-            let rotatedWidth = croppedData.height
-            let rotatedHeight = croppedData.width
+            // Flip width and height
+            const rotatedWidth = croppedData.height;
+            const rotatedHeight = croppedData.width;
 
-            let imgWidth = (croppedData.rotate % 180 == 0) ? imageData.naturalWidth : imageData.naturalHeight
-            let imgHeight = (croppedData.rotate % 180 == 0) ? imageData.naturalHeight : imageData.naturalWidth
+            const imgWidth = croppedData.rotate % 180 === 0 ? imageData.naturalWidth : imageData.naturalHeight;
+            const imgHeight = croppedData.rotate % 180 === 0 ? imageData.naturalHeight : imageData.naturalWidth;
 
-            // These are OFFSETS FROM THE CORRESPONDING BORDERS!!!!!!!!!!!
-            let left = croppedData.x
-            let top = croppedData.y
-            let right = imgWidth - left - croppedData.width
-            let bottom = imgHeight - top - croppedData.height
+            // Calculate offsets from borders
+            const left = croppedData.x;
+            const top = croppedData.y;
+            const right = imgWidth - left - croppedData.width;
+            const bottom = imgHeight - top - croppedData.height;
 
-            let newLeft, newTop
-            if (normalizedAngle == 0) {
-                if (isRotationPositive) {
-                    newLeft = bottom
-                    newTop = left
-                } else {
-                    newLeft = top
-                    newTop = right
+            // Compute new offsets based on angle
+            const computeNewOffsets = (angle, isPositive) => {
+                const horizontalOffset = isPositive ? bottom : top;
+                const verticalOffset = isPositive ? left : right;
+
+                switch (angle) {
+                    case 0:
+                    case 90:
+                    case 180:
+                    case 270:
+                        return { newLeft: horizontalOffset, newTop: verticalOffset };
+                    default:
+                        return { newLeft: left, newTop: top }; // Default case (unlikely to be hit)
                 }
-            }
-            if (normalizedAngle == 90) {
-                if (isRotationPositive) {
-                    newLeft = bottom
-                    newTop = left
-                } else {
-                    newLeft = top
-                    newTop = right
-                }
-            }
-            if (normalizedAngle == 180) {
-                if (isRotationPositive) {
-                    newLeft = bottom
-                    newTop = left
-                } else {
-                    newLeft = bottom
-                    newTop = right
-                }
-            }
-            if (normalizedAngle == 270) {
-                if (isRotationPositive) {
-                    newLeft = bottom
-                    newTop = left
-                } else {
-                    newLeft = top
-                    newTop = right
-                }
-            }
+            };
 
-            let newX = newLeft
-            let newY = newTop
+            const { newLeft, newTop } = computeNewOffsets(normalizedAngle, isRotationPositive);
+            let newCropperData = {
+                x: newLeft,
+                y: newTop,
+                width: rotatedWidth,
+                height: rotatedHeight,
+                rotate: totalAngle
+            };
 
-            this.currCropData = { x: newX, y: newY, width: rotatedWidth, height: rotatedHeight, rotate: totalAngle }
             cropper.rotate(deg);
-            setTimeout(() => {
-                this.setData(this.currCropData);
-            }, 20)
+            this.currCropData = newCropperData;
+
+            if (this.checkBounds(newCropperData)) {
+                setTimeout(() => {
+                    this.setData(newCropperData);
+                }, 20);
+            } else {
+                cropper.clear();
+            }
         },
         // THIS WILL BE REWORKED AND REVIEWED. IGNORE FOR NOW.
         highlightBox(fieldIdx) {
