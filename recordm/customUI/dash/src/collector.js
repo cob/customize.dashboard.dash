@@ -57,7 +57,7 @@ function parseDashboard(raw_dashboard) {
             "Image": "",
             "GroupAccess": [{}],
             "Variables": [{
-                "VarName" : "", 
+                "VarName" : "",
                 "Initial Value" : "",
             }],
             "Context": "",
@@ -218,6 +218,20 @@ function parseDashboard(raw_dashboard) {
             "SortFieldName" : "",
             "DisplayFieldHierarchy" : "",
             "OutputVarHierarchy" : "",
+        },
+        "ImageViewer" : {
+            "ImageViewerCustomize": [{
+                "ImageViewerClasses": ""
+            }],
+            "OutputVarImageViewer":"",
+            "ImageViewerURL":""
+        },
+        "InstanceViewer" : {
+            "InstanceViewerCustomize": [{
+                "InstanceViewerClasses": "",
+                "NoInstanceClasses": ""
+            }],
+            "InstanceIdInputVar":""
         }
     }
 
