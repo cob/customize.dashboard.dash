@@ -490,8 +490,7 @@ export default {
         rotate(deg) {
             const cropper = this.$refs.cropper;
             if (!cropper) return;
-            const croppedData = cropper.getData(true);  // Get previous values
-            console.log("Rotate CB", croppedData)
+            const croppedData = this.currCropData || cropper.getData(true)  // Get previous values
 
             const imageData = cropper.getImageData();
             const totalAngle = croppedData.rotate + deg;
@@ -542,6 +541,7 @@ export default {
 
             if (this.checkBounds(newCropperData)) {
                 setTimeout(() => {
+                    cropper.initCrop()
                     this.setData(newCropperData);
                 }, 20);
             } else {
