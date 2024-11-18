@@ -151,6 +151,16 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
     }
     return  result 
   });
+  Handlebars.registerHelper("format", function(type, val, options={}) { 
+    let opts = options    
+    if(typeof(options) === 'string') {
+      opts = JSON.parse(options.replaceAll('\\', ''))
+    }
+
+    if(type == "number") {
+      return Intl.NumberFormat(opts.locale ? opts.locale : 'pt-PT', { style: "decimal",  useGrouping: true}).format(val)
+    }
+  })
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
   Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); });
   Handlebars.registerHelper('or', function(arg1, arg2) { return (arg1 || arg2); });
