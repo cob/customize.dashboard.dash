@@ -3,9 +3,9 @@
     <div v-if="!instanceId"
          :class="noInstanceClasses">No instance selected</div>
 
-    <div v-if="instanceId" ref="instanceViewer"
-         class="cob-app instance-viewer w-full overflow-auto"
-         :class="instanceClasses"></div>
+    <div ref="instanceViewer"
+         class="cob-app instance-viewer  overflow-auto"
+         :class="[...instanceClasses, {'w-full':instanceViewer}]"></div>
   </div>
 </template>
 
@@ -20,6 +20,9 @@ export default {
   mounted() {
     this.showInstance(this.instanceId);
   },
+  beforeDestroy() {
+    if(this.instanceViewer) { this.instanceViewer.destroy(); }
+  },
   watch: {
     instanceId: function(newId) {
       this.showInstance(newId);
@@ -33,20 +36,19 @@ export default {
     noInstanceClasses() { return this.options["NoInstanceClasses"] || "w-full text-center text-3xl text-gray-300 font-bold self-center"; },
 
     inputVar() { return this.component["InstanceIdInputVar"];},
-    instanceId() {return this.vars[this.inputVar];},
+    instanceId() {return this.inputVar ? this.vars[this.inputVar] : undefined;},
   },
   methods: {
     showInstance(id) {
 
       if (!id) {
-        this.instanceViewer.destroy();
+        if(this.instanceViewer) { this.instanceViewer.destroy(); }
         this.instanceViewer = null;
         return
       }
 
       if (this.instanceViewer) {
         this.instanceViewer.showInstance(id);
-
       } else {
         this.instanceViewer = new cob.components.InstanceViewer(cob.app, $(this.$refs.instanceViewer), id, {});
       }
