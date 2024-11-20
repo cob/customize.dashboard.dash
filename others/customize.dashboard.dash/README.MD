@@ -2,6 +2,18 @@
 
 ### Definition Upgrades:
 
+#### 6.63
+- Added missing "ListClasses" to customize list component
+
+```
+ALTERED
+* Board > Component > [=List] ListCustomize : $[InputVar,SetDefaultView,ShowViews,ShowActions,ShowImport,CreateAndDelete] $multiple $help[Select the defaults to change] -> $[InputVar,SetDefaultView,ShowViews,ShowActions,ShowImport,CreateAndDelete,Classes] $multiple $help[Select the defaults to change]
+
+NEW 
+* Board > Component > [=List] ListCustomize > [=Classes] ListClasses : $text Default: <empty>
+```
+
+
 #### 6.61.0
 - Added new `HeaderOnly` option to `CalendarCustomize`. This option will hide the calendar itself, and only the show the time navgiation bar, with arrow keys and date pickers - it will maintain the "view types" for the calendar, which can be used to set time intervals (week, month, etc).
 

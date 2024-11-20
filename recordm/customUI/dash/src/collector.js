@@ -200,7 +200,8 @@ function parseDashboard(raw_dashboard) {
         "List": {
             "ListCustomize": [{
                 "InputVarList": [{}],
-                "DefaultView": ""
+                "DefaultView": "",
+                "ListClasses" : ""
             }],
             "ListDefinition": "",
             "ListQuery": ""

@@ -1,6 +1,7 @@
 <template>
-    <section ref="searchContainer" class="cob-app search-definition content"></section>
+  <section ref="searchContainer" :class="`cob-app search-definition content ${classes}`"</section>
 </template>
+
 
 <script>
     export default {
@@ -29,7 +30,7 @@
             },
             definition()      { return this.component['ListDefinition']      || "" },
             query()           { return this.component['ListQuery']      || "" },
-            classes()         { return this.options['ListClasses'] || "text-center font-bold pb-2 " },
+            classes()         { return this.options['ListClasses'] || "" },
             inputs()          { return this.options['InputVarList'].map(v => v['InputVarList']) },
             inputFilter()     { return this.inputs.filter(v => this.component.vars[v]).map(v => this.component.vars[v]).join(" ")},
             queryWithFilter() { return (this.query + " " + this.inputFilter.trim()) },
