@@ -1,5 +1,5 @@
 <template>
-  <section ref="searchContainer" :class="`cob-app search-definition content ${classes}`"</section>
+  <section ref="searchContainer" :class="`cob-app search-definition content ${classes}`"></section>
 </template>
 
 
