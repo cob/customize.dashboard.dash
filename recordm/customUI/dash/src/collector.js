@@ -238,6 +238,7 @@ function parseDashboard(raw_dashboard) {
     }
 
     for( let board of dash["Board"]) {
+        board["Dash"] = { id: dash.instanceId, name: dash.Name }
         let componentsList = clone([])
         for( let component of board["Component"]) {
             if(component["Component"] == null) continue

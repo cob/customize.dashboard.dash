@@ -46,7 +46,26 @@
             options()    { return this.board['BoardCustomize'][0] },
             components() { return this.board['Component'] },
             classes()    { return this.options['BoardClasses'] || "col-span-12 md:col-span-4 rounded-md border border-gray-300 bg-white bg-opacity-70 p-4 m-1" },
-            image()      { return this.options['Image'] ? "background-image: url(" + this.options['Image'] +  ");" : "" }
+            image()      { return this.options['Image'] ? "background-image: url(" + this.options['Image'] +  ");" : "" },
+            customizations() { return window.CoBDashCustomizations.getDashCustomization(this.board.Dash.name, this.board.Board) }
+        },
+        mounted() {
+            this.customizations.forEach(c => {
+                try {
+                    c.onMounted()
+                } catch(e) {
+                    console.error("Error running customization On Mounted")
+                }
+            });
+        },
+        updated() {
+            this.customizations.forEach(c => {
+                try {
+                    c.onUpdated()
+                } catch(e) {
+                    console.error("Error running customization On Update")
+                }
+            });
         }
     }
 </script>
