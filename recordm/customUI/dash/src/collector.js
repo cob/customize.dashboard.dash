@@ -232,7 +232,8 @@ function parseDashboard(raw_dashboard) {
                 "InstanceViewerClasses": "",
                 "NoInstanceClasses": ""
             }],
-            "InstanceIdInputVar":""
+            "InstanceViewerInstanceId":"",
+            "InstanceViewerOutputVar":""
         }
     }
 
