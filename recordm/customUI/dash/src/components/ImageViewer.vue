@@ -165,9 +165,10 @@
             </div>
 
             <div class="img-cropper block">
-                <vue-cropper class="" v-if="imgSrc" ref="cropper" :src="imgSrc" preview=".preview" :viewMode="2"
-                    :dragMode="'move'" :modal="true" :highlight="true" :autoCrop="false" @zoom="handleZoom"
-                    @cropmove="handleMove" @ready="onCropperReady" :imgStyle="{ display: 'block', maxWidth: '100%' }" />
+                <vue-cropper class="max-h-[70vh]" v-if="imgSrc" ref="cropper" :src="imgSrc" preview=".preview"
+                    :viewMode="2" :dragMode="'move'" :modal="true" :highlight="true" :autoCrop="false"
+                    @zoom="handleZoom" @cropmove="handleMove" @ready="onCropperReady"
+                    :imgStyle="{ display: 'block', maxWidth: '100%' }" />
 
                 <div v-if="!imgSrc" class="text-center font-semibold text-xl pt-2 text-stone-500">
                     <i class="fa-regular fa-image"></i> No image to display.
@@ -266,6 +267,14 @@ export default {
         outputVar() { return this.component["OutputVarImageViewer"] },
         imageUrl() { return this.component["ImageViewerURL"] },
     },
+    watch: {
+        imageUrl: function (newUrl) {
+            this.imgSrc = newUrl
+            if (this.$refs.cropper) {
+                this.$refs.cropper.replace(newUrl);
+            }
+        },
+    },
     props: {
         component: Object
     },
@@ -299,8 +308,6 @@ export default {
             let storedObject = JSON.parse(localStorage.getItem(key));
             console.log("Retrieved object in Vue component:", storedObject);
             this.imgSrc = storedObject.img
-            this.instanceId = storedObject.id
-            this.instanceUrl = `/recordm/index.html?naked=true#/instance/${storedObject.id}`
             if (this.$refs.cropper) {
                 this.imgSrc = storedObject.img
                 this.$refs.cropper.replace(storedObject.img);
