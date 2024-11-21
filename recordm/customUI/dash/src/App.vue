@@ -162,6 +162,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
     }
   })
   Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
+  Handlebars.registerHelper('startsWith', function (arg1, arg2) { return (arg1.startsWith(arg2)); });
   Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); });
   Handlebars.registerHelper('or', function(arg1, arg2) { return (arg1 || arg2); });
   Handlebars.registerHelper('not', function(arg) {return (!arg); } )
