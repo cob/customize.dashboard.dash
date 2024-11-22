@@ -45,7 +45,7 @@ export default {
     outputVar() { return this.component["InstanceViewerOutputVar"] || '' }
   },
   methods: {
-    showInstance(id) {
+    async showInstance(id) {
 
       if (!id) {
         if (this.instanceViewer) { this.instanceViewer.destroy(); }
@@ -54,9 +54,10 @@ export default {
       }
 
       if (this.instanceViewer) {
-        this.instanceViewer.showInstance(id);
+        await this.instanceViewer.showInstance(id);
       } else {
         this.instanceViewer = new cob.components.InstanceViewer(cob.app, $(this.$refs.instanceViewer), id, {});
+        await this.instanceViewer.showInstance(id)
       }
 
       // Set instanceId in output var
