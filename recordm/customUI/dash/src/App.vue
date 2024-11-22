@@ -881,7 +881,7 @@
               }
               catch (e) {
                 if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: Exception processing dash. e=", e)
-                reportError("Error: error building dashboard " + newDashEs.id + " (" + e + ")")
+                reportError("Error: error building dashboard " + newDashEs.id)
               }
             })
             .catch((e) => {
