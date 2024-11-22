@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full h-full">
+  <div class="flex w-full h-full max-h-[70vh]">
     <div v-if="!instanceId" :class="noInstanceClasses">No instance selected</div>
 
     <div ref="instanceViewer" class="cob-app instance-viewer  overflow-auto"
