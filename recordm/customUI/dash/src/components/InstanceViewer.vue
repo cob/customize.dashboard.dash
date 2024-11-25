@@ -9,6 +9,8 @@
 
 <script>
 import ComponentStatePersistence from "@/model/ComponentStatePersistence";
+import { EventBus } from "../event-bus"
+const BUS_FIELD_FOCUS = "field-focus"
 
 export default {
   props: {
@@ -16,8 +18,10 @@ export default {
   },
   data: () => ({
     instanceViewer: null,
+    fieldDetails: null,
+    evenHandlers: {}
   }),
-  mounted() {
+  async mounted() {
     // Temporary for egv poc
     window.addEventListener("pocDocUpdate", this.handleEvent);
 
@@ -41,10 +45,49 @@ export default {
     instanceClasses() { return this.options["InstanceViewerClasses"] || ""; },
     noInstanceClasses() { return this.options["NoInstanceClasses"] || "w-full text-center text-3xl text-gray-300 font-bold self-center"; },
 
-    instanceId() { return this.component["InstanceViewerInstanceId"]; },
+    instanceId() { return this.component["InstanceViewerInstanceId"] },
     outputVar() { return this.component["InstanceViewerOutputVar"] || '' }
   },
   methods: {
+    // Turn this into a component option: SendFocusEvents
+    setupFocusListeners() {
+      if (this.instanceViewer) {
+        const presenter = this.instanceViewer.getInstanceP()
+        // get target groups
+        let fps = presenter.findFieldPs(fp => fp.field.fieldDefinition.name.includes("Parte Delantera") ||
+          fp.field.fieldDefinition.name.includes("Parte Trasera")
+        )
+
+        // Iterate groups and their child fields - the ones we want to "fill" with ocr
+        fps.forEach(fp_group => {
+          fp_group.getChildPs().forEach(fp => {
+            const fieldContainer = fp.content()[0]
+            const fieldInput = fieldContainer.querySelectorAll("textarea, input") // get textareas and inputs
+            fieldInput.forEach(input => {
+              const fieldDetails = { instancePresenter: presenter, field: fp };
+              //this.fieldDetails = { instancePresenter: presenter, field: fp }
+              if (!input.dataset.focusListenerAdded) {
+                const focusHandler = (ev) => {
+                  console.log("rv focus event");
+                  EventBus.$emit(BUS_FIELD_FOCUS, { detail: fieldDetails });
+                };
+
+                input.addEventListener("focus", this.focusHandler);
+                //input.addEventListener("focus", this.handleFocusListener);
+                input.dataset.focusListenerAdded = "true"; // Mark as listener added
+                
+                // Store the handler for later removal
+                input.dataset.focusHandler = focusHandler;
+              }
+            })
+          })
+        });
+      }
+    },
+    handleFocusListener(ev) {
+      console.log("rv focus event ")
+      EventBus.$emit(BUS_FIELD_FOCUS, { detail: this.fieldDetails })
+    },
     async showInstance(id) {
 
       if (!id) {
@@ -55,9 +98,11 @@ export default {
 
       if (this.instanceViewer) {
         await this.instanceViewer.showInstance(id);
+        this.setupFocusListeners()
       } else {
-        this.instanceViewer = new cob.components.InstanceViewer(cob.app, $(this.$refs.instanceViewer), id, {});
+        this.instanceViewer = new cob.components.InstanceViewer(cob.app, $(this.$refs.instanceViewer), {});
         await this.instanceViewer.showInstance(id)
+        this.setupFocusListeners()
       }
 
       // Set instanceId in output var

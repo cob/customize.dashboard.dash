@@ -225,6 +225,7 @@ import 'cropperjs/dist/cropper.css';
 import Waiting2 from './shared/Waiting2.vue';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import jsQR from "jsqr";
+import { EventBus } from '../event-bus';
 
 
 export default {
@@ -335,6 +336,9 @@ export default {
                 this.ocrText = ocrData.data.text
                 console.log("ocr data", this.ocrText, ocrData);
                 this.setOutputVar(this.ocrText)
+
+                // WIP
+                EventBus.$emit("imageviewer-ocr", {ocrText:this.ocrText})
             } catch (exce) {
                 console.log("Error running OCR: ", exce)
             } finally {
@@ -556,37 +560,12 @@ export default {
             }
         },
         // THIS WILL BE REWORKED AND REVIEWED. IGNORE FOR NOW.
-        highlightBox(fieldIdx) {
+        highlightBox() {
             // Reset cropper state everything
             this.reset()
             this.cropCrop()
 
-            // Get original image coordinates
-            let fieldData = this.fields[fieldIdx]
-            let left = fieldData.left
-            let top = fieldData.top
-            let width = fieldData.width
-            let height = fieldData.height
-
-            // Retrieve cropper data
-            const canvasData = this.$refs.cropper.getCanvasData()
-
-            left = left //+ canvasData.left
-            top = top //+ canvasData.top
-
-            let scaleX = canvasData.width / canvasData.naturalWidth
-            let scaleY = canvasData.height / canvasData.naturalHeight
-            width = width * scaleX
-            height = height * scaleY
-
-            // Calculate new crop box dimensions
-            const newCropBoxData = {
-                left: left,
-                top: top,
-                width: width,
-                height: height
-            };
-            this.setData({ x: newCropBoxData.left, y: newCropBoxData.top, width: newCropBoxData.width, height: newCropBoxData.height, scaleX: 1, scaleY: 1, rotate: 0 })
+            console.log("RV highlight box!")
         },
 
         // HTML INPUT RELATED
