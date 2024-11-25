@@ -583,6 +583,7 @@
 
           // Get the specifiedContext evaluated (using available functions: [list] )
           let specifiedContext
+          let expression
           try {
             function list(...args) {
               const dashInfoItem = DashFunctions.instancesList(...args)
@@ -626,12 +627,12 @@
               return dashInfoItem;
             }
 
-            const expression = `specifiedContext= ${specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, "\"") : "{}"}`;
+            expression = `specifiedContext= ${specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, "\"") : "{}"}`;
             eval(expression);
 
           } catch (e) {
-            debugger
-            console.error("Error processing specific context:", e)
+            console.error("Error on eval(expression)\n Expression=", expression, "\n", e)
+            throw e
           }
 
           // Build final context with all components
@@ -693,7 +694,13 @@
           dashStr = dashStr.replaceAll(/(,(\s*))+/g, ",$2") //  Also remove double comma in the resulting arrays (maintain the spaces in case normal text with commas)
           dashStr = dashStr.replaceAll(/(?<!\\)\n/g, "\\n") // escapes newlines
           dashStr = dashStr.replaceAll(/	/g,"\\t") //escapes literal tabs
-          let dash = JSON.parse(dashStr)
+          let dash
+          try {
+            dash = JSON.parse(dashStr)
+          } catch (e) {
+            console.error("DASH: Error parsing processed dash from string to json (use ' instead of \" - or escape the \"s ).", e, dashboard,"\n", dashStr.replaceAll("\\n","\n"))
+            throw e
+          }
 
           for( let i = dashboard.boardQueries.length; i > 0 ; i-- ) {
             let dashInfoItem = dashboard.boardQueries.pop()
