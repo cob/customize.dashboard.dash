@@ -119,7 +119,7 @@ export default {
             });
         }
         // Clear all events added by customizations and components before destroying
-        EventBus.off()
+        EventBus.$off()
     },
     computed: {
         options() { return this.dashboard['DashboardCustomize'][0] },
