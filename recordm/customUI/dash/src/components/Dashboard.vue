@@ -50,9 +50,26 @@ export default {
     }),
     created() {
         this.statePersistence = []
+        for (const key in this.customizations) {
+            if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
+            this.customizations[key].forEach(c => {
+                if (c.onCreated && typeof c.onCreated === "function") {
+                    try {
+                        let customizationDetail = {
+                            dashContainer: this.$refs.dashboardContainer, dashContext: this,
+                            eventBus: EventBus
+                        }
+                        c.onCreated(customizationDetail)
+                    } catch (e) {
+                        console.error("Error running customization On Created", e)
+                    }
+                }
+            });
+        }
     },
     mounted() {
         for (const key in this.customizations) {
+            if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
             this.customizations[key].forEach(c => {
                 try {
                     let customizationDetail = {
@@ -68,6 +85,7 @@ export default {
     },
     updated() {
         for (const key in this.customizations) {
+            if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
             this.customizations[key].forEach(c => {
                 try {
                     let customizationDetail = {
@@ -87,6 +105,7 @@ export default {
             v => this.statePersistence[v] && this.statePersistence[v].stop())
 
         for (const key in this.customizations) {
+            if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
             this.customizations[key].forEach(c => {
                 try {
                     let customizationDetail = {
@@ -149,6 +168,15 @@ export default {
             const options = board['BoardCustomize'][0]['BoardCustomize']
             if (options)
                 return options.split("\u0000").indexOf("IsModal") !== -1
+        },
+        dashboardPatternMatcher(dashboardName, pattern) {
+            try {
+                const regex = new RegExp(pattern); 
+                return regex.test(dashboardName);
+            } catch (error) {
+                console.error("Invalid regex pattern:", error.message);
+                return false;
+            }
         }
     }
 }
