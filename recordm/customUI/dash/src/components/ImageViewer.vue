@@ -338,7 +338,11 @@ export default {
                 this.setOutputVar(this.ocrText)
 
                 // WIP
-                EventBus.$emit("imageviewer-ocr", {ocrText:this.ocrText})
+                let eventDetails = { 
+                    senderUID: this._uid, 
+                    details: { ocrText: this.ocrText }
+                }
+                EventBus.$emit("imageviewer-ocr", eventDetails)
             } catch (exce) {
                 console.log("Error running OCR: ", exce)
             } finally {

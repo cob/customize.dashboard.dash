@@ -70,12 +70,15 @@ export default {
           const fieldContainer = fp.content()[0]
           const fieldInput = fieldContainer.querySelectorAll("textarea, input") // get textareas and inputs
           fieldInput.forEach(input => {
-            const fieldDetails = { instancePresenter: presenter, field: fp };
-
             if (!input.dataset.focusListenerAdded) {
+              const fieldDetails = { instancePresenter: presenter, field: fp };
               const focusHandler = (ev) => {
                 console.log("DEBUG: InstanceViewer Focus event 1", input.id);
-                EventBus.$emit(BUS_FIELD_FOCUS, { detail: fieldDetails });
+                let eventDetails = { 
+                  senderUID: this._uid, 
+                  detail: fieldDetails 
+                }
+                EventBus.$emit(BUS_FIELD_FOCUS, eventDetails);
               };
 
               input.addEventListener("focus", focusHandler);
