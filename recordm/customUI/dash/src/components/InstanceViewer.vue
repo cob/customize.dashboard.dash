@@ -46,7 +46,8 @@ export default {
     noInstanceClasses() { return this.options["NoInstanceClasses"] || "w-full text-center text-3xl text-gray-300 font-bold self-center"; },
 
     instanceId() { return this.component["InstanceViewerInstanceId"] },
-    outputVar() { return this.component["InstanceViewerOutputVar"] || '' }
+    outputVar() { return this.component["InstanceViewerOutputVar"] || '' },
+    componentIdentifier() { return this.options[0]["InstanceViewerIdentifier"] || "" }
   },
   methods: {
     // Turn this into a component option: SendFocusEvents
@@ -76,6 +77,7 @@ export default {
                 console.log("DEBUG: InstanceViewer Focus event 1", input.id);
                 let eventDetails = { 
                   senderUID: this._uid, 
+                  componentIdentifier: this.componentIdentifier,
                   detail: fieldDetails 
                 }
                 EventBus.$emit(BUS_FIELD_FOCUS, eventDetails);

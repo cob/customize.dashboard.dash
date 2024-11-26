@@ -222,7 +222,8 @@ function parseDashboard(raw_dashboard) {
         },
         "ImageViewer" : {
             "ImageViewerCustomize": [{
-                "ImageViewerClasses": ""
+                "ImageViewerClasses": "",
+                "ImageViewerIdentifier":""
             }],
             "OutputVarImageViewer":"",
             "ImageViewerURL":""
@@ -230,7 +231,8 @@ function parseDashboard(raw_dashboard) {
         "InstanceViewer" : {
             "InstanceViewerCustomize": [{
                 "InstanceViewerClasses": "",
-                "NoInstanceClasses": ""
+                "NoInstanceClasses": "",
+                "InstanceViewerIdentifier":""
             }],
             "InstanceViewerInstanceId":"",
             "InstanceViewerOutputVar":""

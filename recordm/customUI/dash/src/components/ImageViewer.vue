@@ -267,6 +267,7 @@ export default {
         classes() { return this.options['ImageViewerClasses'] || ""; },
         outputVar() { return this.component["OutputVarImageViewer"] },
         imageUrl() { return this.component["ImageViewerURL"] },
+        componentIdentifier() { if(this.options.length > 0) {return this.options[0]["ImageViewerIdentifier"]} else return "" }
     },
     watch: {
         imageUrl: function (newUrl) {
@@ -340,6 +341,7 @@ export default {
                 // WIP
                 let eventDetails = { 
                     senderUID: this._uid, 
+                    componentIdentifier: this.componentIdentifier,
                     details: { ocrText: this.ocrText }
                 }
                 EventBus.$emit("imageviewer-ocr", eventDetails)
