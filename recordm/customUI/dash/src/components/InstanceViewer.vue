@@ -53,57 +53,91 @@ export default {
     setupFocusListeners() {
       if (this.instanceViewer) {
         const presenter = this.instanceViewer.getInstanceP()
-        // get target groups
-        let fps = presenter.findFieldPs(fp => fp.field.fieldDefinition.name.includes("Parte Delantera") ||
-          fp.field.fieldDefinition.name.includes("Parte Trasera")
-        )
+
+        let fps = presenter.findFieldPs(fp => {
+          if (fp && fp.field && fp.field.fieldDefinition && fp.field.fieldDefinition.description) {
+            let description = fp.field.fieldDefinition.description;
+            if (description.includes("readonly") || description.includes("group")) {
+              return false
+            }
+            return true
+          }
+          return true
+        });
 
         // Iterate groups and their child fields - the ones we want to "fill" with ocr
-        fps.forEach(fp_group => {
-          fp_group.getChildPs().forEach(fp => {
-            const fieldContainer = fp.content()[0]
-            const fieldInput = fieldContainer.querySelectorAll("textarea, input") // get textareas and inputs
-            fieldInput.forEach(input => {
-              const fieldDetails = { instancePresenter: presenter, field: fp };
-              //this.fieldDetails = { instancePresenter: presenter, field: fp }
-              if (!input.dataset.focusListenerAdded) {
-                const focusHandler = (ev) => {
-                  console.log("rv focus event");
-                  EventBus.$emit(BUS_FIELD_FOCUS, { detail: fieldDetails });
-                };
+        fps.forEach(fp => {
+          const fieldContainer = fp.content()[0]
+          const fieldInput = fieldContainer.querySelectorAll("textarea, input") // get textareas and inputs
+          fieldInput.forEach(input => {
+            const fieldDetails = { instancePresenter: presenter, field: fp };
 
-                input.addEventListener("focus", this.focusHandler);
-                //input.addEventListener("focus", this.handleFocusListener);
-                input.dataset.focusListenerAdded = "true"; // Mark as listener added
-                
-                // Store the handler for later removal
-                input.dataset.focusHandler = focusHandler;
-              }
-            })
+            if (!input.dataset.focusListenerAdded) {
+              const focusHandler = (ev) => {
+                console.log("DEBUG: InstanceViewer Focus event 1", input.id);
+                EventBus.$emit(BUS_FIELD_FOCUS, { detail: fieldDetails });
+              };
+
+              input.addEventListener("focus", focusHandler);
+              input.dataset.focusListenerAdded = "true"; 
+              this.focusHandlers[input.id] = focusHandler // Store the handler for later removal
+            }
           })
-        });
+        })
       }
     },
-    handleFocusListener(ev) {
-      console.log("rv focus event ")
-      EventBus.$emit(BUS_FIELD_FOCUS, { detail: this.fieldDetails })
+    removeFocusListeners() {
+      if (this.instanceViewer) {
+        const presenter = this.instanceViewer.getInstanceP()
+
+        let fps = presenter.findFieldPs(fp => {
+          if (fp && fp.field && fp.field.fieldDefinition && fp.field.fieldDefinition.description) {
+            let description = fp.field.fieldDefinition.description;
+            if (description.includes("readonly") || description.includes("group")) {
+              return false
+            }
+            return true
+          }
+          return true
+        });
+
+        // Iterate groups and their child fields - the ones we want to "fill" with ocr
+        fps.forEach(fp => {
+          const fieldContainer = fp.content()[0]
+          const fieldInput = fieldContainer.querySelectorAll("textarea, input") // get textareas and inputs
+          fieldInput.forEach(input => {
+            if (input.dataset.focusListenerAdded || input.dataset.focusListenerAdded === "true") {
+              const focusHandler = this.focusHandlers[input.id]
+              if (focusHandler) {
+                input.removeEventListener("focus", focusHandler);
+                delete input.dataset.focusListenerAdded;
+                delete this.focusHandlers[input.id]
+              }
+            }
+          })
+        })
+      }
     },
     async showInstance(id) {
-
       if (!id) {
-        if (this.instanceViewer) { this.instanceViewer.destroy(); }
+        if (this.instanceViewer) { 
+          this.removeFocusListeners()
+          this.instanceViewer.destroy();
+        }
         this.instanceViewer = null;
         return
       }
 
+      this.removeFocusListeners()
       if (this.instanceViewer) {
         await this.instanceViewer.showInstance(id);
-        this.setupFocusListeners()
       } else {
         this.instanceViewer = new cob.components.InstanceViewer(cob.app, $(this.$refs.instanceViewer), {});
         await this.instanceViewer.showInstance(id)
-        this.setupFocusListeners()
       }
+      this.removeFocusListeners()
+      this.setupFocusListeners()
+
 
       // Set instanceId in output var
       if (this.outputVar) {
