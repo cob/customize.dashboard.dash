@@ -267,7 +267,7 @@ export default {
         classes() { return this.options['ImageViewerClasses'] || ""; },
         outputVar() { return this.component["OutputVarImageViewer"] },
         imageUrl() { return this.component["ImageViewerURL"] },
-        componentIdentifier() { if(this.options.length > 0) {return this.options[0]["ImageViewerIdentifier"]} else return "" }
+        componentIdentifier() { if (this.options.length > 0) { return this.options[0]["ImageViewerIdentifier"] } else return "" }
     },
     watch: {
         imageUrl: function (newUrl) {
@@ -336,13 +336,13 @@ export default {
                 const ocrData = await worker.recognize(this.cropImg);
                 this.ocrText = ocrData.data.text
                 console.log("ocr data", this.ocrText, ocrData);
-                this.setOutputVar(this.ocrText)
+                if (this.outputVar) { this.setOutputVar(this.ocrText) }
 
                 // WIP
-                let eventDetails = { 
-                    senderUID: this._uid, 
+                let eventDetails = {
+                    senderUID: this._uid,
                     componentIdentifier: this.componentIdentifier,
-                    details: { ocrText: this.ocrText }
+                    details: { ocrText: this.ocrText, cropData: this.currCropData, confidence: ocrData.data.confidence }
                 }
                 EventBus.$emit("imageviewer-ocr", eventDetails)
             } catch (exce) {
@@ -565,15 +565,88 @@ export default {
                 cropper.clear();
             }
         },
-        // THIS WILL BE REWORKED AND REVIEWED. IGNORE FOR NOW.
-        highlightBox() {
+        // Under frequent re-works
+        highlightBox(x, y, w, h, r) {
+            const cropper = this.$refs.cropper;
+            if (!cropper) return;
             // Reset cropper state everything
-            this.reset()
             this.cropCrop()
 
+            //MEGA TEST - THIS CODE WILL BE REMOVED
+            function generateRandomRectangle(maxX, maxY) {
+                // Ensure maxX and maxY are positive numbers
+                if (maxX <= 0 || maxY <= 0) {
+                    throw new Error("maxX and maxY must be positive numbers");
+                }
+
+                // Generate random width and height, ensuring they fit within maxX and maxY
+                const width = Math.floor(Math.random() * maxX) + 1;
+                const height = Math.floor(Math.random() * maxY) + 1;
+
+                // Generate random X and Y positions ensuring the rectangle fits within bounds
+                const x = Math.floor(Math.random() * (maxX - width + 1));
+                const y = Math.floor(Math.random() * (maxY - height + 1));
+
+                return { x, y, width, height };
+            }
+
+            const imageData = cropper.getImageData();
+            const canvasData = cropper.getCanvasData();
+            let { imgLeft, imgTop, imgRight, imgBottom } = this.convertCanvasToImageSpace(canvasData, this.currRatio)
+
+            let rngRect = generateRandomRectangle(imageData.naturalWidth, imageData.height)
+            let rotation = this.currCropData ? this.currCropData.rotate : cropper.getData().rotate
+            let newCropperData = {
+                x: x || rngRect.x,
+                y: y || rngRect.y,
+                width: w || rngRect.width,
+                height: h || rngRect.height,
+                rotate: r || rotation
+            };
+
+            // "Calculate" dropbox coords - we changed the names to left, right, etc to help with
+            // readability
+            let { x: cb_left, y: cb_top, width: cb_width, height: cb_height } = newCropperData;
+            let cb_right = cb_left + cb_width
+            let cb_bottom = cb_top + cb_height
+
+            // Check individual bounds because we will need to know what to use
+            // to calculate the offsets
+            let left_in_bounds = (imgLeft < cb_left) && (cb_left < imgRight)
+            let right_in_bounds = (imgLeft < cb_right) && (cb_right < imgRight)
+            let top_in_bounds = (imgTop < cb_top) && (cb_top < imgBottom)
+            let bottom_in_bounds = (imgTop < cb_bottom) && (cb_bottom < imgBottom)
+
+            let offsetX = 0
+            let offsetY = 0
+            // Horizontal bounds
+            if (!left_in_bounds && !right_in_bounds) {
+                const cropBoxCenterX = cb_left + cb_width / 2; 
+                const imageCenterX = (imgLeft + imgRight) / 2;
+                offsetX = cropBoxCenterX - imageCenterX;
+            } else if (!left_in_bounds) {
+                offsetX = cb_left - imgLeft;
+            } else if (!right_in_bounds) {
+                offsetX = cb_right - imgRight;
+            }
+
+            // Vertical bounds
+            if (!top_in_bounds && !bottom_in_bounds) {
+                const cropBoxCenterY = cb_top + cb_height / 2; 
+                const imageCenterY = (imgTop + imgBottom) / 2; 
+                offsetY = cropBoxCenterY - imageCenterY; 
+            } else if (!top_in_bounds) {
+                offsetY = cb_top - imgTop;
+            } else if (!bottom_in_bounds) {
+                offsetY = cb_bottom - imgBottom;
+            }
+
+            if(offsetX > 0 || offsetY > 0) {
+                cropper.move(-offsetX * this.currRatio, -offsetY * this.currRatio);
+            }
+            this.setData(newCropperData)
             console.log("RV highlight box!")
         },
-
         // HTML INPUT RELATED
         setImage(e) {
             const file = e.target.files[0];

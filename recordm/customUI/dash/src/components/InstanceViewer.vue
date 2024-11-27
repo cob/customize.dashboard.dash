@@ -19,9 +19,9 @@ export default {
   data: () => ({
     instanceViewer: null,
     fieldDetails: null,
-    evenHandlers: {}
+    focusHandlers: {}
   }),
-  async mounted() {
+  mounted() {
     // Temporary for egv poc
     window.addEventListener("pocDocUpdate", this.handleEvent);
 
