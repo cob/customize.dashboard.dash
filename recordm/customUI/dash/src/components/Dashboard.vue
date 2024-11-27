@@ -71,14 +71,16 @@ export default {
         for (const key in this.customizations) {
             if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
             this.customizations[key].forEach(c => {
-                try {
-                    let customizationDetail = {
-                        dashContainer: this.$refs.dashboardContainer, dashContext: this,
-                        eventBus: EventBus
+                if (c.onMounted && typeof c.onMounted === "function") {
+                    try {
+                        let customizationDetail = {
+                            dashContainer: this.$refs.dashboardContainer, dashContext: this,
+                            eventBus: EventBus
+                        }
+                        c.onMounted(customizationDetail)
+                    } catch (e) {
+                        console.error("Error running customization On Mounted", e)
                     }
-                    c.onMounted(customizationDetail)
-                } catch (e) {
-                    console.error("Error running customization On Mounted", e)
                 }
             });
         }
@@ -87,14 +89,16 @@ export default {
         for (const key in this.customizations) {
             if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
             this.customizations[key].forEach(c => {
-                try {
-                    let customizationDetail = {
-                        dashContainer: this.$refs.dashboardContainer, dashContext: this,
-                        eventBus: EventBus
+                if (c.onUpdated && typeof c.onUpdated === "function") {
+                    try {
+                        let customizationDetail = {
+                            dashContainer: this.$refs.dashboardContainer, dashContext: this,
+                            eventBus: EventBus
+                        }
+                        c.onUpdated(customizationDetail)
+                    } catch (e) {
+                        console.error("Error running customization On Mounted", e)
                     }
-                    c.onUpdated(customizationDetail)
-                } catch (e) {
-                    console.error("Error running customization On Mounted", e)
                 }
             });
         }
@@ -107,14 +111,16 @@ export default {
         for (const key in this.customizations) {
             if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
             this.customizations[key].forEach(c => {
-                try {
-                    let customizationDetail = {
-                        dashContainer: this.$refs.dashboardContainer, dashContext: this,
-                        eventBus: EventBus
+                if (c.onBeforeDestroy && typeof c.onBeforeDestroy === "function") {
+                    try {
+                        let customizationDetail = {
+                            dashContainer: this.$refs.dashboardContainer, dashContext: this,
+                            eventBus: EventBus
+                        }
+                        c.onBeforeDestroy(customizationDetail)
+                    } catch (e) {
+                        console.error("Error running customization On Before Destroy", e)
                     }
-                    c.onBeforeDestroy(customizationDetail)
-                } catch (e) {
-                    console.error("Error running customization On Before Destroy", e)
                 }
             });
         }
