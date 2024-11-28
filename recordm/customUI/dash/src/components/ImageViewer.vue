@@ -641,9 +641,7 @@ export default {
                 offsetY = cb_bottom - imgBottom;
             }
 
-            if(offsetX > 0 || offsetY > 0) {
-                cropper.move(-offsetX * this.currRatio, -offsetY * this.currRatio);
-            }
+            cropper.move(-offsetX * this.currRatio, -offsetY * this.currRatio);
             this.setData(newCropperData)
             console.log("RV highlight box!")
         },
