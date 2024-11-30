@@ -238,8 +238,13 @@ function parseDashboard(raw_dashboard) {
     }
 
 
-    // remove all 'Initial_Templates' and 'instanceId' added for processing
+    // remove all 'Initial_Templates','instanceId' added for processing and also all empty fields
     dash = JSON.parse(JSON.stringify(dash, (k, v) => (k === 'Initial_Template') ? undefined : v))
+    dash = JSON.parse(JSON.stringify(dash, (k, v) => (k === 'instanceId') ? undefined : v))
+    dash = JSON.parse(JSON.stringify(dash, (k, v) => (v === null) ? undefined : v))
+    dash.instanceId = "" + raw_dashboard.id //needed to build $file url
+    dash.version = "" + raw_dashboard.version //needed to build $file url
+
 
     return dash
 }
