@@ -1,5 +1,23 @@
 import Handlebars from "handlebars";
 
+if( typeof(document.handlebarsTemplates) !== 'undefined' ) {
+    document.handlebarsTemplates.forEach( async (url) => {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Failed to load templates: ${response.statusText}`);
+            }
+            const template = await response.text();
+            const parts = url.split("/");
+            const index = parts.indexOf("dashs");
+            const name = parts.slice(index + 1).join('/')
+            Handlebars.registerPartial(name, template);
+        } catch (error) {
+            console.error(error);
+        }
+    })
+}
+
 Handlebars.registerHelper("pasteInRm", function (...strings) {
     strings.pop() //for some reason the last item is of type Obj, and not an actual param
     if (strings.length > 0) {
