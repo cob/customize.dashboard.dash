@@ -31,6 +31,7 @@ export default {
     // Temporary for egv poc
     window.removeEventListener("pocDocUpdate", this.handleEvent);
 
+    this.removeFocusListeners()
     if (this.instanceViewer) { this.instanceViewer.destroy(); }
   },
   watch: {
@@ -43,7 +44,7 @@ export default {
     vars() { return this.component["vars"]; },
 
     instanceClasses() { return this.options["InstanceViewerClasses"] || ""; },
-    noInstanceClasses() { return this.options["NoInstanceClasses"] || "w-full text-center text-3xl text-gray-300 font-bold self-center"; },
+    noInstanceClasses() { return this.options["NoInstanceClasses"] || "w-full text-center text-xl text-stone-400 font-bold self-center"; },
 
     instanceId() { return this.component["InstanceViewerInstanceId"] },
     outputVar() { return this.component["InstanceViewerOutputVar"] || '' },
