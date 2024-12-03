@@ -170,7 +170,7 @@
                     @zoom="handleZoom" @cropmove="handleMove" @ready="onCropperReady"
                     :imgStyle="{ display: 'block', maxWidth: '100%' }" />
 
-                <div v-if="!imgSrc" class="text-center font-semibold text-xl pt-2 text-stone-500">
+                <div v-if="!imgSrc" class="text-center font-semibold text-xl pt-2 text-stone-400">
                     <i class="fa-regular fa-image"></i> No image to display.
                 </div>
             </div>
@@ -406,11 +406,10 @@ export default {
         handleMove(e) {
             const cropper = this.$refs.cropper;
             if (!cropper) return;
-
             let action = e.detail.action;
             if (action === "move" || action === "zoom") {
                 const cropperData = this.currCropData || cropper.getData(true);
-                if (this.checkBounds(cropperData)) {
+                if (this.checkBounds(cropperData) && (cropperData.width > 0 && cropperData.height > 0)) {
                     cropper.initCrop();
                     this.currCropData = cropperData;
                     this.setData(cropperData);
