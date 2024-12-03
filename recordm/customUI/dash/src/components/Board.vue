@@ -8,11 +8,13 @@
             <Totals    v-if="item['Component'] === 'Totals'"    :component="item" :key="i" />
             <Kibana    v-if="item['Component'] === 'Kibana'"    :component="item" :key="i" />
             <Filtro    v-if="item['Component'] === 'Filter'"    :component="item" :key="i" />
-            <Calendar  v-if="item['Component'] === 'Calendar'"  :component="item" :key="i" />
+            <Calendar  v-if="item['Component'] === 'Calendar'"  :component="item" :dashboard="dashboard" :key="i" />
             <List      v-if="item['Component'] === 'List'"      :component="item" :key="i" v-on="$listeners" :refreshFlag="refreshFlag"/>
             <Activator v-if="item['Component'] === 'ModalActivator'" :component="item" :key="i" @show-modal="d => $emit('show-modal', d)"/>
             <Slides    v-if="item['Component'] === 'Slides'"      :component="item" :key="i" 
-            v-on="$listeners" @show-modal="d => $emit('show-modal', d)" :refreshFlag="refreshFlag"/>    
+                        v-on="$listeners" 
+                        @show-modal="d => $emit('show-modal', d)" 
+                        :refreshFlag="refreshFlag"/>    
             <Hierarchy v-if="item['Component'] === 'Hierarchy'" :component="item" :key="i" :refreshFlag="refreshFlag"/>
         </template>
     </div>
@@ -30,13 +32,14 @@
     import Activator from './Activator.vue'
     import Markdown from './Markdown.vue'
     import Slides from './Slides.vue'
-import Hierarchy from './Hierarchy.vue'
+    import Hierarchy from './Hierarchy.vue'
 
     export default {
         components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown, Slides, Hierarchy },
         props: {
           board: Object,
-          refreshFlag: Number
+          refreshFlag: Number,
+          dashboard: Object,
         },
         computed: {
             options()    { return this.board['BoardCustomize'][0] },
