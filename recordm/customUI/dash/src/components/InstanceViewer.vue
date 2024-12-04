@@ -95,7 +95,7 @@ export default {
     removeFocusListeners() {
       if (this.instanceViewer) {
         const presenter = this.instanceViewer.getInstanceP()
-
+        if(!presenter) { return; }
         let fps = presenter.findFieldPs(fp => {
           if (fp && fp.field && fp.field.fieldDefinition && fp.field.fieldDefinition.description) {
             let description = fp.field.fieldDefinition.description;
