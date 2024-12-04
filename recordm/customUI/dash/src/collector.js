@@ -223,6 +223,7 @@ function parseDashboard(raw_dashboard) {
         "ImageViewer" : {
             "ImageViewerCustomize": [{
                 "ImageViewerClasses": "",
+                "ImageViewerButtonClasses":"",
                 "ImageViewerIdentifier":""
             }],
             "OutputVarImageViewer":"",
