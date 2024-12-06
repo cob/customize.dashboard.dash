@@ -2,7 +2,7 @@
     <div ref="viewerContainer" class="flex">
 
         <div class="flex flex-col  w-full">
-            <div class="flex items-center justify-center pt-2 pb-1 gap-x-0.5 flex-wrap">
+            <div class="flex items-center justify-center pt-2 pb-1 gap-x-0.5 flex-wrap gap-y-0.5">
                 <a
                     class="rounded-md relative mr-0.5" :class="buttonClasses">
                     <!-- Hidden File Input -->
@@ -16,11 +16,11 @@
                 </a>
 
                 <div class="flex  mr-0.5">
-                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @keydown="handleKeyDown" @click.prevent="zoom(0.2)"
+                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="zoom(0.2)"
                         title="Ctrl + +">
                         <i class="fa-solid fa-magnifying-glass-plus"></i>
                     </a>
-                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @keydown="handleKeyDown" @click.prevent="zoom(-0.2)"
+                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="zoom(-0.2)"
                         title="Ctrl + -">
                         <i class="fa-solid fa-magnifying-glass-minus"></i>
                     </a>
@@ -38,21 +38,40 @@
                 </div>
 
                 <div class="flex mr-0.5">
-                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="move(10, 0)"
+                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="move(20, 0)"
                         title="Ctrl + Left">
                         <i class="fa-solid fa-arrow-left"></i>
                     </a>
-                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button" @click.prevent="move(-10, 0)"
+                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button" @click.prevent="move(-20, 0)"
                         title="Ctrl + Right">
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
-                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button" @click.prevent="move(0, 10)"
+                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button" @click.prevent="move(0, 20)"
                         title="Ctrl + Up">
                         <i class="fa-solid fa-arrow-up"></i>
                     </a>
-                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="move(0, -10)"
+                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="move(0, -20)"
                         title="Ctrl + Down">
                         <i class="fa-solid fa-arrow-down"></i>
+                    </a>
+                </div>
+
+                <div class="flex mr-0.5">
+                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="moveCropbox(-20, 0)"
+                        title="Ctrl + Left">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button" @click.prevent="moveCropbox(20, 0)"
+                        title="Ctrl + Right">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button" @click.prevent="moveCropbox(0, -20)"
+                        title="Ctrl + Up">
+                        <i class="fa-solid fa-chevron-up"></i>
+                    </a>
+                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="moveCropbox(0, 20)"
+                        title="Ctrl + Down">
+                        <i class="fa-solid fa-chevron-down"></i>
                     </a>
                 </div>
 
@@ -66,24 +85,6 @@
                         <i class="fa-solid fa-rotate-left"></i>
                     </a>
                 </div>
-
-                <!--
-                <div class="flex">
-                    <a class="bg-blue-600 text-stone-200 font-light rounded-l-md border-2 text-sm border-stone-800 px-2 py-1
-                 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="enableCropper"
-                        title="Ctrl + ?">
-                        <i class="fa-solid fa-lock-open"></i>
-                    </a>
-                    <a class="bg-blue-600 text-stone-200 font-light rounded-r-md border-2 text-sm border-stone-800 px-2 py-1
-                 mr-0.5 hover:bg-blue-400 hover:cursor-pointer" href="#" role="button" @click.prevent="disableCropper"
-                        title="Ctrl + ?">
-                        <i class="fa-solid fa-lock"></i>
-                    </a>
-                </div>
-                <div class="border-l border-stone-800 h-full"></div>
-                -->
-
-
 
                 <div class="flex mr-0.5">
                     <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="cropCrop"
@@ -111,8 +112,13 @@
                         <i class="fa-solid fa-scissors"></i>
                     </a>
 
-                    <a v-if="imgSrc" :class="buttonClasses" class="rounded-md" href="#" role="button"
+                    
+                    <a v-if="imgSrc" :class="buttonClasses" class="fa-ocr rounded-md flex items-center" href="#" role="button"
                         @click.prevent="cropAndRecognize">
+                        <svg v-if="loadingOcr || loadingQr" class="animate-spin mr-1 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-60" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-85" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
                         OCR
                     </a>
 
@@ -159,7 +165,6 @@
             </div>
 
             <div class="flex">
-                <Waiting2 v-if="loadingOcr || loadingQr" />
                 <div v-if="ocrText" class="grow">
                     <div class="font-bold">Extracted OCR</div>
                     <div> {{ ocrText }} </div>
@@ -205,7 +210,6 @@
 import { createWorker } from 'tesseract.js';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
-import Waiting2 from './shared/Waiting2.vue';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import jsQR from "jsqr";
 import { EventBus } from '../event-bus';
@@ -213,8 +217,7 @@ import { EventBus } from '../event-bus';
 
 export default {
     components: {
-        VueCropper,
-        Waiting2
+        VueCropper
     },
     data: () => ({
         // For knowing what to load
@@ -265,12 +268,10 @@ export default {
         component: Object
     },
     mounted() {
-        window.addEventListener("keydown", this.handleKeyDown)
         // Hardcoded event for POC
         window.addEventListener("pocDocUpdate", this.handleEvent);
     },
     beforeDestroy() {
-        window.removeEventListener("keydown", this.handleKeyDown)
         // Hardcoded event for POC
         window.removeEventListener("pocDocUpdate", this.handleEvent);
     },
@@ -279,40 +280,6 @@ export default {
             this.showPreview = !this.showPreview
             if (this.showPreview) {
                 this.$refs.cropper.replace(this.imgSrc)
-            }
-        },
-        handleKeyDown(event) {
-            const isMac = navigator.platform.indexOf('Mac') !== -1;
-            const commandOrCtrl = isMac ? event.metaKey : event.ctrlKey;
-
-            // TODO: modify this to support whathver keybinds we want
-            if (commandOrCtrl && event.key === "+") {
-                event.preventDefault()
-                this.zoom(0.2);
-            } else if (commandOrCtrl && event.key === "-") {
-                event.preventDefault()
-                this.zoom(-0.2);
-            } else if (commandOrCtrl && event.key === "ArrowUp") {
-                event.preventDefault()
-                this.move(0, 50)
-            } else if (commandOrCtrl && event.key === "ArrowDown") {
-                event.preventDefault()
-                this.move(0, -50)
-            } else if (commandOrCtrl && event.key === "ArrowLeft") {
-                event.preventDefault()
-                this.move(50, 0)
-            } else if (commandOrCtrl && event.key === "ArrowRight") {
-                event.preventDefault()
-                this.move(-50, 0)
-            } else if (commandOrCtrl && event.shiftKey && event.key === "r") {
-                event.preventDefault()
-                this.rotate(-90)
-            } else if (commandOrCtrl  && event.key === "r") {
-                event.preventDefault()
-                this.rotate(90) 
-            } else if (commandOrCtrl  && event.key === "o") {
-                event.preventDefault()
-                this.cropAndRecognize()
             }
         },
         handleEvent(event) {
@@ -345,10 +312,15 @@ export default {
 
                 const ocrData = await worker.recognize(this.cropImg);
                 this.ocrText = ocrData.data.text
+                
+                // Show info notification in case the extracted text is ""
+                if(!ocrData.data.text) {
+                    cob.ui.notification.showInfo(`OCR could not find text to extract.`);
+                }
+
                 console.log("ocr data", this.ocrText, ocrData);
                 if (this.outputVar) { this.setOutputVar(this.ocrText) }
 
-                // WIP
                 let eventDetails = {
                     senderUID: this._uid,
                     componentIdentifier: this.componentIdentifier,
@@ -412,6 +384,17 @@ export default {
             } else {
                 cropper.clear();
             }
+        },
+        moveCropbox(offsetX, offsetY) {
+            const cropper = this.$refs.cropper;
+            if (!cropper) return;
+
+            let cropperData = this.currCropData || cropper.getData(true);
+            if(cropperData.width == 0 || cropperData.height == 0) {return}
+            cropperData.x += offsetX
+            cropperData.y += offsetY
+            this.currCropData = cropperData;
+            this.setData(cropperData);
         },
         handleMove(e) {
             const cropper = this.$refs.cropper;
