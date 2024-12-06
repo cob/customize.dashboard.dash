@@ -1,9 +1,9 @@
 <template>
-  <div class="flex w-full h-full max-h-[70vh]">
+  <div class="" :class="instanceClasses">
     <div v-if="!instanceId && !this.instanceViewer" :class="noInstanceClasses">No instance selected</div>
 
     <div ref="instanceViewer" class="cob-app instance-viewer  overflow-auto"
-      :class="[...instanceClasses, { 'w-full': instanceViewer }]"></div>
+      ></div>
   </div>
 </template>
 
@@ -43,8 +43,8 @@ export default {
     options() { return this.component["InstanceViewerCustomize"]; },
     vars() { return this.component["vars"]; },
 
-    instanceClasses() { return this.options["InstanceViewerClasses"] || ""; },
-    noInstanceClasses() { return this.options["NoInstanceClasses"] || "w-full text-center text-xl text-stone-400 font-bold self-center"; },
+    instanceClasses() { return this.options[0]["InstanceViewerClasses"] || "flex w-full h-full max-h-[70vh]"; },
+    noInstanceClasses() { return this.options[0]["NoInstanceClasses"] || "w-full text-center text-xl text-stone-400 font-bold self-center"; },
 
     instanceId() { return this.component["InstanceViewerInstanceId"] },
     outputVar() { return this.component["InstanceViewerOutputVar"] || '' },
