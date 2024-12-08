@@ -29,7 +29,6 @@
   import rmListDefinitions from '@cob/rest-api-wrapper/src/rmListDefinitions';
   import tippy from 'tippy.js';
   import Instance from "@/components/shared/Instance";
-  import Vue from "vue";
   import ComponentStatePersistence from "@/model/ComponentStatePersistence";
   import Handlebars from 'handlebars'
   import CalendarDayEvent from './CalendarDayEvent.vue'
