@@ -2,6 +2,16 @@
 
 ### Definition Upgrades:
 
+#### 6.70.0
+
+* Dashboard-Solutions:
+
+```
+NEW (After field `Descrição`)
+* Documentação : $markdown $style[mdPreview]
+```
+Update instance dashboard chooser
+
 #### 6.63
 - Added missing "ListClasses" to customize list component
 
@@ -12,7 +22,6 @@ ALTERED
 NEW 
 * Board > Component > [=List] ListCustomize > [=Classes] ListClasses : $text Default: <empty>
 ```
-
 
 #### 6.61.0
 - Added new `HeaderOnly` option to `CalendarCustomize`. This option will hide the calendar itself, and only the show the time navgiation bar, with arrow keys and date pickers - it will maintain the "view types" for the calendar, which can be used to set time intervals (week, month, etc).
