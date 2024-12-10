@@ -1,6 +1,6 @@
 <template>
   <div class="" :class="instanceClasses">
-    <div v-if="!instanceId && !this.instanceViewer" :class="noInstanceClasses">No instance selected</div>
+    <div v-if="!instanceId && !this.instanceDetails" :class="noInstanceClasses">No instance selected</div>
 
     <div ref="instanceViewer" class="cob-app instance-viewer  overflow-auto"
       ></div>
@@ -17,6 +17,7 @@ export default {
     component: Object,
   },
   data: () => ({
+    instanceDetails: null,
     instanceViewer: null,
     fieldDetails: null,
     focusHandlers: {}
@@ -32,7 +33,7 @@ export default {
     window.removeEventListener("pocDocUpdate", this.handleEvent);
 
     this.removeFocusListeners()
-    if (this.instanceViewer) { this.instanceViewer.destroy(); }
+    if (this.instanceDetails) { this.instanceDetails.destroy() }
   },
   watch: {
     instanceId: function (newId) {
@@ -53,8 +54,8 @@ export default {
   methods: {
     // Turn this into a component option: SendFocusEvents
     setupFocusListeners() {
-      if (this.instanceViewer) {
-        const presenter = this.instanceViewer.getInstanceP()
+      if (this.instanceDetails) {
+        const presenter = this.instanceDetails.getInstanceP()
 
         let fps = presenter.findFieldPs(fp => {
           if (fp && fp.field && fp.field.fieldDefinition && fp.field.fieldDefinition.description) {
@@ -93,8 +94,8 @@ export default {
       }
     },
     removeFocusListeners() {
-      if (this.instanceViewer) {
-        const presenter = this.instanceViewer.getInstanceP()
+      if (this.instanceDetails) {
+        const presenter = this.instanceDetails.getInstanceP()
         if(!presenter) { return; }
         let fps = presenter.findFieldPs(fp => {
           if (fp && fp.field && fp.field.fieldDefinition && fp.field.fieldDefinition.description) {
@@ -126,22 +127,16 @@ export default {
     },
     async showInstance(id) {
       if (!id) {
-        if (this.instanceViewer) { 
+        if (this.instanceDetails) { 
           this.removeFocusListeners()
-          this.instanceViewer.destroy();
+          this.instanceDetails.destroy();
         }
-        this.instanceViewer = null;
+        this.instanceDetails = null
         return
       }
 
       this.removeFocusListeners()
-      if (this.instanceViewer) {
-        await this.instanceViewer.showInstance(id);
-      } else {
-        this.instanceViewer = new cob.components.InstanceViewer(cob.app, $(this.$refs.instanceViewer), {});
-        await this.instanceViewer.showInstance(id)
-      }
-      this.removeFocusListeners()
+      await this._initInstanceDetail(id)
       this.setupFocusListeners()
 
 
@@ -156,6 +151,13 @@ export default {
         statePersistence.content = finalValue
         this.$set(this.vars, this.outputVar, id)
       }
+    },
+    async _initInstanceDetail(id) {
+      return new Promise((resolve) => {
+        if(this.instanceDetails) {this.instanceDetails.destroy()}
+        this.instanceDetails = new cob.components.InstanceDetail(cob.app, {container: $(this.$refs.instanceViewer)})
+        this.instanceDetails.init(id, undefined, {onDone: resolve})
+      })
     },
     activateFromPersistenceChange(filterVarName) {
       return (newContent) => { this.$set(this.vars, filterVarName, newContent) }
