@@ -34,13 +34,13 @@
             "configuration": {
                 "description": null,
                 "keys": {
+                    "InstanceDescription": {},
                     "Reference": {
                         "args": {
                             "query": "*",
                             "definition": "Dashboard-Solutions"
                         }
-                    },
-                    "InstanceDescription": {}
+                    }
                 },
                 "extensions": {
                     "$groupEdit": {}
@@ -162,13 +162,13 @@
                     "configuration": {
                         "description": null,
                         "keys": {
-                            "InstanceDescription": {},
                             "AutoRefField": {
                                 "args": {
                                     "source_field": "Solution",
                                     "field_name": "Ordem"
                                 }
-                            }
+                            },
+                            "InstanceDescription": {}
                         },
                         "extensions": {}
                     },
@@ -242,10 +242,10 @@
             "configuration": {
                 "description": null,
                 "keys": {
-                    "InstanceDescription": {},
                     "Number": {
                         "args": {}
-                    }
+                    },
+                    "InstanceDescription": {}
                 },
                 "extensions": {}
             },
@@ -266,11 +266,7 @@
             "configuration": {
                 "description": null,
                 "keys": {
-                    "Help": {
-                        "args": [
-                            "Select the defaults to change"
-                        ]
-                    },
+                    "Multiple": {},
                     "Select": {
                         "args": [
                             "Classes",
@@ -284,7 +280,11 @@
                         ],
                         "default": null
                     },
-                    "Multiple": {}
+                    "Help": {
+                        "args": [
+                            "Select the defaults to change"
+                        ]
+                    }
                 },
                 "extensions": {}
             },
@@ -589,10 +589,10 @@
             "configuration": {
                 "description": null,
                 "keys": {
-                    "InstanceDescription": {},
                     "Link": {
                         "args": {}
                     },
+                    "InstanceDescription": {},
                     "AutoTextJoin": {
                         "args": [
                             "'/recordm/index.html#/cob.custom-resource/'",
@@ -655,11 +655,7 @@
                     "configuration": {
                         "description": null,
                         "keys": {
-                            "Help": {
-                                "args": [
-                                    "Select the defaults to change"
-                                ]
-                            },
+                            "Multiple": {},
                             "Select": {
                                 "args": [
                                     "Classes",
@@ -668,7 +664,11 @@
                                 ],
                                 "default": null
                             },
-                            "Multiple": {}
+                            "Help": {
+                                "args": [
+                                    "Select the defaults to change"
+                                ]
+                            }
                         },
                         "extensions": {}
                     },
@@ -754,7 +754,6 @@
                     "configuration": {
                         "description": null,
                         "keys": {
-                            "InstanceDescription": {},
                             "Select": {
                                 "args": [
                                     "Label",
@@ -774,7 +773,8 @@
                                     "InstanceViewer"
                                 ],
                                 "default": null
-                            }
+                            },
+                            "InstanceDescription": {}
                         },
                         "extensions": {
                             "$style": {
@@ -796,11 +796,7 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
@@ -808,7 +804,11 @@
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -931,18 +931,18 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes"
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -1031,11 +1031,7 @@
                                     "configuration": {
                                         "description": null,
                                         "keys": {
-                                            "Help": {
-                                                "args": [
-                                                    "Select the defaults to change"
-                                                ]
-                                            },
+                                            "Multiple": {},
                                             "Select": {
                                                 "args": [
                                                     "Classes",
@@ -1046,7 +1042,11 @@
                                                 ],
                                                 "default": null
                                             },
-                                            "Multiple": {}
+                                            "Help": {
+                                                "args": [
+                                                    "Select the defaults to change"
+                                                ]
+                                            }
                                         },
                                         "extensions": {}
                                     },
@@ -1249,11 +1249,7 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
@@ -1261,7 +1257,11 @@
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -1375,11 +1375,7 @@
                                     "configuration": {
                                         "description": null,
                                         "keys": {
-                                            "Help": {
-                                                "args": [
-                                                    "Select the defaults to change"
-                                                ]
-                                            },
+                                            "Multiple": {},
                                             "Select": {
                                                 "args": [
                                                     "LineClasses",
@@ -1388,7 +1384,11 @@
                                                 ],
                                                 "default": null
                                             },
-                                            "Multiple": {}
+                                            "Help": {
+                                                "args": [
+                                                    "Select the defaults to change"
+                                                ]
+                                            }
                                         },
                                         "extensions": {}
                                     },
@@ -1508,11 +1508,7 @@
                                             "configuration": {
                                                 "description": null,
                                                 "keys": {
-                                                    "Help": {
-                                                        "args": [
-                                                            "Select the defaults to change"
-                                                        ]
-                                                    },
+                                                    "Multiple": {},
                                                     "Select": {
                                                         "args": [
                                                             "Classes",
@@ -1523,7 +1519,11 @@
                                                         ],
                                                         "default": null
                                                     },
-                                                    "Multiple": {}
+                                                    "Help": {
+                                                        "args": [
+                                                            "Select the defaults to change"
+                                                        ]
+                                                    }
                                                 },
                                                 "extensions": {}
                                             },
@@ -1721,11 +1721,6 @@
                                     "configuration": {
                                         "description": null,
                                         "keys": {
-                                            "Help": {
-                                                "args": [
-                                                    "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                                                ]
-                                            },
                                             "Select": {
                                                 "args": [
                                                     "Listing",
@@ -1733,6 +1728,11 @@
                                                     "Link"
                                                 ],
                                                 "default": "Listing"
+                                            },
+                                            "Help": {
+                                                "args": [
+                                                    "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                                                ]
                                             }
                                         },
                                         "extensions": {}
@@ -1853,11 +1853,7 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
@@ -1868,7 +1864,11 @@
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -2062,11 +2062,7 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
@@ -2076,7 +2072,11 @@
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -2222,11 +2222,7 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
@@ -2238,7 +2234,11 @@
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -2707,11 +2707,7 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "InputVar",
@@ -2724,7 +2720,11 @@
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -2924,11 +2924,7 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "LinkClasses",
@@ -2936,7 +2932,11 @@
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -3024,18 +3024,18 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes"
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -3154,11 +3154,7 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
@@ -3166,7 +3162,11 @@
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -3297,12 +3297,7 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "'EndOfContentTrigger'",
-                                            "to configure end of slides update. False if you want to ONLY SHOW contents"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes",
@@ -3310,7 +3305,12 @@
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "'EndOfContentTrigger'",
+                                            "to configure end of slides update. False if you want to ONLY SHOW contents"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -3465,18 +3465,18 @@
                             "configuration": {
                                 "description": null,
                                 "keys": {
-                                    "Help": {
-                                        "args": [
-                                            "Select the defaults to change"
-                                        ]
-                                    },
+                                    "Multiple": {},
                                     "Select": {
                                         "args": [
                                             "Classes"
                                         ],
                                         "default": null
                                     },
-                                    "Multiple": {}
+                                    "Help": {
+                                        "args": [
+                                            "Select the defaults to change"
+                                        ]
+                                    }
                                 },
                                 "extensions": {}
                             },
@@ -3950,14 +3950,19 @@
                                     "id": null,
                                     "name": "ImageViewerClasses",
                                     "required": null,
-                                    "description": "$text $default(text-justify text-gray-700) Default: text-justify text-gray-700 ",
+                                    "description": "$text $default(max-h-[70vh]) Default: max-h-[70vh] $help(Classes for the image viewer container) ",
                                     "configuration": {
-                                        "description": "Default: text-justify text-gray-700",
+                                        "description": "Default: max-h-[70vh]",
                                         "keys": {
                                             "Default": {
                                                 "args": {
-                                                    "value": "text-justify text-gray-700"
+                                                    "value": "max-h-[70vh]"
                                                 }
+                                            },
+                                            "Help": {
+                                                "args": [
+                                                    "Classes for the image viewer container"
+                                                ]
                                             }
                                         },
                                         "extensions": {
@@ -3979,7 +3984,47 @@
                                     "order": 130,
                                     "restricted": false,
                                     "rootField": false,
-                                    "defaultValue": "text-justify text-gray-700"
+                                    "defaultValue": "max-h-[70vh]"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "ImageViewerButtonClasses",
+                                    "required": null,
+                                    "description": "$text $default(bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer) $help(Classes for the image viewer buttons) ",
+                                    "configuration": {
+                                        "description": null,
+                                        "keys": {
+                                            "Default": {
+                                                "args": {
+                                                    "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
+                                                }
+                                            },
+                                            "Help": {
+                                                "args": [
+                                                    "Classes for the image viewer buttons"
+                                                ]
+                                            }
+                                        },
+                                        "extensions": {
+                                            "$text": {}
+                                        }
+                                    },
+                                    "condition": "=Classes",
+                                    "visibilityCondition": {
+                                        "type": "Equal",
+                                        "value": [
+                                            "Classes"
+                                        ],
+                                        "matcher": {
+                                            "type": "Parent"
+                                        }
+                                    },
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 131,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                                 },
                                 {
                                     "id": null,
@@ -4003,7 +4048,7 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 131,
+                                    "order": 132,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
@@ -4036,7 +4081,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 132,
+                            "order": 133,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -4063,7 +4108,7 @@
                             },
                             "duplicable": false,
                             "fields": [],
-                            "order": 133,
+                            "order": 134,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
@@ -4103,40 +4148,13 @@
                                     "id": null,
                                     "name": "NoInstanceClasses",
                                     "required": null,
-                                    "description": "w-full text-center text-3xl text-gray-300 font-bold self-center",
+                                    "description": "$text $default(w-full text-center text-xl text-stone-400 font-bold self-center) Default: w-full text-center text-xl text-stone-400 font-bold self-center",
                                     "configuration": {
-                                        "description": "w-full text-center text-3xl text-gray-300 font-bold self-center",
-                                        "keys": {},
-                                        "extensions": {}
-                                    },
-                                    "condition": "=Classes",
-                                    "visibilityCondition": {
-                                        "type": "Equal",
-                                        "value": [
-                                            "Classes"
-                                        ],
-                                        "matcher": {
-                                            "type": "Parent"
-                                        }
-                                    },
-                                    "duplicable": false,
-                                    "fields": [],
-                                    "order": 135,
-                                    "restricted": false,
-                                    "rootField": false,
-                                    "defaultValue": null
-                                },
-                                {
-                                    "id": null,
-                                    "name": "InstanceViewerClasses",
-                                    "required": null,
-                                    "description": "$text $default(text-justify text-gray-700) Default: text-justify text-gray-700 ",
-                                    "configuration": {
-                                        "description": "Default: text-justify text-gray-700",
+                                        "description": "Default: w-full text-center text-xl text-stone-400 font-bold self-center",
                                         "keys": {
                                             "Default": {
                                                 "args": {
-                                                    "value": "text-justify text-gray-700"
+                                                    "value": "w-full text-center text-xl text-stone-400 font-bold self-center"
                                                 }
                                             }
                                         },
@@ -4159,7 +4177,42 @@
                                     "order": 136,
                                     "restricted": false,
                                     "rootField": false,
-                                    "defaultValue": "text-justify text-gray-700"
+                                    "defaultValue": "w-full text-center text-xl text-stone-400 font-bold self-center"
+                                },
+                                {
+                                    "id": null,
+                                    "name": "InstanceViewerClasses",
+                                    "required": null,
+                                    "description": "$text $default(flex w-full h-full max-h-[70vh]) Default: flex w-full h-full max-h-[70vh]",
+                                    "configuration": {
+                                        "description": "Default: flex w-full h-full max-h-[70vh]",
+                                        "keys": {
+                                            "Default": {
+                                                "args": {
+                                                    "value": "flex w-full h-full max-h-[70vh]"
+                                                }
+                                            }
+                                        },
+                                        "extensions": {
+                                            "$text": {}
+                                        }
+                                    },
+                                    "condition": "=Classes",
+                                    "visibilityCondition": {
+                                        "type": "Equal",
+                                        "value": [
+                                            "Classes"
+                                        ],
+                                        "matcher": {
+                                            "type": "Parent"
+                                        }
+                                    },
+                                    "duplicable": false,
+                                    "fields": [],
+                                    "order": 137,
+                                    "restricted": false,
+                                    "rootField": false,
+                                    "defaultValue": "flex w-full h-full max-h-[70vh]"
                                 },
                                 {
                                     "id": null,
@@ -4183,40 +4236,13 @@
                                     },
                                     "duplicable": false,
                                     "fields": [],
-                                    "order": 137,
+                                    "order": 138,
                                     "restricted": false,
                                     "rootField": false,
                                     "defaultValue": null
                                 }
                             ],
-                            "order": 134,
-                            "restricted": false,
-                            "rootField": false,
-                            "defaultValue": null
-                        },
-                        {
-                            "id": null,
-                            "name": "InstanceIdInputVar",
-                            "required": null,
-                            "description": "DEPRECATED",
-                            "configuration": {
-                                "description": "DEPRECATED",
-                                "keys": {},
-                                "extensions": {}
-                            },
-                            "condition": "=InstanceViewer",
-                            "visibilityCondition": {
-                                "type": "Equal",
-                                "value": [
-                                    "InstanceViewer"
-                                ],
-                                "matcher": {
-                                    "type": "Parent"
-                                }
-                            },
-                            "duplicable": false,
-                            "fields": [],
-                            "order": 138,
+                            "order": 135,
                             "restricted": false,
                             "rootField": false,
                             "defaultValue": null
