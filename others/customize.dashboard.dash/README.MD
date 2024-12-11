@@ -2,6 +2,10 @@
 
 ### Definition Upgrades:
 
+#### 6.70.1
+* Dashboard-v1:
+Updates the instance Home, adds a LabelClass 'invisible' to Label that has the content 'script:window.location.replace...'
+
 #### 6.70.0
 
 * Dashboard-Solutions:
