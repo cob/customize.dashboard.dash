@@ -2,6 +2,10 @@
 
 ### Definition Upgrades:
 
+#### 6.70.2
+* Component List:
+Faz refresh da grid do list sempre que as dimensões mudarem.
+
 #### 6.70.1
 * Dashboard-v1:
 Updates the instance Home, adds a LabelClass 'invisible' to Label that has the content 'script:window.location.replace...'
