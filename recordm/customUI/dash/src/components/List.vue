@@ -10,15 +10,26 @@
           refreshFlag: Number 
         },
         data: () => ({
-            simpleSearch: null
+            simpleSearch: null,
+            observer: null,
         }),
         mounted() {
-            this.$refs.searchContainer.setAttribute("id", this.containerId);
-            setTimeout(this.updateQuery, 10)
+            const listContainer = this.$refs.searchContainer
+            listContainer.setAttribute("id", this.containerId);
+            setTimeout(this.updateQuery, 10);
+
+            this.observer = new window.ResizeObserver(_ => {
+              if(this.simpleSearch) this.simpleSearch.refreshGrid()
+            });
+            this.observer.observe(listContainer)
         },
         beforeDestroy() {
           if (this.simpleSearch) {
             this.simpleSearch.destroy()
+          }
+
+          if(this.observer) {
+            this.observer.unobserve()
           }
         },
         computed: {
