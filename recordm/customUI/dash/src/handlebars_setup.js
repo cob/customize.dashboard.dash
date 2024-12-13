@@ -107,7 +107,7 @@ Handlebars.registerHelper("format", function (type, val, options = {}) {
     }
 
     if (type == "number") {
-        return Intl.NumberFormat(opts.locale ? opts.locale : 'pt-PT', { style: "decimal", useGrouping: true }).format(val)
+        return Intl.NumberFormat(opts.locale ? opts.locale : 'pt-PT', opts).format(val)
     }
 })
 
