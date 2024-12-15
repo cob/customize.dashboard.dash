@@ -724,7 +724,7 @@
                 for (let l of c.Line) {
                   l.Value = l.Value.map(v => {
                     if (v.Arg[2] && v.Arg[2].Arg.startsWith("{")) {
-                      v.Arg[2]['Arg'] = JSON.parse(v.Arg[2]['Arg'])
+                      eval("v.Arg[2]['Arg']="+ v.Arg[2]['Arg'])
                     }
                     // If Attention is configured for this value line then add attention status as user check
                     if (v["ValueCustomize"][0]["ValueAttention"]) {
