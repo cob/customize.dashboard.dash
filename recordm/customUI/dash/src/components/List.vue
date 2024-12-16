@@ -12,16 +12,17 @@
         data: () => ({
             simpleSearch: null,
             observer: null,
+            listContainer: null,
         }),
         mounted() {
-            const listContainer = this.$refs.searchContainer
-            listContainer.setAttribute("id", this.containerId);
+            this.listContainer = this.$refs.searchContainer
+            this.listContainer.setAttribute("id", this.containerId);
             setTimeout(this.updateQuery, 10);
 
             this.observer = new window.ResizeObserver(_ => {
               if(this.simpleSearch) this.simpleSearch.refreshGrid()
             });
-            this.observer.observe(listContainer)
+            this.observer.observe(this.listContainer)
         },
         beforeDestroy() {
           if (this.simpleSearch) {
@@ -29,7 +30,7 @@
           }
 
           if(this.observer) {
-            this.observer.unobserve(listContainer)
+            this.observer.unobserve(this.listContainer)
           }
         },
         computed: {
