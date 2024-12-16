@@ -29,7 +29,7 @@
           }
 
           if(this.observer) {
-            this.observer.unobserve()
+            this.observer.unobserve(listContainer)
           }
         },
         computed: {
