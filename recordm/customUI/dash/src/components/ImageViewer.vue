@@ -3,8 +3,7 @@
 
         <div class="flex flex-col  w-full">
             <div class="flex items-center justify-center pt-2 pb-1 gap-x-0.5 flex-wrap gap-y-0.5">
-                <a
-                    class="rounded-md relative mr-0.5" :class="buttonClasses">
+                <a class="rounded-md relative mr-0.5" :class="buttonClasses">
                     <!-- Hidden File Input -->
                     <input class="hidden" ref="input" type="file" name="image" accept="image/*" @change="setImage"
                         id="fileInput" />
@@ -27,12 +26,12 @@
                 </div>
 
                 <div class="flex  mr-0.5">
-                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="setDragMode('move')"
-                        title="Ctrl + ?">
+                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button"
+                        @click.prevent="setDragMode('move')" title="Ctrl + ?">
                         <i class="fa-solid fa-up-down-left-right"></i>
                     </a>
-                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="setDragMode('crop')"
-                        title="Ctrl + ?">
+                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button"
+                        @click.prevent="setDragMode('crop')" title="Ctrl + ?">
                         <i class="fa-solid fa-crop-simple"></i>
                     </a>
                 </div>
@@ -57,20 +56,20 @@
                 </div>
 
                 <div class="flex mr-0.5">
-                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="moveCropbox(-20, 0)"
-                        title="Ctrl + Left">
+                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button"
+                        @click.prevent="moveCropbox(-20, 0)" title="Ctrl + Left">
                         <i class="fa-solid fa-chevron-left"></i>
                     </a>
-                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button" @click.prevent="moveCropbox(20, 0)"
-                        title="Ctrl + Right">
+                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button"
+                        @click.prevent="moveCropbox(20, 0)" title="Ctrl + Right">
                         <i class="fa-solid fa-chevron-right"></i>
                     </a>
-                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button" @click.prevent="moveCropbox(0, -20)"
-                        title="Ctrl + Up">
+                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button"
+                        @click.prevent="moveCropbox(0, -20)" title="Ctrl + Up">
                         <i class="fa-solid fa-chevron-up"></i>
                     </a>
-                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="moveCropbox(0, 20)"
-                        title="Ctrl + Down">
+                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button"
+                        @click.prevent="moveCropbox(0, 20)" title="Ctrl + Down">
                         <i class="fa-solid fa-chevron-down"></i>
                     </a>
                 </div>
@@ -98,7 +97,8 @@
                 </div>
 
                 <div class="flex mr-0.5">
-                    <a v-if="debugMode" :class="buttonClasses" class="rounded-md" href="#" role="button" @click.prevent="reset" title="Ctrl + ?">
+                    <a v-if="debugMode" :class="buttonClasses" class="rounded-md" href="#" role="button"
+                        @click.prevent="reset" title="Ctrl + ?">
                         Reset
                     </a>
 
@@ -107,22 +107,27 @@
                         <i class="fa-solid fa-eye"></i>
                     </a>
 
-                    <a v-if="imgSrc" :class="buttonClasses" class="rounded-md" href="#" role="button" @click.prevent="cropImage"
-                        title="Ctrl + ?">
+                    <a v-if="imgSrc" :class="buttonClasses" class="rounded-md" href="#" role="button"
+                        @click.prevent="cropImage" title="Ctrl + ?">
                         <i class="fa-solid fa-scissors"></i>
                     </a>
 
-                    
-                    <a v-if="imgSrc" :class="buttonClasses" class="fa-ocr rounded-md flex items-center" href="#" role="button"
-                        @click.prevent="cropAndRecognize">
-                        <svg v-if="loadingOcr || loadingQr" class="animate-spin mr-1 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-60" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-85" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+
+                    <a v-if="imgSrc" :class="buttonClasses" class="fa-ocr rounded-md flex items-center" href="#"
+                        role="button" @click.prevent="cropAndRecognize">
+                        <svg v-if="loadingOcr || loadingQr" class="animate-spin mr-1 h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-60" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-85" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
                         </svg>
                         OCR
                     </a>
 
-                    <a v-if="imgSrc && qrReader" :class="buttonClasses" class="rounded-md" href="#" role="button" @click.prevent="cropAndReadCode">
+                    <a v-if="imgSrc && qrReader" :class="buttonClasses" class="rounded-md" href="#" role="button"
+                        @click.prevent="cropAndReadCode">
                         <i class="fa-solid fa-qrcode"></i>
                     </a>
                 </div>
@@ -154,10 +159,9 @@
             </div>
 
             <div class="img-cropper block">
-                <vue-cropper :class="classes" v-if="imgSrc" ref="cropper" :src="imgSrc" preview=".preview"
-                    :viewMode="2" :dragMode="'move'" :modal="true" :highlight="true" :autoCrop="false"
-                    @zoom="handleZoom" @cropmove="handleMove" @ready="onCropperReady"
-                    :imgStyle="{ display: 'block', maxWidth: '100%' }" />
+                <vue-cropper :class="classes" v-if="imgSrc" ref="cropper" :src="imgSrc" preview=".preview" :viewMode="2"
+                    :dragMode="'move'" :modal="true" :highlight="true" :autoCrop="false" @zoom="handleZoom"
+                    @cropmove="handleMove" @ready="onCropperReady" :imgStyle="{ display: 'block', maxWidth: '100%' }" />
 
                 <div v-if="!imgSrc" class="text-center font-semibold text-xl pt-2 text-stone-400">
                     <i class="fa-regular fa-image"></i> No image to display.
@@ -251,7 +255,7 @@ export default {
     computed: {
         options() { return this.component['ImageViewerCustomize'][0]; },
         classes() { return this.options['ImageViewerClasses'] || "max-h-[70vh]"; },
-        buttonClasses() {return this.options['ImageViewerButtonClasses'] || "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"},
+        buttonClasses() { return this.options['ImageViewerButtonClasses'] || "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer" },
         outputVar() { return this.component["OutputVarImageViewer"] },
         imageUrl() { return this.component["ImageViewerURL"] },
         componentIdentifier() { if (this.options.length > 0) { return this.options[0]["ImageViewerIdentifier"] } else return "" }
@@ -312,9 +316,9 @@ export default {
 
                 const ocrData = await worker.recognize(this.cropImg);
                 this.ocrText = ocrData.data.text
-                
+
                 // Show info notification in case the extracted text is ""
-                if(!ocrData.data.text) {
+                if (!ocrData.data.text) {
                     cob.ui.notification.showInfo(`OCR could not find text to extract.`);
                 }
 
@@ -390,7 +394,7 @@ export default {
             if (!cropper) return;
 
             let cropperData = this.currCropData || cropper.getData(true);
-            if(cropperData.width == 0 || cropperData.height == 0) {return}
+            if (cropperData.width == 0 || cropperData.height == 0) { return }
             cropperData.x += offsetX
             cropperData.y += offsetY
             this.currCropData = cropperData;
@@ -549,7 +553,7 @@ export default {
             this.currCropData = newCropperData;
             if (this.checkBounds(newCropperData)) {
                 setTimeout(() => {
-                    if(newCropperData.width > 0 && newCropperData.height > 0) {
+                    if (newCropperData.width > 0 && newCropperData.height > 0) {
                         cropper.initCrop()
                         this.setData(newCropperData);
                     }
@@ -562,40 +566,25 @@ export default {
         highlightBox(x, y, w, h, r) {
             const cropper = this.$refs.cropper;
             if (!cropper) return;
-            // Reset cropper state everything
-            this.cropCrop()
 
-            //MEGA TEST - THIS CODE WILL BE REMOVED
-            function generateRandomRectangle(maxX, maxY) {
-                // Ensure maxX and maxY are positive numbers
-                if (maxX <= 0 || maxY <= 0) {
-                    throw new Error("maxX and maxY must be positive numbers");
-                }
-
-                // Generate random width and height, ensuring they fit within maxX and maxY
-                const width = Math.floor(Math.random() * maxX) + 1;
-                const height = Math.floor(Math.random() * maxY) + 1;
-
-                // Generate random X and Y positions ensuring the rectangle fits within bounds
-                const x = Math.floor(Math.random() * (maxX - width + 1));
-                const y = Math.floor(Math.random() * (maxY - height + 1));
-
-                return { x, y, width, height };
-            }
-
-            const imageData = cropper.getImageData();
             const canvasData = cropper.getCanvasData();
             let { imgLeft, imgTop, imgRight, imgBottom } = this.convertCanvasToImageSpace(canvasData, this.currRatio)
 
-            let rngRect = generateRandomRectangle(imageData.naturalWidth, imageData.height)
             let rotation = this.currCropData ? this.currCropData.rotate : cropper.getData().rotate
             let newCropperData = {
-                x: x || rngRect.x,
-                y: y || rngRect.y,
-                width: w || rngRect.width,
-                height: h || rngRect.height,
+                x: x,
+                y: y,
+                width: w, 
+                height: h, 
                 rotate: r || rotation
             };
+
+            if (!newCropperData.width || !newCropperData.height || newCropperData.width == 0 || newCropperData.height == 0) {
+                return;
+            }
+
+            // Place default cropper
+            this.cropCrop()
 
             // "Calculate" dropbox coords - we changed the names to left, right, etc to help with
             // readability
@@ -614,7 +603,7 @@ export default {
             let offsetY = 0
             // Horizontal bounds
             if (!left_in_bounds && !right_in_bounds) {
-                const cropBoxCenterX = cb_left + cb_width / 2; 
+                const cropBoxCenterX = cb_left + cb_width / 2;
                 const imageCenterX = (imgLeft + imgRight) / 2;
                 offsetX = cropBoxCenterX - imageCenterX;
             } else if (!left_in_bounds) {
@@ -625,9 +614,9 @@ export default {
 
             // Vertical bounds
             if (!top_in_bounds && !bottom_in_bounds) {
-                const cropBoxCenterY = cb_top + cb_height / 2; 
-                const imageCenterY = (imgTop + imgBottom) / 2; 
-                offsetY = cropBoxCenterY - imageCenterY; 
+                const cropBoxCenterY = cb_top + cb_height / 2;
+                const imageCenterY = (imgTop + imgBottom) / 2;
+                offsetY = cropBoxCenterY - imageCenterY;
             } else if (!top_in_bounds) {
                 offsetY = cb_top - imgTop;
             } else if (!bottom_in_bounds) {
