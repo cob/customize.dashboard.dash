@@ -40,7 +40,8 @@ import ComponentStatePersistence from "@/model/ComponentStatePersistence"
           activeModal : String
         }),
         created() {
-            this.statePersistence = []
+            this.statePersistence = {}
+            this.updateVars(this.vars)
         },
         beforeDestroy() {
             Object.keys(this.vars).forEach (
