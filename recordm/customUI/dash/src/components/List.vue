@@ -20,7 +20,7 @@
             setTimeout(this.updateQuery, 10);
 
             this.observer = new window.ResizeObserver(_ => {
-              if(this.simpleSearch) this.simpleSearch.refreshGrid()
+              if (this.simpleSearch && this.simpleSearch.refreshGrid) this.simpleSearch.refreshGrid()
             });
             this.observer.observe(this.listContainer)
         },
