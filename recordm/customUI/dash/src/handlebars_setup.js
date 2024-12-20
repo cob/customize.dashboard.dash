@@ -92,6 +92,14 @@ Handlebars.registerHelper('includes', function (arg1, arg2, caseInsensitive) {
     return (arg1.includes(arg2))
 });
 
+Handlebars.registerHelper('replace', function (word, oldValue, newValue) {
+    if (typeof word === 'string') {
+        return word.replace(oldValue, newValue)
+    } else {
+        return ""
+    }
+});
+
 Handlebars.registerHelper('concat', function (...args) {
     let result = ""
     for (let index = 0; index < args.length - 1; index++) {
