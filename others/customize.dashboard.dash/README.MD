@@ -4,8 +4,8 @@
 
 
 #### 6.70.1
-* Dashboard-v1:
-Updates the `Home` dashboard instance: check the LabelCustomize `classes` checkbox and add a LabelClass 'invisible' to the Label component that has the content 'script:window.location.replace...'
+Re-import `Home` dashboard_v1 instance (instances/dashboardhome_v6.63.0.xlsx) Or do it by hand : 
+Update the `Home` dashboard instance: check the LabelCustomize `classes` checkbox and add a LabelClass 'invisible' to the Label component that has the content 'script:window.location.replace...'
 
 #### 6.70.0
 
