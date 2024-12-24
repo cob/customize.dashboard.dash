@@ -11,7 +11,7 @@
             <div :class="width + ' ' + grid" >
                 <template  v-for="(board,i) in boards">
                     <Modal v-if="isModal(board) && board.Board == activeModal" :board="board" :key="dashboard.instanceId + '-modal-' + i"  @show-modal="toggleModal" v-on="$listeners" :refreshFlag="refreshFlag"/>
-                    <Board v-else-if="!isModal(board)" :board="board" :key="dashboard.instanceId + '-' + i" @show-modal="toggleModal" v-on="$listeners" :refreshFlag="refreshFlag"/>
+                    <Board v-else-if="!isModal(board)" :board="board" :key="dashboard.instanceId + '-' + i" :dashboard="dashboard" @show-modal="toggleModal" v-on="$listeners" :refreshFlag="refreshFlag"/>
                 </template>
             </div>
         </div>
@@ -46,7 +46,8 @@ export default {
         activeModal: String
     }),
     created() {
-        this.statePersistence = []
+        this.statePersistence = {}
+        this.updateVars(this.vars)
         for (const key in this.customizations) {
             if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
             this.customizations[key].forEach(c => {

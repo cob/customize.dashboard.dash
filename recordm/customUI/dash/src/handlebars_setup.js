@@ -66,7 +66,7 @@ Handlebars.registerHelper("listFilter", function (list, field, value, first) {
     const filteredList = []
     if (list) {
         for (const obj of list) {
-            if (obj[field] && obj[field][0] == value) {
+            if (obj[field] && ( (typeof(obj[field]) == "number" && obj[field]+"" == value+"") || (typeof(obj[field]) == "object"  && obj[field].some( v => v+"" == value+"" )))) {
                 if (first === 'true') { //returns only the first match
                     return [obj]
                 }
@@ -92,6 +92,14 @@ Handlebars.registerHelper('includes', function (arg1, arg2, caseInsensitive) {
     return (arg1.includes(arg2))
 });
 
+Handlebars.registerHelper('replace', function (word, oldValue, newValue) {
+    if (typeof word === 'string') {
+        return word.replace(oldValue, newValue)
+    } else {
+        return ""
+    }
+});
+
 Handlebars.registerHelper('concat', function (...args) {
     let result = ""
     for (let index = 0; index < args.length - 1; index++) {
@@ -107,7 +115,7 @@ Handlebars.registerHelper("format", function (type, val, options = {}) {
     }
 
     if (type == "number") {
-        return Intl.NumberFormat(opts.locale ? opts.locale : 'pt-PT', { style: "decimal", useGrouping: true }).format(val)
+        return Intl.NumberFormat(opts.locale ? opts.locale : 'pt-PT', opts).format(val)
     }
 })
 
