@@ -163,6 +163,16 @@ export default {
       const key = event.detail.key;
       let storedObject = JSON.parse(localStorage.getItem(key));
       this.showInstance(storedObject.id);
+      if (this.outputVar) {
+        const statePersistence = new ComponentStatePersistence(this.outputVar, this.activateFromPersistenceChange(this.outputVar))
+        if (!statePersistence) {
+          console.warn("State persistence not found for filter var name", this.outputVar)
+          return
+        }
+        const finalValue = statePersistence.content !== storedObject.id ? storedObject.id : ""
+        statePersistence.content = finalValue
+        this.$set(this.vars, this.outputVar, storedObject.id)
+      }
     }
   },
 };
