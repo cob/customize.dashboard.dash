@@ -19,8 +19,12 @@ export default {
     instanceDetails: null,
     instanceViewer: null,
     fieldDetails: null,
-    focusHandlers: {}
+    focusHandlers: {},
+    statePersistence: Object
   }),
+  created() {
+    this.statePersistence = new ComponentStatePersistence(this.outputVar, this.activateFromPersistenceChange(this.outputVar))
+  },
   mounted() {
     // Temporary for egv poc
     window.addEventListener("pocDocUpdate", this.handleEvent);
@@ -31,22 +35,15 @@ export default {
     // Temporary for egv poc
     window.removeEventListener("pocDocUpdate", this.handleEvent);
 
+    this.statePersistence.stop()
     this.removeFocusListeners()
     if (this.instanceDetails) { this.instanceDetails.destroy() }
   },
   watch: {
     instanceId: function (newId) {
-      this.showInstance(newId);
-      // Set instanceId in output var
-      if (this.outputVar) {
-        const statePersistence = new ComponentStatePersistence(this.outputVar, this.activateFromPersistenceChange(this.outputVar))
-        if (!statePersistence) {
-          console.warn("State persistence not found for filter var name", this.outputVar)
-          return
-        }
-        const finalValue = statePersistence.content !== newId ? newId : ""
-        statePersistence.content = finalValue
-        this.$set(this.vars, this.outputVar, newId)
+      if(newId) {
+        this.showInstance(newId);
+        this.setOutputVar(newId);
       }
     },
   },
@@ -62,6 +59,18 @@ export default {
     componentIdentifier() { return this.options[0]["InstanceViewerIdentifier"] || "" }
   },
   methods: {
+    setOutputVar(newId) {
+      // Set instanceId in output var
+      if (this.outputVar) {
+        if (!this.statePersistence) {
+          console.warn("State persistence not found for filter var name", this.outputVar)
+          return
+        }
+        const finalValue = this.statePersistence.content !== newId ? newId : ""
+        this.statePersistence.content = finalValue
+        this.$set(this.vars, this.outputVar, newId)
+      }
+    },
     // Turn this into a component option: SendFocusEvents
     setupFocusListeners() {
       if (this.instanceDetails) {
