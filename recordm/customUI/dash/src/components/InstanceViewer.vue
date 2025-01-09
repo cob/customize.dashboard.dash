@@ -42,9 +42,9 @@ export default {
   watch: {
     instanceId: function (newId) {
       if(newId) {
-        this.showInstance(newId);
         this.setOutputVar(newId);
       }
+      this.showInstance(newId);
     },
   },
   computed: {
