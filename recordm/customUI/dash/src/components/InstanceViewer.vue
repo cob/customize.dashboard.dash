@@ -61,7 +61,7 @@ export default {
   methods: {
     setOutputVar(newId) {
       // Set instanceId in output var
-      if (this.outputVar) {
+      if (this.outputVar && newId != this.instanceId) {
         if (!this.statePersistence) {
           console.warn("State persistence not found for filter var name", this.outputVar)
           return
