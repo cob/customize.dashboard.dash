@@ -168,17 +168,6 @@
                 </div>
             </div>
 
-            <div class="flex">
-                <div v-if="ocrText" class="grow">
-                    <div class="font-bold">Extracted OCR</div>
-                    <div> {{ ocrText }} </div>
-                </div>
-                <div v-if="qrText" class="grow">
-                    <div class="font-bold">Extracted QR Code</div>
-                    <div> {{ qrText }} </div>
-                </div>
-            </div>
-
             <hr v-if="showPreview" />
 
             <div v-if="showPreview" class="w-full flex flex-col items-center">
