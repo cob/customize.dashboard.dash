@@ -214,8 +214,6 @@ export default {
     },
     data: () => ({
         // For knowing what to load
-        instanceId: '',
-        instanceUrl: '',
         imgSrc: '',
         cropImg: '',
 
@@ -260,29 +258,11 @@ export default {
     props: {
         component: Object
     },
-    mounted() {
-        // Hardcoded event for POC
-        window.addEventListener("pocDocUpdate", this.handleEvent);
-    },
-    beforeDestroy() {
-        // Hardcoded event for POC
-        window.removeEventListener("pocDocUpdate", this.handleEvent);
-    },
     methods: {
         togglePreview() {
             this.showPreview = !this.showPreview
             if (this.showPreview) {
                 this.$refs.cropper.replace(this.imgSrc)
-            }
-        },
-        handleEvent(event) {
-            const key = event.detail.key;
-            let storedObject = JSON.parse(localStorage.getItem(key));
-            console.log("Retrieved object in Vue component:", storedObject);
-            this.imgSrc = storedObject.img
-            if (this.$refs.cropper) {
-                this.imgSrc = storedObject.img
-                this.$refs.cropper.replace(storedObject.img);
             }
         },
         onCropperReady() {

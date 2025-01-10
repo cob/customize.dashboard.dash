@@ -26,22 +26,16 @@ export default {
     this.statePersistence = new ComponentStatePersistence(this.outputVar, this.activateFromPersistenceChange(this.outputVar))
   },
   mounted() {
-    // Temporary for egv poc
-    window.addEventListener("pocDocUpdate", this.handleEvent);
-
     this.showInstance(this.instanceId);
   },
   beforeDestroy() {
-    // Temporary for egv poc
-    window.removeEventListener("pocDocUpdate", this.handleEvent);
-
     this.statePersistence.stop()
     this.removeFocusListeners()
     if (this.instanceDetails) { this.instanceDetails.destroy() }
   },
   watch: {
     instanceId: function (newId) {
-      if(newId) {
+      if (newId) {
         this.setOutputVar(newId);
       }
       this.showInstance(newId);
@@ -61,7 +55,7 @@ export default {
   methods: {
     setOutputVar(newId) {
       // Set instanceId in output var
-      if (this.outputVar && newId != this.instanceId) {
+      if (this.outputVar) {
         if (!this.statePersistence) {
           console.warn("State persistence not found for filter var name", this.outputVar)
           return
@@ -167,21 +161,6 @@ export default {
     },
     activateFromPersistenceChange(filterVarName) {
       return (newContent) => { this.$set(this.vars, filterVarName, newContent) }
-    },
-    handleEvent(event) {
-      const key = event.detail.key;
-      let storedObject = JSON.parse(localStorage.getItem(key));
-      this.showInstance(storedObject.id);
-      if (this.outputVar) {
-        const statePersistence = new ComponentStatePersistence(this.outputVar, this.activateFromPersistenceChange(this.outputVar))
-        if (!statePersistence) {
-          console.warn("State persistence not found for filter var name", this.outputVar)
-          return
-        }
-        const finalValue = statePersistence.content !== storedObject.id ? storedObject.id : ""
-        statePersistence.content = finalValue
-        this.$set(this.vars, this.outputVar, storedObject.id)
-      }
     }
   },
 };
