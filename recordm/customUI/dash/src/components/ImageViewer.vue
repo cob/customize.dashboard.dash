@@ -523,7 +523,7 @@ export default {
                 y: newTop,
                 width: rotatedWidth,
                 height: rotatedHeight,
-                rotate: r || rotation
+                rotate: totalAngle
             };
 
             cropper.rotate(deg);
