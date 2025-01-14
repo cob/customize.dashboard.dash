@@ -27,6 +27,9 @@ export default {
   },
   mounted() {
     this.showInstance(this.instanceId);
+    if(this.instanceId) {
+      this.setOutputVar(this.instanceId);
+    }
   },
   beforeDestroy() {
     this.statePersistence.stop()

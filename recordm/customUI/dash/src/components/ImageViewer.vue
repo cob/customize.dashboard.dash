@@ -249,16 +249,24 @@ export default {
     },
     watch: {
         imageUrl: function (newUrl) {
-            this.imgSrc = newUrl
-            if (this.$refs.cropper) {
-                this.$refs.cropper.replace(newUrl);
-            }
-        },
+            updateCropperImage(newUrl)
+        }
     },
     props: {
         component: Object
     },
+    mounted() {
+        if (this.imageUrl) {
+            this.updateCropperImage(this.imageUrl)
+        }
+    },
     methods: {
+        updateCropperImage(imageUrl) {
+            this.imgSrc = imageUrl
+            if (this.$refs.cropper) {
+                this.$refs.cropper.replace(imageUrl);
+            }
+        },
         togglePreview() {
             this.showPreview = !this.showPreview
             if (this.showPreview) {
@@ -515,7 +523,7 @@ export default {
                 y: newTop,
                 width: rotatedWidth,
                 height: rotatedHeight,
-                rotate: totalAngle
+                rotate: r || rotation
             };
 
             cropper.rotate(deg);
@@ -543,8 +551,8 @@ export default {
             let newCropperData = {
                 x: x,
                 y: y,
-                width: w, 
-                height: h, 
+                width: w,
+                height: h,
                 rotate: r || rotation
             };
 
