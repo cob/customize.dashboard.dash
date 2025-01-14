@@ -249,7 +249,7 @@ export default {
     },
     watch: {
         imageUrl: function (newUrl) {
-            updateCropperImage(newUrl)
+            this.updateCropperImage(newUrl)
         }
     },
     props: {
@@ -551,8 +551,8 @@ export default {
             let newCropperData = {
                 x: x,
                 y: y,
-                width: w,
-                height: h,
+                width: w, 
+                height: h, 
                 rotate: r || rotation
             };
 
