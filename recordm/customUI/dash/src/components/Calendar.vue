@@ -29,7 +29,6 @@
   import rmListDefinitions from '@cob/rest-api-wrapper/src/rmListDefinitions';
   import tippy from 'tippy.js';
   import Instance from "@/components/shared/Instance";
-  import Vue from "vue";
   import ComponentStatePersistence from "@/model/ComponentStatePersistence";
   import Handlebars from 'handlebars'
   import CalendarDayEvent from './CalendarDayEvent.vue'
@@ -103,7 +102,8 @@
     },
 
     props: {
-      component: Object
+      component: Object,
+      dashboard: Object
     },
 
     data: () => ({
@@ -163,7 +163,6 @@
 
       statePersistence: Object,
     }),
-
     created() {
         this.calendarOptions.initialView = this.eventView[0]
         this.calendarOptions.headerToolbar.right = this.eventView.join(",")
@@ -609,6 +608,8 @@
             if(isHandles ) {
               const convertedToHandlebars = descriptionEventField.replaceAll("{|{","{{").replaceAll("}|}","}}")
               const template = Handlebars.compile(convertedToHandlebars)
+              esInstance._dashboard =  this.dashboard
+              esInstance._calendarView = this.calendarApi.view.type
               actualtitle = template(esInstance)
             } else {
               const title = esInstance[descriptionEventField] || [esInstance.id]

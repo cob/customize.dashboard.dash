@@ -2,6 +2,32 @@
 
 ### Definition Upgrades:
 
+
+#### 6.70.1
+Re-import `Home` dashboard_v1 instance (instances/dashboardhome_v6.63.0.xlsx) Or do it by hand : 
+Update the `Home` dashboard instance: check the LabelCustomize `classes` checkbox and add a LabelClass 'invisible' to the Label component that has the content 'script:window.location.replace...'
+
+#### 6.70.0
+
+* Dashboard-Solutions:
+
+```
+NEW (After field `Descrição`)
+* Documentação : $markdown $style[mdPreview]
+```
+Update instance dashboard chooser
+
+#### 6.63
+- Added missing "ListClasses" to customize list component
+
+```
+ALTERED
+* Board > Component > [=List] ListCustomize : $[InputVar,SetDefaultView,ShowViews,ShowActions,ShowImport,CreateAndDelete] $multiple $help[Select the defaults to change] -> $[InputVar,SetDefaultView,ShowViews,ShowActions,ShowImport,CreateAndDelete,Classes] $multiple $help[Select the defaults to change]
+
+NEW 
+* Board > Component > [=List] ListCustomize > [=Classes] ListClasses : $text Default: <empty>
+```
+
 #### 6.61.0
 - Added new `HeaderOnly` option to `CalendarCustomize`. This option will hide the calendar itself, and only the show the time navgiation bar, with arrow keys and date pickers - it will maintain the "view types" for the calendar, which can be used to set time intervals (week, month, etc).
 

@@ -12,10 +12,10 @@
   import { umLoggedin } from '@cob/rest-api-wrapper';
   import * as DashFunctions from '@cob/dashboard-info';
   import { parseDashboard } from './collector.js'
+  import { Handlebars } from './handlebars_setup.js'
   import Dashboard from './components/Dashboard.vue'
   import Refresh from './components/shared/Refresh.vue'
   import ComponentStatePersistence from "./model/ComponentStatePersistence";
-  import Handlebars from "handlebars";
   import traverse from "traverse";
   import sha256 from "crypto-js/sha256";
 
@@ -28,369 +28,10 @@
   const CHOOSERFLAG = "MODULE>"
   const SCOPE_ACCESS_PERMISSION_KEYWORD = "ACESSO ";
 
-  const formatDate = (date) => date.toISOString()
-
-  function isNumeric(str) {
-    if (typeof str != "string") return false
-    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)
-          !isNaN(parseFloat(str)) // and ensure strings of whitespace fail
-  }
-
-  function paging(direction, current, size, limit) {
-    if (current) { // var may not be initialized when dash is mounted/rendered...
-      if( !isNumeric(current) ){
-      // handle date 
-      const n = parseInt(size.slice(0, -1))*direction
-      const order = size.slice(-1).toLowerCase()
-      const date = new Date(current)
-      date.setHours(15) //timezone things, quickfix for now
-
-      if(order === 'd'){ // days 
-        date.setDate( date.getDate() + n)     
-      }if(order === 'w'){ // weeks  
-        date.setDate( date.getDate() + n*7)        
-      }if(order === 'm'){ // months 
-        date.setMonth( date.getMonth() + n) 
-      }if(order === 'y'){ // years  
-        date.setFullYear( date.getFullYear() + n)
-      } 
-
-      if(limit) {
-        const limitDate = new Date(limit)
-        limitDate.setHours(15)
-        if( direction < 0 && limitDate > date)
-          return formatDate(limitDate)
-        if( direction > 0 && limitDate < date)
-          return formatDate(limitDate)
-      }
-
-      return formatDate(date)
-    } else {
-      // handle number 
-      let aux_current = parseInt(current)
-      const shifted = aux_current + size*direction
-      if((direction > 0 && limit && shifted > limit) || 
-         (direction < 0 && limit && shifted < limit ))
-        return limit 
-      return shifted  
-    }
-    }
-  }
-
-Handlebars.registerHelper("pasteInRm", function (...strings) {
-  strings.pop() //for some reason the last item is of type Obj, and not an actual param
-  if (strings.length > 0) {
-    const result = {};
-    for (let i = 0; i < strings.length; i += 2) {
-      const key = strings[i];
-      const value = strings[i + 1];
-      result[key] = value;
-    }
-    const fields = Object.entries(result).map(([key, value]) => {
-      return {
-        "value": value,
-        "fieldDefinition": {
-          "name": key
-        }
-      }
-    })
-    const data = {
-      "opts": {
-        "auto-paste-if-empty": true
-      },
-      "fields": fields
-    }
-    let stringifiedString = JSON.stringify(data)
-    return stringifiedString
-  }
-  return ""
-})
-  Handlebars.registerHelper("listSort", function(list, field, dir) {
-    const isAscending = dir.toLowerCase() === 'asc';
-    if(list) {
-      return list.sort((a, b) => {
-        if (a[field] < b[field]) {
-            return isAscending ? -1 : 1;
-        } else if (a[field] > b[field]) {
-            return isAscending ? 1 : -1;
-        } else {
-            return 0;
-        }
-    });
-    }
-  })
-  Handlebars.registerHelper("listFilter", function(list, field, value, first) {
-    const filteredList = []
-    if (list) {
-      for (const obj of list) {
-        if (obj[field] && obj[field][0] == value) {
-          if (first === 'true') { //returns only the first match
-            return [obj]
-          }
-          filteredList.push(obj)
-        }
-      }
-    }
-    return filteredList.length > 0 ? filteredList : null;
-  })
-  Handlebars.registerHelper("screenSm", function() { return window.matchMedia("(max-width: 640px)").matches;})
-  Handlebars.registerHelper("screenMd", function() {return window.matchMedia("(max-width: 768px)").matches;})
-  Handlebars.registerHelper('isNaked', function () { return cob.app.getSettings().mode() === "naked" });
-  Handlebars.registerHelper('includes', function (arg1, arg2, caseInsensitive) { 
-    if(arg1.length > 0) {arg1 = arg1[0]} //hack for when handlerbars passes a list with a single value
-    if(arg2.length > 0) {arg2 = arg2[0]} // of the string we want in it 
-    if(caseInsensitive == true) {
-      return arg1.toLowerCase().includes(arg2.toLowerCase())
-    }
-    return  (arg1.includes(arg2) ) 
-  });
-  Handlebars.registerHelper('concat', function (...args) {
-    let result = ""
-    for(let index = 0; index < args.length-1; index++){
-      result = result.concat(args[index])
-    }
-    return  result 
-  });
-  Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
-  Handlebars.registerHelper('and', function(arg1, arg2) { return (arg1 && arg2); });
-  Handlebars.registerHelper('or', function(arg1, arg2) { return (arg1 || arg2); });
-  Handlebars.registerHelper('not', function(arg) {return (!arg); } )
-  Handlebars.registerHelper('add', function(arg1,arg2) { return ((arg1?arg1*1:0) + arg2*1); });
-  Handlebars.registerHelper('greaterOrEq', function(arg1,arg2,options) {  
-    if (arg1*1 >= arg2*1){
-      return options.fn(this);
-    } else {
-      return options.inverse(this);
-    }});
-  Handlebars.registerHelper('lesserOrEq', function(arg1,arg2,options) {  
-    if (arg1*1 <= arg2*1){
-      return options.fn(this);
-    } else {
-      return options.inverse(this);
-    }});
-  Handlebars.registerHelper('greaterThan', function(arg1,arg2) {
-    return ((arg1?arg1*1:0) > arg2*1); 
-  });
-  Handlebars.registerHelper('lessThan', function(arg1,arg2) {
-    return ((arg1?arg1*1:0) < arg2*1); 
-  });
-
-  Handlebars.registerHelper('dateInfoTimestamp', function(timestamp, keyword) {
-    if(!timestamp)
-      return "No date."
-
-    const date = new Date(timestamp * 1)
-
-    if (keyword == "FullDateTime") {
-      let options = {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "numeric",
-          minute: "numeric",
-          hour12: false,
-        };
-      return new Intl.DateTimeFormat(undefined, options).format(date)
-    } if (keyword == "FullDate") {
-      let options = {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour12: false,
-        };
-      return new Intl.DateTimeFormat(undefined, options).format(date)
-    } if (keyword == "FullTime") {
-      let options = {
-          hour: "numeric",
-          minute: "numeric",
-          hour12: false,
-        };
-      return new Intl.DateTimeFormat(undefined, options).format(date)
-    } else if (keyword == "FullWithWeekDay"){
-      return new Intl.DateTimeFormat("pt", { weekday: "long", year: "numeric", month: "long", day: "numeric"}).format(date)
-    } else if (keyword == "WeekDay"){
-      return new Intl.DateTimeFormat("pt", { weekday: "long" }).format(date)
-    } else {
-      return "No date."
-    }
-  })
-  
-  Handlebars.registerHelper('dateInfo', function(datestring, keyword) {
-    const date = new Date(datestring)
-
-    if(!datestring)
-      return ""
-
-    switch (keyword) {
-      case "LastDateOfYear":
-        return formatDate(new Date(date.getFullYear(), 11, 31, 23, 59))
-
-      case "FirstDateOfYear":
-        return formatDate(new Date(date.getFullYear(), 0, 1))
-
-      case "LastDateOfMonth":
-        const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);   
-        const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
-        return formatDate(lastDayOfMonth)
-
-      case "FirstDateOfMonth":
-        const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
-        return formatDate(firstDay)
-
-      case "MonthText":
-        const month = date.toLocaleString("pt", { month: 'short' })
-        return month.charAt(0).toUpperCase() + month.slice(1, -1)
-
-      case "FullDateText":
-        return date.toLocaleString("pt", { weekday: "long", year: "numeric", month: "long", day: "numeric"})
-
-      case "WeekDayText":
-        return date.toLocaleString("pt", { weekday: "long", day: "numeric"})
-
-      case "FullYear":
-        return date.getFullYear()
-
-      case "MonthIndexAt1":
-        return date.getMonth() + 1
-
-      case "FirstEpochOfYear":
-        const firstOfYear = new Date(date.getFullYear(), 0, 1);   
-        return firstOfYear.getTime()
-
-      case "LastEpochOfYear":
-        const lastOfYear = new Date(date.getFullYear(), 11, 31, 23, 59);   
-        return lastOfYear.getTime()
-
-      case "FirstEpochOfMonth":
-        const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-        return firstDayOfMonth.getTime()
-
-      case "LastEpochOfMonth":
-        const nextMonthFirstDayEpoch = new Date(date.getFullYear(), date.getMonth() + 1, 1, 23, 59);   
-        const lastDayOfMonthEpoch = new Date(nextMonthFirstDayEpoch - 1);
-        return lastDayOfMonthEpoch.getTime()
-
-      case "FirstEpochOfDay":
-        const atMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0);
-        return atMidnight.getTime()
-
-      case "LastEpochOfDay":
-        const atEleven = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59);
-        return atEleven.getTime()
-        
-      default:
-        return undefined
-    }
-  })
-  
-  Handlebars.registerHelper('today', function() {
-    const today = new Date() 
-    return formatDate(today)
-  } )
-
-  Handlebars.registerHelper('todayTimestamp', function() {
-    return (new Date()).getTime()
-  } )
-
-  function compareDatesAux(dateStrOrStamp1,dateStrOrStamp2,withTime) {
-    let stamp1 = dateStrOrStamp1 * 1
-    dateStrOrStamp1 = isNaN(stamp1) ? dateStrOrStamp1 : stamp1
-
-    let stamp2 = dateStrOrStamp2 * 1
-    dateStrOrStamp2 = isNaN(stamp2) ? dateStrOrStamp2 : stamp2
-
-    const date1 = new Date(dateStrOrStamp1)
-    const date2 = new Date(dateStrOrStamp2)
-
-    let result = undefined
-    if ( date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth() && date1.getFullYear() == date2.getFullYear()){
-      if(withTime){
-        if (date1.getHours() == date2.getHours() && date1.getMinutes() == date2.getMinutes()){
-          result = 0
-        }
-      } else {
-        result = 0
-      }
-    }
-
-    if (result == undefined){
-      if (date1.getTime() > date2.getTime()){
-        result = 1
-      } else if (date1.getTime() < date2.getTime()) {
-        result = -1
-      } else {
-        result = 0
-      }
-    }
-    
-    return result
-  }
-  Handlebars.registerHelper('compareDates', function(dateStrOrStamp1,dateStrOrStamp2) {
-    return compareDatesAux(dateStrOrStamp1,dateStrOrStamp2,false)
-  })
-  Handlebars.registerHelper('compareDateTimes', function(dateStrOrStamp1,dateStrOrStamp2) {
-    return compareDatesAux(dateStrOrStamp1,dateStrOrStamp2,true)
-  })
-
-  Handlebars.registerHelper('nextPage', function(current, size, limit=undefined) {
-    return paging(1, current, size, limit)
-  })
-  Handlebars.registerHelper('prevPage', function(current, size, limit=undefined) {
-    return paging(-1, current, size, limit)
-  })
-
-  Handlebars.registerHelper('lookupWithDefault', function(obj,key,defaultValue) {
-    return obj[key] ? obj[key] : defaultValue
-  })
-
-  Handlebars.registerHelper('createVar', function(varsObject,varName,value) {
-    varsObject[varName] = value
-  }) 
-
-  function localIterableEval(obj, evalCode, someOrEveryOrFilter,options={defaultValue:false}) {
-    let filter = []
-    for (const key in obj) {
-      const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : `'${obj[key]}'`
-      evalCode = evalCode.replaceAll(/\\"/g,"\"").replaceAll(/\\'/g,"\'")
-      const code = `((key,val) =>  ${evalCode}) ('${key}', ${val})`  
-      let evalResult
-      
-      try {
-        evalResult = eval(code)
-      } catch (e) {
-        console.error("eval error of key:"+key+" and value:"+JSON.stringify(obj[key])+" --> ",e)
-      }
-      if ( someOrEveryOrFilter == "some") {
-        if (evalResult) return true
-      } else if (someOrEveryOrFilter == "filter") {
-        if (evalResult ){
-          filter.push(evalResult)
-          if (options.firstOnly == "first"){
-            return filter
-          }
-        } 
-      } else if ( !evalResult) { //for every
-        return false
-      }
-    }
-    return options.defaultValue
-  }
-
-  Handlebars.registerHelper("filter", function (obj, evalCode, allOrFirst) {
-    return localIterableEval(obj, evalCode,"filter",{defaultValue:[],firstOnly:allOrFirst})
-  })
-
-  Handlebars.registerHelper('some', function(obj, evalCode) {
-    return localIterableEval(obj, evalCode, "some",{defaultValue:false})
-  })
-
-  Handlebars.registerHelper('every', function(obj, evalCode) {
-    return localIterableEval(obj, evalCode, "every",{defaultValue:false})
-  }) 
-
   export default {
     name: 'App',
     components: { Dashboard, Refresh },
+
     data: () => ({
       error: "",
       chooserError: "",
@@ -478,20 +119,20 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
       }
     },
 
-  updated() {
-    let activeDash = this.dashboardsCached[this.activeDashKey]
+    updated() {
+      let activeDash = this.dashboardsCached[this.activeDashKey]
 
-    if (activeDash) {
-      if (this.timeoutId) {
-        clearTimeout(this.timeoutId);
+      if (activeDash) {
+        if (this.timeoutId) {
+          clearTimeout(this.timeoutId);
+        }
+
+        this.timeoutId = setTimeout(() => {
+          this.stopDragDropListeners(activeDash)
+          this.startDragDropListeners(activeDash)
+        }, 300)
       }
-
-      this.timeoutId = setTimeout(() => {
-        this.stopDragDropListeners(activeDash)
-        this.startDragDropListeners(activeDash)
-      }, 300)
-    }
-  },
+    },
 
     watch: {
       // Monitor changes to the status of getting the Dashboard list
@@ -800,6 +441,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
           dropZone.addEventListener("drop", boundHandleDragDrop);
         }
       },
+
       stopDragDropListeners(activeDash) {
         let activeDragDropInfo = activeDash.dashboardDragDropInfo
 
@@ -819,6 +461,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
           dropZone.removeEventListener("drop", activeDragDropInfo.handleDropRefs.get(dropZone));
         }
       },
+
       resumeListener(e, params) {
         //Recheck user (the user might have changed or his groups might have changed after previous load)
         umLoggedin().then(userInfo => {
@@ -874,7 +517,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
         const key = this.dashboardArg + requestResultList.map(d => d.id).join("-") + JSON.stringify(this.userInfo)
         const dashKey = "H" + sha256(key).toString().replace("=", "_")
 
-        const compileDashboard = (dashboardParsed) => {
+        const generateDashboardTemplate = (dashboardParsed) => {
           if(DEBUG.app) console.log("DASH:  APP: 5.1: loadDashboard: compileDashboard: dashboardParsed=",dashboardParsed)
 
           const JsonStringifyWithBlockHelpers = (json, replaceList) => {
@@ -902,7 +545,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
           for (let i = replaceList.length - 1; i > -1; i--) {
             template = template.replace('"#REPLACE' + i + '"', replaceList[i]) // The replacement of blocks must include de " " that were put around the block
           }
-          return Handlebars.compile(template)
+          return template
         }
 
         const getBaseContext = () => {
@@ -940,6 +583,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
 
           // Get the specifiedContext evaluated (using available functions: [list] )
           let specifiedContext
+          let expression
           try {
             function list(...args) {
               const dashInfoItem = DashFunctions.instancesList(...args)
@@ -983,11 +627,12 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
               return dashInfoItem;
             }
 
-            const expression = `specifiedContext= ${specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, "\"") : "{}"}`;
+            expression = `specifiedContext= ${specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, "\"") : "{}"}`;
             eval(expression);
 
           } catch (e) {
-            console.error("Error processing specific context:", e)
+            console.error("Error on eval(expression)\n Expression=", expression, "\n", e)
+            throw e
           }
 
           // Build final context with all components
@@ -1035,14 +680,27 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
         const buildDashboard = (dashboard) => {
           if(DEBUG.app) console.log("DASH:  APP: 5.4: loadDashboard: buildDashboard: dashboard=",dashboard)
 
-          let dashStr = dashboard.dashboardProcessor(dashboard.dashboardContext)
+          let dashStr
+          try {
+            dashStr = dashboard.dashboardProcessor(dashboard.dashboardContext)
+          } catch (e) {
+            console.error("DASH: Error executing 'dashboard.dashboardProcessor(dashboard.dashboardContext)'. Note: `dashboardProcessor` was compiled from 'dashboard.dashboardTemplate'  ", e, dashboard, dashboard.dashboardTemplate.replaceAll("\\n","\n").replaceAll('\\"','"'))
+            throw e
+          }
+
           while(dashStr.match(/,\s*]/)) {
             dashStr = dashStr.replaceAll(/,\s*]/g, "]") // Every last comma in array are removed
           }
           dashStr = dashStr.replaceAll(/(,(\s*))+/g, ",$2") //  Also remove double comma in the resulting arrays (maintain the spaces in case normal text with commas)
           dashStr = dashStr.replaceAll(/(?<!\\)\n/g, "\\n") // escapes newlines
           dashStr = dashStr.replaceAll(/	/g,"\\t") //escapes literal tabs
-          let dash = JSON.parse(dashStr)
+          let dash
+          try {
+            dash = JSON.parse(dashStr)
+          } catch (e) {
+            console.error("DASH: Error parsing processed dash from string to json (use ' instead of \" - or escape the \"s ).", e, dashboard,"\n", dashStr.replaceAll("\\n","\n"))
+            throw e
+          }
 
           for( let i = dashboard.boardQueries.length; i > 0 ; i-- ) {
             let dashInfoItem = dashboard.boardQueries.pop()
@@ -1066,7 +724,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
                 for (let l of c.Line) {
                   l.Value = l.Value.map(v => {
                     if (v.Arg[2] && v.Arg[2].Arg.startsWith("{")) {
-                      v.Arg[2]['Arg'] = JSON.parse(v.Arg[2]['Arg'])
+                      eval("v.Arg[2]['Arg']="+ v.Arg[2]['Arg'])
                     }
                     // If Attention is configured for this value line then add attention status as user check
                     if (v["ValueCustomize"][0]["ValueAttention"]) {
@@ -1218,7 +876,8 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
                 dash.contextQueries = []
                 dash.boardQueries = []
                 dash.dashboardParsed = parseDashboard(resp.data);
-                dash.dashboardProcessor = compileDashboard(dash.dashboardParsed);
+                dash.dashboardTemplate = generateDashboardTemplate(dash.dashboardParsed);
+                dash.dashboardProcessor = Handlebars.compile(dash.dashboardTemplate)
                 dash.dashboardBaseContext = getBaseContext();
                 dash.dashboardContext = getContext(dash);
                 dash.dashboardProcessed = buildDashboard(dash);
@@ -1229,7 +888,7 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
               }
               catch (e) {
                 if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: Exception processing dash. e=", e)
-                reportError("Error: error building dashboard " + newDashEs.id + " (" + e + ")")
+                reportError("Error: error building dashboard " + newDashEs.id)
               }
             })
             .catch((e) => {

@@ -1,7 +1,7 @@
 {
   "id": null,
   "name": "Dashboard-Solutions",
-  "description": "@COB v6.28.0",
+  "description": "@COB v6.70.0",
   "duplicable": null,
   "state": "enabled",
   "fieldDefinitions": [
@@ -11,7 +11,7 @@
       "required": null,
       "description": "$instanceLabel",
       "configuration": {
-        "description": "",
+        "description": null,
         "keys": {
           "InstanceLabel": {}
         },
@@ -22,8 +22,8 @@
       "duplicable": false,
       "fields": [],
       "order": 0,
-      "rootField": true,
       "restricted": false,
+      "rootField": true,
       "defaultValue": null
     },
     {
@@ -32,7 +32,7 @@
       "required": null,
       "description": "$instanceDescription",
       "configuration": {
-        "description": "",
+        "description": null,
         "keys": {
           "InstanceDescription": {}
         },
@@ -43,8 +43,8 @@
       "duplicable": false,
       "fields": [],
       "order": 1,
-      "rootField": true,
       "restricted": false,
+      "rootField": true,
       "defaultValue": null
     },
     {
@@ -53,7 +53,7 @@
       "required": null,
       "description": "$instanceDescription",
       "configuration": {
-        "description": "",
+        "description": null,
         "keys": {
           "InstanceDescription": {}
         },
@@ -64,8 +64,8 @@
       "duplicable": false,
       "fields": [],
       "order": 2,
-      "rootField": true,
       "restricted": false,
+      "rootField": true,
       "defaultValue": null
     },
     {
@@ -74,12 +74,12 @@
       "required": null,
       "description": "$number $instanceDescription",
       "configuration": {
-        "description": "",
+        "description": null,
         "keys": {
-          "InstanceDescription": {},
           "Number": {
             "args": {}
-          }
+          },
+          "InstanceDescription": {}
         },
         "extensions": {}
       },
@@ -88,8 +88,8 @@
       "duplicable": false,
       "fields": [],
       "order": 3,
-      "rootField": true,
       "restricted": false,
+      "rootField": true,
       "defaultValue": null
     },
     {
@@ -107,8 +107,8 @@
       "duplicable": false,
       "fields": [],
       "order": 4,
-      "rootField": true,
       "restricted": false,
+      "rootField": true,
       "defaultValue": null
     },
     {
@@ -117,7 +117,7 @@
       "required": null,
       "description": "$markdown $style[mdPreview]",
       "configuration": {
-        "description": "",
+        "description": null,
         "keys": {},
         "extensions": {
           "$markdown": {},
@@ -133,8 +133,34 @@
       "duplicable": false,
       "fields": [],
       "order": 5,
-      "rootField": true,
       "restricted": false,
+      "rootField": true,
+      "defaultValue": null
+    },
+    {
+      "id": null,
+      "name": "Documentação",
+      "required": null,
+      "description": "$markdown $style[mdPreview]",
+      "configuration": {
+        "description": null,
+        "keys": {},
+        "extensions": {
+          "$markdown": {},
+          "$style": {
+            "args": [
+              "mdPreview"
+            ]
+          }
+        }
+      },
+      "condition": null,
+      "visibilityCondition": null,
+      "duplicable": false,
+      "fields": [],
+      "order": 6,
+      "restricted": false,
+      "rootField": true,
       "defaultValue": null
     },
     {
@@ -153,9 +179,9 @@
       "visibilityCondition": null,
       "duplicable": false,
       "fields": [],
-      "order": 6,
-      "rootField": true,
+      "order": 7,
       "restricted": false,
+      "rootField": true,
       "defaultValue": null
     },
     {
@@ -172,9 +198,9 @@
       "visibilityCondition": null,
       "duplicable": false,
       "fields": [],
-      "order": 7,
-      "rootField": true,
+      "order": 8,
       "restricted": false,
+      "rootField": true,
       "defaultValue": null
     },
     {
@@ -183,7 +209,7 @@
       "required": null,
       "description": "$references(Dashboard_v1,Solution)",
       "configuration": {
-        "description": "",
+        "description": null,
         "keys": {
           "References": {
             "args": {
@@ -198,9 +224,9 @@
       "visibilityCondition": null,
       "duplicable": false,
       "fields": [],
-      "order": 8,
-      "rootField": true,
+      "order": 9,
       "restricted": false,
+      "rootField": true,
       "defaultValue": null
     }
   ],
