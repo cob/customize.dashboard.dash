@@ -114,6 +114,7 @@
       monthTitle: null,
       yearTitle: null,
       dateRange: null, // array: [initDate, endDate]
+      isCalendarHidden: false,
 
       calendarApi: null,
       debouncing: false,
@@ -167,6 +168,20 @@
         this.calendarOptions.initialView = this.eventView[0]
         this.calendarOptions.headerToolbar.right = this.eventView.join(",")
         onlyHeaderToolbar.right = this.calendarOptions.headerToolbar.right
+        // Add custom button to toggle view to calendarOptions
+        if (this.headerOnly) {
+          this.calendarOptions.customButtons = {
+            toggleView: {
+              text: "Show/Hide",
+              click: (e) => {
+                const calendarHarness = document.querySelector(".fc-view-harness")
+                if (calendarHarness) { calendarHarness.classList.toggle("hidden") }
+                this.isCalendarHidden = !this.isCalendarHidden
+              }
+            }
+          }
+        }
+
         this.statePersistence = new ComponentStatePersistence(this.component.id, this.updateCalendarBasedOnPersistedStateChange)
 
         // If configured get the definition id to allow instance creation
@@ -369,6 +384,10 @@
     watch: {
       queries: function(newQueries) {
         this.calendarApi.setOption('noEventsContent', {html: '<div>&nbsp;</div>'})
+        // If we're in header only mode and the calendar is hidden, we don't need to launch the queries
+        if (this.headerOnly && this.isCalendarHidden) {
+          return
+        }
         for (var i=0; i<newQueries.length; i++) {
           if( i < this.rmEventSources.length ) {
             this.rmEventSources[i].changeArgs({query: newQueries[i]})
