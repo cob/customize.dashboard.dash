@@ -328,7 +328,6 @@ export default {
                 this.qrText = result.text
                 this.setOutputVar(result.text)
                 first_success = true
-                console.log("QR Code Content ATCUD processed: ", this.parseATCUD(result.text))
             } catch (error) {
                 console.log('Error: Could not read QR code with zxing')
             }
@@ -342,7 +341,6 @@ export default {
                     const code = jsQR(imgData.data, croppedCanvas.width, croppedCanvas.height)
                     this.qrText = code.data
                     this.setOutputVar(code.data)
-                    console.log("QR Code Content ATCUD processed: ", this.parseATCUD(code.data))
                 } catch (error) {
                     console.log('Error v2: Could not read QR code with jsqr')
                 }
@@ -708,21 +706,6 @@ export default {
             this.$refs.cropper.setData(JSON.parse(this.viewData));
             this.currCropData = JSON.parse(this.viewData)
         },
-
-        // OTHER
-        parseATCUD(input) {
-            const result = {};
-            const pairs = input.split('*');
-
-            pairs.forEach(pair => {
-                const [key, value] = pair.split(':');
-                if (key && value) {
-                    result[key] = value;
-                }
-            });
-
-            return result;
-        }
     },
 }
 </script>
