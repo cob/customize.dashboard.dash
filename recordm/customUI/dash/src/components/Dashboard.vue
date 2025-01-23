@@ -48,80 +48,21 @@ export default {
     created() {
         this.statePersistence = {}
         this.updateVars(this.vars)
-        for (const key in this.customizations) {
-            if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
-            this.customizations[key].forEach(c => {
-                if (c.onCreated && typeof c.onCreated === "function") {
-                    try {
-                        let customizationDetail = {
-                            dashContainer: this.$refs.dashboardContainer, dashContext: this,
-                            eventBus: EventBus
-                        }
-                        c.onCreated(customizationDetail)
-                    } catch (e) {
-                        console.error("Error running customization On Created", e)
-                    }
-                }
-            });
-        }
+        this.runLifecycleHook(this.customizations, "onCreated")
     },
     mounted() {
-        for (const key in this.customizations) {
-            if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
-            this.customizations[key].forEach(c => {
-                if (c.onMounted && typeof c.onMounted === "function") {
-                    try {
-                        let customizationDetail = {
-                            dashContainer: this.$refs.dashboardContainer, dashContext: this,
-                            eventBus: EventBus
-                        }
-                        c.onMounted(customizationDetail)
-                    } catch (e) {
-                        console.error("Error running customization On Mounted", e)
-                    }
-                }
-            });
-        }
+        this.runLifecycleHook(this.customizations, "onMounted")
     },
     updated() {
-        for (const key in this.customizations) {
-            if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
-            this.customizations[key].forEach(c => {
-                if (c.onUpdated && typeof c.onUpdated === "function") {
-                    try {
-                        let customizationDetail = {
-                            dashContainer: this.$refs.dashboardContainer, dashContext: this,
-                            eventBus: EventBus
-                        }
-                        c.onUpdated(customizationDetail)
-                    } catch (e) {
-                        console.error("Error running customization On Mounted", e)
-                    }
-                }
-            });
-        }
+        this.runLifecycleHook(this.customizations, "onUpdated")
     },
     beforeDestroy() {
         Object.keys(this.vars).forEach(
             //TODO: fix - sometimes we get this.vars with [null]. We currently test but this shouldn't happen       
             v => this.statePersistence[v] && this.statePersistence[v].stop())
 
-        for (const key in this.customizations) {
-            if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue } 
-            this.customizations[key].forEach(c => {
-                if (c.onBeforeDestroy && typeof c.onBeforeDestroy === "function") {
-                    try {
-                        let customizationDetail = {
-                            dashContainer: this.$refs.dashboardContainer, dashContext: this,
-                            eventBus: EventBus
-                        }
-                        c.onBeforeDestroy(customizationDetail)
-                    } catch (e) {
-                        console.error("Error running customization On Before Destroy", e)
-                    }
-                }
-            });
-        }
+        this.runLifecycleHook(this.customizations, "onBeforeDestroy")
+
         // Clear all events added by customizations and components before destroying
         EventBus.$off()
     },
@@ -144,6 +85,24 @@ export default {
         vars(newVars) { this.updateVars(newVars) }
     },
     methods: {
+        runLifecycleHook(customizationsList, hookName) {
+            for (const key in customizationsList) {
+                if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue }
+                customizationsList[key].forEach(c => {
+                    if (c[hookName] && typeof c[hookName] === "function") {
+                        try {
+                            let customizationDetail = {
+                                dashContainer: this.$refs.dashboardContainer, dashContext: this,
+                                eventBus: EventBus
+                            }
+                            c[hookName](customizationDetail)
+                        } catch (e) {
+                            console.error(`Error running customization hook ${hookName}`, e)
+                        }
+                    }
+                });
+            }
+        },
         updateVars(vars) {
             Object.entries(vars).forEach(entry => {
                 const name = entry[0]
@@ -178,7 +137,7 @@ export default {
                 const regex = new RegExp(pattern); 
                 return regex.test(dashboardName);
             } catch (error) {
-                console.error("Invalid regex pattern:", error.message);
+                console.error(`Error testing customization with regex pattern ${pattern} in dashboard ${dashboardName}: ${error.message}`);
                 return false;
             }
         }
