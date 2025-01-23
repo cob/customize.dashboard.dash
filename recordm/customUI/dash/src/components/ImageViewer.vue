@@ -3,7 +3,8 @@
 
         <div class="flex flex-col  w-full">
             <div class="flex items-center justify-center pt-2 pb-1 gap-x-0.5 flex-wrap gap-y-0.5">
-                <a class="rounded-md relative mr-0.5" :class="buttonClasses">
+                <!-- TEMPORARILY HIDDEN UNTIL FUTURE NEED -->
+                <a v-if="false" class="rounded-md relative mr-0.5" :class="buttonClasses">
                     <!-- Hidden File Input -->
                     <input class="hidden" ref="input" type="file" name="image" accept="image/*" @change="setImage"
                         id="fileInput" />
@@ -14,7 +15,7 @@
                     </label>
                 </a>
 
-                <div class="flex  mr-0.5">
+                <div v-if="zoomButtons" class="flex  mr-0.5">
                     <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="zoom(0.2)"
                         title="Ctrl + +">
                         <i class="fa-solid fa-magnifying-glass-plus"></i>
@@ -25,56 +26,62 @@
                     </a>
                 </div>
 
-                <div class="flex  mr-0.5">
+                <div v-if="modeSwitch" class="flex mr-0.5">
                     <a :class="buttonClasses" class="rounded-l-md" href="#" role="button"
                         @click.prevent="setDragMode('move')" title="Ctrl + ?">
                         <i class="fa-solid fa-up-down-left-right"></i>
                     </a>
-                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button"
+                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button"
                         @click.prevent="setDragMode('crop')" title="Ctrl + ?">
                         <i class="fa-solid fa-crop-simple"></i>
                     </a>
+                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="clearCrop"
+                        title="Ctrl + ?">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
                 </div>
 
+                <!-- Used with invisible and aboslute to not occupy DOM and still be findable by customizations -->
                 <div class="flex mr-0.5">
-                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="move(20, 0)"
+                    <a :class="buttonClasses" class="invisible absolute" href="#" role="button" @click.prevent="move(20, 0)"
                         title="Ctrl + Left">
                         <i class="fa-solid fa-arrow-left"></i>
                     </a>
-                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button" @click.prevent="move(-20, 0)"
+                    <a :class="buttonClasses" class="bg-blue-600 invisible absolute" href="#" role="button" @click.prevent="move(-20, 0)"
                         title="Ctrl + Right">
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
-                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button" @click.prevent="move(0, 20)"
+                    <a :class="buttonClasses" class="bg-blue-600 invisible absolute" href="#" role="button" @click.prevent="move(0, 20)"
                         title="Ctrl + Up">
                         <i class="fa-solid fa-arrow-up"></i>
                     </a>
-                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="move(0, -20)"
+                    <a :class="buttonClasses" class="rounded-r-md invisible absolute" href="#" role="button" @click.prevent="move(0, -20)"
                         title="Ctrl + Down">
                         <i class="fa-solid fa-arrow-down"></i>
                     </a>
                 </div>
 
+                <!-- Used with invisible and aboslute to not occupy DOM and still be findable by customizations -->
                 <div class="flex mr-0.5">
-                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button"
+                    <a :class="buttonClasses" class="invisible absolute" href="#" role="button"
                         @click.prevent="moveCropbox(-20, 0)" title="Ctrl + Left">
                         <i class="fa-solid fa-chevron-left"></i>
                     </a>
-                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button"
+                    <a :class="buttonClasses" class="bg-blue-600 invisible absolute" href="#" role="button"
                         @click.prevent="moveCropbox(20, 0)" title="Ctrl + Right">
                         <i class="fa-solid fa-chevron-right"></i>
                     </a>
-                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button"
+                    <a :class="buttonClasses" class="bg-blue-600 invisible absolute" href="#" role="button"
                         @click.prevent="moveCropbox(0, -20)" title="Ctrl + Up">
                         <i class="fa-solid fa-chevron-up"></i>
                     </a>
-                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button"
+                    <a :class="buttonClasses" class="bg-blue-600 invisible absolute" href="#" role="button"
                         @click.prevent="moveCropbox(0, 20)" title="Ctrl + Down">
                         <i class="fa-solid fa-chevron-down"></i>
                     </a>
                 </div>
 
-                <div class="flex mr-0.5">
+                <div v-if="rotateButtons" class="flex mr-0.5">
                     <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="rotate(90)"
                         title="Ctrl + ?">
                         <i class="fa-solid fa-rotate-right"></i>
@@ -86,34 +93,18 @@
                 </div>
 
                 <div class="flex mr-0.5">
-                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="cropCrop"
-                        title="Ctrl + ?">
-                        <i class="fa-solid fa-check"></i>
-                    </a>
-                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="clearCrop"
-                        title="Ctrl + ?">
-                        <i class="fa-solid fa-xmark"></i>
-                    </a>
-                </div>
-
-                <div class="flex mr-0.5">
-                    <a v-if="debugMode" :class="buttonClasses" class="rounded-md" href="#" role="button"
-                        @click.prevent="reset" title="Ctrl + ?">
-                        Reset
-                    </a>
-
-                    <a :class="buttonClasses" class="rounded-md" href="#" role="button" @click.prevent="togglePreview"
+                    <!-- TEMPORARILY DISABLED UNTIL FUTURE NEED -->
+                    <a v-if="false" :class="buttonClasses" class="rounded-md" href="#" role="button" @click.prevent="togglePreview"
                         title="Ctrl + ?">
                         <i class="fa-solid fa-eye"></i>
                     </a>
-
-                    <a v-if="imgSrc" :class="buttonClasses" class="rounded-md" href="#" role="button"
+                    <a v-if="false" :class="buttonClasses" class="rounded-md" href="#" role="button"
                         @click.prevent="cropImage" title="Ctrl + ?">
                         <i class="fa-solid fa-scissors"></i>
                     </a>
 
 
-                    <a v-if="imgSrc" :class="buttonClasses" class="fa-ocr rounded-md flex items-center" href="#"
+                    <a v-if="imgSrc && ocrButton" :class="buttonClasses" class="fa-ocr rounded-md flex items-center" href="#"
                         role="button" @click.prevent="cropAndRecognize">
                         <svg v-if="loadingOcr || loadingQr" class="animate-spin mr-1 h-5 w-5 text-white"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -132,30 +123,6 @@
                     </a>
                 </div>
 
-
-                <!-- DEBUG BUTTONS BELOW -->
-                <a v-if="debugMode" class="font-light rounded-md border-2 border-stone-800 p-1" href="#" role="button"
-                    @click.prevent="getCanvasData">
-                    Get Canvas Data
-                </a>
-
-                <a v-if="debugMode" class="font-light rounded-l-md border-2 border-stone-800 p-1" href="#" role="button"
-                    @click.prevent="getData">
-                    Get Data
-                </a>
-                <a v-if="debugMode" class="font-light rounded-r-md border-2 border-stone-800 p-1 mr-0.5" href="#"
-                    role="button" @click.prevent="setDataText">
-                    Set Data
-                </a>
-
-                <a v-if="debugMode" class="font-light rounded-l-md border-2 border-stone-800 p-1" href="#" role="button"
-                    @click.prevent="getCropBoxData">
-                    Get CropBox Data
-                </a>
-                <a v-if="debugMode" class="font-light rounded-r-md border-2 border-stone-800 p-1 mr-0.5" href="#"
-                    role="button" @click.prevent="setCropBoxDataText">
-                    Set CropBox Data
-                </a>
             </div>
 
             <div class="img-cropper block">
@@ -175,25 +142,6 @@
                 <div class="preview overflow-hidden w-full h-40"></div>
             </div>
 
-
-            <div v-if="debugMode" class="flex">
-                <div v-if="cropBoxData" class="w-6/12"> <span class="font-bold">Crop Box Data</span>
-                    <hr>
-                    <textarea class="w-full" v-model="cropBoxData"></textarea>
-                </div>
-                <div v-if="viewData" class="w-6/12"> <span class="font-bold">View Data</span>
-                    <hr>
-                    <textarea class="w-full" v-model="viewData"></textarea>
-                </div>
-                <div v-if="canvasData" class="w-6/12"> <span class="font-bold">Canvas Data</span>
-                    <hr>
-                    <textarea class="w-full" v-model="canvasData"></textarea>
-                </div>
-                <div v-if="currentRatio" class="w-6/12"> <span class="font-bold">Ratio</span>
-                    <hr>
-                    <textarea class="w-full" v-model="currentRatio"></textarea>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -236,7 +184,6 @@ export default {
 
         //Other
         showPreview: false,
-        debugMode: false,
         qrReader: false,
     }),
     computed: {
@@ -245,7 +192,21 @@ export default {
         buttonClasses() { return this.options['ImageViewerButtonClasses'] || "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer" },
         outputVar() { return this.component["OutputVarImageViewer"] },
         imageUrl() { return this.component["ImageViewerURL"] },
-        componentIdentifier() { if (this.options.length > 0) { return this.options[0]["ImageViewerIdentifier"] } else return "" }
+        componentIdentifier() { if (this.options.length > 0) { return this.options[0]["ImageViewerIdentifier"] } else return "" },
+
+        // Vars that define if button groups should appear
+        enableButtons() {  
+            if(this.options['Enable Buttons']) {
+                return this.options['Enable Buttons'].split("\u0000")
+            }
+            return []
+        }, 
+        
+        // Enable buttons
+        zoomButtons() { return (this.enableButtons && this.enableButtons.includes("Zoom In/Out")) || false}, // Zoom buttons
+        modeSwitch() { return (this.enableButtons && this.enableButtons.includes("Mode Switch")) || false }, // Arrow keys to move image
+        rotateButtons() { return (this.enableButtons && this.enableButtons.includes("Rotate")) || false }, // Rotate buttons
+        ocrButton() { return (this.enableButtons && this.enableButtons.includes("OCR")) || false}, // OCR Button   
     },
     watch: {
         imageUrl: function (newUrl) {
