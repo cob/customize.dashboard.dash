@@ -15,7 +15,7 @@
             v-on="$listeners" @show-modal="d => $emit('show-modal', d)" :refreshFlag="refreshFlag"/>
             <Hierarchy v-if="item['Component'] === 'Hierarchy'" :component="item" :key="i" :refreshFlag="refreshFlag"/>
             <ImageViewer  v-if="item['Component'] === 'ImageViewer'"  :component="item" :key="i" />
-          <InstanceViewer  v-if="item['Component'] === 'InstanceViewer'"  :component="item" :key="i" />
+            <InstanceViewer  v-if="item['Component'] === 'InstanceViewer'"  :component="item" :key="i" />
         </template>
     </div>
 </template>
