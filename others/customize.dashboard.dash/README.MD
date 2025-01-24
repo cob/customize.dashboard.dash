@@ -2,6 +2,92 @@
 
 ### Definition Upgrades:
 
+#### 6.74.0
+
+```
+ALTERED
+Board > Component: $[Label,Menu,Totals,Kibana,Filter,Calendar,List,Mermaid,ModalActivator,Markdown,Slides,Hierarchy,Viewer,ImageViewer,InstanceViewer] $instanceDescription $style[singleColumn]
+
+NEW
+Board > Component > [=ImageViewer] ImageViewerCustomize : $[Classes,Tag,Buttons] $multiple
+Board > Component > [=ImageViewer] ImageViewerCustomize > [=Classes] ImageViewerClasses : $text $default(max-h-[70vh]) Default: max-h-[70vh] $help(Classes for the image viewer container) 
+Board > Component > [=ImageViewer] ImageViewerCustomize > [=Classes] ImageViewerButtonClasses : $text $default(bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer) $help(Classes for the image viewer buttons) 
+Board > Component > [=ImageViewer] ImageViewerCustomize > [=Tag] ImageViewerIdentifier : Identifier for Image Viewer Component
+Board > Component > [=ImageViewer] ImageViewerCustomize > [=Buttons] Enable Buttons : $multiple $[Zoom In/Out,Mode Switch,Rotate,OCR]
+Board > Component > [=ImageViewer] OutputVarImageViewer : Extracted text from OCR or QR Code
+Board > Component > [=ImageViewer] ImageViewerURL : Image URL
+
+Board > Component > [=InstanceViewer] InstanceViewerCustomize : $[Classes,Tag] $multiple
+Board > Component > [=InstanceViewer] InstanceViewerCustomize > [=Classes] NoInstanceClasses : $text $default(w-full text-center text-xl text-stone-400 font-bold self-center) Default: w-full text-center text-xl text-stone-400 font-bold self-center
+Board > Component > [=InstanceViewer] InstanceViewerCustomize > [=Classes] InstanceViewerClasses : $text $default(flex w-full h-full max-h-[70vh]) Default: flex w-full h-full max-h-[70vh]self-center
+Board > Component > [=InstanceViewer] InstanceViewerCustomize > [=Tag] InstanceViewerIdentifier : Identifier for Instance Viewer Component
+Board > Component > [=InstanceViewer] InstanceViewerInstanceId : ID of the instance to show
+Board > Component > [=InstanceViewer] InstanceViewerOutputVar : 
+```
+
+#### Detailed Changelog (6.74.0)
+Adds two new components:
+- ImageViewer: allows image viewing and performing OCR on a highlighted part of said image.
+- InstanceViewer: allows viewing an instance in a dashboard.
+
+Adds support for new dashboard customizations. The following is part of a draft of documentation for these customizations:
+
+#### Supported Hooks
+We currently support the following hooks:
+- `onCreated`
+- `onMounted`
+- `onUpdated`
+- `onBeforeDestroy`
+
+#### Dash Customizations
+To set up a dashboard JavaScript customization, follow these steps:
+
+1. Create a new file in `/recordm/customUI/js/customizations`.
+2. Initialize your code (JavaScript) with the lifecycle hooks where you wish to run custom logic:
+    ```javascript
+    const my_code = {
+        onMounted: ({ dashContainer, dashContext, eventBus }) => {
+            // Custom logic for onMounted
+        },
+
+        onUpdated: ({ dashContainer, dashContext, eventBus }) => {
+            // Custom logic for onUpdated
+        },
+
+        // Other hooks...
+
+        onBeforeDestroy: ({ dashContainer, dashContext, eventBus }) => {
+            // Custom logic for onBeforeDestroy
+        }
+    };
+
+    CoBDashCustomizations.registerDashCustomization("Dashboard Name", my_code);
+    ```
+3. Register your custom JavaScript file in `/recordm/customUI/js/customizations2.js`.
+
+#### Lifecycle Hooks Parameters
+| Parameter     | Description                                                                 |
+|---------------|-----------------------------------------------------------------------------|
+| `dashContainer` | Contains the dashboard DOM container.                                      |
+| `dashContext`   | The Dashboard Vue component object. Access the dashboard component state, methods, and child components. |
+| `eventBus`      | An event bus. Listen for events fired by components and run logic accordingly. |
+
+Note: Since `eventBus` is a Vue event bus, you can add listeners to it like this:
+```
+eventBus.$on("Event Name", myEventHandlerFunction);
+```
+
+#### Existing Events
+| Component       | Event             | Description                                                   | Event Data                                                                                          |
+|-----------------|-------------------|---------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| Image Viewer    | `imageviewer-ocr` | Fired when OCR is run on this component.                      | **details**: { **ocrText**: The text decoded via OCR; **cropData**: The bounding box coordinates; **confidence**: Confidence of the extracted text value. } |
+| Instance Viewer | `field-focus`     | Fired when a field is focused (highlighted, clicked, etc.).   | **detail**: { **instancePresenter**: The instance presenter; **field**: The field presenter for the focused field. } |
+
+All event data also includes:
+- **senderUID**: The Vue component UUID of the sender.
+- **componentIdentifier**: The component identifier (if specified at the dashboard level).
+
+---
 
 #### 6.70.1
 Re-import `Home` dashboard_v1 instance (instances/dashboardhome_v6.63.0.xlsx) Or do it by hand : 
