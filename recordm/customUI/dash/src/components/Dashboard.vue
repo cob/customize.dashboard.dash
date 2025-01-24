@@ -1,9 +1,12 @@
 <template>
-    <div class="h-full" :class="classes" :style="image" >
-        <div class="flex flex-row flex-wrap justify-end gap-1 mb-10"> 
-            <a v-for="(item,i) in menu" :key="item.name+i" :href="item.href" :class="item.active?'bg-lime-100':'bg-white'" class="rounded  py-1 px-2 text-xs min-w-fit whitespace-nowrap font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-lime-100" v-html="item.name"></a>
+    <div class="h-full" :class="classes" :style="image">
+        <div class="flex flex-row flex-wrap justify-end gap-1 mb-10">
+            <a v-for="(item, i) in menu" :key="item.name + i" :href="item.href"
+                :class="item.active ? 'bg-lime-100' : 'bg-white'"
+                class="rounded  py-1 px-2 text-xs min-w-fit whitespace-nowrap font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-lime-100"
+                v-html="item.name"></a>
         </div>
-        
+
         <div>
             <div :class="width + ' ' + grid" >
                 <template  v-for="(board,i) in boards">
@@ -12,11 +15,14 @@
                 </template>
             </div>
         </div>
-        <div v-if="dashboard.dashboardContext.user.isSystem" style="position: absolute;bottom: 5px;right: 5px;" class="text-lg">
-            <a :href="'#/instance/'+dashboard.instanceId" target="_blank" rel="noopener noreferrer" class="px-1.5 py-0.5 rounded bg-white bg-opacity-30">
+        <div v-if="dashboard.dashboardContext.user.isSystem" style="position: absolute;bottom: 5px;right: 5px;"
+            class="text-lg">
+            <a :href="'#/instance/' + dashboard.instanceId" target="_blank" rel="noopener noreferrer"
+                class="px-1.5 py-0.5 rounded bg-white bg-opacity-30">
                 <i class="fa-regular fa-pen-to-square"></i>
             </a>
-            <a :href="'#/instance/duplicate/'+dashboard.instanceId" target="_blank" rel="noopener noreferrer" class="px-1.5 py-0.5 rounded bg-white bg-opacity-30 ml-2">
+            <a :href="'#/instance/duplicate/' + dashboard.instanceId" target="_blank" rel="noopener noreferrer"
+                class="px-1.5 py-0.5 rounded bg-white bg-opacity-30 ml-2">
                 <i class="fa-regular fa-clone"></i>
             </a>
         </div>
@@ -27,74 +33,114 @@
 import Board from './Board.vue'
 import Modal from './Modal.vue'
 import ComponentStatePersistence from "@/model/ComponentStatePersistence"
+import { EventBus } from '@/event-bus';
 
+export default {
+    components: { Board, Modal },
+    props: {
+        dashboard: Object,
+        menu: Array,
+        refreshFlag: Number
+    },
+    data: () => ({
+        activeModal: String
+    }),
+    created() {
+        this.statePersistence = {}
+        this.updateVars(this.vars)
+        this.runLifecycleHook(this.customizations, "onCreated")
+    },
+    mounted() {
+        this.runLifecycleHook(this.customizations, "onMounted")
+    },
+    updated() {
+        this.runLifecycleHook(this.customizations, "onUpdated")
+    },
+    beforeDestroy() {
+        Object.keys(this.vars).forEach(
+            //TODO: fix - sometimes we get this.vars with [null]. We currently test but this shouldn't happen       
+            v => this.statePersistence[v] && this.statePersistence[v].stop())
 
-    export default {
-        components: { Board, Modal },
-        props: {
-          dashboard: Object,
-          menu: Array,
-          refreshFlag: Number
-        },
-        data: () => ({
-          activeModal : String
-        }),
-        created() {
+        this.runLifecycleHook(this.customizations, "onBeforeDestroy")
+
+        // Clear all events added by customizations and components before destroying
+        EventBus.$off()
+    },
+    computed: {
+        options() { return this.dashboard['DashboardCustomize'][0] },
+        boards() { return this.dashboard['Board'] },
+        classes() { return this.options['DashboardClasses'] || "h-full bg-cover bg-center overflow-auto p-3" },
+        width() { return this.options['Width'] || "max-w-6xl mx-auto" },
+        grid() { return this.options['Grid'] || "grid grid-flow-row-dense md:grid-cols-12" },
+        vars() { return this.options['Variables'].reduce((vars, v) => { vars[v['VarName']] = v['Initial Value']; return vars }, {}) },
+        image() { return this.options['Image'] ? "background-image: url(" + this.options['Image'] + ");" : "" },
+        customizations() { return window.CoBDashCustomizations.customizations }
+    },
+    watch: {
+        dashboard(old, neww) {
+            if (old.instanceId == neww.instanceId) return;
             this.statePersistence = {}
             this.updateVars(this.vars)
         },
-        beforeDestroy() {
-            Object.keys(this.vars).forEach (
-                //TODO: fix - sometimes we get this.vars with [null]. We currently test but this shouldn't happen       
-                v => this.statePersistence[v] && this.statePersistence[v].stop())  
-        },
-        computed: {
-            options() { return this.dashboard['DashboardCustomize'][0] },
-            boards()  { return this.dashboard['Board'] },
-            classes() { return this.options['DashboardClasses'] || "h-full bg-cover bg-center overflow-auto p-3" },
-            width()   { return this.options['Width']            || "max-w-6xl mx-auto" },
-            grid()    { return this.options['Grid']             || "grid grid-flow-row-dense md:grid-cols-12" },
-            vars()    { return this.options['Variables'].reduce( (vars, v) => {vars[v['VarName']] = v['Initial Value']; return vars}, {}) },
-            image()   { return this.options['Image'] ? "background-image: url(" + this.options['Image'] +  ");" : "" }
-        },
-        watch: {
-            dashboard(old, neww) { 
-                if(old.instanceId == neww.instanceId) return;
-                this.statePersistence = {}
-                this.updateVars(this.vars)
-            },
-            vars(newVars) { this.updateVars(newVars) }
-        },
-        methods: {
-            updateVars(vars)  {
-                Object.entries(vars).forEach( entry => {
-                    const name = entry[0]
-                    const value = entry[1]
-                    
-                    if(!this.statePersistence[name])
-                        this.statePersistence[name] = new ComponentStatePersistence(name, this.activateFromPersistenceChange(name))
-                    
-                    if(name && value && !this.statePersistence[name].content) {
-                        this.statePersistence[name].content = value 
-                        this.dashboard.dashboardContext.vars[name] = this.statePersistence[name].content
+        vars(newVars) { this.updateVars(newVars) }
+    },
+    methods: {
+        runLifecycleHook(customizationsList, hookName) {
+            for (const key in customizationsList) {
+                if(!this.dashboardPatternMatcher(this.dashboard.Name, key)) { continue }
+                customizationsList[key].forEach(c => {
+                    if (c[hookName] && typeof c[hookName] === "function") {
+                        try {
+                            let customizationDetail = {
+                                dashContainer: this.$refs.dashboardContainer, dashContext: this,
+                                eventBus: EventBus
+                            }
+                            c[hookName](customizationDetail)
+                        } catch (e) {
+                            console.error(`Error running customization hook ${hookName}`, e)
+                        }
                     }
+                });
+            }
+        },
+        updateVars(vars) {
+            Object.entries(vars).forEach(entry => {
+                const name = entry[0]
+                const value = entry[1]
 
-                  
-                })
-              },
-            activateFromPersistenceChange(varName) {
-                return (newContent) => {
-                    this.$set(this.dashboard.dashboardContext.vars, varName, newContent)
+                if (!this.statePersistence[name])
+                    this.statePersistence[name] = new ComponentStatePersistence(name, this.activateFromPersistenceChange(name))
+
+                if (name && value && !this.statePersistence[name].content) {
+                    this.statePersistence[name].content = value
+                    this.dashboard.dashboardContext.vars[name] = this.statePersistence[name].content
                 }
-            },
-            toggleModal(payload) {
-                this.activeModal = payload
-            },
-            isModal(board) {
-                const options = board['BoardCustomize'][0]['BoardCustomize']
-                if (options)
-                    return options.split("\u0000").indexOf("IsModal") !== -1
+
+
+            })
+        },
+        activateFromPersistenceChange(varName) {
+            return (newContent) => {
+                this.$set(this.dashboard.dashboardContext.vars, varName, newContent)
+            }
+        },
+        toggleModal(payload) {
+            this.activeModal = payload
+        },
+        isModal(board) {
+            const options = board['BoardCustomize'][0]['BoardCustomize']
+            if (options)
+                return options.split("\u0000").indexOf("IsModal") !== -1
+        },
+        dashboardPatternMatcher(dashboardName, pattern) {
+            try {
+                const regex = new RegExp(pattern); 
+                return regex.test(dashboardName);
+            } catch (error) {
+                console.error(`Error testing customization with regex pattern ${pattern} in dashboard ${dashboardName}: ${error.message}`);
+                return false;
             }
         }
     }
+}
 </script>

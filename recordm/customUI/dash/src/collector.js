@@ -57,7 +57,7 @@ function parseDashboard(raw_dashboard) {
             "Image": "",
             "GroupAccess": [{}],
             "Variables": [{
-                "VarName" : "", 
+                "VarName" : "",
                 "Initial Value" : "",
             }],
             "Context": "",
@@ -219,10 +219,30 @@ function parseDashboard(raw_dashboard) {
             "SortFieldName" : "",
             "DisplayFieldHierarchy" : "",
             "OutputVarHierarchy" : "",
+        },
+        "ImageViewer" : {
+            "ImageViewerCustomize": [{
+                "ImageViewerClasses": "",
+                "ImageViewerButtonClasses":"",
+                "ImageViewerIdentifier":"",
+                "Enable Buttons":""
+            }],
+            "OutputVarImageViewer":"",
+            "ImageViewerURL":""
+        },
+        "InstanceViewer" : {
+            "InstanceViewerCustomize": [{
+                "InstanceViewerClasses": "",
+                "NoInstanceClasses": "",
+                "InstanceViewerIdentifier":""
+            }],
+            "InstanceViewerInstanceId":"",
+            "InstanceViewerOutputVar":""
         }
     }
 
     for( let board of dash["Board"]) {
+        board["Dash"] = { id: dash.instanceId, name: dash.Name }
         let componentsList = clone([])
         for( let component of board["Component"]) {
             if(component["Component"] == null) continue
