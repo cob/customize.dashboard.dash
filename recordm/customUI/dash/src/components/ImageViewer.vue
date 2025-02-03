@@ -1,7 +1,7 @@
 <template>
-    <div ref="viewerContainer" class="flex">
+    <div ref="viewerContainer" class="flex h-full">
 
-        <div class="flex flex-col  w-full">
+        <div class="flex flex-col  w-full  h-full">
             <div class="flex items-center justify-center pt-2 pb-1 gap-x-0.5 flex-wrap gap-y-0.5">
                 <!-- TEMPORARILY HIDDEN UNTIL FUTURE NEED -->
                 <a v-if="false" class="rounded-md relative mr-0.5" :class="buttonClasses">
@@ -125,10 +125,10 @@
 
             </div>
 
-            <div class="img-cropper block">
+            <div class="img-cropper block  h-full">
                 <vue-cropper :class="classes" v-if="imgSrc" ref="cropper" :src="imgSrc" preview=".preview" :viewMode="2"
                     :dragMode="'move'" :modal="true" :highlight="true" :autoCrop="false" @zoom="handleZoom"
-                    @cropmove="handleMove" @ready="onCropperReady" :imgStyle="{ display: 'block', maxWidth: '100%' }" />
+                    @cropmove="handleMove" @ready="onCropperReady"  />
 
                 <div v-if="!imgSrc" class="text-center font-semibold text-xl pt-2 text-stone-400">
                     <i class="fa-regular fa-image"></i> No image to display.
@@ -188,7 +188,7 @@ export default {
     }),
     computed: {
         options() { return this.component['ImageViewerCustomize'][0]; },
-        classes() { return this.options['ImageViewerClasses'] || "max-h-[70vh]"; },
+        classes() { return this.options['ImageViewerClasses'] || "h-full"; },
         buttonClasses() { return this.options['ImageViewerButtonClasses'] || "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer" },
         outputVar() { return this.component["OutputVarImageViewer"] },
         imageUrl() { return this.component["ImageViewerURL"] },
