@@ -38,9 +38,7 @@ export default {
   },
   watch: {
     instanceId: function (newId) {
-      if (newId) {
-        this.setOutputVar(newId);
-      }
+      this.setOutputVar(newId);
       this.showInstance(newId);
     },
   },
