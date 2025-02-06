@@ -1,111 +1,103 @@
 <template>
-    <div ref="viewerContainer" class="flex h-full">
+    <div :id="componentIdentifier" ref="viewerContainer" class="flex h-full">
 
         <div class="flex flex-col  w-full  h-full">
-            <div class="flex items-center justify-center pt-2 pb-1 gap-x-0.5 flex-wrap gap-y-0.5">
-                <!-- TEMPORARILY HIDDEN UNTIL FUTURE NEED -->
+            <div class="flex items-center justify-between mb-1 py-2 px-2 gap-x-0.5 flex-wrap border-t-[1px] border-x-[1px] rounded-t-md
+            border-stone-400 bg-stone-200/30">
+                <!-- TEMPORARILY HIDDEN UNTIL FUTURE NEED
                 <a v-if="false" class="rounded-md relative mr-0.5" :class="buttonClasses">
-                    <!-- Hidden File Input -->
                     <input class="hidden" ref="input" type="file" name="image" accept="image/*" @change="setImage"
                         id="fileInput" />
 
-                    <!-- Custom Button/Label for File Input -->
                     <label for="fileInput" class="hover:cursor-pointer">
                         <i class="fas fa-folder-open"></i>
                     </label>
                 </a>
+                -->
 
-                <div v-if="zoomButtons" class="flex  mr-0.5">
-                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="zoom(0.2)"
-                        title="Ctrl + +">
-                        <i class="fa-solid fa-magnifying-glass-plus"></i>
-                    </a>
-                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="zoom(-0.2)"
-                        title="Ctrl + -">
-                        <i class="fa-solid fa-magnifying-glass-minus"></i>
-                    </a>
+                <div class="flex gap-x-2">
+                    <div v-if="zoomButtons" class="flex  mr-0.5">
+                        <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="zoom(0.2)"
+                            title="Ctrl + +">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        </a>
+                        <a :class="buttonClasses" class="rounded-r-md" href="#" role="button"
+                            @click.prevent="zoom(-0.2)" title="Ctrl + -">
+                            <i class="fa-solid fa-magnifying-glass-minus"></i>
+                        </a>
+                    </div>
+
+                    <div v-if="modeSwitch" class="flex mr-0.5">
+                        <a :class="buttonClasses" class="rounded-l-md" href="#" role="button"
+                            @click.prevent="setDragMode('move')" title="Ctrl + ?">
+                            <i class="fa-solid fa-up-down-left-right"></i>
+                        </a>
+                        <a :class="buttonClasses" class="" href="#" role="button"
+                            @click.prevent="setDragMode('crop')" title="Ctrl + ?">
+                            <i class="fa-solid fa-crop-simple"></i>
+                        </a>
+                        <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="clearCrop"
+                            title="Ctrl + ?">
+                            <i class="fa-solid fa-xmark"></i>
+                        </a>
+                    </div>
+
+                    <!-- Used with invisible and aboslute to not occupy DOM and still be findable by customizations -->
+                    <div class="flex mr-0.5 hidden">
+                        <a :class="buttonClasses" class=" absolute" href="#" role="button"
+                            @click.prevent="move(20, 0)" title="Ctrl + Left">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </a>
+                        <a :class="buttonClasses" class="  absolute" href="#" role="button"
+                            @click.prevent="move(-20, 0)" title="Ctrl + Right">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a :class="buttonClasses" class=" absolute" href="#" role="button"
+                            @click.prevent="move(0, 20)" title="Ctrl + Up">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </a>
+                        <a :class="buttonClasses" class=" absolute" href="#" role="button"
+                            @click.prevent="move(0, -20)" title="Ctrl + Down">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </a>
+                    </div>
+
+                    <!-- Used with invisible and aboslute to not occupy DOM and still be findable by customizations -->
+                    <div class="flex mr-0.5 hidden">
+                        <a :class="buttonClasses" class=" absolute" href="#" role="button"
+                            @click.prevent="moveCropbox(-20, 0)" title="Ctrl + Left">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                        <a :class="buttonClasses" class=" absolute" href="#" role="button"
+                            @click.prevent="moveCropbox(20, 0)" title="Ctrl + Right">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                        <a :class="buttonClasses" class=" absolute" href="#" role="button"
+                            @click.prevent="moveCropbox(0, -20)" title="Ctrl + Up">
+                            <i class="fa-solid fa-chevron-up"></i>
+                        </a>
+                        <a :class="buttonClasses" class=" absolute" href="#" role="button"
+                            @click.prevent="moveCropbox(0, 20)" title="Ctrl + Down">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </a>
+                    </div>
+
+                    <div v-if="rotateButtons" class="flex mr-0.5">
+                        <a :class="buttonClasses" class="rounded-l-md" href="#" role="button"
+                            @click.prevent="rotate(90)" title="Ctrl + ?">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </a>
+                        <a :class="buttonClasses" class="rounded-r-md" href="#" role="button"
+                            @click.prevent="rotate(-90)" title="Ctrl + ?">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </a>
+                    </div>
                 </div>
 
-                <div v-if="modeSwitch" class="flex mr-0.5">
-                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button"
-                        @click.prevent="setDragMode('move')" title="Ctrl + ?">
-                        <i class="fa-solid fa-up-down-left-right"></i>
-                    </a>
-                    <a :class="buttonClasses" class="bg-blue-600" href="#" role="button"
-                        @click.prevent="setDragMode('crop')" title="Ctrl + ?">
-                        <i class="fa-solid fa-crop-simple"></i>
-                    </a>
-                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="clearCrop"
-                        title="Ctrl + ?">
-                        <i class="fa-solid fa-xmark"></i>
-                    </a>
-                </div>
 
-                <!-- Used with invisible and aboslute to not occupy DOM and still be findable by customizations -->
                 <div class="flex mr-0.5">
-                    <a :class="buttonClasses" class="invisible absolute" href="#" role="button" @click.prevent="move(20, 0)"
-                        title="Ctrl + Left">
-                        <i class="fa-solid fa-arrow-left"></i>
-                    </a>
-                    <a :class="buttonClasses" class="bg-blue-600 invisible absolute" href="#" role="button" @click.prevent="move(-20, 0)"
-                        title="Ctrl + Right">
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                    <a :class="buttonClasses" class="bg-blue-600 invisible absolute" href="#" role="button" @click.prevent="move(0, 20)"
-                        title="Ctrl + Up">
-                        <i class="fa-solid fa-arrow-up"></i>
-                    </a>
-                    <a :class="buttonClasses" class="rounded-r-md invisible absolute" href="#" role="button" @click.prevent="move(0, -20)"
-                        title="Ctrl + Down">
-                        <i class="fa-solid fa-arrow-down"></i>
-                    </a>
-                </div>
-
-                <!-- Used with invisible and aboslute to not occupy DOM and still be findable by customizations -->
-                <div class="flex mr-0.5">
-                    <a :class="buttonClasses" class="invisible absolute" href="#" role="button"
-                        @click.prevent="moveCropbox(-20, 0)" title="Ctrl + Left">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </a>
-                    <a :class="buttonClasses" class="bg-blue-600 invisible absolute" href="#" role="button"
-                        @click.prevent="moveCropbox(20, 0)" title="Ctrl + Right">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </a>
-                    <a :class="buttonClasses" class="bg-blue-600 invisible absolute" href="#" role="button"
-                        @click.prevent="moveCropbox(0, -20)" title="Ctrl + Up">
-                        <i class="fa-solid fa-chevron-up"></i>
-                    </a>
-                    <a :class="buttonClasses" class="bg-blue-600 invisible absolute" href="#" role="button"
-                        @click.prevent="moveCropbox(0, 20)" title="Ctrl + Down">
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </a>
-                </div>
-
-                <div v-if="rotateButtons" class="flex mr-0.5">
-                    <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="rotate(90)"
-                        title="Ctrl + ?">
-                        <i class="fa-solid fa-rotate-right"></i>
-                    </a>
-                    <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="rotate(-90)"
-                        title="Ctrl + ?">
-                        <i class="fa-solid fa-rotate-left"></i>
-                    </a>
-                </div>
-
-                <div class="flex mr-0.5">
-                    <!-- TEMPORARILY DISABLED UNTIL FUTURE NEED -->
-                    <a v-if="false" :class="buttonClasses" class="rounded-md" href="#" role="button" @click.prevent="togglePreview"
-                        title="Ctrl + ?">
-                        <i class="fa-solid fa-eye"></i>
-                    </a>
-                    <a v-if="false" :class="buttonClasses" class="rounded-md" href="#" role="button"
-                        @click.prevent="cropImage" title="Ctrl + ?">
-                        <i class="fa-solid fa-scissors"></i>
-                    </a>
-
-
-                    <a v-if="imgSrc && ocrButton" :class="buttonClasses" class="fa-ocr rounded-md flex items-center" href="#"
-                        role="button" @click.prevent="cropAndRecognize">
+                    <a v-if="imgSrc && ocrButton" :class="buttonClasses" class="fa-ocr rounded-md flex items-center"
+                        href="#" role="button" @click.prevent="cropAndRecognize">
                         <svg v-if="loadingOcr || loadingQr" class="animate-spin mr-1 h-5 w-5 text-white"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-60" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -117,22 +109,36 @@
                         OCR
                     </a>
 
+                    <!-- TEMPORARILY DISABLED UNTIL FUTURE NEED 
+                    <a v-if="false" :class="buttonClasses" class="rounded-md" href="#" role="button" @click.prevent="togglePreview"
+                        title="Ctrl + ?">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                    <a v-if="false" :class="buttonClasses" class="rounded-md" href="#" role="button"
+                        @click.prevent="cropImage" title="Ctrl + ?">
+                        <i class="fa-solid fa-scissors"></i>
+                    </a>
+
                     <a v-if="imgSrc && qrReader" :class="buttonClasses" class="rounded-md" href="#" role="button"
                         @click.prevent="cropAndReadCode">
                         <i class="fa-solid fa-qrcode"></i>
                     </a>
+                    -->
                 </div>
 
             </div>
 
-            <div class="img-cropper block  h-full">
-                <vue-cropper :class="classes" v-if="imgSrc" ref="cropper" :src="imgSrc" preview=".preview" :viewMode="2"
-                    :dragMode="'move'" :modal="true" :highlight="true" :autoCrop="false" @zoom="handleZoom"
-                    @cropmove="handleMove" @ready="onCropperReady"  />
+            <div 
+                class="img-cropper border-[1px] border-stone-400 h-full bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC')]">
+                <vue-cropper :class="cropperClasses" v-if="imgSrc" ref="cropper" :src="imgSrc" preview=".preview"
+                    :viewMode="2" :dragMode="'move'" :modal="true" :highlight="true" :autoCrop="false"
+                    @zoom="handleZoom" @cropmove="handleMove" @ready="onCropperReady" />
 
-                <div v-if="!imgSrc" class="text-center font-semibold text-xl pt-2 text-stone-400">
-                    <i class="fa-regular fa-image"></i> No image to display.
+                
+                <div v-if="!imgSrc" class="flex items-center justify-center h-full text-center font-semibold text-xl text-stone-400">
+                    <i class="fa-regular fa-image"></i> 
                 </div>
+                
             </div>
 
             <hr v-if="showPreview" />
@@ -188,30 +194,31 @@ export default {
     }),
     computed: {
         options() { return this.component['ImageViewerCustomize'][0]; },
-        classes() { return this.options['ImageViewerClasses'] || "h-full"; },
-        buttonClasses() { return this.options['ImageViewerButtonClasses'] || "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer" },
+        cropperClasses() { return this.options['ImageViewerClasses'] || "h-full"; },
+        buttonClasses() { return this.options['ImageViewerButtonClasses'] || "border-transparent border-[1px] text-stone-400 font-light text-sm px-2 py-1 hover:border-[1px] hover:border-stone-300 hover:bg-stone-100 hover:cursor-pointer" },
         outputVar() { return this.component["OutputVarImageViewer"] },
         imageUrl() { return this.component["ImageViewerURL"] },
-        componentIdentifier() { if (this.options.length > 0) { return this.options[0]["ImageViewerIdentifier"] } else return "" },
+        componentIdentifier() { return this.options["ImageViewerIdentifier"] || "" },
 
         // Vars that define if button groups should appear
-        enableButtons() {  
-            if(this.options['Enable Buttons']) {
+        enableButtons() {
+            //bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer
+            if (this.options['Enable Buttons']) {
                 return this.options['Enable Buttons'].split("\u0000")
             }
             return []
-        }, 
-        
+        },
+
         // Enable buttons
-        zoomButtons() { return (this.enableButtons && this.enableButtons.includes("Zoom In/Out")) || false}, // Zoom buttons
+        zoomButtons() { return (this.enableButtons && this.enableButtons.includes("Zoom In/Out")) || false }, // Zoom buttons
         modeSwitch() { return (this.enableButtons && this.enableButtons.includes("Mode Switch")) || false }, // Arrow keys to move image
         rotateButtons() { return (this.enableButtons && this.enableButtons.includes("Rotate")) || false }, // Rotate buttons
-        ocrButton() { return (this.enableButtons && this.enableButtons.includes("OCR")) || false}, // OCR Button   
+        ocrButton() { return (this.enableButtons && this.enableButtons.includes("OCR")) || false }, // OCR Button   
     },
     watch: {
         imageUrl: function (newUrl) {
             this.updateCropperImage(newUrl)
-        }
+        },
     },
     props: {
         component: Object
@@ -237,6 +244,7 @@ export default {
         onCropperReady() {
             this.clearCrop()
             this.zoom(0) //we zoom with 0 to force init some vars
+            this.move(0, -10000)
         },
         async cropAndRecognize() {
             this.cropImage()
@@ -510,8 +518,8 @@ export default {
             let newCropperData = {
                 x: x,
                 y: y,
-                width: w, 
-                height: h, 
+                width: w,
+                height: h,
                 rotate: r || rotation
             };
 
