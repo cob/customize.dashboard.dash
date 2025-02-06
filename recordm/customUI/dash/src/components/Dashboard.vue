@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full" :class="classes" :style="image">
+    <div class="h-full flex flex-col" :class="classes" :style="image">
         <div class="flex flex-row flex-wrap justify-end gap-1 mb-10">
             <a v-for="(item, i) in menu" :key="item.name + i" :href="item.href"
                 :class="item.active ? 'bg-lime-100' : 'bg-white'"
@@ -7,7 +7,7 @@
                 v-html="item.name"></a>
         </div>
 
-        <div>
+        <div class="h-full">
             <div :class="width + ' ' + grid" >
                 <template  v-for="(board,i) in boards">
                     <Modal v-if="isModal(board) && board.Board == activeModal" :board="board" :key="dashboard.instanceId + '-modal-' + i"  @show-modal="toggleModal" v-on="$listeners" :refreshFlag="refreshFlag"/>
