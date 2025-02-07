@@ -1,8 +1,8 @@
 <template>
-    <div :id="componentIdentifier" ref="viewerContainer" class="flex h-full">
+    <div :id="componentIdentifier" ref="viewerContainerRef" class="flex h-full">
 
         <div class="flex flex-col  w-full  h-full">
-            <div class="flex items-center justify-between mb-1 py-2 px-2 gap-x-0.5 flex-wrap border-t-[1px] border-x-[1px] rounded-t-md
+            <div ref="imageViewerToolbar" class="flex items-center justify-between mb-1 py-2 px-2 gap-x-0.5 flex-wrap border-t-[1px] border-x-[1px] rounded-t-md
             border-stone-400 bg-stone-200/30">
                 <!-- TEMPORARILY HIDDEN UNTIL FUTURE NEED
                 <a v-if="false" class="rounded-md relative mr-0.5" :class="buttonClasses">
@@ -32,8 +32,8 @@
                             @click.prevent="setDragMode('move')" title="Ctrl + ?">
                             <i class="fa-solid fa-up-down-left-right"></i>
                         </a>
-                        <a :class="buttonClasses" class="" href="#" role="button"
-                            @click.prevent="setDragMode('crop')" title="Ctrl + ?">
+                        <a :class="buttonClasses" class="" href="#" role="button" @click.prevent="setDragMode('crop')"
+                            title="Ctrl + ?">
                             <i class="fa-solid fa-crop-simple"></i>
                         </a>
                         <a :class="buttonClasses" class="rounded-r-md" href="#" role="button" @click.prevent="clearCrop"
@@ -44,20 +44,20 @@
 
                     <!-- Used with invisible and aboslute to not occupy DOM and still be findable by customizations -->
                     <div class="flex mr-0.5 hidden">
-                        <a :class="buttonClasses" class=" absolute" href="#" role="button"
-                            @click.prevent="move(20, 0)" title="Ctrl + Left">
+                        <a :class="buttonClasses" class=" absolute" href="#" role="button" @click.prevent="move(20, 0)"
+                            title="Ctrl + Left">
                             <i class="fa-solid fa-arrow-left"></i>
                         </a>
                         <a :class="buttonClasses" class="  absolute" href="#" role="button"
                             @click.prevent="move(-20, 0)" title="Ctrl + Right">
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
-                        <a :class="buttonClasses" class=" absolute" href="#" role="button"
-                            @click.prevent="move(0, 20)" title="Ctrl + Up">
+                        <a :class="buttonClasses" class=" absolute" href="#" role="button" @click.prevent="move(0, 20)"
+                            title="Ctrl + Up">
                             <i class="fa-solid fa-arrow-up"></i>
                         </a>
-                        <a :class="buttonClasses" class=" absolute" href="#" role="button"
-                            @click.prevent="move(0, -20)" title="Ctrl + Down">
+                        <a :class="buttonClasses" class=" absolute" href="#" role="button" @click.prevent="move(0, -20)"
+                            title="Ctrl + Down">
                             <i class="fa-solid fa-arrow-down"></i>
                         </a>
                     </div>
@@ -128,17 +128,19 @@
 
             </div>
 
-            <div 
+            <div ref="imageViewerContainerRef"
                 class="img-cropper border-[1px] border-stone-400 h-full bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC')]">
                 <vue-cropper :class="cropperClasses" v-if="imgSrc" ref="cropper" :src="imgSrc" preview=".preview"
                     :viewMode="2" :dragMode="'move'" :modal="true" :highlight="true" :autoCrop="false"
-                    @zoom="handleZoom" @cropmove="handleMove" @ready="onCropperReady" />
+                    :imgStyle="{ display: 'block', maxWidth: '100%' }" @zoom="handleZoom" @cropmove="handleMove"
+                    @ready="onCropperReady" />
 
-                
-                <div v-if="!imgSrc" class="flex items-center justify-center h-full text-center font-semibold text-xl text-stone-400">
-                    <i class="fa-regular fa-image"></i> 
+
+                <div v-if="!imgSrc"
+                    class="flex items-center justify-center h-full text-center font-semibold text-xl text-stone-400">
+                    <i class="fa-regular fa-image"></i>
                 </div>
-                
+
             </div>
 
             <hr v-if="showPreview" />
@@ -223,12 +225,41 @@ export default {
     props: {
         component: Object
     },
+    updated() {
+        this.calculateViewerHeight()
+    },
     mounted() {
         if (this.imageUrl) {
             this.updateCropperImage(this.imageUrl)
         }
     },
     methods: {
+        calculateViewerHeight() {
+            const viewerContainer = this.$refs.viewerContainerRef;
+            const toolbarContainer = this.$refs.imageViewerToolbar;
+            const headerContainer = document.getElementById("header"); // Get the header toolbar
+
+            let viewerContainerHeight = window.getComputedStyle(viewerContainer).height;
+            let toolbarHeight = window.getComputedStyle(toolbarContainer).height;
+            let headerHeight = window.getComputedStyle(headerContainer).height;
+
+
+            if (viewerContainerHeight.includes("px") && toolbarHeight.includes("px") && headerHeight.includes("px")) {
+                viewerContainerHeight = parseInt(viewerContainerHeight.replace("px", ""), 10);
+                toolbarHeight = parseInt(toolbarHeight.replace("px", ""), 10);
+                headerHeight = parseInt(headerHeight.replace("px", ""), 10);
+
+                const viewportHeight = window.innerHeight;
+
+                // Convert to vh
+                const viewerContainerHeightVH = (viewerContainerHeight / viewportHeight) * 100;
+                const toolbarHeightVH = (toolbarHeight / viewportHeight) * 100;
+                const headerHeightVH = (headerHeight / viewportHeight) * 100;
+                const viewerHeightVH = viewerContainerHeightVH - toolbarHeightVH - headerHeightVH;
+
+                this.$refs.imageViewerContainerRef.style.height = `${viewerHeightVH}vh`;
+            }
+        },
         updateCropperImage(imageUrl) {
             this.imgSrc = imageUrl
             if (this.$refs.cropper) {
