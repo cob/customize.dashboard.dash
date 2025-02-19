@@ -61,7 +61,7 @@ export default {
           console.warn("State persistence not found for filter var name", this.outputVar)
           return
         }
-        const finalValue = this.statePersistence.content !== newId ? newId : ""
+        const finalValue = newId //this.statePersistence.content !== newId ? newId : ""
         this.statePersistence.content = finalValue
         this.$set(this.vars, this.outputVar, newId)
       }
