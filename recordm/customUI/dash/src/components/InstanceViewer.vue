@@ -87,7 +87,7 @@ export default {
           const fieldContainer = fp.content()[0]
           const fieldInput = fieldContainer.querySelectorAll("textarea, input") // get textareas and inputs
           fieldInput.forEach(input => {
-            if (!input.dataset.focusListenerAdded) {
+            if (!input.dataset.focusListenerAdded && input.tabIndex >= 0 && !input.disabled) {
               const fieldDetails = { instancePresenter: presenter, field: fp };
               const focusHandler = (ev) => {
                 console.log("DEBUG: InstanceViewer Focus event 1", input.id);
