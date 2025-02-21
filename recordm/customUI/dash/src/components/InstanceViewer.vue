@@ -70,7 +70,7 @@ export default {
     setupFocusListeners() {
       if (this.instanceDetails) {
         const presenter = this.instanceDetails.getInstanceP()
-
+        if(!presenter) {return}
         let fps = presenter.findFieldPs(fp => {
           if (fp && fp.field && fp.field.fieldDefinition && fp.field.fieldDefinition.description) {
             let description = fp.field.fieldDefinition.description;
