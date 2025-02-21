@@ -226,7 +226,10 @@ export default {
         component: Object
     },
     updated() {
-        this.calculateViewerHeight()
+        // Hack to fix resize race that happens with the jscropper component
+        setTimeout(() => {
+            this.calculateViewerHeight()
+        }, 150)
     },
     mounted() {
         if (this.imageUrl) {
@@ -238,7 +241,7 @@ export default {
             const viewerContainer = this.$refs.viewerContainerRef;
             const toolbarContainer = this.$refs.imageViewerToolbar;
             const headerContainer = document.getElementById("header"); // Get the header toolbar
-
+            if (!viewerContainer) { return }
             let viewerContainerHeight = window.getComputedStyle(viewerContainer).height;
             let toolbarHeight = window.getComputedStyle(toolbarContainer).height;
             let headerHeight = window.getComputedStyle(headerContainer).height;
