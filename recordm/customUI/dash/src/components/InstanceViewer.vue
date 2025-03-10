@@ -9,6 +9,7 @@
 <script>
 import ComponentStatePersistence from "@/model/ComponentStatePersistence";
 import { EventBus } from "../event-bus"
+import { nextTick } from 'vue'
 const BUS_FIELD_FOCUS = "field-focus"
 
 export default {
@@ -54,7 +55,7 @@ export default {
     componentIdentifier() { return this.options[0]["InstanceViewerIdentifier"] || "" }
   },
   methods: {
-    setOutputVar(newId) {
+    async setOutputVar(newId) {
       // Set instanceId in output var
       if (this.outputVar) {
         if (!this.statePersistence) {
@@ -64,6 +65,7 @@ export default {
         const finalValue = newId //this.statePersistence.content !== newId ? newId : ""
         this.statePersistence.content = finalValue
         this.$set(this.vars, this.outputVar, newId)
+        await nextTick()
       }
     },
     // Turn this into a component option: SendFocusEvents
