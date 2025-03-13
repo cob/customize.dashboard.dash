@@ -172,11 +172,25 @@ export default {
 .instance-viewer {
   position: relative;
   background-color: inherit;
+  height: 100%;
 }
 
 .instance-viewer .instance-detail-container {
   position: static;
+  height: 100%;
 }
+
+.instance-viewer .instance-container {
+  margin-top: 0% !important;
+  padding-top: 10px; 
+  height: 100%;
+}
+
+.instance-viewer .instance-container .content, 
+.instance-viewer .instance-container .content > div {
+  height: 100%;
+}
+
 
 .instance-viewer .instance-detail-container .sidenav {
   display: none;
@@ -184,5 +198,6 @@ export default {
 
 .instance-viewer .instance-detail-container .instance-container .fields-container {
   position: static;
+  height: 100%;
 }
 </style>
