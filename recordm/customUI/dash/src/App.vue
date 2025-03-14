@@ -18,6 +18,7 @@
   import ComponentStatePersistence from "./model/ComponentStatePersistence";
   import traverse from "traverse";
   import sha256 from "crypto-js/sha256";
+  import { nextTick } from 'vue'
 
   window.CoBDasHDebug = window.CoBDasHDebug || {}
   const DEBUG = window.CoBDasHDebug
@@ -45,6 +46,7 @@
       hashArg: "",
       refreshFlag:0,
       timeoutId: null, // Used to track update timer debounce
+      statePersistencesMap: Object
     }),
 
     created() {
@@ -238,6 +240,37 @@
     },
 
     methods: {
+      getActiveDash() {
+        if(!this.activeDashKey) {return}
+        return this.dashboardsCached[this.activeDashKey]
+      },
+      activateFromPersistenceChange(filterVarName) {
+        // get active dashboard - we want to make sure we update only the curr dash variables
+        const currDash = this.getActiveDash()
+
+        if(!currDash) {return}
+
+        const currDashContext = currDash.dashboardBaseContext
+        return (newContent) => {this.$set(currDashContext.vars, filterVarName, newContent)}
+      },
+      async setDashboardVar(filterVarName, filterValue) {
+        const activeDashboard = this.getActiveDash();
+        if (!activeDashboard) return;
+
+        const dashboardContext = activeDashboard.dashboardBaseContext;
+
+        if (!this.statePersistencesMap[filterVarName]) {
+          this.statePersistencesMap[filterVarName] = new ComponentStatePersistence(
+            filterVarName,
+            this.activateFromPersistenceChange(filterVarName)
+          );
+        }
+
+        this.statePersistencesMap[filterVarName].content = filterValue;
+        this.$set(dashboardContext.vars, filterVarName, filterValue);
+
+        await nextTick();
+      },
       startDragDropListeners(activeDash) {
         let activeDragDropInfo = activeDash.dashboardDragDropInfo
 
