@@ -240,21 +240,23 @@
     },
 
     methods: {
-      getActiveDash() {
-        if(!this.activeDashKey) {return}
-        return this.dashboardsCached[this.activeDashKey]
-      },
-      activateFromPersistenceChange(filterVarName) {
-        // get active dashboard - we want to make sure we update only the curr dash variables
-        const currDash = this.getActiveDash()
-
-        if(!currDash) {return}
-
-        const currDashContext = currDash.dashboardBaseContext
-        return (newContent) => {this.$set(currDashContext.vars, filterVarName, newContent)}
-      },
       async setDashboardVar(filterVarName, filterValue) {
-        const activeDashboard = this.getActiveDash();
+        const getActiveDash = () => {
+          if(!this.activeDashKey) {return}
+          return this.dashboardsCached[this.activeDashKey]
+        }
+
+        const activateFromPersistenceChange = (filterVarName) => {
+          // get active dashboard - we want to make sure we update only the curr dash variables
+          const currDash = getActiveDash()
+
+          if(!currDash) {return}
+
+          const currDashContext = currDash.dashboardBaseContext
+          return (newContent) => {this.$set(currDashContext.vars, filterVarName, newContent)}
+        }
+
+        const activeDashboard = getActiveDash();
         if (!activeDashboard) return;
 
         const dashboardContext = activeDashboard.dashboardBaseContext;
@@ -262,7 +264,7 @@
         if (!this.statePersistencesMap[filterVarName]) {
           this.statePersistencesMap[filterVarName] = new ComponentStatePersistence(
             filterVarName,
-            this.activateFromPersistenceChange(filterVarName)
+            activateFromPersistenceChange(filterVarName)
           );
         }
 
