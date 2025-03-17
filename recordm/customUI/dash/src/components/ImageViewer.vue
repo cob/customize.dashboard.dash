@@ -131,7 +131,7 @@
             <div ref="imageViewerContainerRef"
                 class="img-cropper border-[1px] border-stone-400 h-full bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC')]">
                 <vue-cropper :class="cropperClasses" v-if="imgSrc" ref="cropper" :src="imgSrc" preview=".preview"
-                    :viewMode="2" :dragMode="'move'" :modal="true" :highlight="true" :autoCrop="false"
+                    :viewMode="2" :dragMode="'crop'" :modal="true" :highlight="true" :autoCrop="false"
                     :imgStyle="{ display: 'block', maxWidth: '100%' }" @zoom="handleZoom" @cropmove="handleMove"
                     @ready="onCropperReady" />
 
