@@ -260,15 +260,14 @@
         if (!activeDashboard) return;
 
         const dashboardContext = activeDashboard.dashboardBaseContext;
+        const dashboardVars = dashboardContext.vars
 
-        if (!this.statePersistencesMap[filterVarName]) {
-          this.statePersistencesMap[filterVarName] = new ComponentStatePersistence(
+        if (!dashboardVars[filterVarName]) {
+          dashboardVars[filterVarName] = new ComponentStatePersistence(
             filterVarName,
             activateFromPersistenceChange(filterVarName)
           );
         }
-
-        this.statePersistencesMap[filterVarName].content = filterValue;
         this.$set(dashboardContext.vars, filterVarName, filterValue);
 
         await nextTick();
