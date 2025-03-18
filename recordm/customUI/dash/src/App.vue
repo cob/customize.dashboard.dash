@@ -46,7 +46,6 @@
       hashArg: "",
       refreshFlag:0,
       timeoutId: null, // Used to track update timer debounce
-      statePersistencesMap: Object
     }),
 
     created() {
