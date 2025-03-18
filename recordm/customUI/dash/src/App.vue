@@ -241,31 +241,23 @@
 
     methods: {
       async setDashboardVar(filterVarName, filterValue) {
+
         const getActiveDash = () => {
           if(!this.activeDashKey) {return}
           return this.dashboardsCached[this.activeDashKey]
         }
 
-        const activateFromPersistenceChange = (filterVarName) => {
-          // get active dashboard - we want to make sure we update only the curr dash variables
-          const currDash = getActiveDash()
-
-          if(!currDash) {return}
-
-          const currDashContext = currDash.dashboardBaseContext
-          return (newContent) => {this.$set(currDashContext.vars, filterVarName, newContent)}
-        }
-
         const activeDashboard = getActiveDash();
         if (!activeDashboard) return;
 
-        const statePersistence = this.$refs.dashboardInstance[filterVarName]
-        const dashboardContext = activeDashboard.dashboardBaseContext;
-        const dashboardVars = dashboardContext.vars
+        const statePersistence = this.$refs.dashboardInstance.statePersistence[filterVarName]
 
         if(statePersistence) {
           statePersistence.content = filterValue
         }
+
+        const dashboardContext = activeDashboard.dashboardBaseContext;
+        const dashboardVars = dashboardContext.vars
 
         this.$set(dashboardContext.vars, filterVarName, filterValue);
 
