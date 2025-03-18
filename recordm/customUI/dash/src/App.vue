@@ -1,7 +1,7 @@
 <template>
   <div id="cobDashApp" class="h-full w-full">
     <div v-if="error || chooserError" class="text-center my-20 text-2xl "> {{ error }} <br> {{ chooserError }} </div>
-    <Dashboard v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" @refresh="updateQueries" :refreshFlag="refreshFlag"/>
+    <Dashboard ref="dashboardInstance" v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" @refresh="updateQueries" :refreshFlag="refreshFlag"/>
 
     <Refresh :updating="processingFlag" @refresh="updateQueries" :class="this.refreshClasses" />
   </div>
@@ -259,15 +259,14 @@
         const activeDashboard = getActiveDash();
         if (!activeDashboard) return;
 
+        const statePersistence = this.$refs.dashboardInstance[filterVarName]
         const dashboardContext = activeDashboard.dashboardBaseContext;
         const dashboardVars = dashboardContext.vars
 
-        if (!dashboardVars[filterVarName]) {
-          dashboardVars[filterVarName] = new ComponentStatePersistence(
-            filterVarName,
-            activateFromPersistenceChange(filterVarName)
-          );
+        if(statePersistence) {
+          statePersistence.content = filterValue
         }
+
         this.$set(dashboardContext.vars, filterVarName, filterValue);
 
         await nextTick();
