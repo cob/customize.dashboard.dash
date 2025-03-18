@@ -1,7 +1,7 @@
 <template>
   <div id="cobDashApp" class="h-full w-full">
     <div v-if="error || chooserError" class="text-center my-20 text-2xl "> {{ error }} <br> {{ chooserError }} </div>
-    <Dashboard v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" @refresh="updateQueries" :refreshFlag="refreshFlag"/>
+    <Dashboard ref="dashboardInstance" v-else-if="activeDashKey" :dashboard="currentDashboard.dashboardProcessed" :menu="currentDashboard.menu" @refresh="updateQueries" :refreshFlag="refreshFlag"/>
 
     <Refresh :updating="processingFlag" @refresh="updateQueries" :class="this.refreshClasses" />
   </div>
@@ -18,6 +18,7 @@
   import ComponentStatePersistence from "./model/ComponentStatePersistence";
   import traverse from "traverse";
   import sha256 from "crypto-js/sha256";
+  import { nextTick } from 'vue'
 
   window.CoBDasHDebug = window.CoBDasHDebug || {}
   const DEBUG = window.CoBDasHDebug
@@ -45,6 +46,7 @@
       hashArg: "",
       refreshFlag:0,
       timeoutId: null, // Used to track update timer debounce
+      statePersistencesMap: Object
     }),
 
     created() {
@@ -238,6 +240,29 @@
     },
 
     methods: {
+      async setDashboardVar(filterVarName, filterValue) {
+
+        const getActiveDash = () => {
+          if(!this.activeDashKey) {return}
+          return this.dashboardsCached[this.activeDashKey]
+        }
+
+        const activeDashboard = getActiveDash();
+        if (!activeDashboard) return;
+
+        const statePersistence = this.$refs.dashboardInstance.statePersistence[filterVarName]
+
+        if(statePersistence) {
+          statePersistence.content = filterValue
+        }
+
+        const dashboardContext = activeDashboard.dashboardBaseContext;
+        const dashboardVars = dashboardContext.vars
+
+        this.$set(dashboardContext.vars, filterVarName, filterValue);
+
+        await nextTick();
+      },
       startDragDropListeners(activeDash) {
         let activeDragDropInfo = activeDash.dashboardDragDropInfo
 
