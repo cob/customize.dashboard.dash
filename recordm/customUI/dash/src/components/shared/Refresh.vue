@@ -27,6 +27,7 @@
     },
     methods: {
       askRefresh() {
+        if(this.updating) { return }
         this.$emit('refresh');
         window.dispatchEvent(new Event("cobRefreshMenu"));
       }
