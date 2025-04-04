@@ -1,6 +1,6 @@
 <!-- From inspecting https://tailwindcss.com/docs/animation#spin example -->
 <template>
-  <button type="button" class="mt-2 mr-1" @click="askRefresh">
+  <button type="button" class="mt-2 mr-1" @click="debounceRefresh">
 
     <svg xmlns="http://www.w3.org/2000/svg"  :class="this.refreshClasses" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd"
@@ -30,7 +30,16 @@
         if(this.updating) { return }
         this.$emit('refresh');
         window.dispatchEvent(new Event("cobRefreshMenu"));
-      }
+      },
+      debounceRefresh() {
+      if (this.refreshTimer) { return }
+
+      this.askRefresh();
+
+      this.refreshTimer = setTimeout(() => {
+        this.refreshTimer = null
+      }, 1200)
+    }
     }
   }
 </script>
