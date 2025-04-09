@@ -2,6 +2,14 @@
 
 ### Definition Upgrades:
 
+#### 6.81.0
+Adds option to enable save buttons in instance viewer
+
+````
+ALTERED
+Board > Component > [=ImageViewer] ImageViewerCustomize : $[Classes,Tag,Buttons] $multiple -> Board > Component > [=ImageViewer] ImageViewerCustomize : $[Classes,Tag,Buttons,EnableSave] $multiple
+````
+
 #### 6.74.0
 
 ```
