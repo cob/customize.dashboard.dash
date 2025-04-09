@@ -49,7 +49,7 @@ export default {
 
     instanceClasses() { return this.options[0]["InstanceViewerClasses"] || "flex w-full h-full max-h-[70vh]"; },
     noInstanceClasses() { return this.options[0]["NoInstanceClasses"] || "w-full text-center text-xl text-stone-400 font-bold self-center"; },
-
+    enableSave() { return this.options[0]["InstanceViewerCustomize"] && this.options[0]["InstanceViewerCustomize"].split("\u0000").indexOf("EnableSave") !== -1 ? true : false },
     instanceId() { return this.component["InstanceViewerInstanceId"] },
     outputVar() { return this.component["InstanceViewerOutputVar"] || '' },
     componentIdentifier() { return this.options[0]["InstanceViewerIdentifier"] || "" }
