@@ -28,7 +28,7 @@ export default {
   },
   mounted() {
     this.showInstance(this.instanceId);
-    if (this.instanceId) {
+    if(this.instanceId) {
       this.setOutputVar(this.instanceId);
     }
   },
@@ -49,7 +49,7 @@ export default {
 
     instanceClasses() { return this.options[0]["InstanceViewerClasses"] || "flex w-full h-full max-h-[70vh]"; },
     noInstanceClasses() { return this.options[0]["NoInstanceClasses"] || "w-full text-center text-xl text-stone-400 font-bold self-center"; },
-    enableSave() { return this.options[0]["InstanceViewerCustomize"].split("\u0000").indexOf("EnableSave") !== -1 ? true : false },
+
     instanceId() { return this.component["InstanceViewerInstanceId"] },
     outputVar() { return this.component["InstanceViewerOutputVar"] || '' },
     componentIdentifier() { return this.options[0]["InstanceViewerIdentifier"] || "" }
@@ -153,7 +153,6 @@ export default {
       this.removeFocusListeners()
       await this._initInstanceDetail(id)
       this.setupFocusListeners()
-      if (!this.enableSave) { this.noSaveApplyStyles() }
     },
     async _initInstanceDetail(id) {
       return new Promise((resolve) => {
@@ -164,24 +163,6 @@ export default {
     },
     activateFromPersistenceChange(filterVarName) {
       return (newContent) => { this.$set(this.vars, filterVarName, newContent) }
-    },
-    noSaveApplyStyles() {
-      const sidenav = this.$el.querySelector('.instance-viewer .instance-detail-container .sidenav');
-      if (sidenav) {
-        sidenav.classList.add("hidden");
-      }
-
-      const instanceContainer = this.$el.querySelector('.instance-viewer .instance-detail-container ');
-      if (instanceContainer) {
-        instanceContainer.classList.add("!h-full");
-        instanceContainer.classList.add("!static");
-      }
-
-      const instanceContainerFields = this.$el.querySelector('.instance-viewer .instance-detail-container .instance-container .fields-container');
-      if (instanceContainerFields) {
-        instanceContainerFields.classList.add("!h-full");
-        instanceContainerFields.classList.add("!static");
-      }
     }
   },
 };
@@ -194,14 +175,29 @@ export default {
   height: 100%;
 }
 
-.instance-viewer .instance-container {
-  margin-top: 0% !important;
-  padding-top: 10px;
+.instance-viewer .instance-detail-container {
+  position: static;
   height: 100%;
 }
 
-.instance-viewer .instance-container .content,
-.instance-viewer .instance-container .content>div {
+.instance-viewer .instance-container {
+  margin-top: 0% !important;
+  padding-top: 10px; 
+  height: 100%;
+}
+
+.instance-viewer .instance-container .content, 
+.instance-viewer .instance-container .content > div {
+  height: 100%;
+}
+
+
+.instance-viewer .instance-detail-container .sidenav {
+  display: none;
+}
+
+.instance-viewer .instance-detail-container .instance-container .fields-container {
+  position: static;
   height: 100%;
 }
 </style>
