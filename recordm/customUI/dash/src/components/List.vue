@@ -53,41 +53,34 @@
           refreshFlag() { this.refresh_list() }
         },
         methods: {
-          methods: {
-              updateQuery() {
-                if(this.simpleSearch) {
-                  this.simpleSearch.setSearchValue(this.queryWithFilter)
+          updateQuery() {
+            if (this.simpleSearch) {
+              this.simpleSearch.setSearchValue(this.queryWithFilter);
 
-                } else {
-                  const simpleSearchOptions = {
-                    activeVisualizationName: this.options["DefaultView"],
-                    showViews: this.selectedOptions.indexOf("ShowViews") !== -1,
-                    showActions: this.selectedOptions.indexOf("ShowActions") !== -1,
-                    showCreateAndDelete: this.selectedOptions.indexOf("CreateAndDelete") !== -1,
-                    showImport: this.selectedOptions.indexOf("ShowImport") !== -1,
-                    allowRowSelection: this.selectedOptions.indexOf("HideRowSelection") === -1,
-                    showDetailsColumns: this.selectedOptions.indexOf("HideDetailsColumn") === -1,
-                    showColumnsSelector: this.selectedOptions.indexOf("HideColumnsSelector") === -1,
-                  };
-                  this.simpleSearch = new cob.components.SimpleSearch(
-                    cob.app,
-                    `#${this.containerId}`,
-                    this.definition,
-                    this.queryWithFilter,
-                    simpleSearchOptions);
-                }
-              },
-              refresh_list() {
-                if(this.simpleSearch) {
-                  this.simpleSearch.refresh()
-                }
-              }
-            },
-            refresh_list() {
-              if(this.simpleSearch) {
-                this.simpleSearch.refresh()
+            } else {
+              const simpleSearchOptions = {
+                activeVisualizationName: this.options["DefaultView"],
+                showViews: this.selectedOptions.indexOf("ShowViews") !== -1,
+                showActions: this.selectedOptions.indexOf("ShowActions") !== -1,
+                showCreateAndDelete: this.selectedOptions.indexOf("CreateAndDelete") !== -1,
+                showImport: this.selectedOptions.indexOf("ShowImport") !== -1,
+                allowRowSelection: this.selectedOptions.indexOf("HideRowSelection") === -1,
+                showDetailsColumns: this.selectedOptions.indexOf("HideDetailsColumn") === -1,
+                showColumnsSelector: this.selectedOptions.indexOf("HideColumnsSelector") === -1,
+              };
+              this.simpleSearch = new cob.components.SimpleSearch(
+                cob.app,
+                `#${this.containerId}`,
+                this.definition,
+                this.queryWithFilter,
+                simpleSearchOptions);
             }
-          }
+          },
+          refresh_list() {
+            if (this.simpleSearch) {
+              this.simpleSearch.refresh();
+            }
+          },
         },
    }
 </script>
