@@ -2,15 +2,23 @@
 
 ### Definition Upgrades:
 
+#### 6.83.0
+Allow to show/hide some features from list:
+* Checkbox row selection
+* Details column
+* Show/hide column visibility
+
+````
+ALTERED
+Board > Component > [=List] ListCustomize : $[InputVar,SetDefaultView,ShowViews,ShowActions,ShowImport,CreateAndDelete,Classes,HideRowSelection,HideDetailsColumn,HideColumnsSelector] $multiple $help[Select the defaults to change]
+````
+
 #### 6.82.0
 Removes `EnableSave` option in instance viewer.
 
 ````
 ALTERED
 Board > Component > [=InstanceViewer] InstanceViewerCustomize : $[Classes,Tag,EnableSave] $multiple
- ->
-Board > Component > [=InstanceViewer] InstanceViewerCustomize : $[Classes,Tag] $multiple
-
 ````
 
 #### 6.81.0

@@ -201,7 +201,10 @@ function parseDashboard(raw_dashboard) {
             "ListCustomize": [{
                 "InputVarList": [{}],
                 "DefaultView": "",
-                "ListClasses" : ""
+                "ListClasses" : "",
+                "HideRowSelection,": "",
+                "HideDetailsColumn,": "",
+                "HideColumnsSelector": "",
             }],
             "ListDefinition": "",
             "ListQuery": ""
