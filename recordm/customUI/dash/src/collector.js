@@ -237,7 +237,8 @@ function parseDashboard(raw_dashboard) {
             "InstanceViewerCustomize": [{
                 "InstanceViewerClasses": "",
                 "NoInstanceClasses": "",
-                "InstanceViewerIdentifier":""
+                "InstanceViewerIdentifier":"",
+                "HideSidenav": ""
             }],
             "InstanceViewerInstanceId":"",
             "InstanceViewerOutputVar":""

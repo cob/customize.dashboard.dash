@@ -2,6 +2,14 @@
 
 ### Definition Upgrades:
 
+#### 6.84.0
+Show and hide sidebar in InstanceViewer
+
+````
+ALTERED
+Board > Component > [==InstanceViewer] InstanceViewerCustomize : $[Classes,Tag,HideSidenav] $multiple
+````
+
 #### 6.83.0
 Allow to show/hide some features from list:
 * Checkbox row selection

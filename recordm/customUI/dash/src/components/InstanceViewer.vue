@@ -2,7 +2,7 @@
   <div class="" :class="instanceClasses">
     <div v-if="!instanceId && !this.instanceDetails" :class="noInstanceClasses">No instance selected</div>
 
-    <div ref="instanceViewer" class="cob-app instance-viewer  overflow-auto"></div>
+    <div ref="instanceViewer" :class="['cob-app instance-viewer overflow-auto', {'no-sidenav': hideSidenav}]"></div>
   </div>
 </template>
 
@@ -46,13 +46,20 @@ export default {
   computed: {
     options() { return this.component["InstanceViewerCustomize"]; },
     vars() { return this.component["vars"]; },
+    selectedOptions() {
+      if (!this.options[0]) return [];
+      if (!this.options[0]["InstanceViewerCustomize"]) return [];
+      return this.options[0]["InstanceViewerCustomize"].split("\u0000");
+    },
 
     instanceClasses() { return this.options[0]["InstanceViewerClasses"] || "flex w-full h-full max-h-[70vh]"; },
     noInstanceClasses() { return this.options[0]["NoInstanceClasses"] || "w-full text-center text-xl text-stone-400 font-bold self-center"; },
 
     instanceId() { return this.component["InstanceViewerInstanceId"] },
     outputVar() { return this.component["InstanceViewerOutputVar"] || '' },
-    componentIdentifier() { return this.options[0]["InstanceViewerIdentifier"] || "" }
+    componentIdentifier() { return this.options[0]["InstanceViewerIdentifier"] || "" },
+
+    hideSidenav() {return this.selectedOptions.indexOf("HideSidenav") !== -1},
   },
   methods: {
     async setOutputVar(newId) {
@@ -182,17 +189,17 @@ export default {
 
 .instance-viewer .instance-container {
   margin-top: 0% !important;
-  padding-top: 10px; 
+  padding-top: 10px;
   height: 100%;
 }
 
-.instance-viewer .instance-container .content, 
+.instance-viewer .instance-container .content,
 .instance-viewer .instance-container .content > div {
   height: 100%;
 }
 
 
-.instance-viewer .instance-detail-container .sidenav {
+.instance-viewer.no-sidenav .instance-detail-container .sidenav {
   display: none;
 }
 

@@ -1,7 +1,7 @@
 {
   "id": null,
   "name": "Dashboard_v1",
-  "description": "@COB v6.83.0",
+  "description": "@COB v6.84.0",
   "duplicable": null,
   "state": "enabled",
   "fieldDefinitions": [
@@ -4159,7 +4159,7 @@
               "id": null,
               "name": "InstanceViewerCustomize",
               "required": null,
-              "description": "$[Classes,Tag,EnableSave] $multiple",
+              "description": "$[Classes,Tag,HideSidenav] $multiple",
               "configuration": {
                 "description": null,
                 "keys": {
@@ -4167,7 +4167,7 @@
                     "args": [
                       "Classes",
                       "Tag",
-                      "EnableSave"
+                      "HideSidenav"
                     ],
                     "default": null
                   },
