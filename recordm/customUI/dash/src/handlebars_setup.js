@@ -18,6 +18,14 @@ if( typeof(document.handlebarsTemplates) !== 'undefined' ) {
     })
 }
 
+Handlebars.registerHelper("markdown", function (text_arg) {
+    if(text_arg) {
+        return marked.parse(text_arg) ;
+    } else {
+        return ""
+    }
+})
+
 Handlebars.registerHelper("pasteInRm", function (...strings) {
     strings.pop() //for some reason the last item is of type Obj, and not an actual param
     if (strings.length > 0) {
