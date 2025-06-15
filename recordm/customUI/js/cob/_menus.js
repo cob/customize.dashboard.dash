@@ -9,7 +9,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
     * -------------------- -------------------- -------------------- --------------------
     Custom getDefaultModuleUri that returns last showed dashboard if it exists as entry page
 
-    Suports using lastDash overrides via `custom-info=last-dash-override` properties in web.properties
+    Supports using lastDash overrides via `custom-info=last-dash-override` properties in web.properties
     Spaces must be replaced by _ in the props.
     Example:
     custom-info=last-dash-override
