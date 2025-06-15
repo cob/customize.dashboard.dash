@@ -3688,7 +3688,7 @@ for (board of dash["Board Title"]) {
     console.assert(dash["Board Title"][0]["Component"][1]["Component"] === "Title")
     console.assert(dash["Board Title"][0]["Component"][1]["Title"] === "Main Menu")
 
-    console.assert(dash["Board Title"][1]["Component"].length = 2)
+    console.assert(dash["Board Title"][1]["Component"].length === 2)
     console.assert(dash["Board Title"][1]["Component"][0]["Component"] === "Totals")
     console.assert(dash["Board Title"][1]["Component"][0]["Header"].length === 1)
     console.assert(dash["Board Title"][1]["Component"][0]["Header"][0]["Header"] === null)
