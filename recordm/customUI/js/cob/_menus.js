@@ -159,7 +159,13 @@ cob.custom.customize.push(function (core, utils, _ui) {
          }})
       }
 
-      window.addEventListener("cobRefreshMenu", () => solutionDashInfo.update({force:true})) // event listener for requests from the dash app (when lastDash and lastDahsolution changes)    
+      window.addEventListener("cobRefreshMenu", () => {
+         if (solutionDashInfo && typeof solutionDashInfo.update === 'function') {
+            solutionDashInfo.update({force:true})
+         } else {
+            setTimeout(() => window.dispatchEvent(new Event("cobRefreshMenu")), 200)
+         }
+      }) // event listener for requests from the dash app (when lastDash and lastDashSolution changes)
       window.addEventListener('click', function(e) {   // event listener that closes submenus when there's clicks outside that submenu
          var subMenus = [...document.querySelectorAll('.cob-submenu')];
          subMenus.forEach(sm => { if (!sm.contains(e.target)) sm.removeAttribute('open') });
