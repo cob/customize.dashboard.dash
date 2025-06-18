@@ -1,11 +1,11 @@
-import Vue from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 
 window.CoBDasHDebug = window.CoBDasHDebug || {}
 const DEBUG = window.CoBDasHDebug
 // window.CoBDasHDebug.main = true
 
-Vue.config.productionTip = true;
+// Vue 3 does not expose productionTip
 
 if(DEBUG.main) console.log("DASH: MAIN: 0 location.hash=" + window.location.hash);
 
@@ -47,9 +47,8 @@ function loadVueApp(origin) {
             document.querySelector("section.custom-resource").append(newcobDashAppDiv)
         }
         
-        vueApp = new Vue({
-            render: function(h) { return h(App); },
-        }).$mount("#cobDashApp");
+        vueApp = createApp(App)
+        vueApp.mount("#cobDashApp")
         window.cobDashAppLoaded = true
         if(DEBUG.main) console.log("DASH: MAIN: " + origin + ".3: done");
     } else {
@@ -62,7 +61,7 @@ function onHashChange() {
 
     if (currentDashName !== initialDashName && window.cobDashAppLoaded) {
         if(DEBUG.main) console.log("DASH: MAIN: 9: Leaving the initialDashName=",initialDashName," for currentDashName=",currentDashName,". Destroying the dashboard");
-        vueApp.$destroy();
+        vueApp.unmount();
         cobDashAppLoaded = false
     } 
     

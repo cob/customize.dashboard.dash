@@ -21,6 +21,13 @@ if(!process.env.dash_dir || !SERVER) {
 }
 
 module.exports = {
+  configureWebpack: {
+    resolve: {
+      alias: {
+        'vue': '@vue/compat'
+      }
+    }
+  },
   // temos que fixar o directorio onde colocamos o build,
   //  para podermos usar o dashboard.html que é gerado sem o editar
   // NOTA: o path relativo não funciona bem com o npm run serve

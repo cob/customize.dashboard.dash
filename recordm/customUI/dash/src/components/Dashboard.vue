@@ -64,7 +64,7 @@ export default {
         this.runLifecycleHook(this.customizations, "onBeforeDestroy")
 
         // Clear all events added by customizations and components before destroying
-        EventBus.$off()
+        EventBus.all.clear()
     },
     computed: {
         options() { return this.dashboard['DashboardCustomize'][0] },
