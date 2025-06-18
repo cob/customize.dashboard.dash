@@ -30,11 +30,12 @@
     "tesseract.js": "^5.1.1",
     "tippy.js": "^6.3.7",
     "traverse": "^0.6.7",
-    "vue": "^2.6.11",
-    "vue-cropperjs": "^4.2.0"
+    "vue": "^3.3.4",
+    "vue-cropperjs": "^5.0.0",
+    "mitt": "^3.0.0"
   },
   "devDependencies": {
-    "@vue/cli-service": "~4.5.0",
-    "vue-template-compiler": "^2.6.11"
+    "@vue/cli-service": "~5.0.0",
+    "@vue/compiler-sfc": "^3.3.4"
   }
 }
