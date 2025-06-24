@@ -605,6 +605,18 @@
           const specifiedContextStr = dashboard.dashboardParsed.DashboardCustomize[0].Context
           const specifiedContextParsed = specifiedContextStr ? (Handlebars.compile(specifiedContextStr))(baseContext) : {}
 
+          // If the context has been re-evaluated, we need to stop all previous contextQueries.
+          // The goal is to avoid having previous contextQueries running and updating the dashboard with old values
+          // that may no longer be present in the current evaluation of the context.
+          for( let i = dashboard.contextQueries.length; i > 0 ; i-- ) {
+            let dashInfoItem = dashboard.contextQueries.pop()
+
+            // If the dashinfo has a validity cycle, stop it - otherwise it should not be required
+            if(dashInfoItem.updateCycle) {
+              dashInfoItem.stopUpdates()
+            }
+          }
+
           // Get the specifiedContext evaluated (using available functions: [list] )
           let specifiedContext
           let expression
