@@ -609,49 +609,68 @@
           let specifiedContext
           let expression
           try {
+            function encodeEscapes(str) {
+              const matches = str.matchAll(/\\(.)/g)
+              let encodedStr = str
+              matches.forEach( m => {
+                const escapedCharacter = m[1]
+                const fullString = m[0]
+                encodedStr = encodedStr.replaceAll(fullString, encodeURI(`\\${escapedCharacter}`))
+              })
+              return encodedStr
+            }
+
             function list(...args) {
-              const dashInfoItem = DashFunctions.instancesList(...args)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const dashInfoItem = DashFunctions.instancesList(...decodedArgs)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
 
             function distinct(...args) {
-              const dashInfoItem = DashFunctions.fieldValues(...args)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const dashInfoItem = DashFunctions.fieldValues(...decodedArgs)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
 
             function sum(...args) {
-              const dashInfoItem = DashFunctions.fieldSum(...args)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const dashInfoItem = DashFunctions.fieldSum(...decodedArgs)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
 
             function average(...args) {
-              const dashInfoItem = DashFunctions.fieldAverage(...args)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const dashInfoItem = DashFunctions.fieldAverage(...decodedArgs)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
 
             function weightedAverage(...args) {
-              const dashInfoItem = DashFunctions.fieldWeightedAverage(...args)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const dashInfoItem = DashFunctions.fieldWeightedAverage(...decodedArgs)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
 
             function httpGet(...args) {
-              const dashInfoItem = DashFunctions.httpGet(...args);
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const dashInfoItem = DashFunctions.httpGet(...decodedArgs);
               dashboard.contextQueries.push(dashInfoItem);
               return dashInfoItem;
             }
 
             function httpPost(...args) {
-              const dashInfoItem = DashFunctions.httpPost(...args);
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const dashInfoItem = DashFunctions.httpPost(...decodedArgs);
               dashboard.contextQueries.push(dashInfoItem);
               return dashInfoItem;
             }
-
-            expression = `specifiedContext= ${specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, "\"") : "{}"}`;
+  
+            const replacedCtx = specifiedContextParsed && specifiedContextParsed.replace ? encodeEscapes(specifiedContextParsed.replace(/&quot;/g, "\"")) : "{}" 
+            expression = `specifiedContext= ${replacedCtx}`; 
             eval(expression);
 
           } catch (e) {
@@ -747,6 +766,7 @@
               } else if (c.Component === "Totals") {
                 for (let l of c.Line) {
                   l.Value = l.Value.map(v => {
+                  v.Arg.forEach( arg => arg.Arg = typeof arg.Arg == 'string' ? decodeURI(arg.Arg) : arg.Arg ) 
                     if (v.Arg[2] && v.Arg[2].Arg.startsWith("{")) {
                       eval("v.Arg[2]['Arg']="+ v.Arg[2]['Arg'])
                     }
