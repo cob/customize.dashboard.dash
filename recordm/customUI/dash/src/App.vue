@@ -605,66 +605,80 @@
           const specifiedContextStr = dashboard.dashboardParsed.DashboardCustomize[0].Context
           const specifiedContextParsed = specifiedContextStr ? (Handlebars.compile(specifiedContextStr))(baseContext) : {}
 
-          // If the context has been re-evaluated, we need to stop all previous contextQueries.
-          // The goal is to avoid having previous contextQueries running and updating the dashboard with old values
-          // that may no longer be present in the current evaluation of the context.
+          // Empty all contextQueries from the dashboard into an oldContextQueries array
+          let oldContextQueries = []
           for( let i = dashboard.contextQueries.length; i > 0 ; i-- ) {
-            let dashInfoItem = dashboard.contextQueries.pop()
-
-            // If the dashinfo has a validity cycle, stop it - otherwise it should not be required
-            if(dashInfoItem.updateCycle) {
-              dashInfoItem.stopUpdates()
-            }
+            oldContextQueries.push(dashboard.contextQueries.pop())
           }
 
           // Get the specifiedContext evaluated (using available functions: [list] )
           let specifiedContext
           let expression
           try {
+
+            // For each dashInfo, we need to check if it already exists in the oldContextQueries array.
+            // If it does, we stop its updates of the new one, and push the old one to the dashboard context to be reused.
+            // If it does not, we push the new one to the dashboard context.
+            function pushToDashboardContext(dashInfoItem) {
+              const existingIndex = oldContextQueries.findIndex(
+                item => item.cacheId === dashInfoItem.cacheId
+              );
+
+              if (existingIndex !== -1) {
+                dashInfoItem.stopUpdates();
+                const preexistingDashInfoItem = oldContextQueries.splice(existingIndex, 1)[0];
+                dashboard.contextQueries.push(preexistingDashInfoItem);
+                return preexistingDashInfoItem;
+              }
+              
+              dashboard.contextQueries.push(dashInfoItem);
+              return dashInfoItem;
+            }
+
+
             function list(...args) {
               const dashInfoItem = DashFunctions.instancesList(...args)
-              dashboard.contextQueries.push(dashInfoItem)
-              return dashInfoItem
+              return pushToDashboardContext(dashInfoItem);
             }
 
             function distinct(...args) {
               const dashInfoItem = DashFunctions.fieldValues(...args)
-              dashboard.contextQueries.push(dashInfoItem)
-              return dashInfoItem
+              return pushToDashboardContext(dashInfoItem);
             }
 
             function sum(...args) {
               const dashInfoItem = DashFunctions.fieldSum(...args)
-              dashboard.contextQueries.push(dashInfoItem)
-              return dashInfoItem
+              return pushToDashboardContext(dashInfoItem);
             }
 
             function average(...args) {
               const dashInfoItem = DashFunctions.fieldAverage(...args)
-              dashboard.contextQueries.push(dashInfoItem)
-              return dashInfoItem
+              return pushToDashboardContext(dashInfoItem);
             }
 
             function weightedAverage(...args) {
               const dashInfoItem = DashFunctions.fieldWeightedAverage(...args)
-              dashboard.contextQueries.push(dashInfoItem)
-              return dashInfoItem
+              return pushToDashboardContext(dashInfoItem);
             }
 
             function httpGet(...args) {
               const dashInfoItem = DashFunctions.httpGet(...args);
-              dashboard.contextQueries.push(dashInfoItem);
-              return dashInfoItem;
+              return pushToDashboardContext(dashInfoItem);
             }
 
             function httpPost(...args) {
               const dashInfoItem = DashFunctions.httpPost(...args);
-              dashboard.contextQueries.push(dashInfoItem);
-              return dashInfoItem;
+              return pushToDashboardContext(dashInfoItem);
             }
 
             expression = `specifiedContext= ${specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, "\"") : "{}"}`;
             eval(expression);
+
+            // Clean up oldContextQueries - clean references and stop updates
+            for( let i = oldContextQueries.length; i > 0 ; i-- ) {
+              let dashInfoItem = oldContextQueries.pop()
+              dashInfoItem.stopUpdates()
+            }
 
           } catch (e) {
             console.error("Error on eval(expression)\n Expression=", expression, "\n", e)
