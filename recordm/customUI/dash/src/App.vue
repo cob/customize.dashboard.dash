@@ -605,11 +605,8 @@
           const specifiedContextStr = dashboard.dashboardParsed.DashboardCustomize[0].Context
           const specifiedContextParsed = specifiedContextStr ? (Handlebars.compile(specifiedContextStr))(baseContext) : {}
 
-          // Empty all contextQueries from the dashboard into an oldContextQueries array
-          let oldContextQueries = []
-          for( let i = dashboard.contextQueries.length; i > 0 ; i-- ) {
-            oldContextQueries.push(dashboard.contextQueries.pop())
-          }
+          // Move all contextQueries from the dashboard.contextQueries into a temporary oldContextQueries array
+          let oldContextQueries = dashboard.contextQueries.splice(0)
 
           // Get the specifiedContext evaluated (using available functions: [list] )
           let specifiedContext
@@ -619,16 +616,16 @@
             // For each dashInfo, we need to check if it already exists in the oldContextQueries array.
             // If it does, we stop its updates of the new one, and push the old one to the dashboard context to be reused.
             // If it does not, we push the new one to the dashboard context.
-            function pushToDashboardContext(dashInfoItem) {
+            function getActiveDashboardContextQuery(dashInfoItem) {
               const existingIndex = oldContextQueries.findIndex(
                 item => item.cacheId === dashInfoItem.cacheId
               );
 
               if (existingIndex !== -1) {
                 dashInfoItem.stopUpdates();
-                const preexistingDashInfoItem = oldContextQueries.splice(existingIndex, 1)[0];
-                dashboard.contextQueries.push(preexistingDashInfoItem);
-                return preexistingDashInfoItem;
+                const preExistingDashInfoItem = oldContextQueries.splice(existingIndex, 1)[0];
+                dashboard.contextQueries.push(preExistingDashInfoItem);
+                return preExistingDashInfoItem;
               }
               
               dashboard.contextQueries.push(dashInfoItem);
@@ -638,47 +635,44 @@
 
             function list(...args) {
               const dashInfoItem = DashFunctions.instancesList(...args)
-              return pushToDashboardContext(dashInfoItem);
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function distinct(...args) {
               const dashInfoItem = DashFunctions.fieldValues(...args)
-              return pushToDashboardContext(dashInfoItem);
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function sum(...args) {
               const dashInfoItem = DashFunctions.fieldSum(...args)
-              return pushToDashboardContext(dashInfoItem);
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function average(...args) {
               const dashInfoItem = DashFunctions.fieldAverage(...args)
-              return pushToDashboardContext(dashInfoItem);
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function weightedAverage(...args) {
               const dashInfoItem = DashFunctions.fieldWeightedAverage(...args)
-              return pushToDashboardContext(dashInfoItem);
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function httpGet(...args) {
               const dashInfoItem = DashFunctions.httpGet(...args);
-              return pushToDashboardContext(dashInfoItem);
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function httpPost(...args) {
               const dashInfoItem = DashFunctions.httpPost(...args);
-              return pushToDashboardContext(dashInfoItem);
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             expression = `specifiedContext= ${specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, "\"") : "{}"}`;
             eval(expression);
 
             // Clean up oldContextQueries - clean references and stop updates
-            for( let i = oldContextQueries.length; i > 0 ; i-- ) {
-              let dashInfoItem = oldContextQueries.pop()
-              dashInfoItem.stopUpdates()
-            }
+            oldContextQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
 
           } catch (e) {
             console.error("Error on eval(expression)\n Expression=", expression, "\n", e)
