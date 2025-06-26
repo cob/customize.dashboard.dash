@@ -767,7 +767,7 @@
               } else if (c.Component === "Totals") {
                 for (let l of c.Line) {
                   l.Value = l.Value.map(v => {
-                  v.Arg.forEach( arg => arg.Arg = typeof arg.Arg == 'string' ? decodeURI(arg.Arg) : arg.Arg ) 
+                  v.Arg.forEach( arg => arg.Arg = typeof arg.Arg == 'string' ? decodeURIComponent(arg.Arg) : arg.Arg ) 
                     if (v.Arg[2] && v.Arg[2].Arg.startsWith("{")) {
                       eval("v.Arg[2]['Arg']="+ v.Arg[2]['Arg'])
                     }
