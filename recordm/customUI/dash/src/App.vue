@@ -609,67 +609,68 @@
           let specifiedContext
           let expression
           try {
-            function encodeEscapes(str) {
-              const matches = str.matchAll(/\\(.)/g)
-              let encodedStr = str
-              matches.forEach( m => {
-                const escapedCharacter = m[1]
-                const fullString = m[0]
-                encodedStr = encodedStr.replaceAll(fullString, encodeURI(`\\${escapedCharacter}`))
-              })
-              return encodedStr
+            function encodeEscapedCharacters(str) {
+            // Due to eval and JSON.parses, the escapes specified in the context that are not used right away by functions
+            // are processed, and by the time they are used in the Totals and other components, they've been processed. This makes it
+            // impossible to properly escape escapes for example.  
+            // Ideally, what we write in the context should be treated as raw, so that the components receive exactly what
+            // we wrote. To achieve this, we encode the escaped character (to "protect" it) and then decode it right before use. 
+              const encodeEscape = (match) => encodeURIComponent(`${match[1]}`)
+              return str.replaceAll(/\\(.)/g, encodeEscape)
             }
 
             function list(...args) {
-              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.instancesList(...decodedArgs)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
 
             function distinct(...args) {
-              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.fieldValues(...decodedArgs)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
 
             function sum(...args) {
-              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.fieldSum(...decodedArgs)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
 
             function average(...args) {
-              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.fieldAverage(...decodedArgs)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
 
             function weightedAverage(...args) {
-              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.fieldWeightedAverage(...decodedArgs)
               dashboard.contextQueries.push(dashInfoItem)
               return dashInfoItem
             }
 
             function httpGet(...args) {
-              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.httpGet(...decodedArgs);
               dashboard.contextQueries.push(dashInfoItem);
               return dashInfoItem;
             }
 
             function httpPost(...args) {
-              const decodedArgs = args.map( a => typeof a == "string" ? decodeURI(a) : a)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.httpPost(...decodedArgs);
               dashboard.contextQueries.push(dashInfoItem);
               return dashInfoItem;
             }
   
-            const replacedCtx = specifiedContextParsed && specifiedContextParsed.replace ? encodeEscapes(specifiedContextParsed.replace(/&quot;/g, "\"")) : "{}" 
+            // The &quot; is used to decode HTML encoded double quotes, placed by Handlebars. It is not the only case and not necessary
+            // But was added in early stages of development and therefore can't be removed (at the risk of breaking dashboards).
+            const replacedCtx = specifiedContextParsed && specifiedContextParsed.replace ? encodeEscapedCharacters(specifiedContextParsed.replace(/&quot;/g, "\"")) : "{}" 
             expression = `specifiedContext= ${replacedCtx}`; 
             eval(expression);
 
