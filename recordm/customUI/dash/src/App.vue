@@ -633,42 +633,63 @@
             }
 
 
+            function encodeEscapedCharacters(str) {
+            // Due to eval and JSON.parses, the escapes specified in the context that are not used right away by functions
+            // are processed, and by the time they are used in the Totals and other components, they've been processed. This makes it
+            // impossible to properly escape escapes for example.  
+            // Ideally, what we write in the context should be treated as raw, so that the components receive exactly what
+            // we wrote. To achieve this, we encode the escaped character (to "protect" it) and then decode it right before use. 
+              const encodeEscape = (match) => encodeURIComponent(`${match[1]}`)
+              return str.replaceAll(/\\(.)/g, encodeEscape)
+            }
+
+
             function list(...args) {
-              const dashInfoItem = DashFunctions.instancesList(...args)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
+              const dashInfoItem = DashFunctions.instancesList(...decodedArgs)
               return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function distinct(...args) {
-              const dashInfoItem = DashFunctions.fieldValues(...args)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
+              const dashInfoItem = DashFunctions.fieldValues(...decodedArgs)
               return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function sum(...args) {
-              const dashInfoItem = DashFunctions.fieldSum(...args)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
+              const dashInfoItem = DashFunctions.fieldSum(...decodedArgs)
               return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function average(...args) {
-              const dashInfoItem = DashFunctions.fieldAverage(...args)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
+              const dashInfoItem = DashFunctions.fieldAverage(...decodedArgs)
               return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function weightedAverage(...args) {
-              const dashInfoItem = DashFunctions.fieldWeightedAverage(...args)
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
+              const dashInfoItem = DashFunctions.fieldWeightedAverage(...decodedArgs)
               return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function httpGet(...args) {
-              const dashInfoItem = DashFunctions.httpGet(...args);
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
+              const dashInfoItem = DashFunctions.httpGet(...decodedArgs);
               return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function httpPost(...args) {
-              const dashInfoItem = DashFunctions.httpPost(...args);
+              const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
+              const dashInfoItem = DashFunctions.httpPost(...decodedArgs);
               return getActiveDashboardContextQuery(dashInfoItem);
             }
-
-            expression = `specifiedContext= ${specifiedContextParsed && specifiedContextParsed.replace ? specifiedContextParsed.replace(/&quot;/g, "\"") : "{}"}`;
+  
+            // The &quot; is used to decode HTML encoded double quotes, placed by Handlebars. It is not the only case and not necessary
+            // But was added in early stages of development and therefore can't be removed (at the risk of breaking dashboards).
+            const replacedCtx = specifiedContextParsed && specifiedContextParsed.replace ? encodeEscapedCharacters(specifiedContextParsed.replace(/&quot;/g, "\"")) : "{}" 
+            expression = `specifiedContext= ${replacedCtx}`; 
             eval(expression);
 
             // Clean up oldContextQueries - clean references and stop updates
@@ -767,6 +788,7 @@
               } else if (c.Component === "Totals") {
                 for (let l of c.Line) {
                   l.Value = l.Value.map(v => {
+                  v.Arg.forEach( arg => arg.Arg = typeof arg.Arg == 'string' ? decodeURIComponent(arg.Arg) : arg.Arg ) 
                     if (v.Arg[2] && v.Arg[2].Arg.startsWith("{")) {
                       eval("v.Arg[2]['Arg']="+ v.Arg[2]['Arg'])
                     }
