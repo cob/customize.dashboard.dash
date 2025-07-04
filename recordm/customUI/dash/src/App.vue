@@ -605,10 +605,34 @@
           const specifiedContextStr = dashboard.dashboardParsed.DashboardCustomize[0].Context
           const specifiedContextParsed = specifiedContextStr ? (Handlebars.compile(specifiedContextStr))(baseContext) : {}
 
+          // Move all contextQueries from the dashboard.contextQueries into a temporary oldContextQueries array
+          let oldContextQueries = dashboard.contextQueries.splice(0)
+
           // Get the specifiedContext evaluated (using available functions: [list] )
           let specifiedContext
           let expression
           try {
+
+            // For each dashInfo, we need to check if it already exists in the oldContextQueries array.
+            // If it does, we stop its updates of the new one, and push the old one to the dashboard context to be reused.
+            // If it does not, we push the new one to the dashboard context.
+            function getActiveDashboardContextQuery(dashInfoItem) {
+              const existingIndex = oldContextQueries.findIndex(
+                item => item.cacheId === dashInfoItem.cacheId
+              );
+
+              if (existingIndex !== -1) {
+                dashInfoItem.stopUpdates();
+                const preExistingDashInfoItem = oldContextQueries.splice(existingIndex, 1)[0];
+                dashboard.contextQueries.push(preExistingDashInfoItem);
+                return preExistingDashInfoItem;
+              }
+              
+              dashboard.contextQueries.push(dashInfoItem);
+              return dashInfoItem;
+            }
+
+
             function encodeEscapedCharacters(str) {
             // Due to eval and JSON.parses, the escapes specified in the context that are not used right away by functions
             // are processed, and by the time they are used in the Totals and other components, they've been processed. This makes it
@@ -619,53 +643,47 @@
               return str.replaceAll(/\\(.)/g, encodeEscape)
             }
 
+
             function list(...args) {
               const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.instancesList(...decodedArgs)
-              dashboard.contextQueries.push(dashInfoItem)
-              return dashInfoItem
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function distinct(...args) {
               const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.fieldValues(...decodedArgs)
-              dashboard.contextQueries.push(dashInfoItem)
-              return dashInfoItem
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function sum(...args) {
               const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.fieldSum(...decodedArgs)
-              dashboard.contextQueries.push(dashInfoItem)
-              return dashInfoItem
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function average(...args) {
               const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.fieldAverage(...decodedArgs)
-              dashboard.contextQueries.push(dashInfoItem)
-              return dashInfoItem
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function weightedAverage(...args) {
               const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.fieldWeightedAverage(...decodedArgs)
-              dashboard.contextQueries.push(dashInfoItem)
-              return dashInfoItem
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function httpGet(...args) {
               const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.httpGet(...decodedArgs);
-              dashboard.contextQueries.push(dashInfoItem);
-              return dashInfoItem;
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
 
             function httpPost(...args) {
               const decodedArgs = args.map( a => typeof a == "string" ? decodeURIComponent(a) : a)
               const dashInfoItem = DashFunctions.httpPost(...decodedArgs);
-              dashboard.contextQueries.push(dashInfoItem);
-              return dashInfoItem;
+              return getActiveDashboardContextQuery(dashInfoItem);
             }
   
             // The &quot; is used to decode HTML encoded double quotes, placed by Handlebars. It is not the only case and not necessary
@@ -673,6 +691,9 @@
             const replacedCtx = specifiedContextParsed && specifiedContextParsed.replace ? encodeEscapedCharacters(specifiedContextParsed.replace(/&quot;/g, "\"")) : "{}" 
             expression = `specifiedContext= ${replacedCtx}`; 
             eval(expression);
+
+            // Clean up oldContextQueries - clean references and stop updates
+            oldContextQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
 
           } catch (e) {
             console.error("Error on eval(expression)\n Expression=", expression, "\n", e)
