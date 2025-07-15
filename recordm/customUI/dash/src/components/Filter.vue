@@ -45,7 +45,7 @@
             placeholder()     { return this.options['Placeholder']       || "Pesquisar ..." },
             selectedOptions() { return (this.options['FilterCustomize'] || "").split("\u0000") },
             showButton()      { return this.selectedOptions.indexOf("noButton") === -1 },
-            classes()         { return this.options['FilterClasses']     || "w-full resize-none border border-slate-300 rounded-md py-2 px-2 outline-slate-300 leading-5" },
+            classes()         { return this.options['FilterClasses']     || "resize-none border border-slate-300 rounded-md py-2 px-2 outline-slate-300 leading-5" },
             esEscape()        { return this.selectedOptions.indexOf("EscapeSpecialChars") !== -1 },
         },
         watch: {
