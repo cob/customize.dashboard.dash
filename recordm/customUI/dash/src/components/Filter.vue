@@ -30,6 +30,12 @@
         created() {
             this.statePersistence = new ComponentStatePersistence(this.component.id, this.activateFromPersistenceChange)
         },
+        mounted() {
+            window.addEventListener('resize', this.resize);
+        },
+        unmount() {
+            window.removeEventListener('resize', this.resize);
+        },
         beforeDestroy() {
             this.statePersistence.stop()
         },
@@ -39,7 +45,7 @@
             placeholder()     { return this.options['Placeholder']       || "Pesquisar ..." },
             selectedOptions() { return (this.options['FilterCustomize'] || "").split("\u0000") },
             showButton()      { return this.selectedOptions.indexOf("noButton") === -1 },
-            classes()         { return this.options['FilterClasses']     || "w-full max-w-xs resize-none min-h-min h-min border border-slate-300 rounded-md py-2 px-2 outline-slate-300 leading-5" },
+            classes()         { return this.options['FilterClasses']     || "w-full resize-none border border-slate-300 rounded-md py-2 px-2 outline-slate-300 leading-5" },
             esEscape()        { return this.selectedOptions.indexOf("EscapeSpecialChars") !== -1 },
         },
         watch: {
@@ -70,7 +76,7 @@
             },
             resize() {
                 const { textarea } = this.$refs;
-                if(textarea && this.inputContent && ( textarea.textLength >= textarea.cols || this.inputContent.split("\n").length > 1) ) {
+                if(textarea && this.inputContent && ( (textarea.textLength * 9) >= textarea.scrollWidth || this.inputContent.split("\n").length > 1) ) {
                     textarea.style.height = "auto";
                     textarea.style.height = (textarea.scrollHeight + 2) + 'px'; // Os 14px são do padding acrescentado
                 } else if(textarea) {
