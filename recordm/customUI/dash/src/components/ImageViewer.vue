@@ -310,7 +310,7 @@ export default {
                     componentIdentifier: this.componentIdentifier,
                     details: { ocrText: this.ocrText, cropData: this.currCropData, confidence: ocrData.data.confidence }
                 }
-                EventBus.$emit("imageviewer-ocr", eventDetails)
+                EventBus.emit("imageviewer-ocr", eventDetails)
             } catch (exce) {
                 console.log("Error running OCR: ", exce)
             } finally {
