@@ -32,6 +32,7 @@
   import ComponentStatePersistence from "@/model/ComponentStatePersistence";
   import Handlebars from 'handlebars'
   import CalendarDayEvent from './CalendarDayEvent.vue'
+  import Vue from 'vue'
 
   const DEFAULT_EVENT_COLOR = '#0e7bbe'
   const MAX_VISIBLE_DAY_EVENTS = 3
