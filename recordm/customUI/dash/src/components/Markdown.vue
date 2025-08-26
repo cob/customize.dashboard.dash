@@ -32,7 +32,6 @@ export default {
 /** This is GitHub's markdown style with some changes:
 *! [Light + Dark] Removed background color (canvas-default -> transparent)
 *! [Light]        Changed border default (border-default -> 433c3c)       
-*!  markdown-body:Changed text-align to 'left' (tailwind was overriding to 'justify')
 ~~ undone removal ~~ *! [Light + Dark] Removed bottom borders from h1 and h2 (commented out in their respective css rules) ~~
 */
 
@@ -577,7 +576,6 @@ outline: none;
 .markdown-body details {
 margin-top: 0;
 margin-bottom: 16px;
-text-align: left;
 }
 
 .markdown-body blockquote>:first-child {
