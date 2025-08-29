@@ -15,7 +15,7 @@
                 </a>
                 -->
 
-                <div class="flex gap-x-2">
+                <div class="flex flex-1 gap-x-2">
                     <div v-if="zoomButtons" class="flex  mr-0.5">
                         <a :class="buttonClasses" class="rounded-l-md" href="#" role="button" @click.prevent="zoom(0.2)"
                             title="Ctrl + +">
@@ -92,11 +92,25 @@
                             <i class="fa-solid fa-rotate-left"></i>
                         </a>
                     </div>
+
+                    <div v-if="totalImages > 1" class="flex items-center gap-x-1 justify-end flex-1 mr-2">
+                        <a :class="buttonClasses" class="rounded-l-md !text-xl" href="#" role="button"
+                            @click.prevent="prevImage()" title="">
+                            <i class="fa-solid fa-caret-left"></i>
+                        </a>
+                        <div class="font-light text-sm text-stone-400">
+                            {{ currImgIdx + 1 }} / {{ totalImages }}
+                        </div>
+                        <a :class="buttonClasses" class="rounded-r-md !text-xl" href="#" role="button"
+                            @click.prevent="nextImage()" title="">
+                            <i class="fa-solid fa-caret-right"></i>
+                        </a>
+                    </div>
                 </div>
 
 
                 <div class="flex mr-0.5">
-                    <a v-if="imgSrc && ocrButton" :class="buttonClasses" class="fa-ocr rounded-md flex items-center"
+                    <a v-if="currentImgSrc && ocrButton" :class="buttonClasses" class="fa-ocr rounded-md flex items-center"
                         href="#" role="button" @click.prevent="cropAndRecognize">
                         <svg v-if="loadingOcr || loadingQr" class="animate-spin mr-1 h-5 w-5 text-white"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -119,7 +133,7 @@
                         <i class="fa-solid fa-scissors"></i>
                     </a>
 
-                    <a v-if="imgSrc && qrReader" :class="buttonClasses" class="rounded-md" href="#" role="button"
+                    <a v-if="currentImgSrc && qrReader" :class="buttonClasses" class="rounded-md" href="#" role="button"
                         @click.prevent="cropAndReadCode">
                         <i class="fa-solid fa-qrcode"></i>
                     </a>
@@ -130,13 +144,13 @@
 
             <div ref="imageViewerContainerRef"
                 class="img-cropper border-[1px] border-stone-400 h-full bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC')]">
-                <vue-cropper :class="cropperClasses" v-if="imgSrc" ref="cropper" :src="imgSrc" preview=".preview"
+                <vue-cropper :class="cropperClasses" v-if="currentImgSrc" ref="cropper" :src="currentImgSrc" preview=".preview"
                     :viewMode="2" :dragMode="'crop'" :modal="true" :highlight="true" :autoCrop="false"
                     :imgStyle="{ display: 'block', maxWidth: '100%' }" @zoom="handleZoom" @cropmove="handleMove"
                     @ready="onCropperReady" />
 
 
-                <div v-if="!imgSrc"
+                <div v-if="!currentImgSrc"
                     class="flex items-center justify-center h-full text-center font-semibold text-xl text-stone-400">
                     <i class="fa-regular fa-image"></i>
                 </div>
@@ -170,7 +184,7 @@ export default {
     },
     data: () => ({
         // For knowing what to load
-        imgSrc: '',
+        currentImgSrc: '',
         cropImg: '',
 
         // For debug
@@ -190,6 +204,9 @@ export default {
         currCropData: undefined,
         lastCropRectInBounds: undefined,
 
+        // Multiple images
+        currImgIdx: 0,
+
         //Other
         showPreview: false,
         qrReader: false,
@@ -199,7 +216,24 @@ export default {
         cropperClasses() { return this.options['ImageViewerClasses'] || "h-full"; },
         buttonClasses() { return this.options['ImageViewerButtonClasses'] || "border-transparent border-[1px] text-stone-400 font-light text-sm px-2 py-1 hover:border-[1px] hover:border-stone-300 hover:bg-stone-100 hover:cursor-pointer" },
         outputVar() { return this.component["OutputVarImageViewer"] },
-        imageUrl() { return this.component["ImageViewerURL"] },
+        imageUrls() {
+            const imgViewerUrl = this.component["ImageViewerURL"];
+
+            if (Array.isArray(imgViewerUrl)) {
+                return imgViewerUrl // obj list
+                    .map(item => item.ImageViewerURL)
+                    .filter(url => typeof url === "string" && url.trim() !== "");
+            } else if (typeof imgViewerUrl === "string") {
+                return [imgViewerUrl]
+            }
+            return []
+        },
+        totalImages() {
+            const urls = this.component["ImageViewerURL"]
+            const isList = Array.isArray(urls)
+
+            return isList && urls.length > 0 ? urls.length : 0
+        },
         componentIdentifier() { return this.options["ImageViewerIdentifier"] || "" },
 
         // Vars that define if button groups should appear
@@ -218,9 +252,12 @@ export default {
         ocrButton() { return (this.enableButtons && this.enableButtons.includes("OCR")) || false }, // OCR Button   
     },
     watch: {
-        imageUrl: function (newUrl) {
-            this.updateCropperImage(newUrl)
+        imageUrls: function (newImgs) {
+            this.updateCropperImage(newImgs)
         },
+        currImgIdx: function (newImgIdx) {
+            this.updateCropperImage(this.imageUrls)
+        }
     },
     props: {
         component: Object
@@ -232,9 +269,7 @@ export default {
         }, 150)
     },
     mounted() {
-        if (this.imageUrl) {
-            this.updateCropperImage(this.imageUrl)
-        }
+        this.updateCropperImage(this.imageUrls)
     },
     methods: {
         calculateViewerHeight() {
@@ -263,22 +298,26 @@ export default {
                 this.$refs.imageViewerContainerRef.style.height = `${viewerHeightVH}vh`;
             }
         },
-        updateCropperImage(imageUrl) {
-            this.imgSrc = imageUrl
-            if (this.$refs.cropper) {
-                this.$refs.cropper.replace(imageUrl);
+        updateCropperImage(imageUrls) {
+            // by default its an empty list
+            if (!imageUrls || (imageUrls && imageUrls.length == 0)) { return }
+            const currImg = imageUrls[this.currImgIdx] ? imageUrls[this.currImgIdx] : imageUrls[0]
+            const isImgDifferent = currImg != this.currentImgSrc
+            this.currentImgSrc = currImg
+            if (this.$refs.cropper && isImgDifferent) {
+                this.$refs.cropper.replace(currImg);
             }
         },
         togglePreview() {
             this.showPreview = !this.showPreview
             if (this.showPreview) {
-                this.$refs.cropper.replace(this.imgSrc)
+                this.$refs.cropper.replace(this.currentImgSrc)
             }
         },
         onCropperReady() {
             this.clearCrop()
             this.zoom(0) //we zoom with 0 to force init some vars
-            this.move(0, -10000)
+            //this.move(0, -10000)
         },
         async cropAndRecognize() {
             this.cropImage()
@@ -326,7 +365,7 @@ export default {
 
             // Uses zxing
             try {
-                const result = await codeReader.decodeFromImageUrl(this.imgSrc);
+                const result = await codeReader.decodeFromImageUrl(this.currentImgSrc);
                 console.log("QR Code Content:", result);
                 this.qrText = result.text
                 this.setOutputVar(result.text)
@@ -478,6 +517,22 @@ export default {
 
             return { imgLeft, imgTop, imgRight, imgBottom }
         },
+        nextImage() {
+            if (this.currImgIdx + 1 >= this.totalImages - 1) {
+                this.currImgIdx = this.totalImages - 1
+            } else {
+                this.currImgIdx++
+            }
+            this.clearCrop()
+        },
+        prevImage() {
+            if (this.currImgIdx - 1 <= 0) {
+                this.currImgIdx = 0
+            } else {
+                this.currImgIdx--
+            }
+            this.clearCrop()
+        },
         rotate(deg) {
             const cropper = this.$refs.cropper;
             if (!cropper) return;
@@ -615,7 +670,7 @@ export default {
             if (typeof FileReader === 'function') {
                 const reader = new FileReader();
                 reader.onload = (event) => {
-                    this.imgSrc = event.target.result;
+                    this.currentImgSrc = event.target.result;
                     // rebuild cropperjs with the updated source
                     if (this.$refs.cropper) {
                         this.$refs.cropper.replace(event.target.result);
