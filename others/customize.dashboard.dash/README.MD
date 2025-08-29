@@ -2,6 +2,22 @@
 
 ### Definition Upgrades:
 
+
+#### 6.86.0
+- ImageViewerURL field is now duplicable.
+    - Supports #each HBS block to dynamically send a list of image urls to the component
+    - Adds pagination with arrows and "page" number.
+    - Meaning the component receives a list of image URLs and using an internal list index we traverse those images to know which one to show currently. E.g:
+```
+{{#each this.imagens}} 
+/recordm/recordm/instances/{{@root.currDoc.value.0.id}}/files/{{@root.imgFieldId}}/{{this}}
+```
+
+```
+ALTERED
+* Board > Component > [=ImageViewer] ImageViewerURL > * Board > Component > [=ImageViewer] ImageViewerURL (*DUPLICABLE*)
+```
+
 #### 6.84.0
 Show and hide sidebar in InstanceViewer
 
