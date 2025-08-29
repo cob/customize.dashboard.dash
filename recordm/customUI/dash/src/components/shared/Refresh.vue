@@ -17,11 +17,7 @@
     },
     computed: {
       refreshClasses() {
-        let defaultClasses = "w-5 h-5 w-auto text-slate-400 !text-red-500 transition cursor-pointer hover:text-red-500 "
-        if (cob.app.getSettings().mode() === "naked") {
-          let nakedClasses = "w-10 h-10 w-auto text-slate-400 !text-red-500 transition cursor-pointer hover:text-red-500 "
-          return [...nakedClasses.split(), this.updating ? 'animate-spin' : "" ]
-        } 
+        let defaultClasses = "h-10 sm:h-5 w-auto text-slate-400 !text-red-500 transition cursor-pointer hover:text-red-500 "
         return [...defaultClasses.split(), this.updating ? 'animate-spin' : "" ]
       }
     },
