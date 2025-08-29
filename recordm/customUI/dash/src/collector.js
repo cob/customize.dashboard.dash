@@ -231,7 +231,7 @@ function parseDashboard(raw_dashboard) {
                 "Enable Buttons":""
             }],
             "OutputVarImageViewer":"",
-            "ImageViewerURL":""
+            "ImageViewerURL":[{}]
         },
         "InstanceViewer" : {
             "InstanceViewerCustomize": [{
