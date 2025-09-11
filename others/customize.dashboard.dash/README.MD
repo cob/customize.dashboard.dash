@@ -2,6 +2,14 @@
 
 ### Definition Upgrades:
 
+#### 6.87.0
+- Add `AllowOverflow` option to instance viewer. 
+    - This fixes the bug where refs inside instance viewer instances would clip out of the page, since overflow was set to hidden.
+
+```
+ALTERED
+Board > Component > [==InstanceViewer] InstanceViewerCustomize : $[Classes,Tag,HideSidenav,AllowOverflow] $multiple
+```
 
 #### 6.86.0
 - ImageViewerURL field is now duplicable.

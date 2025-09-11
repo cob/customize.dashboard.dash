@@ -238,7 +238,8 @@ function parseDashboard(raw_dashboard) {
                 "InstanceViewerClasses": "",
                 "NoInstanceClasses": "",
                 "InstanceViewerIdentifier":"",
-                "HideSidenav": ""
+                "HideSidenav": "",
+                "AllowOverflow": "",
             }],
             "InstanceViewerInstanceId":"",
             "InstanceViewerOutputVar":""
