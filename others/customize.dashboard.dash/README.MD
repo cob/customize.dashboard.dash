@@ -3,12 +3,13 @@
 ### Definition Upgrades:
 
 #### 6.87.0
-- Add `AllowOverflow` option to instance viewer. 
+- Add `StopOverflow` option to instance viewer. 
+    - When `StopOverflow` is not toggled (default), `!overflow-auto` is applied. When it is toggled, we removed the `!overflow-auto` and replace it with the old default behaviour, `overflow-auto`.
     - This fixes the bug where refs inside instance viewer instances would clip out of the page, since overflow was set to hidden.
 
 ```
 ALTERED
-Board > Component > [==InstanceViewer] InstanceViewerCustomize : $[Classes,Tag,HideSidenav,AllowOverflow] $multiple
+Board > Component > [==InstanceViewer] InstanceViewerCustomize : $[Classes,Tag,HideSidenav,StopOverflow] $multiple
 ```
 
 #### 6.86.0
