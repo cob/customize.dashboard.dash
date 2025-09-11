@@ -2,7 +2,7 @@
   <div class="" :class="instanceClasses">
     <div v-if="!instanceId && !this.instanceDetails" :class="noInstanceClasses">No instance selected</div>
 
-    <div ref="instanceViewer" :class="['cob-app instance-viewer overflow-auto', {'no-sidenav': hideSidenav}, {'!overflow-auto': allowOverflow}]"></div>
+    <div ref="instanceViewer" :class="['cob-app instance-viewer ', {'no-sidenav': hideSidenav}, {'overflow-auto': stopOverflow}, {'!overflow-auto': !stopOverflow}]"></div>
   </div>
 </template>
 
@@ -60,7 +60,7 @@ export default {
     componentIdentifier() { return this.options[0]["InstanceViewerIdentifier"] || "" },
 
     hideSidenav() {return this.selectedOptions.indexOf("HideSidenav") !== -1},
-    allowOverflow() {return this.selectedOptions.indexOf("AllowOverflow") !== -1},
+    stopOverflow() {return this.selectedOptions.indexOf("StopOverflow") !== -1},
   },
   methods: {
     async setOutputVar(newId) {

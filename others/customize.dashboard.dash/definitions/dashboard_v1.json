@@ -4293,7 +4293,7 @@
                             "id": null,
                             "name": "InstanceViewerCustomize",
                             "required": null,
-                            "description": "$[Classes,Tag,HideSidenav,AllowOverflow] $multiple",
+                            "description": "$[Classes,Tag,HideSidenav,StopOverflow] $multiple",
                             "configuration": {
                                 "description": null,
                                 "keys": {
@@ -4303,7 +4303,7 @@
                                             "Classes",
                                             "Tag",
                                             "HideSidenav",
-                                            "AllowOverflow"
+                                            "StopOverflow"
                                         ],
                                         "default": null
                                     }
