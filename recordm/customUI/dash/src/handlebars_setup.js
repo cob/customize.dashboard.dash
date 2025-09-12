@@ -387,7 +387,7 @@ Handlebars.registerHelper('createVar', function (varsObject, varName, value) {
 })
 
 function localIterableEval(obj, evalCode, someOrEveryOrFilter, options = { defaultValue: false }) {
-    let filter = []
+    let filter = Array.isArray(obj) ? [] : {}
     for (const key in obj) {
         const val = typeof obj[key] == 'object' ? JSON.stringify(obj[key]) : `'${obj[key]}'`
         evalCode = evalCode.replaceAll(/\\"/g, "\"").replaceAll(/\\'/g, "\'")
@@ -403,20 +403,17 @@ function localIterableEval(obj, evalCode, someOrEveryOrFilter, options = { defau
             if (evalResult) return true
         } else if (someOrEveryOrFilter == "filter") {
             if (evalResult) {
-                filter.push(evalResult)
-                if (options.firstOnly == "first") {
-                    return filter
-                }
+                filter[key] = obj[key]            
             }
         } else if (!evalResult) { //for every
             return false
         }
     }
-    return options.defaultValue
+    return Object.keys(filter).length > 0 ? filter : options.defaultValue
 }
 
-Handlebars.registerHelper("filter", function (obj, evalCode, allOrFirst) {
-    return localIterableEval(obj, evalCode, "filter", { defaultValue: [], firstOnly: allOrFirst })
+Handlebars.registerHelper("filter", function (obj, evalCode) {
+    return localIterableEval(obj, evalCode, "filter", { defaultValue: [] })
 })
 
 Handlebars.registerHelper('some', function (obj, evalCode) {
