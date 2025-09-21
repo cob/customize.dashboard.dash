@@ -2,6 +2,16 @@
 
 ### Definition Upgrades:
 
+#### 6.88.0
+- New handlebar functions
+
+```
+subtract(a,b)
+multiply(a,b)
+max(a,b)
+min(a,b)
+```
+
 #### 6.87.0
 - Add `StopOverflow` option to instance viewer. 
     - When `StopOverflow` is not toggled (default), `!overflow-auto` is applied. When it is toggled, we removed the `!overflow-auto` and replace it with the old default behaviour, `overflow-auto`.
