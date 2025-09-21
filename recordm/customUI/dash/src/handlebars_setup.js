@@ -93,7 +93,7 @@ Handlebars.registerHelper('isNaked', function () { return cob.app.getSettings().
 
 Handlebars.registerHelper('includes', function (arg1, arg2, caseInsensitive) {
     if (arg1.length > 0) { arg1 = arg1[0] } //hack for when handlerbars passes a list with a single value
-    if (arg2.length > 0) { arg2 = arg2[0] } // of the string we want in it 
+    if (arg2.length > 0) { arg2 = arg2[0] } // of the string we want in it
     if (caseInsensitive == true) {
         return arg1.toLowerCase().includes(arg2.toLowerCase())
     }
@@ -127,7 +127,25 @@ Handlebars.registerHelper("format", function (type, val, options = {}) {
     }
 })
 
-Handlebars.registerHelper('eq', function (arg1, arg2) { return (arg1 == arg2); });
+function arraysEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) return false;
+
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) return false;
+    }
+
+    return true;
+}
+
+Handlebars.registerHelper('eq', function (arg1, arg2) {
+    // If both are arrays, compare their first elements
+    if (Array.isArray(arg1) && Array.isArray(arg2)) {
+        return arraysEqual(arg1[0], arg2[0]);
+    }
+
+    // Otherwise, compare directly
+    return arg1 == arg2;
+});
 
 Handlebars.registerHelper('startsWith', function (arg1, arg2) { return (arg1.startsWith(arg2)); });
 
@@ -333,19 +351,19 @@ function paging(direction, current, size, limit) {
 
     if (current) { // var may not be initialized when dash is mounted/rendered...
         if (!isNumeric(current)) {
-            // handle date 
+            // handle date
             const n = parseInt(size.slice(0, -1)) * direction
             const order = size.slice(-1).toLowerCase()
             const date = new Date(current)
             date.setHours(15) //timezone things, quickfix for now
 
-            if (order === 'd') { // days 
+            if (order === 'd') { // days
                 date.setDate(date.getDate() + n)
-            } if (order === 'w') { // weeks  
+            } if (order === 'w') { // weeks
                 date.setDate(date.getDate() + n * 7)
-            } if (order === 'm') { // months 
+            } if (order === 'm') { // months
                 date.setMonth(date.getMonth() + n)
-            } if (order === 'y') { // years  
+            } if (order === 'y') { // years
                 date.setFullYear(date.getFullYear() + n)
             }
 
@@ -360,7 +378,7 @@ function paging(direction, current, size, limit) {
 
             return formatDate(date)
         } else {
-            // handle number 
+            // handle number
             let aux_current = parseInt(current)
             const shifted = aux_current + size * direction
             if ((direction > 0 && limit && shifted > limit) ||
@@ -403,7 +421,7 @@ function localIterableEval(obj, evalCode, someOrEveryOrFilter, options = { defau
             if (evalResult) return true
         } else if (someOrEveryOrFilter == "filter") {
             if (evalResult) {
-                filter[key] = obj[key]            
+                filter[key] = obj[key]
             }
         } else if (!evalResult) { //for every
             return false
@@ -424,5 +442,28 @@ Handlebars.registerHelper('every', function (obj, evalCode) {
     return localIterableEval(obj, evalCode, "every", { defaultValue: false })
 })
 
+
+Handlebars.registerHelper('times', function (n, block) {
+    let accum = '';
+    for (let i = 1; i <= n; ++i)
+        accum += block.fn(i);
+    return accum;
+});
+
+Handlebars.registerHelper('subtract', function (arg1, arg2) {
+    return ((arg1 ? arg1 : 0) - (arg2 ? arg2 : 0));
+});
+
+Handlebars.registerHelper('multiply', function (arg1, arg2) {
+    return ((arg1 ? arg1 : 0) * (arg2 ? arg2 : 0));
+});
+
+Handlebars.registerHelper('max', function (a, b) {
+    return Math.max(a, b);
+});
+
+Handlebars.registerHelper('min', function (a, b) {
+    return Math.min(a, b);
+});
 
 export { Handlebars }
