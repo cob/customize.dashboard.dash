@@ -58,22 +58,27 @@
               this.simpleSearch.setSearchValue(this.queryWithFilter);
 
             } else {
-              const simpleSearchOptions = {
-                activeVisualizationName: this.options["DefaultView"],
-                showViews: this.selectedOptions.indexOf("ShowViews") !== -1,
-                showActions: this.selectedOptions.indexOf("ShowActions") !== -1,
-                showCreateAndDelete: this.selectedOptions.indexOf("CreateAndDelete") !== -1,
-                showImport: this.selectedOptions.indexOf("ShowImport") !== -1,
-                allowRowSelection: this.selectedOptions.indexOf("HideRowSelection") === -1,
-                showDetailsColumns: this.selectedOptions.indexOf("HideDetailsColumn") === -1,
-                showColumnsSelector: this.selectedOptions.indexOf("HideColumnsSelector") === -1,
-              };
-              this.simpleSearch = new cob.components.SimpleSearch(
-                cob.app,
-                `#${this.containerId}`,
-                this.definition,
-                this.queryWithFilter,
-                simpleSearchOptions);
+              //Wait 100m to allow for the queryWithFilter to stabilize with initial values
+              setTimeout(() => {
+                if (!this.simpleSearch) {
+                  const simpleSearchOptions = {
+                    activeVisualizationName: this.options["DefaultView"],
+                    showViews: this.selectedOptions.indexOf("ShowViews") !== -1,
+                    showActions: this.selectedOptions.indexOf("ShowActions") !== -1,
+                    showCreateAndDelete: this.selectedOptions.indexOf("CreateAndDelete") !== -1,
+                    showImport: this.selectedOptions.indexOf("ShowImport") !== -1,
+                    allowRowSelection: this.selectedOptions.indexOf("HideRowSelection") === -1,
+                    showDetailsColumns: this.selectedOptions.indexOf("HideDetailsColumn") === -1,
+                    showColumnsSelector: this.selectedOptions.indexOf("HideColumnsSelector") === -1,
+                  };
+                  this.simpleSearch = new cob.components.SimpleSearch(
+                    cob.app,
+                    `#${this.containerId}`,
+                    this.definition,
+                    this.queryWithFilter,
+                    simpleSearchOptions);
+                }
+              }, 100);
             }
           },
           refresh_list() {
