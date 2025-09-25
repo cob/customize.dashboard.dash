@@ -34,7 +34,7 @@
     "vue-cropperjs": "^4.2.0"
   },
   "devDependencies": {
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-service": "~5.0.9",
     "vue-template-compiler": "^2.6.11"
   }
 }
