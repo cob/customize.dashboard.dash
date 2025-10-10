@@ -2,6 +2,13 @@
 
 ### Definition Upgrades:
 
+#### 6.89.0
+- New handlebar function
+
+```
+div(a,b)
+```
+
 #### 6.88.0
 - New handlebar functions
 
