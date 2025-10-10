@@ -157,6 +157,12 @@ Handlebars.registerHelper('not', function (arg) { return (!arg); })
 
 Handlebars.registerHelper('add', function (arg1, arg2) { return ((arg1 ? arg1 * 1 : 0) + arg2 * 1); });
 
+// Register division helper
+Handlebars.registerHelper('div', function (a, b) {
+    if (!a || !b) return 0;          // fallback if undefined or zero
+    return a / b;                    // returns decimal
+});
+
 Handlebars.registerHelper('greaterOrEq', function (arg1, arg2, options) {
     if (arg1 * 1 >= arg2 * 1) {
         return options.fn(this);
@@ -381,9 +387,10 @@ function paging(direction, current, size, limit) {
             // handle number
             let aux_current = parseInt(current)
             const shifted = aux_current + size * direction
-            if ((direction > 0 && limit && shifted > limit) ||
-                (direction < 0 && limit && shifted < limit))
+            if ((direction > 0 && limit != undefined && shifted > limit) ||
+                (direction < 0 && limit != undefined && shifted < limit)) {
                 return limit
+            }
             return shifted
         }
     }
