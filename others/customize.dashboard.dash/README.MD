@@ -2,6 +2,15 @@
 
 ### Definition Upgrades:
 
+#### 6.89.1
+- The `listSort` Handlebars helper was updated to make the field parameter optional. It now supports sorting arrays of objects by a specific field or arrays of primitive values directly. Invalid or non-array inputs are safely handled by returning an empty array.
+
+Can now be used like:
+```
+{{listSort myArray "name" "asc"}}   // sorts objects by 'name' ascending
+{{listSort myArray "" "desc"}}      // sorts primitive values descending
+```
+
 #### 6.89.0
 - New handlebar function
 
