@@ -56,19 +56,24 @@ Handlebars.registerHelper("pasteInRm", function (...strings) {
 })
 
 Handlebars.registerHelper("listSort", function (list, field, dir) {
-    const isAscending = dir.toLowerCase() === 'asc';
-    if (list) {
-        return list.sort((a, b) => {
-            if (a[field] < b[field]) {
-                return isAscending ? -1 : 1;
-            } else if (a[field] > b[field]) {
-                return isAscending ? 1 : -1;
-            } else {
-                return 0;
-            }
-        });
-    }
-})
+    const isAscending = dir && dir.toLowerCase() === 'asc';
+
+    if (!list || !Array.isArray(list)) return [];
+
+    return list.sort((a, b) => {
+        const valA = field ? a[field] : a;
+        const valB = field ? b[field] : b;
+
+        if (valA < valB) {
+            return isAscending ? -1 : 1;
+        } else if (valA > valB) {
+            return isAscending ? 1 : -1;
+        } else {
+            return 0;
+        }
+    });
+});
+
 
 Handlebars.registerHelper("listFilter", function (list, field, value, first) {
     const filteredList = []
