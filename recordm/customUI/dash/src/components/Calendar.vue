@@ -29,6 +29,7 @@
   import rmListDefinitions from '@cob/rest-api-wrapper/src/rmListDefinitions';
   import tippy from 'tippy.js';
   import Instance from "@/components/shared/Instance";
+  import { createApp } from 'vue';
   import ComponentStatePersistence from "@/model/ComponentStatePersistence";
   import Handlebars from 'handlebars'
   import CalendarDayEvent from './CalendarDayEvent.vue'
@@ -680,7 +681,8 @@
             const template = Handlebars.compile(convertedToHandlebars)
             tooltipComponent = template(esInstance)
         } else {
-          tooltipComponent = new Vue(Object.assign({propsData: {esInstance}}, Instance)).$mount().$el
+          const container = document.createElement('div')
+          tooltipComponent = createApp(Instance, { esInstance }).mount(container).$el
         }
 
         return tippy(el, {

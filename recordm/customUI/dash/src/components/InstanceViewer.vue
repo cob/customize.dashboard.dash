@@ -105,7 +105,7 @@ export default {
                   componentIdentifier: this.componentIdentifier,
                   detail: fieldDetails
                 }
-                EventBus.$emit(BUS_FIELD_FOCUS, eventDetails);
+                EventBus.emit(BUS_FIELD_FOCUS, eventDetails);
               };
 
               input.addEventListener("focus", focusHandler);
