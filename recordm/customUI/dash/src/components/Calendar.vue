@@ -30,7 +30,7 @@
   import tippy from 'tippy.js';
   import Instance from "@/components/shared/Instance";
   import ComponentStatePersistence from "@/model/ComponentStatePersistence";
-  import Handlebars from 'handlebars'
+  import { Handlebars } from '../handlebars_setup.js'
   import CalendarDayEvent from './CalendarDayEvent.vue'
   import Vue from 'vue'
 
@@ -414,7 +414,7 @@
     },
 
     methods: {
-      isHandlebars(text) { return text.includes("{|{") },
+      isHandlebars(text) { return text.includes("{|{") || text.includes("{${") },
       updateCalendarBasedOnPersistedStateChange(newContent = {}) {
         if(!this.calendarApi) {
           setTimeout(() => this.updateCalendarBasedOnPersistedStateChange(newContent),100)
@@ -626,7 +626,7 @@
             let actualtitle  
             const isHandles = esInstance["DESC IS HANDLEBARS"]
             if(isHandles ) {
-              const convertedToHandlebars = descriptionEventField.replaceAll("{|{","{{").replaceAll("}|}","}}")
+              const convertedToHandlebars = descriptionEventField.replaceAll("{|{","{{").replaceAll("}|}","}}").replaceAll("{${","{{{").replaceAll("}$}","}}}")
               const template = Handlebars.compile(convertedToHandlebars)
               esInstance._dashboard =  this.dashboard
               esInstance._calendarView = this.calendarApi.view.type
@@ -676,7 +676,8 @@
         let tooltipComponent 
         const tooltipTemplate = esInstance["TOOLTIP TEMPLATE"]
         if(tooltipTemplate && tooltipTemplate != "") {
-            const convertedToHandlebars = tooltipTemplate.replaceAll("{|{","{{").replaceAll("}|}","}}")
+            const convertedToHandlebars = tooltipTemplate.replaceAll("{|{","{{").replaceAll("}|}","}}").replaceAll("{${","{{{").replaceAll("}$}","}}}")
+
             const template = Handlebars.compile(convertedToHandlebars)
             tooltipComponent = template(esInstance)
         } else {
