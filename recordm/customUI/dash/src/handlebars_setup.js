@@ -104,6 +104,10 @@ Handlebars.registerHelper('includes', function (arg1, arg2, caseInsensitive) { /
     }
 
     if (caseInsensitive == true) {
+        if (Array.isArray(arg1)) {
+            let lowered = arg1.map(el => String(el).toLowerCase());
+            return lowered.includes(arg2.toLowerCase());
+        }
         return arg1.toLowerCase().includes(arg2.toLowerCase())
     }
     return (arg1.includes(arg2))
