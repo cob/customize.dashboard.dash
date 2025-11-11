@@ -99,8 +99,9 @@ Handlebars.registerHelper('isNaked', function () { return cob.app.getSettings().
 Handlebars.registerHelper('includes', function (arg1, arg2, caseInsensitive) { //
     if (Array.isArray(arg1)) {
         arg1 = arg1.length === 1 ? arg1[0] : arg1;}
-    if (Array.isArray(arg2)) { 
-        arg2 = arg2.length === 1 ? arg2[0] : arg2;}   
+    if (Array.isArray(arg2)) {
+        arg2 = arg2[0];
+    }
 
     if (caseInsensitive == true) {
         return arg1.toLowerCase().includes(arg2.toLowerCase())
