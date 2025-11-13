@@ -110,8 +110,9 @@
 
 
                 <div class="flex mr-0.5">
-                    <a v-if="currentImgSrc && ocrButton" :class="buttonClasses" class="fa-ocr rounded-md flex items-center"
-                        href="#" role="button" @click.prevent="cropAndRecognize">
+                    <a v-if="currentImgSrc && ocrButton" :class="buttonClasses"
+                        class="fa-ocr rounded-md flex items-center" href="#" role="button"
+                        @click.prevent="cropAndRecognize">
                         <svg v-if="loadingOcr || loadingQr" class="animate-spin mr-1 h-5 w-5 text-white"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-60" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -144,10 +145,10 @@
 
             <div ref="imageViewerContainerRef"
                 class="img-cropper border-[1px] border-stone-400 h-full bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC')]">
-                <vue-cropper :class="cropperClasses" v-if="currentImgSrc" ref="cropper" :src="currentImgSrc" preview=".preview"
-                    :viewMode="2" :dragMode="'crop'" :modal="true" :highlight="true" :autoCrop="false"
-                    :imgStyle="{ display: 'block', maxWidth: '100%' }" @zoom="handleZoom" @cropmove="handleMove"
-                    @ready="onCropperReady" />
+                <vue-cropper :class="cropperClasses" v-if="currentImgSrc" ref="cropper" :src="currentImgSrc"
+                    preview=".preview" :viewMode="2" :dragMode="'crop'" :modal="true" :highlight="true"
+                    :autoCrop="false" :imgStyle="{ display: 'block', maxWidth: '100%' }" @zoom="handleZoom"
+                    @cropmove="handleMove" @ready="onCropperReady" />
 
 
                 <div v-if="!currentImgSrc"
@@ -177,6 +178,13 @@ import { BrowserMultiFormatReader } from '@zxing/browser';
 import jsQR from "jsqr";
 import { EventBus } from '../event-bus';
 
+function debounce(fn, delay = 100) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+    };
+}
 
 export default {
     components: {
@@ -210,6 +218,9 @@ export default {
         //Other
         showPreview: false,
         qrReader: false,
+
+        // internal observer ref
+        viewerResizeObserver: null,
     }),
     computed: {
         options() { return this.component['ImageViewerCustomize'][0]; },
@@ -254,49 +265,57 @@ export default {
     watch: {
         imageUrls: function (newImgs) {
             this.updateCropperImage(newImgs)
+            this.$nextTick(() => this.calculateViewerHeight())
         },
         currImgIdx: function (newImgIdx) {
             this.updateCropperImage(this.imageUrls)
+            this.$nextTick(() => this.calculateViewerHeight())
         }
     },
     props: {
         component: Object
     },
-    updated() {
-        // Hack to fix resize race that happens with the jscropper component
-        setTimeout(() => {
-            this.calculateViewerHeight()
-        }, 150)
-    },
     mounted() {
-        this.updateCropperImage(this.imageUrls)
+        this.updateCropperImage(this.imageUrls);
+
+        // Create resize observer to handle jscropper internal resizes
+        this.$nextTick(() => {
+            this.calculateViewerHeight()
+
+            const viewerContainer = this.$refs.viewerContainerRef
+            if (viewerContainer) {
+                this.viewerResizeObserver = new ResizeObserver(
+                    debounce(() => {
+                        this.calculateViewerHeight()
+                    }, 100)
+                )
+                this.viewerResizeObserver.observe(viewerContainer)
+            }
+        })
+
+    },
+    beforeUnmount() {
+        if (this.viewerResizeObserver) {
+            this.viewerResizeObserver.disconnect();
+        }
     },
     methods: {
         calculateViewerHeight() {
             const viewerContainer = this.$refs.viewerContainerRef;
-            const toolbarContainer = this.$refs.imageViewerToolbar;
-            const headerContainer = document.getElementById("header"); // Get the header toolbar
-            if (!viewerContainer) { return }
-            let viewerContainerHeight = window.getComputedStyle(viewerContainer).height;
-            let toolbarHeight = window.getComputedStyle(toolbarContainer).height;
-            let headerHeight = window.getComputedStyle(headerContainer).height;
+            const toolbar = this.$refs.imageViewerToolbar;
+            const header = document.getElementById("header");
+            const viewer = this.$refs.imageViewerContainerRef;
 
+            if (!viewerContainer || !toolbar || !header || !viewer) return;
 
-            if (viewerContainerHeight.includes("px") && toolbarHeight.includes("px") && headerHeight.includes("px")) {
-                viewerContainerHeight = parseInt(viewerContainerHeight.replace("px", ""), 10);
-                toolbarHeight = parseInt(toolbarHeight.replace("px", ""), 10);
-                headerHeight = parseInt(headerHeight.replace("px", ""), 10);
+            const viewerContainerHeight = viewerContainer.getBoundingClientRect().height;
+            const toolbarHeight = toolbar.getBoundingClientRect().height;
+            const headerHeight = header.getBoundingClientRect().height;
 
-                const viewportHeight = window.innerHeight;
+            const availableHeight = viewerContainerHeight - toolbarHeight - headerHeight;
 
-                // Convert to vh
-                const viewerContainerHeightVH = (viewerContainerHeight / viewportHeight) * 100;
-                const toolbarHeightVH = (toolbarHeight / viewportHeight) * 100;
-                const headerHeightVH = (headerHeight / viewportHeight) * 100;
-                const viewerHeightVH = viewerContainerHeightVH - toolbarHeightVH - headerHeightVH;
-
-                this.$refs.imageViewerContainerRef.style.height = `${viewerHeightVH}vh`;
-            }
+            //viewer.style.height = `${availableHeight}px`;
+            viewer.style.setProperty("height", `${availableHeight}px`, "important");
         },
         updateCropperImage(imageUrls) {
             // by default its an empty list
