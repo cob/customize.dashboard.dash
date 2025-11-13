@@ -97,9 +97,20 @@ Handlebars.registerHelper("screenMd", function () { return window.matchMedia("(m
 Handlebars.registerHelper('isNaked', function () { return cob.app.getSettings().mode() === "naked" });
 
 Handlebars.registerHelper('includes', function (arg1, arg2, caseInsensitive) {
-    if (arg1.length > 0) { arg1 = arg1[0] } //hack for when handlerbars passes a list with a single value
-    if (arg2.length > 0) { arg2 = arg2[0] } // of the string we want in it
+    if (arg1 == null || arg2 == null) {
+        return false;
+    }
+    if (Array.isArray(arg1)) {
+        arg1 = arg1.length === 1 ? arg1[0] : arg1;}
+    if (Array.isArray(arg2)) {
+        arg2 = arg2[0];
+    }
+
     if (caseInsensitive == true) {
+        if (Array.isArray(arg1)) {
+            let lowered = arg1.map(el => String(el).toLowerCase());
+            return lowered.includes(arg2.toLowerCase());
+        }
         return arg1.toLowerCase().includes(arg2.toLowerCase())
     }
     return (arg1.includes(arg2))
