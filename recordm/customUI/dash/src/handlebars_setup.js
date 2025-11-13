@@ -96,7 +96,10 @@ Handlebars.registerHelper("screenMd", function () { return window.matchMedia("(m
 
 Handlebars.registerHelper('isNaked', function () { return cob.app.getSettings().mode() === "naked" });
 
-Handlebars.registerHelper('includes', function (arg1, arg2, caseInsensitive) { //
+Handlebars.registerHelper('includes', function (arg1, arg2, caseInsensitive) {
+    if (arg1 == null || arg2 == null) {
+        return false;
+    }
     if (Array.isArray(arg1)) {
         arg1 = arg1.length === 1 ? arg1[0] : arg1;}
     if (Array.isArray(arg2)) {
