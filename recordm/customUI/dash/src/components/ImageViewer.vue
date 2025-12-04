@@ -144,12 +144,20 @@
             </div>
 
             <div ref="imageViewerContainerRef"
-                class="img-cropper border-[1px] border-stone-400 h-full bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC')]">
+                class="img-cropper border-[1px] border-stone-400 h-full bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC')] relative">
                 <vue-cropper :class="cropperClasses" v-if="currentImgSrc" ref="cropper" :src="currentImgSrc"
                     preview=".preview" :viewMode="2" :dragMode="'crop'" :modal="true" :highlight="true"
                     :autoCrop="false" :imgStyle="{ display: 'block', maxWidth: '100%' }" @zoom="handleZoom"
                     @cropmove="handleMove" @ready="onCropperReady" />
 
+                <!-- OCR Loading Overlay -->
+                <div v-if="loadingOcr"
+                    class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="flex flex-col items-center">
+                        <i class="fas fa-spinner fa-spin text-white text-6xl mb-4"></i>
+                        <p class="text-white text-lg font-semibold">OCR...</p>
+                    </div>
+                </div>
 
                 <div v-if="!currentImgSrc"
                     class="flex items-center justify-center h-full text-center font-semibold text-xl text-stone-400">
@@ -178,13 +186,6 @@ import { BrowserMultiFormatReader } from '@zxing/browser';
 import jsQR from "jsqr";
 import { EventBus } from '../event-bus';
 
-function debounce(fn, delay = 100) {
-    let timer;
-    return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn(...args), delay);
-    };
-}
 
 export default {
     components: {
@@ -218,9 +219,6 @@ export default {
         //Other
         showPreview: false,
         qrReader: false,
-
-        // internal observer ref
-        viewerResizeObserver: null,
     }),
     computed: {
         options() { return this.component['ImageViewerCustomize'][0]; },
@@ -265,57 +263,49 @@ export default {
     watch: {
         imageUrls: function (newImgs) {
             this.updateCropperImage(newImgs)
-            this.$nextTick(() => this.calculateViewerHeight())
         },
         currImgIdx: function (newImgIdx) {
             this.updateCropperImage(this.imageUrls)
-            this.$nextTick(() => this.calculateViewerHeight())
         }
     },
     props: {
         component: Object
     },
-    mounted() {
-        this.updateCropperImage(this.imageUrls);
-
-        // Create resize observer to handle jscropper internal resizes
-        this.$nextTick(() => {
+    updated() {
+        // Hack to fix resize race that happens with the jscropper component
+        setTimeout(() => {
             this.calculateViewerHeight()
-
-            const viewerContainer = this.$refs.viewerContainerRef
-            if (viewerContainer) {
-                this.viewerResizeObserver = new ResizeObserver(
-                    debounce(() => {
-                        this.calculateViewerHeight()
-                    }, 100)
-                )
-                this.viewerResizeObserver.observe(viewerContainer)
-            }
-        })
-
+        }, 150)
     },
-    beforeUnmount() {
-        if (this.viewerResizeObserver) {
-            this.viewerResizeObserver.disconnect();
-        }
+    mounted() {
+        this.updateCropperImage(this.imageUrls)
     },
     methods: {
         calculateViewerHeight() {
             const viewerContainer = this.$refs.viewerContainerRef;
-            const toolbar = this.$refs.imageViewerToolbar;
-            const header = document.getElementById("header");
-            const viewer = this.$refs.imageViewerContainerRef;
+            const toolbarContainer = this.$refs.imageViewerToolbar;
+            const headerContainer = document.getElementById("header"); // Get the header toolbar
+            if (!viewerContainer) { return }
+            let viewerContainerHeight = window.getComputedStyle(viewerContainer).height;
+            let toolbarHeight = window.getComputedStyle(toolbarContainer).height;
+            let headerHeight = window.getComputedStyle(headerContainer).height;
 
-            if (!viewerContainer || !toolbar || !header || !viewer) return;
 
-            const viewerContainerHeight = viewerContainer.getBoundingClientRect().height;
-            const toolbarHeight = toolbar.getBoundingClientRect().height;
-            const headerHeight = header.getBoundingClientRect().height;
+            if (viewerContainerHeight.includes("px") && toolbarHeight.includes("px") && headerHeight.includes("px")) {
+                viewerContainerHeight = parseInt(viewerContainerHeight.replace("px", ""), 10);
+                toolbarHeight = parseInt(toolbarHeight.replace("px", ""), 10);
+                headerHeight = parseInt(headerHeight.replace("px", ""), 10);
 
-            const availableHeight = viewerContainerHeight - toolbarHeight - headerHeight;
+                const viewportHeight = window.innerHeight;
 
-            //viewer.style.height = `${availableHeight}px`;
-            viewer.style.setProperty("height", `${availableHeight}px`, "important");
+                // Convert to vh
+                const viewerContainerHeightVH = (viewerContainerHeight / viewportHeight) * 100;
+                const toolbarHeightVH = (toolbarHeight / viewportHeight) * 100;
+                const headerHeightVH = (headerHeight / viewportHeight) * 100;
+                const viewerHeightVH = viewerContainerHeightVH - toolbarHeightVH - headerHeightVH;
+
+                this.$refs.imageViewerContainerRef.style.height = `${viewerHeightVH}vh`;
+            }
         },
         updateCropperImage(imageUrls) {
             // by default its an empty list
