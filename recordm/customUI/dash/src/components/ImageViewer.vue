@@ -1,7 +1,7 @@
 <template>
     <div :id="componentIdentifier" ref="viewerContainerRef" class="flex h-full">
 
-        <div class="flex flex-col  w-full  h-full">
+        <div class="flex flex-col  w-full  h-full min-h-0">
             <div ref="imageViewerToolbar" class="flex items-center justify-between mb-1 py-2 px-2 gap-x-0.5 flex-wrap border-t-[1px] border-x-[1px] rounded-t-md
             border-stone-400 bg-stone-200/30">
                 <!-- TEMPORARILY HIDDEN UNTIL FUTURE NEED
@@ -144,7 +144,7 @@
             </div>
 
             <div ref="imageViewerContainerRef"
-                class="img-cropper border-[1px] border-stone-400 h-full bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC')] relative">
+                class="img-cropper border-[1px] border-stone-400 h-full overflow-hidden bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC')] relative">
                 <vue-cropper :class="cropperClasses" v-if="currentImgSrc" ref="cropper" :src="currentImgSrc"
                     preview=".preview" :viewMode="2" :dragMode="'crop'" :modal="true" :highlight="true"
                     :autoCrop="false" :imgStyle="{ display: 'block', maxWidth: '100%' }" @zoom="handleZoom"
@@ -271,40 +271,51 @@ export default {
     props: {
         component: Object
     },
-    updated() {
-        // Hack to fix resize race that happens with the jscropper component
-        setTimeout(() => {
-            this.calculateViewerHeight()
-        }, 150)
-    },
     mounted() {
         this.updateCropperImage(this.imageUrls)
+        this._resizeHandler = () => this.calculateViewerHeight();
+        // make sure this runs on window resize
+        window.addEventListener('resize', this._resizeHandler);
+    },
+    beforeDestroy() {
+        window.removeEventListener('resize', this._resizeHandler);
     },
     methods: {
         calculateViewerHeight() {
             const viewerContainer = this.$refs.viewerContainerRef;
             const toolbarContainer = this.$refs.imageViewerToolbar;
-            const headerContainer = document.getElementById("header"); // Get the header toolbar
-            if (!viewerContainer) { return }
-            let viewerContainerHeight = window.getComputedStyle(viewerContainer).height;
-            let toolbarHeight = window.getComputedStyle(toolbarContainer).height;
-            let headerHeight = window.getComputedStyle(headerContainer).height;
+            if (!viewerContainer || !toolbarContainer) { return }
 
+            const viewerRect = viewerContainer.getBoundingClientRect();
+            const toolbarHeight = toolbarContainer.getBoundingClientRect().height;
+            const viewportHeight = window.innerHeight;
+            
+            // now correctly calculate available height
+            const availableHeight = viewportHeight - viewerRect.top;
+            const imageViewerHeight = availableHeight - toolbarHeight;
 
-            if (viewerContainerHeight.includes("px") && toolbarHeight.includes("px") && headerHeight.includes("px")) {
-                viewerContainerHeight = parseInt(viewerContainerHeight.replace("px", ""), 10);
-                toolbarHeight = parseInt(toolbarHeight.replace("px", ""), 10);
-                headerHeight = parseInt(headerHeight.replace("px", ""), 10);
+            if (imageViewerHeight > 0) {
+                this.$refs.imageViewerContainerRef.style.height = `${imageViewerHeight}px`;
 
-                const viewportHeight = window.innerHeight;
+                // resize() is cropperjs's internal handler (on Cropper.prototype)
+                // cropperjs binds this to window resize events
+                // need a safeguard because its not part of the public API...
+                const internalCropper = this.$refs.cropper && this.$refs.cropper.cropper;
+                if (internalCropper) {
+                    if (typeof internalCropper.resize === 'function') {
+                        internalCropper.resize();
+                    } else if (this.currentImgSrc) {
+                        // if .resize is not available for any reason, call "the hammer" with the
+                        // replace() method which fully rebuilds the cropper - hopefully on a moment 
+                        // where everything has been mounted
+                        // https://github.com/fengyuanchen/cropperjs/blob/v1/src/js/handlers.js
 
-                // Convert to vh
-                const viewerContainerHeightVH = (viewerContainerHeight / viewportHeight) * 100;
-                const toolbarHeightVH = (toolbarHeight / viewportHeight) * 100;
-                const headerHeightVH = (headerHeight / viewportHeight) * 100;
-                const viewerHeightVH = viewerContainerHeightVH - toolbarHeightVH - headerHeightVH;
-
-                this.$refs.imageViewerContainerRef.style.height = `${viewerHeightVH}vh`;
+                        // _refitInProgress is a flag that prevents infinite calls
+                        // due to this being called on the OnCropperReady
+                        this._refitInProgress = true;
+                        this.$refs.cropper.replace(this.currentImgSrc);
+                    }
+                }
             }
         },
         updateCropperImage(imageUrls) {
@@ -324,9 +335,16 @@ export default {
             }
         },
         onCropperReady() {
+            // means we had to call .replace() again and do everything except call calculateViewerHeight
+            if (this._refitInProgress) { 
+                this._refitInProgress = false;
+                this.clearCrop()
+                this.zoom(0)
+                return;
+            }
+            this.calculateViewerHeight()
             this.clearCrop()
             this.zoom(0) //we zoom with 0 to force init some vars
-            //this.move(0, -10000)
         },
         async cropAndRecognize() {
             this.cropImage()
