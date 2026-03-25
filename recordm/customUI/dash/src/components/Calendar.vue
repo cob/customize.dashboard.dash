@@ -30,7 +30,7 @@
   import tippy from 'tippy.js';
   import Instance from "@/components/shared/Instance";
   import ComponentStatePersistence from "@/model/ComponentStatePersistence";
-  import { Handlebars } from '../handlebars_setup.js'
+  import Handlebars from 'handlebars'
   import CalendarDayEvent from './CalendarDayEvent.vue'
   import Vue from 'vue'
 
