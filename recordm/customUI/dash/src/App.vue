@@ -263,6 +263,7 @@
         await nextTick();
       },
       startDragDropListeners(activeDash) {
+        const vueInstance = this
         let activeDragDropInfo = activeDash.dashboardDragDropInfo
 
         // Helper functions to parse data from data attributes and prefixed class names
@@ -416,6 +417,8 @@
                   }
                   activeDragDropInfo.draggedItem.classList.remove("dragging")
                   activeDragDropInfo.droppedOnZone = true;
+
+                  vueInstance.updateQueries()
                 })
                 .catch(error => {
                   // Concurrent Error
