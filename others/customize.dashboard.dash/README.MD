@@ -2,6 +2,15 @@
 
 ### Definition Upgrades:
 
+#### 6.93.0
+
+Added a new `UpdateOnDrop` option to the dashboard. This allows the user to specificy (in seconds) the time after which the dash queries should be updated after an item is dropped (via drag & drop) - only when a concurrent script is called.
+
+```
+NEW
+DashboardCustomize [=DragDrop] > UpdateOnDragDrop : $number(2) $help[If you wish to for the dashboard to update the queries after a drop is performed, specify the number of seconds after which the update should happen.]
+```
+
 #### 6.89.1
 - The `listSort` Handlebars helper was updated to make the field parameter optional. It now supports sorting arrays of objects by a specific field or arrays of primitive values directly. Invalid or non-array inputs are safely handled by returning an empty array.
 
