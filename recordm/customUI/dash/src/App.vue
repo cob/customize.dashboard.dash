@@ -418,7 +418,22 @@
                   activeDragDropInfo.draggedItem.classList.remove("dragging")
                   activeDragDropInfo.droppedOnZone = true;
 
-                  vueInstance.updateQueries()
+                  
+                  // UpdateOnDrop is time in seconds - needs to be converted to ms
+                  let updateOnDrop = activeDash.dashboardParsed.DashboardCustomize[0].UpdateOnDrop
+
+                  if (updateOnDrop !== null && updateOnDrop !== '' && !isNaN(updateOnDrop)) {
+                    const delay = Number(updateOnDrop)
+
+                    if (delay === 0) {
+                      vueInstance.updateQueries()
+                    } else {
+                      setTimeout(() => {
+                        vueInstance.updateQueries()
+                      }, delay * 1000)
+                    }
+                  }
+                  
                 })
                 .catch(error => {
                   // Concurrent Error
