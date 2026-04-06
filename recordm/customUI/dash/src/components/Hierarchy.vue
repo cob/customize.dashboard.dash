@@ -3,20 +3,24 @@
         <button class="float-right text-[10px] uppercase text-slate-400 hover:text-slate-500 border-slate-200  hover:border-slate-300 hover:shadow-none  py-0 px-1 rounded-sm" @click="clear" >
             Limpar
         </button>
-        <template v-for="(top, i) in tops">
+        <template v-for="(top, i) in tops" >
             <HierarchyNode class="pb-1" :selectedPath="selectedPath" :setOutput="setOutput" :instance="instances[top]"
                 :tree="tree" :instances="instances" :nodeClasses="hierarchyNodeClasses" :displayField="displayField" :key="i" 
                 :rowClasses="hierarchyRowClasses"/>
         </template>
         <template v-if="tops && tops.length == 0">
-            No results
+            <template v-if="isLoading">
+                Loading...
+            </template>
+            <template v-else>
+                No results
+            </template>
         </template>
     </div>
 </template>
 
 <script>
 import ComponentStatePersistence from "@/model/ComponentStatePersistence";
-import { rmDefinitionSearch } from '@cob/rest-api-wrapper'
 import { toEsFieldName } from '@cob/rest-api-wrapper/src/utils/ESHelper';
 import HierarchyNode from './HierarchyNode.vue';
 
@@ -36,6 +40,7 @@ export default {
     }, 
     computed: {
         resultIds() { return this.dashResults.map( r => r.id + "" ) },
+        isLoading() { return this.component.dash_info.state !== "cache" && this.component.dash_info.state !== "ready"},
         options() { return this.component['HierarchyCustomize'][0] },
         displayField() { return this.component['DisplayFieldHierarchy']},
         definitionName() { return this.component["DefinitionNameHierarchy"] },
@@ -88,20 +93,18 @@ export default {
             await this.updateTree()
         },
         async dashResults(newRes, oldRes) {
-            if (newRes.length > 0 && (oldRes == undefined || oldRes.length == 0) ) {
-                if (this.component.dash_info.state === "ready" || this.component.dash_info.state === "cache") {
-                    const args = await this.createFullTree()
-                    this.instances = args.instances
-                    this.originalTops = args.tops
-                    this.originalTree = args.tree
+            if (this.component.dash_info.state === "ready" || this.component.dash_info.state === "cache") {
+                const args = await this.createFullTree()
+                this.instances = args.instances
+                this.originalTops = args.tops
+                this.originalTree = args.tree
 
-                    await this.updateTree()
+                await this.updateTree()
 
-                    if(this.statePersistence.content){   
-                        this.setOutput(this.statePersistence.content)
-                    }
+                if(this.statePersistence.content){   
+                    this.setOutput(this.statePersistence.content)
                 }
-                }
+            }
         },
         async dashResultsInput(newRes, oldRes) {
             if (this.input) {

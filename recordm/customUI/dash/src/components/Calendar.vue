@@ -136,6 +136,7 @@
         height: 'auto',
         contentHeight: 'auto',
         aspectRatio: 2,
+        multiMonthMinWidth:600,
         validRange: {
           start: '1970-01-01'
         },
