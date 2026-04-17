@@ -1,6 +1,6 @@
 <template>
     <div class="absolute">
-        <div ref="modal" class="relative z-10" aria-labelledby="modal-title" role="dialog" id="modal-pc" aria-modal="true">
+        <div ref="modal" class="relative z-40" aria-labelledby="modal-title" role="dialog" id="modal-pc" aria-modal="true">
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
             <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
                 <div class="flex min-h-full  items-center justify-center text-center " @click.self="closeModal">
