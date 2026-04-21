@@ -490,7 +490,7 @@ Handlebars.registerHelper('min', function (a, b) {
 });
 
 Handlebars.registerHelper('array', function(...args) {
-    // this upports use of expressions like (some (array 'a' 'b' 'c') "this === ourVariable")
+    // this upports use of expressions like (some (array 'a' 'b' 'c') 'val === "{{ourVariable}}"')
     return args.slice(0, -1); // remove o último argumento (options do Handlebars)
 });
 export { Handlebars }
