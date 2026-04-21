@@ -489,4 +489,8 @@ Handlebars.registerHelper('min', function (a, b) {
     return Math.min(a, b);
 });
 
+Handlebars.registerHelper('array', function(...args) {
+    // this upports use of expressions like (some (array 'a' 'b' 'c') "this === ourVariable")
+    return args.slice(0, -1); // remove o último argumento (options do Handlebars)
+});
 export { Handlebars }
