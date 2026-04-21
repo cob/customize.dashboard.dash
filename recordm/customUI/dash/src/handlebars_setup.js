@@ -489,13 +489,4 @@ Handlebars.registerHelper('min', function (a, b) {
     return Math.min(a, b);
 });
 
-Handlebars.registerHelper('array', function(...args) {
-    return args.slice(0, -1); // removes last arg (options from Handlebars)
-});
-
-Handlebars.registerHelper('arrayIncludes', function(arr, value) {
-    // (arrayIncludes (array 'a' 'b' 'c') ourVariable)
-    return arr.includes(value);
-});
-
 export { Handlebars }
