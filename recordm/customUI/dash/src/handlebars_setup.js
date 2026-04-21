@@ -490,7 +490,12 @@ Handlebars.registerHelper('min', function (a, b) {
 });
 
 Handlebars.registerHelper('array', function(...args) {
-    // this upports use of expressions like (some (array 'a' 'b' 'c') 'val === "{{ourVariable}}"')
-    return args.slice(0, -1); // remove o último argumento (options do Handlebars)
+    return args.slice(0, -1); // removes last arg (options from Handlebars)
 });
+
+Handlebars.registerHelper('arrayIncludes', function(arr, value) {
+    // (arrayIncludes (array 'a' 'b' 'c') ourVariable)
+    return arr.includes(value);
+});
+
 export { Handlebars }
