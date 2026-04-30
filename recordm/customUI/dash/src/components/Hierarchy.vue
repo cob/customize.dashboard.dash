@@ -34,6 +34,7 @@ export default {
         selectedPath: undefined,
         originalTops: [],
         originalTree: {},
+        previousHash: "",
     }),
     props: {
         component: Object
@@ -73,7 +74,7 @@ export default {
         },
     },
     async created() {
-        const args = await this.createFullTree()
+        const args = await this.createFullTree(this.dashResults)
         this.instances = args.instances
         this.originalTops = args.tops
         this.originalTree = args.tree
@@ -93,14 +94,16 @@ export default {
             await this.updateTree()
         },
         async dashResults(newRes, oldRes) {
-            if (this.component.dash_info.state === "ready" || this.component.dash_info.state === "cache") {
-                const args = await this.createFullTree()
+            const newHash = this.hashArray(this.dashResults)
+            if ((this.component.dash_info.state === "ready" || this.component.dash_info.state === "cache")
+                && newHash != this.previousHash ) {
+                const args = await this.createFullTree(newRes)
                 this.instances = args.instances
                 this.originalTops = args.tops
                 this.originalTree = args.tree
 
                 await this.updateTree()
-
+                this.previousHash = newHash
                 if(this.statePersistence.content){   
                     this.setOutput(this.statePersistence.content)
                 }
@@ -154,10 +157,7 @@ export default {
             if(newID && this.dashResults.length > 0)
                 this.setOutput(newID) 
         },
-        async createFullTree() {
-            const results = this.dashResults
-
-
+        async createFullTree(results) {
             const tops = []
             const tree = {}
             const instances = {}
@@ -190,7 +190,6 @@ export default {
 
             tops.sort( compareNodesByChildren )
             Object.values(tree).forEach( c =>  c.sort( compareNodesByChildren ) )
-
             return { tree: tree, tops: tops, instances: instances }
         },
         async sweepTreeTops(instances, input) {
@@ -236,8 +235,23 @@ export default {
             Object.values(tree).forEach( c =>  c.sort( compareNodesByChildren ) )
 
             return { tree: tree, tops: tops }
-        }
-
+        },
+        hashArray(arr) {
+            let h1 = 0xdeadbeef ^ arr.length;
+            let h2 = 0x41c6ce57 ^ arr.length;
+            for (let i = 0; i < arr.length; i++) {
+                const item = arr[i];
+                const s = item.id + '|' + item.parent; // fields that matter
+                for (let j = 0; j < s.length; j++) {
+                const ch = s.charCodeAt(j);
+                h1 = Math.imul(h1 ^ ch, 2654435761);
+                h2 = Math.imul(h2 ^ ch, 1597334677);
+                }
+            }
+            h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+            h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+            return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+            }
     }
 
 
