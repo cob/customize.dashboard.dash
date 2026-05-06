@@ -55,7 +55,7 @@
     return `${date.getFullYear()}-${month}-${monthDay}` 
   }
 
-  function createDatePickerElement(date1,date2) {
+  function createDatePickerElement(date1, date2, singleDate = false) {
     if(!date2){
       date2 = new Date()
     }
@@ -66,18 +66,25 @@
     let strDate1 = getInputTypeOfDate(date1)
     let strDate2 = getInputTypeOfDate(date2)
 
-    const htmlString = `<div class="fc-button !p-0 !text-base">
-      <input type="date" value="${strDate1}">
-      <span class="px-1">|</span>
-      <input type="date" value="${strDate2}">
-      </div>`
+    let htmlString
+    if (singleDate) {
+      htmlString = `<div class="fc-button !p-0 !text-base">
+        <input type="date" value="${strDate1}">
+        </div>`
+    } else {
+      htmlString = `<div class="fc-button !p-0 !text-base">
+        <input type="date" value="${strDate1}">
+        <span class="px-1">|</span>
+        <input type="date" value="${strDate2}">
+        </div>`
+    }
 
     let htmlElement = (new DOMParser()).parseFromString(htmlString, "text/html").body.firstChild
     htmlElement.remove()
     return htmlElement
   }
 
-  function orderElementsByDatesAndGetDates(previousDateElement, nextDateElement,defaultRange){
+  function orderElementsByDatesAndGetDates(previousDateElement, nextDateElement, defaultRange){
     let tempDate;
     let previousDate = new Date(previousDateElement.value)
     let nextDate = new Date(nextDateElement.value)
@@ -92,6 +99,14 @@
     previousDateElement.value=getInputTypeOfDate(previousDate)
     nextDateElement.value=getInputTypeOfDate(nextDate)
     return [previousDate,nextDate]
+  }
+
+  /**
+   * Helper to check if a date picker element is in single-date mode.
+   * Single-date mode means there's no separator <span> element inside.
+   */
+  function isDatePickerSingleMode(datePickerElement) {
+    return datePickerElement && !datePickerElement.querySelector('span')
   }
  
   export default {
@@ -292,6 +307,16 @@
       // Behavior component model
       updatingFlag()         { return this.eventSources.map(source => source.state == "loading" || source.state == "updating" ).reduce( (acc,v) => acc || v, false) }, //True if any source is loading|updating
 
+      /**
+       * Returns true if the current calendar view is a single-day view (dayGridDay or listDay).
+       * Used to decide whether the date picker should show one date or a range.
+       */
+      isSingleDayView() {
+        if (!this.calendarApi) return false
+        const viewType = this.calendarApi.view.type
+        return viewType === 'dayGridDay' || viewType === 'listDay'
+      },
+
       queries() {
         let queries = []
         
@@ -431,7 +456,10 @@
 
         function updateNavigationCalendarDates(prevDate, nextDate) {
           viewThisObject.datePickerElement.children[0].value = getInputTypeOfDate(prevDate)
-          viewThisObject.datePickerElement.children[2].value = getInputTypeOfDate(nextDate)
+          // Only update second date input if it exists (range mode)
+          if (viewThisObject.datePickerElement.children[2]) {
+            viewThisObject.datePickerElement.children[2].value = getInputTypeOfDate(nextDate)
+          }
           viewThisObject.dateRange = [prevDate, nextDate]
         }
 
@@ -441,6 +469,23 @@
          * @param {*} previousDateButtonClicked true | false
          */
         function onNavigationButtonClicked(previousDateButtonClicked) {
+          const isSingle = isDatePickerSingleMode(viewThisObject.datePickerElement)
+
+          if (isSingle) {
+            // Single-date mode: navigate by one day
+            const dateInput = viewThisObject.datePickerElement.children[0]
+            let current = new Date(dateInput.value)
+            if (isNaN(current.getTime())) return
+            const ONE_DAY = 24 * 60 * 60 * 1000
+            current = new Date(current.getTime() + (previousDateButtonClicked ? -ONE_DAY : ONE_DAY))
+            dateInput.value = getInputTypeOfDate(current)
+            const nextDay = new Date(current)
+            nextDay.setDate(nextDay.getDate() + 1)
+            viewThisObject.dateRange = [current, nextDay]
+            return
+          }
+
+          // Range mode: existing behavior
           let prevDate, nextDate
 
           const previousDateElement = viewThisObject.datePickerElement.children[0]
@@ -482,40 +527,85 @@
             text: "today",
             click: function () {
               let today = new Date()
-              updateNavigationCalendarDates(today,today)
+              const isSingle = isDatePickerSingleMode(viewThisObject.datePickerElement)
+              if (isSingle) {
+                viewThisObject.datePickerElement.children[0].value = getInputTypeOfDate(today)
+                const tomorrow = new Date(today)
+                tomorrow.setDate(tomorrow.getDate() + 1)
+                viewThisObject.dateRange = [today, tomorrow]
+              } else {
+                updateNavigationCalendarDates(today, today)
+              }
             }
           }
         }
       },
       handleViewType() {
         if (this.calendarApi) {
+          const viewType = this.calendarApi.view.type
+          const singleDate = (viewType === 'dayGridDay' || viewType === 'listDay')
+
           const setupDatePicker = () => {
+            // If the date picker already exists, check if its mode (single vs range) still matches.
+            // If it doesn't match, destroy and recreate it.
+            if (this.datePickerElement) {
+              const currentIsSingle = isDatePickerSingleMode(this.datePickerElement)
+              if (currentIsSingle !== singleDate) {
+                this.datePickerElement.remove()
+                this.datePickerElement = undefined
+              }
+            }
+
             if (!this.datePickerElement) {
-              this.datePickerElement = createDatePickerElement(this.calendarApi.view.currentStart, this.calendarApi.view.currentEnd);
+              this.datePickerElement = createDatePickerElement(
+                this.calendarApi.view.currentStart,
+                this.calendarApi.view.currentEnd,
+                singleDate
+              );
+
               const previousDateElement = this.datePickerElement.children[0];
-              const nextDateElement = this.datePickerElement.children[2];
-              previousDateElement.oninput = nextDateElement.oninput = () => {
-                this.dateRange = orderElementsByDatesAndGetDates(previousDateElement, nextDateElement, this.dateRange);
-                this.calendarApi.currentDate = this.dateRange[0];
-              };
+
+              if (singleDate) {
+                // Single-date mode: only one input
+                previousDateElement.oninput = () => {
+                  const picked = new Date(previousDateElement.value)
+                  if (!isNaN(picked.getTime())) {
+                    const nextDay = new Date(picked)
+                    nextDay.setDate(nextDay.getDate() + 1)
+                    this.dateRange = [picked, nextDay]
+                    this.calendarApi.gotoDate(picked)
+                  }
+                }
+              } else {
+                // Range mode: two inputs (existing behavior)
+                const nextDateElement = this.datePickerElement.children[2];
+                previousDateElement.oninput = nextDateElement.oninput = () => {
+                  this.dateRange = orderElementsByDatesAndGetDates(previousDateElement, nextDateElement, this.dateRange);
+                  this.calendarApi.currentDate = this.dateRange[0];
+                };
+              }
             }
           };
 
-          // If datepicket has been created, we set 
+          // If datepicker has been created, update its value(s) to reflect the current view
           if (this.datePickerElement) {
             this.datePickerElement.children[0].value = getInputTypeOfDate(this.calendarApi.view.currentStart);
-            this.datePickerElement.children[2].value = getInputTypeOfDate(this.calendarApi.view.currentEnd);
+            // Only update the second input if it exists (range mode)
+            if (this.datePickerElement.children[2]) {
+              this.datePickerElement.children[2].value = getInputTypeOfDate(this.calendarApi.view.currentEnd);
+            }
           }
 
           const insertDatePicker = (headerElement) => {
             if (!this.datePickerElement.parentElement) {
               headerElement.insertAdjacentElement("afterend", this.datePickerElement);
               this.datePickerElement.children[0].value = getInputTypeOfDate(this.calendarApi.view.currentStart);
-              this.datePickerElement.children[2].value = getInputTypeOfDate(this.calendarApi.view.currentEnd);
+              if (this.datePickerElement.children[2]) {
+                this.datePickerElement.children[2].value = getInputTypeOfDate(this.calendarApi.view.currentEnd);
+              }
             }
           };
 
-          const viewType = this.calendarApi.view.type;
           const isListYearView = viewType === "listYear";
           const toolbarHeader = this.calendarApi.el.querySelector(".fc-header-toolbar")
           let toolbarHeaderCenter, toolbarHeaderLeft
