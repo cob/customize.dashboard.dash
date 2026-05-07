@@ -1,14 +1,3 @@
-<style>
-.cob-app.search-definition {
-  box-sizing: unset;
-  position: unset;
-  background-color: white;
-}
-.slick-header-menu {
-  z-index: 1;
-}
-</style>
-
 <template>
   <section ref="searchContainer" :class="`cob-app search-definition content ${classes}`"></section>
 </template>
@@ -101,3 +90,13 @@
    }
 </script>
 
+<style>
+    .cob-app.search-definition {
+        box-sizing: unset;
+        position: unset;
+        background-color: white;
+    }
+    .slick-header-menu {
+        z-index: 1;
+    }
+</style>
