@@ -100,3 +100,25 @@
         z-index: 1;
     }
 </style>
+
+<!--
+/*****************************************************
+Se o servidor não conseguir chegar a  https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic
+(é usado num import numa dep do dash),só quando der timeout é que o vue decide fazer o render dos estilos do
+list component.
+Isso faz com que a lista apareça inicialmente no topo da página.
+
+ Nestes casos é necessário um HACK para ter o list component dentro de um dashboard no sitio certo desde o inicio.
+ A solução é ter os estilos seguintes dentro de um css que já esteja carregado quando o dashboard é carregado
+*****************************************************/
+div#cobDashApp section.search-definition {
+  box-sizing: unset;
+  position: unset;
+  background-color: white;
+}
+body:has(div#cobDashApp) .slick-header-menu {
+  z-index: 1;
+}
+/*fim do hack*/
+
+-->
