@@ -41,16 +41,16 @@ the application; `pull` is the only way into the repo.
 ### Layout (in the client repo)
 
 ```
-dashboards/<Name>/dashboard.json    canonical representation (carries instanceId + version)
-dashboards/<Name>/*.hbs             multiline fields (templates/HTML/Context), one file each,
-                                    referenced from dashboard.json as "@file:<name>.hbs"
+recordm/customUI/dashs/<Name>/dashboard.json   canonical representation (carries instanceId + version)
+recordm/customUI/dashs/<Name>/*.hbs            multiline fields (templates/HTML/Context), one file
+                                               each, referenced as "@file:<name>.hbs"
 ```
 
 ### Workflow
 
 1. Create (or duplicate) the dashboard in the application, once
-2. `npm run dash-sync pull <instanceId>` — brings it into `dashboards/`
-3. `cob-cli test -d dash` — dashboards present in `dashboards/` are served from the local files
+2. `npm run dash-sync pull <instanceId>` — brings it into `recordm/customUI/dashs/`
+3. `cob-cli test -d dash` — dashboards present in `recordm/customUI/dashs/` are served locally
    and any edit reloads the browser (see `tools/dev_middleware.js`). Iterating writes NOTHING to
    RecordM, so the instance version history keeps its meaning
 4. `npm run dash-sync push <Name>` — deliberate save: one meaningful version on the instance.

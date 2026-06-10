@@ -1,8 +1,8 @@
 // Repo directory format for a dashboard ("dashboards as code").
 //
-// A dashboard is stored as one directory:
-//   dashboards/<name>/dashboard.json   - the canonical representation (parseDashboardFull output)
-//   dashboards/<name>/*.hbs            - multiline string fields, externalized for IDE editing
+// A dashboard is stored as one directory (under recordm/customUI/dashs in client repos):
+//   <name>/dashboard.json   - the canonical representation (parseDashboardFull output)
+//   <name>/*.hbs            - multiline string fields, externalized for IDE editing
 //
 // Any string value containing a newline is moved to its own .hbs file and replaced in
 // dashboard.json by a "@file:<filename>" reference (single-line values stay inline). The file

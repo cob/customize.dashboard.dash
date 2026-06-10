@@ -62,7 +62,7 @@ async function runOk(...cliArgs) {
     return result
 }
 
-const dashDir = join(repoDir, "dashboards", "Plan-Test")
+const dashDir = join(repoDir, "recordm", "customUI", "dashs", "Plan-Test")
 const localVersion = () => JSON.parse(readFileSync(join(dashDir, "dashboard.json"), 'utf8')).version
 
 // --------------------------------------------------------------------------------------- tests

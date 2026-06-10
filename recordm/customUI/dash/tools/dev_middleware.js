@@ -1,5 +1,5 @@
 // Dev-server middleware for "dashboards as code": when running `cob-cli test -d dash` (or
-// `npm run serve`), dashboards represented in the client repo's dashboards/ directory are served
+// `npm run serve`), dashboards represented in the client repo (recordm/customUI/dashs) are served
 // LOCALLY instead of being fetched from the RecordM server, and any edit to them reloads the
 // browser. This gives a hot-reload edit loop with zero writes (and zero version increments) on
 // the RecordM instance — pushing with dash-sync stays a deliberate act.
@@ -72,14 +72,14 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
             })
     })
 
-    // any change under dashboards/ reloads the browser (App.vue then refetches the dashboard)
+    // any change under the dashboards directory reloads the browser (App.vue refetches the dashboard)
     let reloadTimer = null
     try {
         fs.watch(dashboardsDir, { recursive: true }, () => {
             index = null
             clearTimeout(reloadTimer)
             reloadTimer = setTimeout(() => {
-                console.log("[CoB] dashboards/ changed -> reloading browser")
+                console.log("[CoB] " + dashboardsDir + " changed -> reloading browser")
                 if (server && typeof server.sockWrite === "function") {
                     server.sockWrite(server.sockets, "content-changed")
                 }

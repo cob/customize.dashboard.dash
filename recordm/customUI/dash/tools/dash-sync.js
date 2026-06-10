@@ -12,7 +12,7 @@
 // Options:
 //   --server <url>   RecordM server (default: resolved from the cob-cli repo, see below)
 //   --env <name>     cob-cli environment to resolve the server from (default: prod)
-//   --dir <path>     dashboards directory (default: <repo root>/dashboards)
+//   --dir <path>     dashboards directory (default: <repo root>/recordm/customUI/dashs)
 //   --force          pull: overwrite uncommitted local changes; push: ignore server version check
 //   --dry-run        push: write the PUT body to a temp file instead of sending it
 //
@@ -61,7 +61,7 @@ function findRepoRoot() {
 }
 
 const repoRoot = findRepoRoot()
-const dashboardsRoot = flags.dir ? resolve(flags.dir) : join(repoRoot, "dashboards")
+const dashboardsRoot = flags.dir ? resolve(flags.dir) : join(repoRoot, "recordm", "customUI", "dashs")
 
 let resolvedServer = null
 function serverUrl() {

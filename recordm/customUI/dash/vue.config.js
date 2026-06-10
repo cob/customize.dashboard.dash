@@ -29,7 +29,7 @@ if(!process.env.dash_dir || !SERVER) {
 let pwdForRepoRoot = process.env.PWD || process.cwd()
 let repoRootPosition = pwdForRepoRoot.indexOf("/recordm/customUI")
 const DASHBOARDS_DIR = process.env.dash_dashboards_dir
-  || (repoRootPosition > 0 ? pwdForRepoRoot.substring(0, repoRootPosition) : ".") + "/dashboards"
+  || (repoRootPosition > 0 ? pwdForRepoRoot.substring(0, repoRootPosition) : ".") + "/recordm/customUI/dashs"
 
 module.exports = {
   // temos que fixar o directorio onde colocamos o build,
