@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "test": "node src/test_serializer.js && node src/test_template_generator.js",
     "build-css": "NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=8000\" tailwindcss -i src/input.css -o ../css/tailwind.css ",
     "continuous-build-css": "NODE_OPTIONS=\"--max-old-space-size=8000\" tailwindcss -i src/input.css -o ../css/tailwind.css --watch"
   },

@@ -22,3 +22,28 @@ dashboard_chooser_0.28.0.xlsx (this one substitutes the chooser dashboard; delet
 ### Definition Upgrades:
 
 See [readme](./others/customize.dashboard.dash/README.MD)
+
+## Development
+
+### Tests
+
+```
+cd recordm/customUI/dash
+npm test        # requires Node >= 22
+```
+
+### Dashboards as code (groundwork)
+
+The modules below allow processing dashboards outside the browser (tests, future repo sync tooling),
+using the exact same logic the app uses at runtime:
+
+* `src/collector.js` — `parseDashboard` (instance -> canonical representation) and the exported
+  `DashTemplate`/`ComponentsTemplates` that define the canonical structure
+* `src/template_generator.js` — `generateDashboardTemplate` (canonical -> Handlebars template),
+  extracted from `App.vue`
+* `src/serializer.js` — `serializeDashboard` (canonical -> instance, the inverse of `parseDashboard`)
+  and `parseDashboardExtras` (captures Solution/Description/Order, used by the dashboard listing but
+  not part of the rendered structure)
+
+The guaranteed property (see `src/test_serializer.js`) is that serialization is a fixed point of the
+parse/serialize cycle: `parseDashboard(serializeDashboard(parseDashboard(raw))) ≡ parseDashboard(raw)`
