@@ -20,6 +20,14 @@ if(!process.env.dash_dir || !SERVER) {
   }
 }
 
+// "Dashboards as code": directório do repo (do cliente) com a representação canónica dos
+// dashboards. Quando existe, o devserver serve esses dashboards a partir dos ficheiros locais e
+// recarrega o browser a cada alteração (ver tools/dev_middleware.js)
+let pwdForRepoRoot = process.env.PWD || process.cwd()
+let repoRootPosition = pwdForRepoRoot.indexOf("/recordm/customUI")
+const DASHBOARDS_DIR = process.env.dash_dashboards_dir
+  || (repoRootPosition > 0 ? pwdForRepoRoot.substring(0, repoRootPosition) : ".") + "/dashboards"
+
 module.exports = {
   // temos que fixar o directorio onde colocamos o build,
   //  para podermos usar o dashboard.html que é gerado sem o editar
@@ -61,7 +69,7 @@ module.exports = {
 
   devServer: {
     port: 8041,
-    before: function(app) {
+    before: function(app, server) {
       app.get('/*', function(req, res, next) {
         // Permite usar / ou /DASH_BOARD/ quando acedido directamente
         if(req.url != "/" && req.url != '/'+DASH_DIR+'/') {
@@ -70,6 +78,15 @@ module.exports = {
 
         res.redirect(`/${DASH_DIR}/dashboard.html`);
       });
+
+      // Servir localmente os dashboards representados no repo, com reload em alterações
+      try {
+        if (require('./tools/dev_middleware.js')(app, server, { dashboardsDir: DASHBOARDS_DIR, serverUrl: SERVER })) {
+          console.log("[CoB] Local dashboards enabled from " + DASHBOARDS_DIR + " (browser reloads on changes)")
+        }
+      } catch (e) {
+        console.warn("[CoB] Local dashboards middleware disabled: " + e.message)
+      }
     },
     proxy: {
       [ "/recordm/localresource/" + DASH_DIR + "/dist"]: {

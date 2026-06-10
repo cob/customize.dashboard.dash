@@ -1,4 +1,4 @@
-import { clone, collect } from './collector.js'
+import { clone, collect, parseDashboard } from './collector.js'
 
 // serializeDashboard is the inverse of parseDashboard (collector.js): it takes the parsed
 // (canonical) dashboard representation and the Dashboard_v1 definition and produces a RecordM
@@ -111,4 +111,35 @@ function parseDashboardExtras(raw_dashboard) {
     return extras
 }
 
-export { serializeDashboard, parseDashboardExtras, DashExtrasTemplate }
+// The full canonical representation used by the repo tooling: everything parseDashboard captures
+// plus the extra root fields. This is what gets stored in a repo and fed to serializeDashboard.
+function parseDashboardFull(raw_dashboard) {
+    return { ...parseDashboard(raw_dashboard), ...parseDashboardExtras(raw_dashboard) }
+}
+
+// Grafts the field ids of an existing server instance onto a serialized instance, pairing
+// occurrences of the same field (by fieldDefinition name) in order. This makes the PUT body look
+// like a regular instance-editor save: existing fields keep their ids, new occurrences keep the
+// negative placeholder ids assigned by serializeDashboard.
+function adoptFieldIds(target, source) {
+    const sourceByName = new Map()
+    for (const field of (source.fields || [])) {
+        const name = field.fieldDefinition.name
+        if (!sourceByName.has(name)) sourceByName.set(name, [])
+        sourceByName.get(name).push(field)
+    }
+    const used = new Map()
+    for (const field of (target.fields || [])) {
+        const name = field.fieldDefinition.name
+        const occurrences = sourceByName.get(name) || []
+        const index = used.get(name) || 0
+        if (index < occurrences.length) {
+            used.set(name, index + 1)
+            if (field.id == null || field.id < 0) field.id = occurrences[index].id
+            adoptFieldIds(field, occurrences[index])
+        }
+    }
+    return target
+}
+
+export { serializeDashboard, parseDashboardFull, parseDashboardExtras, adoptFieldIds, DashExtrasTemplate }

@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test": "node src/test_serializer.js && node src/test_template_generator.js",
+    "test": "node src/test_serializer.js && node src/test_template_generator.js && node src/test_repo_format.js && node tools/test_dash_sync.js && node tools/test_dev_middleware.js",
+    "dash-sync": "node tools/dash-sync.js",
     "build-css": "NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=8000\" tailwindcss -i src/input.css -o ../css/tailwind.css ",
     "continuous-build-css": "NODE_OPTIONS=\"--max-old-space-size=8000\" tailwindcss -i src/input.css -o ../css/tailwind.css --watch"
   },

@@ -32,18 +32,52 @@ cd recordm/customUI/dash
 npm test        # requires Node >= 22
 ```
 
-### Dashboards as code (groundwork)
+## Dashboards as code
 
-The modules below allow processing dashboards outside the browser (tests, future repo sync tooling),
-using the exact same logic the app uses at runtime:
+Complex dashboards can be represented in the client repo (git: IDE editing, versioning, diffs)
+while simple ones keep being edited directly in the application. Dashboards are always CREATED in
+the application; `pull` is the only way into the repo.
+
+### Layout (in the client repo)
+
+```
+dashboards/<Name>/dashboard.json    canonical representation (carries instanceId + version)
+dashboards/<Name>/*.hbs             multiline fields (templates/HTML/Context), one file each,
+                                    referenced from dashboard.json as "@file:<name>.hbs"
+```
+
+### Workflow
+
+1. Create (or duplicate) the dashboard in the application, once
+2. `npm run dash-sync pull <instanceId>` — brings it into `dashboards/`
+3. `cob-cli test -d dash` — dashboards present in `dashboards/` are served from the local files
+   and any edit reloads the browser (see `tools/dev_middleware.js`). Iterating writes NOTHING to
+   RecordM, so the instance version history keeps its meaning
+4. `npm run dash-sync push <Name>` — deliberate save: one meaningful version on the instance.
+   Refuses if the server version moved (someone edited in the app): use `diff`/`pull` first
+5. `npm run dash-sync status` / `diff <Name>` — detect and inspect changes made in the application
+
+CLI auth: env `COB_TOKEN` or `COB_USERNAME`/`COB_PASSWORD` (prompted otherwise). The server comes
+from the repo's `.server` file (or `--server <url>`).
+
+Sync model: the canonical `version` field means "this representation corresponds to version N of
+the instance"; `push` requires the server to still be at N (optimistic locking) and ends with an
+implicit pull recording N+1. Local uncommitted edits are git's responsibility: `pull` refuses to
+overwrite them (`--force` to override).
+
+### Modules (all reusable outside the browser)
 
 * `src/collector.js` — `parseDashboard` (instance -> canonical representation) and the exported
   `DashTemplate`/`ComponentsTemplates` that define the canonical structure
 * `src/template_generator.js` — `generateDashboardTemplate` (canonical -> Handlebars template),
   extracted from `App.vue`
-* `src/serializer.js` — `serializeDashboard` (canonical -> instance, the inverse of `parseDashboard`)
-  and `parseDashboardExtras` (captures Solution/Description/Order, used by the dashboard listing but
-  not part of the rendered structure)
+* `src/serializer.js` — `serializeDashboard` (canonical -> instance, the inverse of
+  `parseDashboard`), `parseDashboardFull` (canonical + Solution/Description/Order root fields)
+  and `adoptFieldIds` (grafts server field ids for editor-like saves)
+* `src/repo_format.js` — the `dashboards/<Name>/` directory format (explode/implode of
+  multiline fields into `.hbs` files)
+* `tools/dash-sync.js` — pull/push/diff/status CLI
+* `tools/dev_middleware.js` — dev-server interception + browser reload (wired in `vue.config.js`)
 
 The guaranteed property (see `src/test_serializer.js`) is that serialization is a fixed point of the
 parse/serialize cycle: `parseDashboard(serializeDashboard(parseDashboard(raw))) ≡ parseDashboard(raw)`
