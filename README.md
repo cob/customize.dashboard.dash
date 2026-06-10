@@ -47,3 +47,11 @@ using the exact same logic the app uses at runtime:
 
 The guaranteed property (see `src/test_serializer.js`) is that serialization is a fixed point of the
 parse/serialize cycle: `parseDashboard(serializeDashboard(parseDashboard(raw))) ≡ parseDashboard(raw)`
+
+To check that property against a real dashboard of a server (saved with an authenticated browser
+session: the instance from `/recordm/recordm/instances/<id>` and the definition from
+`/recordm/recordm/definitions/name/Dashboard_v1`):
+
+```
+node src/check_roundtrip.js instance.json definition.json
+```
