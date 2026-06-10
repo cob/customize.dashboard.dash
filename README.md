@@ -59,7 +59,7 @@ dashboards/<Name>/*.hbs             multiline fields (templates/HTML/Context), o
 
 CLI auth: env `COB_TOKEN` or `COB_USERNAME`/`COB_PASSWORD` (prompted otherwise). The server is
 resolved like cob-cli does: `environments/<env>/server` (env defaults to `prod`, override with
-`--env <name>`), falling back to the legacy `.server` file, `COB_SERVER` or `--server <url>`.
+`--env <name>`), or explicitly via `COB_SERVER` / `--server <url>`.
 
 Sync model: the canonical `version` field means "this representation corresponds to version N of
 the instance"; `push` requires the server to still be at N (optimistic locking) and ends with an
