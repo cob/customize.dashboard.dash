@@ -57,8 +57,9 @@ dashboards/<Name>/*.hbs             multiline fields (templates/HTML/Context), o
    Refuses if the server version moved (someone edited in the app): use `diff`/`pull` first
 5. `npm run dash-sync status` / `diff <Name>` — detect and inspect changes made in the application
 
-CLI auth: env `COB_TOKEN` or `COB_USERNAME`/`COB_PASSWORD` (prompted otherwise). The server comes
-from the repo's `.server` file (or `--server <url>`).
+CLI auth: env `COB_TOKEN` or `COB_USERNAME`/`COB_PASSWORD` (prompted otherwise). The server is
+resolved like cob-cli does: `environments/<env>/server` (env defaults to `prod`, override with
+`--env <name>`), falling back to the legacy `.server` file, `COB_SERVER` or `--server <url>`.
 
 Sync model: the canonical `version` field means "this representation corresponds to version N of
 the instance"; `push` requires the server to still be at N (optimistic locking) and ends with an

@@ -9,14 +9,19 @@ if(!process.env.dash_dir || !SERVER) {
   DASH_DIR = pwd.substring(pwd.lastIndexOf("/")+1)
   
   let localSubPosition = pwd.indexOf("/recordm/customUI")
-  let serverFile = (localSubPosition > 0 ? pwd.substring(0,localSubPosition) :  ".") + "/.server"
+  let repoRoot = localSubPosition > 0 ? pwd.substring(0,localSubPosition) : "."
   try {
-    // Se estivermos dentro de um repo cob-cli então vamos conseguir obter o servidor a partir do '.server' na raiz do repo
-    SERVER = "https://" + require('fs').readFileSync(serverFile, 'utf8') + ".cultofbits.com";
+    // Se estivermos dentro de um repo cob-cli vamos conseguir obter o servidor a partir do
+    // 'environments/<env>/server' (convenção actual; env default: prod) ou do '.server' (repos antigos)
+    const fs = require('fs')
+    let serverFile = repoRoot + "/environments/" + (process.env.dash_env || "prod") + "/server"
+    if (!fs.existsSync(serverFile)) serverFile = repoRoot + "/.server"
+    let serverName = fs.readFileSync(serverFile, 'utf8').trim()
+    SERVER = "https://" + (serverName.indexOf(".") >= 0 ? serverName : serverName + ".cultofbits.com");
   } catch {
     //  se não conseguirmos usamos a máquina de formação como default
     SERVER = "https://learning.cultofbits.com";
-    console.warn("Warning: file '.server' not found. Using " + SERVER + " as backend" )
+    console.warn("Warning: no 'environments/<env>/server' or '.server' file found. Using " + SERVER + " as backend" )
   }
 }
 

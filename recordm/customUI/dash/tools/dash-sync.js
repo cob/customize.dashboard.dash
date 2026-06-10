@@ -10,10 +10,14 @@
 //   node tools/dash-sync.js status
 //
 // Options:
-//   --server <url>   RecordM server (default: "https://" + content of the repo's .server file)
+//   --server <url>   RecordM server (default: resolved from the cob-cli repo, see below)
+//   --env <name>     cob-cli environment to resolve the server from (default: prod)
 //   --dir <path>     dashboards directory (default: <repo root>/dashboards)
 //   --force          pull: overwrite uncommitted local changes; push: ignore server version check
 //   --dry-run        push: write the PUT body to a temp file instead of sending it
+//
+// Server resolution order: --server, COB_SERVER, environments/<env>/server (cob-cli convention,
+// name gets ".cultofbits.com" appended unless it already contains a dot), .server (legacy repos).
 //
 // Auth (env): COB_TOKEN (cobtoken cookie) or COB_USERNAME/COB_PASSWORD (otherwise prompted)
 //
@@ -41,7 +45,7 @@ const flags = {}
 const positional = []
 for (let i = 0; i < args.length; i++) {
     if (args[i] === "--force" || args[i] === "--dry-run") flags[args[i].substring(2)] = true
-    else if (args[i] === "--server" || args[i] === "--dir") flags[args[i].substring(2)] = args[++i]
+    else if (args[i] === "--server" || args[i] === "--dir" || args[i] === "--env") flags[args[i].substring(2)] = args[++i]
     else positional.push(args[i])
 }
 const [command, target] = positional
@@ -49,9 +53,9 @@ const [command, target] = positional
 function findRepoRoot() {
     let dir = resolve(".")
     while (true) {
-        if (existsSync(join(dir, ".server"))) return dir
+        if (existsSync(join(dir, "environments")) || existsSync(join(dir, ".server"))) return dir
         const parent = dirname(dir)
-        if (parent === dir) return resolve(".") // no .server found: use cwd (needs --server)
+        if (parent === dir) return resolve(".") // not inside a cob-cli repo: use cwd (needs --server)
         dir = parent
     }
 }
@@ -59,12 +63,30 @@ function findRepoRoot() {
 const repoRoot = findRepoRoot()
 const dashboardsRoot = flags.dir ? resolve(flags.dir) : join(repoRoot, "dashboards")
 
+let resolvedServer = null
 function serverUrl() {
+    if (!resolvedServer) {
+        resolvedServer = resolveServer()
+        console.error("server: " + resolvedServer)
+    }
+    return resolvedServer
+}
+
+function resolveServer() {
     if (flags.server) return flags.server.replace(/\/$/, "")
     if (process.env.COB_SERVER) return process.env.COB_SERVER.replace(/\/$/, "")
-    const serverFile = join(repoRoot, ".server")
-    if (existsSync(serverFile)) return "https://" + readFileSync(serverFile, 'utf8').trim() + ".cultofbits.com"
-    throw new Error("no server: use --server <url>, COB_SERVER, or run inside a cob-cli repo (with .server)")
+    const environment = flags.env || "prod"
+    const candidates = [
+        join(repoRoot, "environments", environment, "server"), // cob-cli convention
+        join(repoRoot, ".server"),                             // legacy repos
+    ]
+    for (const file of candidates) {
+        if (existsSync(file)) {
+            const name = readFileSync(file, 'utf8').trim()
+            return "https://" + (name.includes(".") ? name : name + ".cultofbits.com")
+        }
+    }
+    throw new Error("no server: use --server <url>, COB_SERVER, or run inside a cob-cli repo (environments/" + environment + "/server or .server)")
 }
 
 // ------------------------------------------------------------------------------- http and auth
@@ -87,6 +109,7 @@ function prompt(question, hidden = false) {
 
 async function ensureAuth() {
     if (cookie != null) return
+    serverUrl() // resolve (and show) the target server before asking for credentials
     if (process.env.COB_TOKEN) {
         cookie = "cobtoken=" + process.env.COB_TOKEN
         return

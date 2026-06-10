@@ -2,7 +2,7 @@
 // Run with: node tools/test_dash_sync.js   (Node >= 22)
 import assert from 'node:assert/strict'
 import http from 'node:http'
-import { mkdtempSync, readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { execFile } from 'node:child_process'
@@ -117,6 +117,16 @@ assert.ok((await runOk("status")).stdout.includes("✓ in sync (v9)"))
 const unknown = await run("push", "999999")
 assert.equal(unknown.status, 1)
 assert.ok(unknown.stderr.includes("created in the app"))
+
+// without --server, the server is resolved from the cob-cli repo convention
+// environments/<env>/server (default env: prod), with .cultofbits.com appended to bare names
+mkdirSync(join(repoDir, "environments", "prod"), { recursive: true })
+writeFileSync(join(repoDir, "environments", "prod", "server"), "dash-sync-test-name\n")
+const resolved = await new Promise((done) => {
+    execFile(process.execPath, [cliPath, "status"], { cwd: repoDir, env: { ...process.env, COB_TOKEN: "t" } },
+        (error, stdout, stderr) => done({ stdout, stderr }))
+})
+assert.ok(resolved.stderr.includes("server: https://dash-sync-test-name.cultofbits.com"), resolved.stderr)
 
 server.close()
 console.log("test_dash_sync: ALL TESTS PASSED")
