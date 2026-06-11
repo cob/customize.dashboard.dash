@@ -86,9 +86,12 @@ module.exports = {
       try {
         if (require('./tools/dev_middleware.js')(app, server, { dashboardsDir: DASHBOARDS_DIR, serverUrl: SERVER })) {
           console.log("[CoB] Local dashboards enabled from " + DASHBOARDS_DIR + " (browser reloads on changes)")
+        } else {
+          console.log("[CoB] Local dashboards disabled: no directory " + DASHBOARDS_DIR)
         }
       } catch (e) {
-        console.warn("[CoB] Local dashboards middleware disabled: " + e.message)
+        // console.log e não console.warn: o cob-cli test descarta o stderr do devserver
+        console.log("[CoB] Local dashboards middleware disabled: " + e.message)
       }
     },
     proxy: {

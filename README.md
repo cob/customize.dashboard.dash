@@ -50,9 +50,12 @@ recordm/customUI/dashs/<Name>/*.hbs            multiline fields (templates/HTML/
 
 1. Create (or duplicate) the dashboard in the application, once
 2. `npm run dash-sync pull <instanceId>` — brings it into `recordm/customUI/dashs/`
-3. `cob-cli test -d dash` — dashboards present in `recordm/customUI/dashs/` are served locally
-   and any edit reloads the browser (see `tools/dev_middleware.js`). Iterating writes NOTHING to
-   RecordM, so the instance version history keeps its meaning
+3. `cob-cli test -d dash` and browse the DASH dev server (port 8041, NOT the 8040 one the cli
+   opens): `http://localhost:8041/recordm/index.html#/cob.custom-resource/<id>/dash`. Dashboards
+   present in `recordm/customUI/dashs/` are served from the local files and any edit reloads the
+   browser (see `tools/dev_middleware.js`) — the 8040 customUI server proxies instance requests
+   straight to the real server, so the interception and the reload only work on 8041. Iterating
+   writes NOTHING to RecordM, so the instance version history keeps its meaning
 4. `npm run dash-sync push <Name>` — deliberate save: one meaningful version on the instance.
    Refuses if the server version moved (someone edited in the app): use `diff`/`pull` first
 5. `npm run dash-sync status` / `diff <Name>` — detect and inspect changes made in the application

@@ -35,7 +35,7 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
             if (entry.error) {
                 // without a readable dashboard.json there is no instanceId to intercept: the
                 // server version will be served - make that visible in the terminal
-                console.error("[CoB] LOCAL dashboard '" + entry.name + "' ignored: " + entry.error)
+                console.log("[CoB] LOCAL dashboard '" + entry.name + "' ignored: " + entry.error)
             } else {
                 index.set(entry.instanceId, entry)
             }
@@ -67,7 +67,8 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
             })
             .catch(e => {
                 // fail loud: a silent fallback to the server version would hide local errors
-                console.error("[CoB] LOCAL dashboard " + req.params.id + " error: " + e.message)
+                // (console.log, not console.error: cob-cli test discards the devserver's stderr)
+                console.log("[CoB] LOCAL dashboard " + req.params.id + " error: " + e.message)
                 res.status(500).json({ error: "local dashboard error: " + e.message })
             })
     })
@@ -86,7 +87,7 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
             }, 200)
         })
     } catch (e) {
-        console.warn("[CoB] dashboards/ watch unavailable (" + e.message + ") - edit reloads disabled")
+        console.log("[CoB] dashboards watch unavailable (" + e.message + ") - edit reloads disabled")
     }
 
     return true
