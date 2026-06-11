@@ -72,6 +72,7 @@
       if(DEBUG.app) console.log("DASH:  APP: 9: beforeDestroy: Stop all watchers and updates")
       this.resumeEventListner.off('resume')
       this.hashArg.stop()
+      if (this.localDashboardsEvents) this.localDashboardsEvents.close()
       this.stopActiveDash()
     },
 
@@ -559,6 +560,9 @@
         const key = this.dashboardArg + requestResultList.map(d => d.id).join("-") + JSON.stringify(this.userInfo)
         const dashKey = "H" + sha256(key).toString().replace("=", "_")
 
+        // kept for the local-dashboards hot reload (see ensureLocalDashboardsWatcher)
+        this.lastLoadArgs = { newDashEs, requestResultList }
+
         const getBaseContext = () => {
           if(DEBUG.app) console.log("DASH:  APP: 5.2: loadDashboard: getBaseContext: ")
           return {
@@ -911,6 +915,10 @@
           axios.get("/recordm/recordm/instances/" + newDashEs.id)
             .then(resp => {
               try {
+                // In dev, the devserver serves dashboards represented in the repo and marks them
+                // with this header: watch for edits and rebuild in place (hot reload)
+                if (resp.headers && resp.headers["x-cob-local-dashboard"]) this.ensureLocalDashboardsWatcher()
+
                 let dash = {};
 
                 let solution, solution_menu
@@ -953,6 +961,26 @@
                 reportError("Error: error getting dashboard " + newDashEs.id)
               }
             });
+        }
+      },
+
+      ensureLocalDashboardsWatcher() {
+        // Dev only (the events endpoint exists only on the devserver middleware): on each edit of
+        // the local repo representation, rebuild the active dashboard in place instead of a full
+        // browser reload. Filter/var state survives via the url-hash persistence.
+        if (this.localDashboardsEvents) return
+        if(DEBUG.app) console.log("DASH:  APP: ensureLocalDashboardsWatcher: subscribing to local dashboards edit events")
+        this.localDashboardsEvents = new EventSource("/recordm/recordm/local-dashboards/events")
+        this.localDashboardsEvents.onmessage = () => {
+          if (!this.lastLoadArgs) return
+          if(DEBUG.app) console.log("DASH:  APP: local dashboards changed -> rebuilding active dashboard")
+          if (this.activeDashKey) {
+            const dashKey = this.activeDashKey
+            this.stopActiveDash()
+            this.activeDashKey = null
+            this.$delete(this.dashboardsCached, dashKey)
+          }
+          this.loadDashboard(this.lastLoadArgs.newDashEs, this.lastLoadArgs.requestResultList)
         }
       },
 

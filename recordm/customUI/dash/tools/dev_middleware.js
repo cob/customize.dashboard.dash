@@ -75,7 +75,8 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
                 return getDefinition(req.headers.cookie).then(definition => {
                     const canonical = modules.implodeDashboard(entry.dir)
                     console.log("[CoB] Serving LOCAL dashboard " + req.params.id + " ('" + canonical.Name + "') from " + entry.dir)
-                    res.json(modules.serializeDashboard(canonical, definition))
+                    // the header tells App.vue to subscribe to the edit events below (hot reload)
+                    res.set("X-Cob-Local-Dashboard", "true").json(modules.serializeDashboard(canonical, definition))
                 })
             })
             .catch(e => {
@@ -86,8 +87,19 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
             })
     })
 
-    // any change under the dashboards directory reloads the browser (App.vue refetches the
-    // dashboard); supports both webpack-dev-server v3 (the dash vue devserver) and v4 (cob-cli)
+    // hot reload: pages whose dash bundle saw the X-Cob-Local-Dashboard header subscribe here
+    // (server-sent events) and rebuild the dashboard in place on each edit (see App.vue)
+    const sseClients = new Set()
+    app.get('/recordm/recordm/local-dashboards/events', (req, res) => {
+        res.set({ "content-type": "text/event-stream", "cache-control": "no-cache", "connection": "keep-alive" })
+        if (res.flushHeaders) res.flushHeaders()
+        res.write("retry: 1000\n\n")
+        sseClients.add(res)
+        req.on("close", () => sseClients.delete(res))
+    })
+
+    // full browser reload, for pages without a hot-reload subscription (older dash bundle);
+    // supports both webpack-dev-server v3 (the dash vue devserver) and v4 (cob-cli)
     const triggerBrowserReload = () => {
         if (server && typeof server.sockWrite === "function") {
             server.sockWrite(server.sockets, "content-changed") // webpack-dev-server v3
@@ -95,14 +107,20 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
             server.sendMessage(server.webSocketServer.clients, "static-changed") // webpack-dev-server v4
         }
     }
+
     let reloadTimer = null
     try {
         fs.watch(dashboardsDir, { recursive: true }, () => {
             index = null
             clearTimeout(reloadTimer)
             reloadTimer = setTimeout(() => {
-                console.log("[CoB] " + dashboardsDir + " changed -> reloading browser")
-                triggerBrowserReload()
+                if (sseClients.size > 0) {
+                    console.log("[CoB] " + dashboardsDir + " changed -> hot reloading dashboard")
+                    for (const client of sseClients) client.write("data: changed\n\n")
+                } else {
+                    console.log("[CoB] " + dashboardsDir + " changed -> reloading browser")
+                    triggerBrowserReload()
+                }
             }, 200)
         })
     } catch (e) {
