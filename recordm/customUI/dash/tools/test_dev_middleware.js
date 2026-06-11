@@ -79,6 +79,15 @@ assert.ok(broken.payload.error.includes(hbsFile))
 // and the file change triggered a browser reload through the dev-server websocket
 assert.ok(sockWrites.includes("content-changed"))
 
+// webpack-dev-server v4 (cob-cli) uses sendMessage/webSocketServer instead of sockWrite
+const v4Messages = []
+const v4App = { get: () => {} }
+const v4Server = { sendMessage: (clients, type) => v4Messages.push(type), webSocketServer: { clients: [] } }
+assert.equal(installLocalDashboards(v4App, v4Server, { dashboardsDir, serverUrl }), true)
+rmSync(join(dashboardsDir, "Plan-Test", "dashboard.json"))
+await new Promise(r => setTimeout(r, 400))
+assert.ok(v4Messages.includes("static-changed"))
+
 mockServer.close()
 console.log("test_dev_middleware: ALL TESTS PASSED")
 process.exit(0) // fs.watch keeps the loop alive

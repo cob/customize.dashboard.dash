@@ -86,7 +86,15 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
             })
     })
 
-    // any change under the dashboards directory reloads the browser (App.vue refetches the dashboard)
+    // any change under the dashboards directory reloads the browser (App.vue refetches the
+    // dashboard); supports both webpack-dev-server v3 (the dash vue devserver) and v4 (cob-cli)
+    const triggerBrowserReload = () => {
+        if (server && typeof server.sockWrite === "function") {
+            server.sockWrite(server.sockets, "content-changed") // webpack-dev-server v3
+        } else if (server && typeof server.sendMessage === "function" && server.webSocketServer) {
+            server.sendMessage(server.webSocketServer.clients, "static-changed") // webpack-dev-server v4
+        }
+    }
     let reloadTimer = null
     try {
         fs.watch(dashboardsDir, { recursive: true }, () => {
@@ -94,9 +102,7 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
             clearTimeout(reloadTimer)
             reloadTimer = setTimeout(() => {
                 console.log("[CoB] " + dashboardsDir + " changed -> reloading browser")
-                if (server && typeof server.sockWrite === "function") {
-                    server.sockWrite(server.sockets, "content-changed")
-                }
+                triggerBrowserReload()
             }, 200)
         })
     } catch (e) {
