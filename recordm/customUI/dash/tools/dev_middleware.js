@@ -95,7 +95,11 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
         if (res.flushHeaders) res.flushHeaders()
         res.write("retry: 1000\n\n")
         sseClients.add(res)
-        req.on("close", () => sseClients.delete(res))
+        console.log("[CoB] hot-reload subscriber connected (" + sseClients.size + ")")
+        req.on("close", () => {
+            sseClients.delete(res)
+            console.log("[CoB] hot-reload subscriber disconnected (" + sseClients.size + " left)")
+        })
     })
 
     // full browser reload, for pages without a hot-reload subscription (older dash bundle);
