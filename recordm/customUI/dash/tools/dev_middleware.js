@@ -43,6 +43,16 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
         return index
     }
 
+    // build the index eagerly at startup, so the terminal immediately shows what is registered
+    // (and any module-loading problem), instead of failing silently on the first request
+    loadModules()
+        .then(modules => {
+            const entries = [...buildIndex(modules).values()]
+            console.log("[CoB] Local dashboards indexed: " + (entries.length === 0 ? "none found in " + dashboardsDir
+                : entries.map(e => e.name + " (instance " + e.instanceId + ")").join(", ")))
+        })
+        .catch(e => console.log("[CoB] Local dashboards failed to load modules: " + e.message))
+
     // the Dashboard_v1 definition comes from the real server, reusing the browser's session
     // cookie (the same one the proxied app requests use); cached after the first fetch
     let definitionPromise = null
@@ -58,7 +68,10 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
         loadModules()
             .then(modules => {
                 const entry = (index || buildIndex(modules)).get(req.params.id)
-                if (!entry) return next()
+                if (!entry) {
+                    console.log("[CoB] instance " + req.params.id + " not represented locally -> server")
+                    return next()
+                }
                 return getDefinition(req.headers.cookie).then(definition => {
                     const canonical = modules.implodeDashboard(entry.dir)
                     console.log("[CoB] Serving LOCAL dashboard " + req.params.id + " ('" + canonical.Name + "') from " + entry.dir)
