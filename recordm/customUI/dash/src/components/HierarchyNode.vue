@@ -17,7 +17,7 @@
                 <span v-if="hasHiddenSelection"
                       class="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-current" />
             </span>
-            <span :class="iconClasses" v-else />
+            <span v-else :class="iconClasses" />
             <span v-if="instance && instances[instance.id]"
                   class="flex-grow leading-6"
                   tabindex="0"
@@ -116,7 +116,7 @@ export default {
             return hasBranch ? [...base, "font-medium"] : [...base, "font-normal"]
         },
         iconClasses() {
-            const baseClasses = ["fa-circle", "ml-1.5", "pr-2", "mt-1.5", "text-xs"]
+            const baseClasses = ["fa-circle", "ml-2", "pr-2", "mt-2", "text-[9px]", "text-slate-400", "hover:text-slate-600"]
             const selectedClass = this.isSelected
                 ? [...this.nodeClasses.split(' ').filter(Boolean), "fa-solid"]
                 : ["fa-regular"]
