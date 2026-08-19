@@ -33,6 +33,12 @@ assert.ok(files["dashboard.yaml"].includes("Width: w-full"))
 // derived keys are stripped from the stored representation
 assert.ok(!files["dashboard.yaml"].includes("Dash:"))
 
+// each array element opens with its identifying key (the "- " prefix proves first position):
+// boards by name, components by type + id, duplicables with an own value (Text, Line, ...) by it
+assert.ok(files["dashboard.yaml"].includes("- Board: Title"))
+assert.ok(files["dashboard.yaml"].includes("- Component: Label\n        id: 9001"))
+assert.ok(files["dashboard.yaml"].includes("- Text: Home"))
+
 // ---------------------------------------------------------------------------------------------
 // write + implode: the directory reads back to the canonical (minus derived keys)
 // ---------------------------------------------------------------------------------------------

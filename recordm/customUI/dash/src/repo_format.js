@@ -43,18 +43,34 @@ function orderCanonical(canonical) {
 
 const sanitize = (segment) => String(segment).replaceAll(/[^A-Za-z0-9-]+/g, "_")
 
+// collect() appends each occurrence's own value (the key with the array's name) AFTER the
+// children, which buries the identifying line at the bottom of the block. For readability the
+// own key (and the components' id) comes first: "- Board: Hierarchy", "- Component: Menu", ...
+function orderElementKeys(element, ownKey) {
+    if (!element || typeof element !== 'object' || Array.isArray(element)) return element
+    const ordered = {}
+    for (const key of [ownKey, "id"]) {
+        if (key in element) ordered[key] = element[key]
+    }
+    for (const key of Object.keys(element)) {
+        if (!(key in ordered)) ordered[key] = element[key]
+    }
+    return ordered
+}
+
 // Returns { "dashboard.yaml": string, "<field path>.hbs": string, ... }
 function explodeDashboard(canonical) {
     const files = {}
 
     const walk = (node, pathSegments) => {
         if (Array.isArray(node)) {
+            const ownKey = pathSegments[pathSegments.length - 1]
             // components get their type in the file name, for readability ("Component.0-Menu...")
             return node.map((element, i) => {
                 const segment = (element && typeof element === 'object' && typeof element.Component === 'string')
                     ? i + "-" + element.Component
                     : i
-                return walk(element, pathSegments.concat(segment))
+                return walk(orderElementKeys(element, ownKey), pathSegments.concat(segment))
             })
         }
         if (node && typeof node === 'object') {
