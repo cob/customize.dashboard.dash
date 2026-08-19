@@ -6,6 +6,7 @@ import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, existsSync, readdi
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { execFile } from 'node:child_process'
+import YAML from 'yaml'
 import { serializeDashboard } from '../src/serializer.js'
 import { c0, loadNumberedDefinition } from '../src/test_fixture.js'
 
@@ -63,13 +64,13 @@ async function runOk(...cliArgs) {
 }
 
 const dashDir = join(repoDir, "recordm", "customUI", "dashs", "Plan-Test")
-const localVersion = () => JSON.parse(readFileSync(join(dashDir, "dashboard.json"), 'utf8')).version
+const localVersion = () => YAML.parse(readFileSync(join(dashDir, "dashboard.yaml"), 'utf8')).version
 
 // --------------------------------------------------------------------------------------- tests
 
 // pull brings the dashboard into dashboards/<Name slug>/, exploded
 await runOk("pull", "458930")
-assert.ok(existsSync(join(dashDir, "dashboard.json")))
+assert.ok(existsSync(join(dashDir, "dashboard.yaml")))
 assert.equal(localVersion(), "7")
 const hbsFiles = readdirSync(dashDir).filter(f => f.endsWith(".hbs"))
 assert.ok(hbsFiles.length >= 1)

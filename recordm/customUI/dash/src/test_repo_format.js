@@ -19,19 +19,19 @@ const c1 = parseDashboardFull(serializeDashboard(c0, definition))
 const files = explodeDashboard(c1)
 const hbsFiles = Object.keys(files).filter(f => f.endsWith(".hbs"))
 assert.ok(hbsFiles.length >= 1)
-assert.ok("dashboard.json" in files)
+assert.ok("dashboard.yaml" in files)
 
 // the multiline MDContent of the Markdown component went to a file with a readable name
 const mdFile = hbsFiles.find(f => f.includes("Markdown") && f.includes("MDContent"))
 assert.ok(mdFile, "expected a .hbs file for the Markdown MDContent, got: " + hbsFiles.join(", "))
 assert.equal(files[mdFile], "## Relatório\ncom **markdown** e\nvárias linhas")
-assert.ok(files["dashboard.json"].includes('"@file:' + mdFile + '"'))
+assert.ok(files["dashboard.yaml"].includes("@file:" + mdFile))
 
 // single-line values stay inline (Context in the fixture is single-line)
-assert.ok(files["dashboard.json"].includes('"Width": "w-full"'))
+assert.ok(files["dashboard.yaml"].includes("Width: w-full"))
 
 // derived keys are stripped from the stored representation
-assert.ok(!files["dashboard.json"].includes('"Dash"'))
+assert.ok(!files["dashboard.yaml"].includes("Dash:"))
 
 // ---------------------------------------------------------------------------------------------
 // write + implode: the directory reads back to the canonical (minus derived keys)
@@ -70,5 +70,27 @@ assert.ok(Object.values(trickyFiles).includes("@file:not-a-real-ref.hbs"))
 const trickyDir = join(dashboardsRoot, "tricky")
 writeDashboardDir(trickyDir, trickyFiles)
 assert.equal(implodeDashboard(trickyDir).Description, "@file:not-a-real-ref.hbs")
+
+// ---------------------------------------------------------------------------------------------
+// manual-edit safety: values edited without the quotes the dump emits still come back as the
+// strings RecordM expects, and an unquoted '#' (yaml comment -> null) is a clear error
+// ---------------------------------------------------------------------------------------------
+const editedDir = join(dashboardsRoot, "edited")
+const editedFiles = explodeDashboard(imploded)
+assert.ok(editedFiles["dashboard.yaml"].includes('Order: "30"'), editedFiles["dashboard.yaml"].slice(0, 400))
+editedFiles["dashboard.yaml"] = editedFiles["dashboard.yaml"]
+    .replace('Order: "30"', "Order: 30")
+    .replace('UpdateOnDrop: "0.5"', "UpdateOnDrop: 0.5")
+    .replace('AllDay: "True"', "AllDay: True")
+writeDashboardDir(editedDir, editedFiles)
+const edited = implodeDashboard(editedDir)
+assert.equal(edited.Order, "30")
+assert.equal(edited.DashboardCustomize[0].UpdateOnDrop, "0.5")
+assert.equal(edited.Board[1].Component[1].Events[1].AllDay, "true") // note: only quotes keep the original case
+
+editedFiles["dashboard.yaml"] = editedFiles["dashboard.yaml"]
+    .replace("Description: Dashboard de teste do round-trip", "Description: #comentario")
+writeDashboardDir(editedDir, editedFiles)
+assert.throws(() => implodeDashboard(editedDir), /null value at 'Description'/)
 
 console.log("test_repo_format: ALL TESTS PASSED")

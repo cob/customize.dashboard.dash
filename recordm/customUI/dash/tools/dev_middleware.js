@@ -33,7 +33,7 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
         index = new Map()
         for (const entry of repoFormat.listDashboardDirs(dashboardsDir)) {
             if (entry.error) {
-                // without a readable dashboard.json there is no instanceId to intercept: the
+                // without a readable dashboard.yaml there is no instanceId to intercept: the
                 // server version will be served - make that visible in the terminal
                 console.log("[CoB] LOCAL dashboard '" + entry.name + "' ignored: " + entry.error)
             } else {

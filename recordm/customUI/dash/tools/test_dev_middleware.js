@@ -99,7 +99,7 @@ const v4Messages = []
 const v4App = { get: () => {} }
 const v4Server = { sendMessage: (clients, type) => v4Messages.push(type), webSocketServer: { clients: [] } }
 assert.equal(installLocalDashboards(v4App, v4Server, { dashboardsDir, serverUrl }), true)
-rmSync(join(dashboardsDir, "Plan-Test", "dashboard.json"))
+rmSync(join(dashboardsDir, "Plan-Test", "dashboard.yaml"))
 await new Promise(r => setTimeout(r, 400))
 assert.ok(v4Messages.includes("static-changed"))
 

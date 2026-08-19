@@ -41,10 +41,16 @@ the application; `pull` is the only way into the repo.
 ### Layout (in the client repo)
 
 ```
-recordm/customUI/dashs/<Name>/dashboard.json   canonical representation (carries instanceId + version)
+recordm/customUI/dashs/<Name>/dashboard.yaml   canonical representation (carries instanceId + version)
 recordm/customUI/dashs/<Name>/*.hbs            multiline fields (templates/HTML/Context), one file
                                                each, referenced as "@file:<name>.hbs"
 ```
+
+Editing notes for `dashboard.yaml`: every value is a string — quote anything YAML would mistype
+(values starting with `#`, `{{`, `*` or `&`; unquoted numbers/booleans are coerced back to strings
+on read, but a value starting with an unquoted `#` becomes null and fails loudly). YAML comments do
+NOT survive a pull (the file is regenerated from the server) — annotate inside the `.hbs` files
+with handlebars comments (`{{!-- --}}`) instead, those are part of the field value.
 
 ### Workflow
 

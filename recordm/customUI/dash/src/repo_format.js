@@ -1,15 +1,21 @@
 // Repo directory format for a dashboard ("dashboards as code").
 //
 // A dashboard is stored as one directory (under recordm/customUI/dashs in client repos):
-//   <name>/dashboard.json   - the canonical representation (parseDashboardFull output)
+//   <name>/dashboard.yaml   - the canonical representation (parseDashboardFull output)
 //   <name>/*.hbs            - multiline string fields, externalized for IDE editing
 //
 // Any string value containing a newline is moved to its own .hbs file and replaced in
-// dashboard.json by a "@file:<filename>" reference (single-line values stay inline). The file
+// dashboard.yaml by a "@file:<filename>" reference (single-line values stay inline). The file
 // content is the field value verbatim. implodeDashboard reverses this, so:
 //   implodeDashboard(explodeDashboard(canonical)) ≡ canonical
+//
+// YAML manual-edit safety: every value in the canonical is a string. The dump quotes anything
+// ambiguous; on read, scalars edited without quotes that YAML parses as number/boolean are
+// coerced back to strings, and null values (e.g. an unquoted value starting with '#', which
+// YAML treats as a comment) fail with a clear error.
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
+import YAML from 'yaml'
 
 const FILE_REF_PREFIX = "@file:"
 
@@ -22,7 +28,7 @@ function stripDerived(canonical) {
     return canonical
 }
 
-// Deterministic top-level key order, for readable and diff-stable dashboard.json files
+// Deterministic top-level key order, for readable and diff-stable dashboard.yaml files
 function orderCanonical(canonical) {
     const first = ["instanceId", "version", "Name", "Description", "Order", "Solution"]
     const ordered = {}
@@ -37,7 +43,7 @@ function orderCanonical(canonical) {
 
 const sanitize = (segment) => String(segment).replaceAll(/[^A-Za-z0-9-]+/g, "_")
 
-// Returns { "dashboard.json": string, "<field path>.hbs": string, ... }
+// Returns { "dashboard.yaml": string, "<field path>.hbs": string, ... }
 function explodeDashboard(canonical) {
     const files = {}
 
@@ -67,37 +73,46 @@ function explodeDashboard(canonical) {
     }
 
     const exploded = walk(orderCanonical(stripDerived(structuredClone(canonical))), [])
-    files["dashboard.json"] = JSON.stringify(exploded, null, 2) + "\n"
+    files["dashboard.yaml"] = YAML.stringify(exploded, { indent: 2, lineWidth: 0 })
     return files
 }
 
 // Reads a dashboard directory back into the canonical representation
 function implodeDashboard(dashboardDir) {
-    const dashboardJson = readFileSync(join(dashboardDir, "dashboard.json"), 'utf8')
-    const resolveRefs = (node) => {
-        if (Array.isArray(node)) return node.map(resolveRefs)
+    const dashboardYaml = readFileSync(join(dashboardDir, "dashboard.yaml"), 'utf8')
+    const resolveRefs = (node, path) => {
+        if (Array.isArray(node)) return node.map((element, i) => resolveRefs(element, path + "[" + i + "]"))
         if (node && typeof node === 'object') {
-            for (const key of Object.keys(node)) node[key] = resolveRefs(node[key])
+            for (const key of Object.keys(node)) node[key] = resolveRefs(node[key], path ? path + "." + key : key)
             return node
+        }
+        if (node === null || node === undefined) {
+            throw new Error("null value at '" + path + "' in dashboard.yaml - missing quotes? (values starting with #, {{, * or & must be quoted; an empty value is written as \"\")")
+        }
+        if (typeof node === 'number' || typeof node === 'boolean') {
+            // RecordM values are always strings: recover unquoted manual edits. The one legit
+            // numeric scalar is the components' field 'id' (assigned by parseDashboard)
+            return (path === "id" || path.endsWith(".id")) ? node : String(node)
         }
         if (typeof node === 'string' && node.startsWith(FILE_REF_PREFIX)) {
             const fileName = node.substring(FILE_REF_PREFIX.length)
             try {
                 return readFileSync(join(dashboardDir, fileName), 'utf8')
             } catch (e) {
-                throw new Error("dashboard.json references missing file '" + fileName + "' in " + dashboardDir)
+                throw new Error("dashboard.yaml references missing file '" + fileName + "' in " + dashboardDir)
             }
         }
         return node
     }
-    return resolveRefs(JSON.parse(dashboardJson))
+    return resolveRefs(YAML.parse(dashboardYaml), "")
 }
 
 // Writes the exploded files to a directory, removing stale .hbs files from previous versions
 function writeDashboardDir(dashboardDir, files) {
     mkdirSync(dashboardDir, { recursive: true })
     for (const existing of readdirSync(dashboardDir)) {
-        if (existing.endsWith(".hbs") && !(existing in files)) {
+        // dashboard.json is cleaned up too: leftover from the pre-yaml format
+        if ((existing.endsWith(".hbs") || existing === "dashboard.json") && !(existing in files)) {
             rmSync(join(dashboardDir, existing))
         }
     }
@@ -113,12 +128,12 @@ function listDashboardDirs(dashboardsRoot) {
     for (const entry of readdirSync(dashboardsRoot, { withFileTypes: true })) {
         if (!entry.isDirectory()) continue
         const dir = join(dashboardsRoot, entry.name)
-        if (!existsSync(join(dir, "dashboard.json"))) continue
+        if (!existsSync(join(dir, "dashboard.yaml"))) continue
         try {
-            const canonical = JSON.parse(readFileSync(join(dir, "dashboard.json"), 'utf8'))
+            const canonical = YAML.parse(readFileSync(join(dir, "dashboard.yaml"), 'utf8'))
             result.push({ name: entry.name, dir, instanceId: "" + canonical.instanceId, version: "" + canonical.version })
         } catch (e) {
-            result.push({ name: entry.name, dir, error: "invalid dashboard.json: " + e.message })
+            result.push({ name: entry.name, dir, error: "invalid dashboard.yaml: " + e.message })
         }
     }
     return result
