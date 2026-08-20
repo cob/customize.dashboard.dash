@@ -25,7 +25,8 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
     const loadModules = () => modulesPromise = modulesPromise || Promise.all([
         import(pathToFileURL(path.join(__dirname, "../src/serializer.js")).href),
         import(pathToFileURL(path.join(__dirname, "../src/repo_format.js")).href),
-    ]).then(([serializer, repoFormat]) => ({ ...serializer, ...repoFormat }))
+        import(pathToFileURL(path.join(__dirname, "../src/validator.js")).href),
+    ]).then(([serializer, repoFormat, validator]) => ({ ...serializer, ...repoFormat, ...validator }))
 
     // index: instanceId -> dashboard directory (rebuilt lazily after any file change)
     let index = null
@@ -75,6 +76,11 @@ module.exports = function installLocalDashboards(app, server, { dashboardsDir, s
                 return getDefinition(req.headers.cookie).then(definition => {
                     const canonical = modules.implodeDashboard(entry.dir)
                     console.log("[CoB] Serving LOCAL dashboard " + req.params.id + " ('" + canonical.Name + "') from " + entry.dir)
+                    // structural findings as warnings, next to the edit loop (never blocks the serve)
+                    const findings = modules.validateDashboard(canonical, { hbsFiles: fs.readdirSync(entry.dir).filter(f => f.endsWith(".hbs")) })
+                    for (const finding of findings.errors.concat(findings.warnings)) {
+                        console.log("[CoB]   ⚠ " + finding.path + ": " + finding.message)
+                    }
                     // the header tells App.vue to subscribe to the edit events below (hot reload)
                     res.set("X-Cob-Local-Dashboard", "true").json(modules.serializeDashboard(canonical, definition))
                 })

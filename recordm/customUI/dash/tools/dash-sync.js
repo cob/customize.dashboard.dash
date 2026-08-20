@@ -8,6 +8,7 @@
 //   node tools/dash-sync.js push <dir|instanceId> [--dry-run] [--force]
 //   node tools/dash-sync.js diff <dir|instanceId>
 //   node tools/dash-sync.js status
+//   node tools/dash-sync.js validate [dir|instanceId]   (offline; exit 1 com erros - CI friendly)
 //
 // Options:
 //   --server <url>   RecordM server (default: resolved from the cob-cli repo, see below)
@@ -25,7 +26,7 @@
 // ("this representation corresponds to version N of the instance"). push requires the server to
 // still be at version N (optimistic locking) and ends with an implicit pull, recording N+1. Local
 // uncommitted changes are git's responsibility: pull refuses to overwrite them without --force.
-import { existsSync, readFileSync, writeFileSync, mkdtempSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync, mkdtempSync, readdirSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { tmpdir } from 'node:os'
 import { spawnSync } from 'node:child_process'
@@ -33,6 +34,7 @@ import { isDeepStrictEqual } from 'node:util'
 import readline from 'node:readline'
 import { parseDashboardFull, serializeDashboard, adoptFieldIds } from '../src/serializer.js'
 import { explodeDashboard, implodeDashboard, writeDashboardDir, listDashboardDirs, stripDerived, slugify } from '../src/repo_format.js'
+import { validateDashboard } from '../src/validator.js'
 
 const INSTANCES_PATH = "/recordm/recordm/instances/"
 const DEFINITION_PATH = "/recordm/recordm/definitions/name/Dashboard_v1"
@@ -189,6 +191,15 @@ async function push() {
     const local = findLocal(target)
     if (!local) throw new Error("dashboard '" + target + "' not found in " + dashboardsRoot + " (dashboards are created in the app and brought in with pull)")
     const canonical = implodeDashboard(local.dir)
+
+    // structural validation first: an unknown key means the value would be silently LOST on push
+    const findings = validateDashboard(canonical, { hbsFiles: readdirSync(local.dir).filter(f => f.endsWith(".hbs")) })
+    for (const finding of findings.warnings) console.warn("  ⚠ " + finding.path + ": " + finding.message)
+    if (findings.errors.length > 0) {
+        for (const finding of findings.errors) console.error("  ✗ " + finding.path + ": " + finding.message)
+        throw new Error("'" + local.name + "': " + findings.errors.length + " erro(s) de validação (corrige antes do push)")
+    }
+
     const definition = await getDefinition()
     const serverRaw = await getInstance(canonical.instanceId)
 
@@ -265,9 +276,39 @@ async function status() {
 
 // --------------------------------------------------------------------------------------- main
 
-const commands = { pull, push, diff: diffCommand, status }
+async function validate() {
+    const all = listDashboardDirs(dashboardsRoot)
+    const dirs = target ? all.filter(d => d.instanceId === "" + target || d.name === target) : all
+    if (target && dirs.length === 0) throw new Error("dashboard '" + target + "' not found in " + dashboardsRoot)
+    if (dirs.length === 0) {
+        console.log("no dashboards in " + dashboardsRoot)
+        return
+    }
+    let totalErrors = 0
+    let totalWarnings = 0
+    for (const entry of dirs) {
+        console.log(entry.name + " (instance " + entry.instanceId + ")")
+        let findings
+        try {
+            if (entry.error) throw new Error(entry.error)
+            const canonical = implodeDashboard(entry.dir)
+            findings = validateDashboard(canonical, { hbsFiles: readdirSync(entry.dir).filter(f => f.endsWith(".hbs")) })
+        } catch (e) {
+            findings = { errors: [{ path: entry.name, message: e.message }], warnings: [] }
+        }
+        for (const finding of findings.errors) console.log("  ✗ " + finding.path + ": " + finding.message)
+        for (const finding of findings.warnings) console.log("  ⚠ " + finding.path + ": " + finding.message)
+        if (findings.errors.length === 0 && findings.warnings.length === 0) console.log("  ✓ ok")
+        totalErrors += findings.errors.length
+        totalWarnings += findings.warnings.length
+    }
+    console.log(dirs.length + " dashboard" + (dirs.length === 1 ? "" : "s") + ": " + totalErrors + " erros, " + totalWarnings + " avisos")
+    if (totalErrors > 0) process.exitCode = 1
+}
+
+const commands = { pull, push, diff: diffCommand, status, validate }
 if (!commands[command]) {
-    console.error("usage: dash-sync <pull|push|diff|status> [args]  (see header of tools/dash-sync.js)")
+    console.error("usage: dash-sync <pull|push|diff|status|validate> [args]  (see header of tools/dash-sync.js)")
     process.exit(1)
 }
 commands[command]().then(

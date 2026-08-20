@@ -65,6 +65,11 @@ with handlebars comments (`{{!-- --}}`) instead, those are part of the field val
 4. `npm run dash-sync push <Name>` — deliberate save: one meaningful version on the instance.
    Refuses if the server version moved (someone edited in the app): use `diff`/`pull` first
 5. `npm run dash-sync status` / `diff <Name>` — detect and inspect changes made in the application
+6. `npm run dash-sync validate [Name]` — offline structural validation (unknown keys with
+   suggestions, component types, per-field handlebars, orphan .hbs files; paths are 1-based:
+   the first Board is Board[1]). Runs automatically on `push` (errors abort — an unknown key
+   would silently lose its value) and its findings show up as `[CoB] ⚠` lines on each serve
+   during `cob-cli test`. Exit code 1 on errors, so it is CI friendly
 
 CLI auth: env `COB_TOKEN` or `COB_USERNAME`/`COB_PASSWORD` (prompted otherwise). The server is
 resolved like cob-cli does: `environments/<env>/server` (env defaults to `prod`, override with
@@ -86,7 +91,8 @@ overwrite them (`--force` to override).
   and `adoptFieldIds` (grafts server field ids for editor-like saves)
 * `src/repo_format.js` — the `dashboards/<Name>/` directory format (explode/implode of
   multiline fields into `.hbs` files)
-* `tools/dash-sync.js` — pull/push/diff/status CLI
+* `src/validator.js` — structural validation derived from the same templates the app uses
+* `tools/dash-sync.js` — pull/push/diff/status/validate CLI
 * `tools/dev_middleware.js` — dev-server interception + browser reload (wired in `vue.config.js`)
 
 The guaranteed property (see `src/test_serializer.js`) is that serialization is a fixed point of the

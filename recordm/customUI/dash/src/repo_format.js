@@ -43,6 +43,16 @@ function orderCanonical(canonical) {
 
 const sanitize = (segment) => String(segment).replaceAll(/[^A-Za-z0-9-]+/g, "_")
 
+// segment used for an array element in .hbs file names and validation paths (1-based, the first
+// Board is 1; components carry their type for readability: "2-Menu")
+const elementSegment = (element, i) =>
+    (element && typeof element === 'object' && typeof element.Component === 'string')
+        ? (i + 1) + "-" + element.Component
+        : "" + (i + 1)
+
+// name of the .hbs file for a field at the given path (shared with the validator)
+const fieldFileName = (pathSegments) => pathSegments.map(sanitize).join(".") + ".hbs"
+
 // collect() appends each occurrence's own value (the key with the array's name) AFTER the
 // children, which buries the identifying line at the bottom of the block. For readability the
 // own key (and the components' id) comes first: "- Board: Hierarchy", "- Component: Menu", ...
@@ -65,13 +75,8 @@ function explodeDashboard(canonical) {
     const walk = (node, pathSegments) => {
         if (Array.isArray(node)) {
             const ownKey = pathSegments[pathSegments.length - 1]
-            // components get their type in the file name, for readability ("Component.0-Menu...")
-            return node.map((element, i) => {
-                const segment = (element && typeof element === 'object' && typeof element.Component === 'string')
-                    ? i + "-" + element.Component
-                    : i
-                return walk(orderElementKeys(element, ownKey), pathSegments.concat(segment))
-            })
+            return node.map((element, i) =>
+                walk(orderElementKeys(element, ownKey), pathSegments.concat(elementSegment(element, i))))
         }
         if (node && typeof node === 'object') {
             const result = {}
@@ -81,7 +86,7 @@ function explodeDashboard(canonical) {
             return result
         }
         if (typeof node === 'string' && (node.includes("\n") || node.startsWith(FILE_REF_PREFIX))) {
-            const fileName = pathSegments.map(sanitize).join(".") + ".hbs"
+            const fileName = fieldFileName(pathSegments)
             files[fileName] = node
             return FILE_REF_PREFIX + fileName
         }
@@ -97,7 +102,7 @@ function explodeDashboard(canonical) {
 function implodeDashboard(dashboardDir) {
     const dashboardYaml = readFileSync(join(dashboardDir, "dashboard.yaml"), 'utf8')
     const resolveRefs = (node, path) => {
-        if (Array.isArray(node)) return node.map((element, i) => resolveRefs(element, path + "[" + i + "]"))
+        if (Array.isArray(node)) return node.map((element, i) => resolveRefs(element, path + "[" + (i + 1) + "]")) // 1-based, like the .hbs names
         if (node && typeof node === 'object') {
             for (const key of Object.keys(node)) node[key] = resolveRefs(node[key], path ? path + "." + key : key)
             return node
@@ -158,4 +163,4 @@ function listDashboardDirs(dashboardsRoot) {
 const slugify = (name) => String(name).normalize("NFD").replaceAll(/[\u0300-\u036f]/g, "")
     .replaceAll(/[^A-Za-z0-9._-]+/g, "-").replaceAll(/^-+|-+$/g, "") || "dashboard"
 
-export { explodeDashboard, implodeDashboard, writeDashboardDir, listDashboardDirs, stripDerived, orderCanonical, slugify, FILE_REF_PREFIX }
+export { explodeDashboard, implodeDashboard, writeDashboardDir, listDashboardDirs, stripDerived, orderCanonical, slugify, elementSegment, fieldFileName, FILE_REF_PREFIX }
