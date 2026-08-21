@@ -95,6 +95,21 @@ assert.equal(findFieldByDefId(raw2.fields, labelImageDefId).value, "logo do clie
 assert.equal(findFieldByDefId(raw2.fields, boardImageDefId).value, "fundo.png")
 
 // ---------------------------------------------------------------------------------------------
+// the serialized instance embeds only the minimal fieldDefinition (id/name/description): the
+// full definition node repeats its `fields` subtree and `descendents` list at every level and
+// inflated a real PUT body to 8MB (413 from nginx). The size guard keeps this from regressing.
+// ---------------------------------------------------------------------------------------------
+const raw1Json = JSON.stringify(raw1)
+assert.ok(!raw1Json.includes('"descendents"'))
+const checkMinimalDefs = (fields) => fields.forEach(field => {
+    assert.ok(Object.keys(field.fieldDefinition).every(k => ["id", "name", "description"].includes(k)),
+        "unexpected fieldDefinition keys: " + Object.keys(field.fieldDefinition).join(","))
+    checkMinimalDefs(field.fields)
+})
+checkMinimalDefs(raw1.fields)
+assert.ok(raw1Json.length < 200 * 1024, "serialized c0 grew to " + Math.round(raw1Json.length / 1024) + " KB")
+
+// ---------------------------------------------------------------------------------------------
 // End-to-end smoke test: the canonical representation must feed the real template pipeline
 // (generateDashboardTemplate -> Handlebars -> cleanup -> JSON), like App.vue does at runtime
 // ---------------------------------------------------------------------------------------------

@@ -75,7 +75,10 @@ function serializeFields(defFields, node, state) {
 function makeField(def, value, childrenNode, state, knownId) {
     return {
         id: (knownId !== undefined && knownId !== null) ? knownId : state.nextPlaceholderId--,
-        fieldDefinition: def,
+        // only what parseDashboard/adoptFieldIds read: embedding the full definition node would
+        // repeat its `fields` subtree and `descendents` list at every level, inflating a PUT
+        // body to several MB (a real push bounced off nginx's request size limit with 413)
+        fieldDefinition: { id: def.id, name: def.name, description: def.description },
         value: normalizeValue(def, value),
         fields: (def.fields && def.fields.length) ? serializeFields(def.fields, childrenNode, state) : [],
     }

@@ -30,6 +30,10 @@ const server = http.createServer((req, res) => {
             res.setHeader("content-type", "application/json")
             res.end(JSON.stringify(instance))
         } else if (req.method === "PUT" && instanceMatch && instanceMatch[1] === "" + instance.id) {
+            // the PUT body must stay small: no definition subtrees/descendents per field (a real
+            // push with the full definition embedded got a 413 from nginx)
+            assert.ok(!body.includes('"descendents"'), "PUT body carries definition descendents")
+            assert.ok(body.length < 500 * 1024, "PUT body is " + Math.round(body.length / 1024) + " KB")
             const received = JSON.parse(body)
             instance = { ...received, version: received.version + 1 } // save bumps the version
             res.setHeader("content-type", "application/json")

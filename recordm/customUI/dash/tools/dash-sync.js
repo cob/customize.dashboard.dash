@@ -211,6 +211,12 @@ async function push() {
     const serialized = adoptFieldIds(serializeDashboard(canonical, definition), serverRaw)
     const body = { ...serverRaw, fields: serialized.fields }
 
+    const bodyKB = Math.round(JSON.stringify(body).length / 1024)
+    console.log("PUT body: " + bodyKB + " KB")
+    if (bodyKB > 900) {
+        console.warn("warning: body close to/over nginx's default 1MB client_max_body_size - a 413 means the server limit needs raising")
+    }
+
     if (flags["dry-run"]) {
         const bodyFile = join(mkdtempSync(join(tmpdir(), "dash-push-")), "put-body.json")
         writeFileSync(bodyFile, JSON.stringify(body, null, 2))
