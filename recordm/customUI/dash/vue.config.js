@@ -9,16 +9,27 @@ if(!process.env.dash_dir || !SERVER) {
   DASH_DIR = pwd.substring(pwd.lastIndexOf("/")+1)
   
   let localSubPosition = pwd.indexOf("/recordm/customUI")
-  let serverFile = (localSubPosition > 0 ? pwd.substring(0,localSubPosition) :  ".") + "/.server"
+  let repoRoot = localSubPosition > 0 ? pwd.substring(0,localSubPosition) : "."
   try {
-    // Se estivermos dentro de um repo cob-cli então vamos conseguir obter o servidor a partir do '.server' na raiz do repo
-    SERVER = "https://" + require('fs').readFileSync(serverFile, 'utf8') + ".cultofbits.com";
+    // Se estivermos dentro de um repo cob-cli vamos conseguir obter o servidor a partir do
+    // 'environments/<env>/server' (env default: prod, configurável via dash_env)
+    let serverFile = repoRoot + "/environments/" + (process.env.dash_env || "prod") + "/server"
+    let serverName = require('fs').readFileSync(serverFile, 'utf8').trim()
+    SERVER = "https://" + (serverName.indexOf(".") >= 0 ? serverName : serverName + ".cultofbits.com");
   } catch {
     //  se não conseguirmos usamos a máquina de formação como default
     SERVER = "https://learning.cultofbits.com";
-    console.warn("Warning: file '.server' not found. Using " + SERVER + " as backend" )
+    console.warn("Warning: no 'environments/<env>/server' file found. Using " + SERVER + " as backend" )
   }
 }
+
+// "Dashboards as code": directório do repo (do cliente) com a representação canónica dos
+// dashboards. Quando existe, o devserver serve esses dashboards a partir dos ficheiros locais e
+// recarrega o browser a cada alteração (ver tools/dev_middleware.js)
+let pwdForRepoRoot = process.env.PWD || process.cwd()
+let repoRootPosition = pwdForRepoRoot.indexOf("/recordm/customUI")
+const DASHBOARDS_DIR = process.env.dash_dashboards_dir
+  || (repoRootPosition > 0 ? pwdForRepoRoot.substring(0, repoRootPosition) : ".") + "/recordm/customUI/dashs"
 
 module.exports = {
   // temos que fixar o directorio onde colocamos o build,
@@ -61,7 +72,7 @@ module.exports = {
 
   devServer: {
     port: 8041,
-    before: function(app) {
+    before: function(app, server) {
       app.get('/*', function(req, res, next) {
         // Permite usar / ou /DASH_BOARD/ quando acedido directamente
         if(req.url != "/" && req.url != '/'+DASH_DIR+'/') {
@@ -70,6 +81,18 @@ module.exports = {
 
         res.redirect(`/${DASH_DIR}/dashboard.html`);
       });
+
+      // Servir localmente os dashboards representados no repo, com reload em alterações
+      try {
+        if (require('./tools/dev_middleware.js')(app, server, { dashboardsDir: DASHBOARDS_DIR, serverUrl: SERVER })) {
+          console.log("[CoB] Local dashboards enabled from " + DASHBOARDS_DIR + " (browser reloads on changes)")
+        } else {
+          console.log("[CoB] Local dashboards disabled: no directory " + DASHBOARDS_DIR)
+        }
+      } catch (e) {
+        // console.log e não console.warn: o cob-cli test descarta o stderr do devserver
+        console.log("[CoB] Local dashboards middleware disabled: " + e.message)
+      }
     },
     proxy: {
       [ "/recordm/localresource/" + DASH_DIR + "/dist"]: {

@@ -47,205 +47,209 @@ function collect(bucket, source) {
     return bucket;
 }
 
+// Bucket template for the dashboard structure expected by the app (and by the repo representation).
+// parseDashboard works on a clone of this template, so it can safely live at module scope.
+const DashTemplate = {
+    "Name": "",
+    "DashboardCustomize": [{
+        "Grid": "",
+        "Width": "",
+        "DashboardClasses": "",
+        "Image": "",
+        "GroupAccess": [{}],
+        "Variables": [{
+            "VarName" : "",
+            "Initial Value" : "",
+        }],
+        "Context": "",
+        "DragDropConcurrent":"",
+        "UpdateOnDrop":"",
+    }],
+    "Board": [{
+        "BoardCustomize": [{
+            "BoardClasses": "",
+            "Image": ""
+        }],
+        "Component": []
+    }],
+};
+
+const ComponentsTemplates = {
+    "Mermaid" : {
+        "MermaidCustomize" : [{
+            "LinkClasses" : "",
+            "DiagramClasses" : ""
+        }],
+        "Process" : "",
+    },
+    "Markdown": {
+        "MDContent" : "",
+        "MarkdownCustomize": [{
+            "MarkdownClasses" : "",
+            "Mode" : ""
+        }]
+    },
+    "Slides": {
+        "Content" : "",
+        "SlidesCustomize": [{
+            "SlidesClasses" : "",
+            "ConcurrentScript":"",
+            "SlidesArg": [{}]
+        }]
+    },
+    "ModalActivator" : {
+        "ModalActivatorCustomize" : [{
+            "ModalActivatorClasses" : ""
+        }],
+        "ModalBoardName": "",
+        "ModalActivatorText": ""
+    },
+    "Label": {
+        "LabelCustomize": [{
+            "LabelClasses": "",
+            "Image": ""
+        }],
+        "Label": "",
+    },
+    "Menu": {
+        "MenuCustomize": [{
+            "MenuClasses": ""
+        }],
+        "Text": [{
+            "Link": "",
+            "FilterVarName": "",
+            "FilterValue": "",
+            "TextCustomize": [{
+                "TextClasses": "",
+                "Icon": "",
+                "TextAttention": ""
+            }],
+        }],
+    },
+    "Totals": {
+        "TotalsCustomize": [{
+            "TotalsClasses": "",
+            "InputVarTotals": [{}],
+        }],
+        "Line": [{
+            "LineCustomize": [{
+                "LineClasses": "",
+                "TitleClasses": "",
+                "Behaviour":"",
+            }],
+            "Value": [{
+                "ValueCustomize": [{
+                    "ValueClasses": "",
+                    "View": "",
+                    "ValueAttention": "",
+                    "ValueAttentionClasses": "",
+                    "Unit": "",
+                }],
+                "Style Value": "",
+                "Arg": [{}]
+            }],
+            "LineBehaviour": [{
+                "FilterTotalVarName":"",
+                "FilterTotalValue":"",
+                "LineLink":""
+            }]
+        }],
+    },
+    "Kibana": {
+        "KibanaCustomize": [{
+            "KibanaClasses": "",
+            "OutputVarKibana": "",
+            "InputVarKibana": [{}],
+            "InputQueryKibana": "",
+            "KibanaTimeField": ""
+        }],
+        "ShareLink": "",
+    },
+    "Filter": {
+        "FilterCustomize": [{
+            "FilterClasses": "",
+            "noButton":"",
+            "Placeholder": ""
+        }],
+        "OutputVarFilter": "",
+    },
+    "Calendar": {
+        "CalendarCustomize": [{
+            "CalendarClasses": "",
+            "InputVarCalendar": [{}],
+            "OutputVarCalendar": "",
+            "OutputVarInterval": "",
+            "MaxVisibleDayEvents": "",
+            "AllowCreateInstances":"",
+            "CreateDefinition":"",
+            "EventViews":"",
+            "StrictMode":""
+        }],
+        "Events": [{
+            "Definition": "",
+            "DateStartEventField": "",
+            "DateEndEventField": "",
+            "DescriptionEventField": "",
+            "StateEventField": "",
+            "EventsQuery": "",
+            "TooltipTemplate":"",
+            "AllDay":""
+        }],
+    },
+    "List": {
+        "ListCustomize": [{
+            "InputVarList": [{}],
+            "DefaultView": "",
+            "ListClasses" : "",
+            "HideRowSelection,": "",
+            "HideDetailsColumn,": "",
+            "HideColumnsSelector": "",
+        }],
+        "ListDefinition": "",
+        "ListQuery": ""
+    },
+    "Hierarchy" : {
+        "HierarchyCustomize": [{
+            "HierarchyNodeClasses": "",
+            "HierarchyRowClasses": "",
+        }],
+        "FilterHierarchy" : "",
+        "InstanceFieldNameHierarchy":"",
+        "InputVarHierarchy" : "",
+        "DefinitionNameHierarchy" : "",
+        "ParentFieldName" : "",
+        "SortFieldName" : "",
+        "DisplayFieldHierarchy" : "",
+        "OutputVarHierarchy" : "",
+    },
+    "ImageViewer" : {
+        "ImageViewerCustomize": [{
+            "ImageViewerClasses": "",
+            "ImageViewerButtonClasses":"",
+            "ImageViewerIdentifier":"",
+            "Enable Buttons":""
+        }],
+        "OutputVarImageViewer":"",
+        "ImageViewerURL":[{}]
+    },
+    "InstanceViewer" : {
+        "InstanceViewerCustomize": [{
+            "InstanceViewerClasses": "",
+            "NoInstanceClasses": "",
+            "InstanceViewerIdentifier":"",
+            "HideSidenav": "",
+            "StopOverflow": "",
+        }],
+        "InstanceViewerInstanceId":"",
+        "InstanceViewerOutputVar":""
+    }
+}
+
 function parseDashboard(raw_dashboard) {
-    let dash = {
-        "Name": "",
-        "DashboardCustomize": [{
-            "Grid": "",
-            "Width": "",
-            "DashboardClasses": "",
-            "Image": "",
-            "GroupAccess": [{}],
-            "Variables": [{
-                "VarName" : "",
-                "Initial Value" : "",
-            }],
-            "Context": "",
-            "DragDropConcurrent":"",
-            "UpdateOnDrop":"",
-        }],
-        "Board": [{
-            "BoardCustomize": [{
-                "BoardClasses": "",
-                "Image": ""
-            }],
-            "Component": []
-        }],
-    };
+    let dash = clone(DashTemplate);
 
     dash.instanceId = "" + raw_dashboard.id //needed to build $file url
     raw_dashboard.fields.reduce(collect, dash);
-
-    const ComponentsTemplates = {
-        "Mermaid" : {
-            "MermaidCustomize" : [{
-                "LinkClasses" : "",
-                "DiagramClasses" : ""
-            }],
-            "Process" : "",
-        },
-        "Markdown": {
-            "MDContent" : "",
-            "MarkdownCustomize": [{
-                "MarkdownClasses" : "",
-                "Mode" : ""
-            }]
-        },
-        "Slides": {
-            "Content" : "",
-            "SlidesCustomize": [{
-                "SlidesClasses" : "",
-                "ConcurrentScript":"",
-                "SlidesArg": [{}]
-            }]
-        },
-        "ModalActivator" : {
-            "ModalActivatorCustomize" : [{
-                "ModalActivatorClasses" : ""
-            }],
-            "ModalBoardName": "",
-            "ModalActivatorText": ""
-        },
-        "Label": {
-            "LabelCustomize": [{
-                "LabelClasses": "",
-                "Image": ""
-            }],
-            "Label": "",
-        },
-        "Menu": {
-            "MenuCustomize": [{
-                "MenuClasses": ""
-            }],
-            "Text": [{
-                "Link": "",
-                "FilterVarName": "",
-                "FilterValue": "",
-                "TextCustomize": [{
-                    "TextClasses": "",
-                    "Icon": "",
-                    "TextAttention": ""
-                }],
-            }],
-        },
-        "Totals": {
-            "TotalsCustomize": [{
-                "TotalsClasses": "",
-                "InputVarTotals": [{}],
-            }],
-            "Line": [{
-                "LineCustomize": [{
-                    "LineClasses": "",
-                    "TitleClasses": "",
-                    "Behaviour":"",
-                }],
-                "Value": [{
-                    "ValueCustomize": [{
-                        "ValueClasses": "",
-                        "View": "",
-                        "ValueAttention": "",
-                        "ValueAttentionClasses": "",
-                        "Unit": "",
-                    }],
-                    "Style Value": "",
-                    "Arg": [{}]
-                }],
-                "LineBehaviour": [{
-                    "FilterTotalVarName":"",
-                    "FilterTotalValue":"",
-                    "LineLink":""
-                }]
-            }],
-        },
-        "Kibana": {
-            "KibanaCustomize": [{
-                "KibanaClasses": "",
-                "OutputVarKibana": "",
-                "InputVarKibana": [{}],
-                "InputQueryKibana": "",
-                "KibanaTimeField": ""
-            }],
-            "ShareLink": "",
-        },
-        "Filter": {
-            "FilterCustomize": [{
-                "FilterClasses": "",
-                "noButton":"",
-                "Placeholder": ""
-            }],
-            "OutputVarFilter": "",
-        },
-        "Calendar": {
-            "CalendarCustomize": [{
-                "CalendarClasses": "",
-                "InputVarCalendar": [{}],
-                "OutputVarCalendar": "",
-                "OutputVarInterval": "",
-                "MaxVisibleDayEvents": "",
-                "AllowCreateInstances":"",
-                "CreateDefinition":"",
-                "EventViews":"",
-                "StrictMode":""
-            }],
-            "Events": [{
-                "Definition": "",
-                "DateStartEventField": "",
-                "DateEndEventField": "",
-                "DescriptionEventField": "",
-                "StateEventField": "",
-                "EventsQuery": "",
-                "TooltipTemplate":"",
-                "AllDay":""
-            }],
-        },
-        "List": {
-            "ListCustomize": [{
-                "InputVarList": [{}],
-                "DefaultView": "",
-                "ListClasses" : "",
-                "HideRowSelection,": "",
-                "HideDetailsColumn,": "",
-                "HideColumnsSelector": "",
-            }],
-            "ListDefinition": "",
-            "ListQuery": ""
-        },
-        "Hierarchy" : {
-            "HierarchyCustomize": [{
-                "HierarchyNodeClasses": "",
-                "HierarchyRowClasses": "",
-            }],
-            "FilterHierarchy" : "",
-            "InstanceFieldNameHierarchy":"",
-            "InputVarHierarchy" : "",
-            "DefinitionNameHierarchy" : "",
-            "ParentFieldName" : "",
-            "SortFieldName" : "",
-            "DisplayFieldHierarchy" : "",
-            "OutputVarHierarchy" : "",
-        },
-        "ImageViewer" : {
-            "ImageViewerCustomize": [{
-                "ImageViewerClasses": "",
-                "ImageViewerButtonClasses":"",
-                "ImageViewerIdentifier":"",
-                "Enable Buttons":""
-            }],
-            "OutputVarImageViewer":"",
-            "ImageViewerURL":[{}]
-        },
-        "InstanceViewer" : {
-            "InstanceViewerCustomize": [{
-                "InstanceViewerClasses": "",
-                "NoInstanceClasses": "",
-                "InstanceViewerIdentifier":"",
-                "HideSidenav": "",
-                "StopOverflow": "",
-            }],
-            "InstanceViewerInstanceId":"",
-            "InstanceViewerOutputVar":""
-        }
-    }
 
     for( let board of dash["Board"]) {
         board["Dash"] = { id: dash.instanceId, name: dash.Name }
@@ -275,4 +279,4 @@ function parseDashboard(raw_dashboard) {
     return dash
 }
 
-export {parseDashboard, clone, collect}
+export {parseDashboard, clone, collect, DashTemplate, ComponentsTemplates}

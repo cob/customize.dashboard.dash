@@ -12,11 +12,11 @@
   import { umLoggedin } from '@cob/rest-api-wrapper';
   import * as DashFunctions from '@cob/dashboard-info';
   import { parseDashboard } from './collector.js'
+  import { generateDashboardTemplate } from './template_generator.js'
   import { Handlebars } from './handlebars_setup.js'
   import Dashboard from './components/Dashboard.vue'
   import Refresh from './components/shared/Refresh.vue'
   import ComponentStatePersistence from "./model/ComponentStatePersistence";
-  import traverse from "traverse";
   import sha256 from "crypto-js/sha256";
   import { nextTick } from 'vue'
 
@@ -72,6 +72,7 @@
       if(DEBUG.app) console.log("DASH:  APP: 9: beforeDestroy: Stop all watchers and updates")
       this.resumeEventListner.off('resume')
       this.hashArg.stop()
+      if (this.localDashboardsEvents) this.localDashboardsEvents.close()
       this.stopActiveDash()
     },
 
@@ -559,36 +560,8 @@
         const key = this.dashboardArg + requestResultList.map(d => d.id).join("-") + JSON.stringify(this.userInfo)
         const dashKey = "H" + sha256(key).toString().replace("=", "_")
 
-        const generateDashboardTemplate = (dashboardParsed) => {
-          if(DEBUG.app) console.log("DASH:  APP: 5.1: loadDashboard: compileDashboard: dashboardParsed=",dashboardParsed)
-
-          const JsonStringifyWithBlockHelpers = (json, replaceList) => {
-            // Replacements will occur on every duplicate field of the dashboard instance that has a value starting with "{{#each something}} ..." or other block helper
-            // replaceList will recursively be set with
-            const newJson = traverse(json).map(function (node) {
-              // If the node has a property with the same name as the name of the enclosing property (ie, something like 'Board' in '{ Board: [ { ..., Board:"string value",...}, ...]}' ) test for the block pattern
-              // (this will be the situation for all duplicate fields, as set by the collector)
-              const epn = this.parent && this.parent.key; //EPN = Enclosing Property Name
-              const propertyValueForEPN = node && epn && typeof (node[epn]) === "string" && node[epn];
-              const blockExpression = propertyValueForEPN && propertyValueForEPN.replaceAll("\n", " ").match(/^\s*{{#(\w+)\s+([^}]*)}}(.*)/);
-
-              if (blockExpression) {
-                node[epn] = blockExpression[3]; // Remove the block expression from the dashboard object and leave the remaining content
-                const textToReplaceNode = "{{#" + blockExpression[1] + " " + blockExpression[2] + "}} " + JsonStringifyWithBlockHelpers(node, replaceList) + ", {{/" + blockExpression[1] + "}}"
-                this.update("#REPLACE" + replaceList.length, true)
-                replaceList.push(textToReplaceNode)
-              }
-            })
-            return JSON.stringify(newJson)
-          }
-
-          let replaceList = []
-          let template = JsonStringifyWithBlockHelpers(dashboardParsed, replaceList)
-          for (let i = replaceList.length - 1; i > -1; i--) {
-            template = template.replace('"#REPLACE' + i + '"', replaceList[i]) // The replacement of blocks must include de " " that were put around the block
-          }
-          return template
-        }
+        // kept for the local-dashboards hot reload (see ensureLocalDashboardsWatcher)
+        this.lastLoadArgs = { newDashEs, requestResultList }
 
         const getBaseContext = () => {
           if(DEBUG.app) console.log("DASH:  APP: 5.2: loadDashboard: getBaseContext: ")
@@ -942,6 +915,10 @@
           axios.get("/recordm/recordm/instances/" + newDashEs.id)
             .then(resp => {
               try {
+                // In dev, the devserver serves dashboards represented in the repo and marks them
+                // with this header: watch for edits and rebuild in place (hot reload)
+                if (resp.headers && resp.headers["x-cob-local-dashboard"]) this.ensureLocalDashboardsWatcher()
+
                 let dash = {};
 
                 let solution, solution_menu
@@ -960,6 +937,7 @@
                 dash.contextQueries = []
                 dash.boardQueries = []
                 dash.dashboardParsed = parseDashboard(resp.data);
+                if(DEBUG.app) console.log("DASH:  APP: 5.1: loadDashboard: generateDashboardTemplate: dashboardParsed=", dash.dashboardParsed)
                 dash.dashboardTemplate = generateDashboardTemplate(dash.dashboardParsed);
                 dash.dashboardProcessor = Handlebars.compile(dash.dashboardTemplate)
                 dash.dashboardBaseContext = getBaseContext();
@@ -983,6 +961,26 @@
                 reportError("Error: error getting dashboard " + newDashEs.id)
               }
             });
+        }
+      },
+
+      ensureLocalDashboardsWatcher() {
+        // Dev only (the events endpoint exists only on the devserver middleware): on each edit of
+        // the local repo representation, rebuild the active dashboard in place instead of a full
+        // browser reload. Filter/var state survives via the url-hash persistence.
+        if (this.localDashboardsEvents) return
+        if(DEBUG.app) console.log("DASH:  APP: ensureLocalDashboardsWatcher: subscribing to local dashboards edit events")
+        this.localDashboardsEvents = new EventSource("/recordm/recordm/local-dashboards/events")
+        this.localDashboardsEvents.onmessage = () => {
+          if (!this.lastLoadArgs) return
+          if(DEBUG.app) console.log("DASH:  APP: local dashboards changed -> rebuilding active dashboard")
+          if (this.activeDashKey) {
+            const dashKey = this.activeDashKey
+            this.stopActiveDash()
+            this.activeDashKey = null
+            this.$delete(this.dashboardsCached, dashKey)
+          }
+          this.loadDashboard(this.lastLoadArgs.newDashEs, this.lastLoadArgs.requestResultList)
         }
       },
 
