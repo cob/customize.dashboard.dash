@@ -48,6 +48,10 @@ assert.ok(!files["dashboard.yaml"].includes("- MenuCustomize"), "singleton group
 assert.ok(!files["dashboard.yaml"].includes("- TextCustomize"))
 assert.ok(files["dashboard.yaml"].includes("MenuCustomize: Classes\n"))
 assert.ok(files["dashboard.yaml"].includes("MenuClasses: flex flex-col gap-y-2"))
+
+// predictable order inside each element: own key, id, then the *Customize block, then the rest
+assert.ok(files["dashboard.yaml"].includes("- Component: Menu\n        id: 9004\n        MenuCustomize: Classes"))
+assert.ok(files["dashboard.yaml"].includes('- Text: Home\n            TextCustomize:'), "TextCustomize must come right after the Text own value")
 assert.ok(files["dashboard.yaml"].includes('TextCustomize: "Classes\\0Icon"'), files["dashboard.yaml"].split("\n").find(l => l.includes("TextCustomize")))
 // hoisted to the root: DashboardCustomize's sub-fields
 assert.ok(files["dashboard.yaml"].includes("\nDashboardClasses: h-full"))

@@ -66,12 +66,15 @@ const elementSegment = (element, i) =>
 const fieldFileName = (pathSegments) => pathSegments.map(sanitize).join(".") + ".hbs"
 
 // collect() appends each occurrence's own value (the key with the array's name) AFTER the
-// children, which buries the identifying line at the bottom of the block. For readability the
-// own key (and the components' id) comes first: "- Board: Hierarchy", "- Component: Menu", ...
+// children, which buries the identifying line at the bottom of the block. For a predictable
+// read the own key, the components' id and the element's *Customize group (whose flattened
+// block moves with its key) come first: "- Component: Menu", "id: ...", "MenuCustomize: ...",
+// then the remaining fields in their original order
 function orderElementKeys(element, ownKey) {
     if (!element || typeof element !== 'object' || Array.isArray(element)) return element
     const ordered = {}
-    for (const key of [ownKey, "id"]) {
+    const first = [ownKey, "id", ...Object.keys(element).filter(key => key !== ownKey && key.endsWith("Customize"))]
+    for (const key of first) {
         if (key in element) ordered[key] = element[key]
     }
     for (const key of Object.keys(element)) {
