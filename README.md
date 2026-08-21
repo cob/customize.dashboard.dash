@@ -63,8 +63,10 @@ a `pull` regenerates the file in the flat form.
 
 1. Create (or duplicate) the dashboard in the application, once
 2. `npm run dash-sync pull <instanceId>` — brings it into `recordm/customUI/dashs/`
-   (`pull --all` brings every Dashboard_v1 of the server; dashboards with uncommitted local
-   changes are skipped)
+   (`pull --all` brings every Dashboard_v1 of the server, and removes from disk the local
+   dashboards whose instance was deleted on the server — git shows the deletion, the developer
+   confirms it at commit time. Dashboards with uncommitted local changes are never overwritten,
+   and changes outside the git index block the removal even with `--force`)
 3. `cob-cli test -d dash` and browse the DASH dev server (port 8041, NOT the 8040 one the cli
    opens): `http://localhost:8041/recordm/index.html#/cob.custom-resource/<id>/dash`. Dashboards
    present in `recordm/customUI/dashs/` are served from the local files and any edit reloads the

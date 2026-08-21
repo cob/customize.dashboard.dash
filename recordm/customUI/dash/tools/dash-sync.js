@@ -4,7 +4,7 @@
 // the repo only manages existing ones (the only way in is `pull`).
 //
 // Usage:
-//   node tools/dash-sync.js pull <instanceId> [--force]
+//   node tools/dash-sync.js pull <instanceId> | pull --all [--force]
 //   node tools/dash-sync.js pull --all [--force]        (every Dashboard_v1 of the server)
 //   node tools/dash-sync.js push <dir|instanceId> [--dry-run] [--force]
 //   node tools/dash-sync.js diff <dir|instanceId>
@@ -27,7 +27,7 @@
 // ("this representation corresponds to version N of the instance"). push requires the server to
 // still be at version N (optimistic locking) and ends with an implicit pull, recording N+1. Local
 // uncommitted changes are git's responsibility: pull refuses to overwrite them without --force.
-import { existsSync, readFileSync, writeFileSync, mkdtempSync, readdirSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync, mkdtempSync, readdirSync, rmSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { tmpdir } from 'node:os'
 import { spawnSync } from 'node:child_process'
@@ -152,7 +152,9 @@ function gitUncommittedChanges(dir) {
         console.warn("warning: not a git repo (or git unavailable) - skipping local changes check")
         return ""
     }
-    return result.stdout.trim()
+    // trimEnd, not trim: the leading char of a porcelain line is the INDEX column (" M" means
+    // unstaged edit, "M " staged) and the orphan-removal guard depends on it
+    return result.stdout.trimEnd()
 }
 
 // both sides of any comparison go through the same serialize+parse normalization, so key order,
@@ -209,7 +211,27 @@ async function pullAll() {
         console.log("pulled '" + canonical.Name + "' v" + canonical.version + " -> " + dashboardDir)
         pulled++
     }
-    console.log(ids.length + " dashboards on the server: " + pulled + " pulled" + (skipped ? ", " + skipped + " skipped" : ""))
+    // local dashboards whose instance disappeared from the server are removed from disk, like
+    // the stale .hbs files: the working tree mirrors the server and git shows the deletion, so
+    // the developer confirms it at commit time (or restores it if the instance was deleted by
+    // mistake - the repo is the backup). Changes NOT in the git index always block the removal,
+    // even with --force: deleting them would be unrecoverable. Staged changes don't block -
+    // they live in the index and survive the file removal (git restore brings them back)
+    let removed = 0
+    for (const orphan of listDashboardDirs(dashboardsRoot)) {
+        if (orphan.error || ids.includes(orphan.instanceId)) continue
+        // porcelain "XY path": Y is the worktree status - untracked ("??") or unstaged edits
+        const unstaged = gitUncommittedChanges(orphan.dir).split("\n").filter(line => line && line[1] !== " ")
+        if (unstaged.length > 0) {
+            console.warn("  ⚠ kept '" + orphan.name + "' - instance " + orphan.instanceId + " no longer exists on the server, but there are local changes outside the git index (commit or stage them, or delete the directory manually)")
+            skipped++
+            continue
+        }
+        rmSync(orphan.dir, { recursive: true, force: true })
+        console.log("removed '" + orphan.name + "' - instance " + orphan.instanceId + " no longer exists on the server (git has the files: commit to confirm, checkout to restore)")
+        removed++
+    }
+    console.log(ids.length + " dashboards on the server: " + pulled + " pulled" + (skipped ? ", " + skipped + " skipped" : "") + (removed ? ", " + removed + " removed" : ""))
 }
 
 async function push() {

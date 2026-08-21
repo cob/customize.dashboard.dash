@@ -5,7 +5,7 @@ import http from 'node:http'
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
-import { execFile } from 'node:child_process'
+import { execFile, spawnSync } from 'node:child_process'
 import YAML from 'yaml'
 import { serializeDashboard } from '../src/serializer.js'
 import { c0, loadNumberedDefinition } from '../src/test_fixture.js'
@@ -26,6 +26,7 @@ const findFieldByName = (fields, name) => {
     return null
 }
 findFieldByName(instance.fields, "Solution Sigla").value = "ACTV"
+let dashboardDeleted = false // when true, the search endpoint stops listing the instance
 const seenCookies = []
 
 const server = http.createServer((req, res) => {
@@ -36,8 +37,9 @@ const server = http.createServer((req, res) => {
         const instanceMatch = req.url.match(/^\/recordm\/recordm\/instances\/(\d+)$/)
         if (req.method === "GET" && req.url.startsWith("/recordm/recordm/definitions/search/name/Dashboard_v1")) {
             // ES search over the definition's instances, like the real endpoint (used by pull --all)
+            const hits = dashboardDeleted ? [] : [{ _id: "" + instance.id }]
             res.setHeader("content-type", "application/json")
-            res.end(JSON.stringify({ hits: { total: { value: 1 }, hits: [{ _id: "" + instance.id }] } }))
+            res.end(JSON.stringify({ hits: { total: { value: hits.length }, hits } }))
         } else if (req.method === "GET" && req.url === "/recordm/recordm/definitions/name/Dashboard_v1") {
             // like the real endpoint: fieldDefinitions FLAT in pre-order, subtrees attached
             const flattenDefs = (defs) => defs.flatMap(d => [d, ...flattenDefs(d.fields || [])])
@@ -155,6 +157,28 @@ const resolved = await new Promise((done) => {
         (error, stdout, stderr) => done({ stdout, stderr }))
 })
 assert.ok(resolved.stderr.includes("server: https://dash-sync-test-name.cultofbits.com"), resolved.stderr)
+
+// dashboard deleted on the server -> pull --all removes the local dir (the working tree mirrors
+// the server; git shows the deletion for the developer to confirm at commit time). Changes
+// outside the git index block the removal even with --force (deleting them would be
+// unrecoverable); staged changes don't (they live in the index and survive the removal)
+const git = (...gitArgs) => {
+    const result = spawnSync("git", ["-C", repoDir, "-c", "user.email=t@t", "-c", "user.name=t", ...gitArgs], { encoding: "utf8" })
+    assert.equal(result.status, 0, "git " + gitArgs.join(" ") + " failed: " + result.stderr)
+}
+dashboardDeleted = true
+git("init")
+git("add", ".")
+git("commit", "-m", "baseline")
+writeFileSync(join(dashDir, "dashboard.yaml"), readFileSync(join(dashDir, "dashboard.yaml"), "utf8") + "# unstaged edit\n")
+const kept = await runOk("pull", "--all", "--force")
+assert.ok(kept.stderr.includes("kept 'Plan-Test'"), kept.stdout + kept.stderr)
+assert.ok(existsSync(dashDir))
+git("add", ".") // staging the edit makes it recoverable from the index -> removal allowed
+const afterDelete = await runOk("pull", "--all")
+assert.ok(afterDelete.stdout.includes("removed 'Plan-Test'"), afterDelete.stdout)
+assert.ok(afterDelete.stdout.includes("0 dashboards on the server: 0 pulled, 1 removed"), afterDelete.stdout)
+assert.ok(!existsSync(dashDir))
 
 server.close()
 console.log("test_dash_sync: ALL TESTS PASSED")
