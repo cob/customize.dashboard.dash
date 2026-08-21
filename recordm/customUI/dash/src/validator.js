@@ -9,7 +9,7 @@
 import Handlebars from 'handlebars'
 import { DashTemplate, ComponentsTemplates } from './collector.js'
 import { DashExtrasTemplate } from './serializer.js'
-import { elementSegment, fieldFileName, FILE_REF_PREFIX } from './repo_format.js'
+import { elementSegment, fieldFileName, isSingletonGroup, FILE_REF_PREFIX } from './repo_format.js'
 
 // keys produced by the tooling itself, valid anywhere they appear. Note: the components' type
 // key ("Component") is NOT here — inside a component element it is its ownKey, and at board
@@ -76,6 +76,11 @@ function validateDashboard(canonical, options = {}) {
         }
     }
 
+    // valid names at a level, for "did you mean" suggestions: the level's own keys plus the
+    // sub-fields of its singleton groups, which sit at this level in the flattened YAML
+    const levelKeys = (template) => Object.keys(template).flatMap(key =>
+        (Array.isArray(template[key]) && isSingletonGroup(key)) ? [key, ...Object.keys(template[key][0] || {})] : [key])
+
     const validateElement = (element, template, ownKey, displayPath, fileSegments) => {
         if (element === null || typeof element !== 'object' || Array.isArray(element)) {
             errors.push({ path: displayPath, message: "esperava um objecto (ocorrência de '" + ownKey + "')" })
@@ -83,17 +88,40 @@ function validateDashboard(canonical, options = {}) {
         }
         for (const key of Object.keys(element)) {
             const value = element[key]
-            const keyPath = displayPath + "." + key
+            const keyPath = (displayPath ? displayPath + "." : "") + key
             if (key === ownKey || META_KEYS.has(key)) {
                 if (typeof value === 'string') checkScalar(value, keyPath, fileSegments.concat(key))
                 continue
             }
             if (!(key in template)) {
-                errors.push({ path: keyPath, message: "chave desconhecida" + suggestion(key, Object.keys(template)) })
+                const owner = Object.keys(template).find(t =>
+                    Array.isArray(template[t]) && isSingletonGroup(t) && key in (template[t][0] || {}))
+                if (owner) {
+                    // an exact sub-field of a singleton group left at this level: only happens
+                    // when the group is ALSO present in list form (otherwise implode nests it)
+                    errors.push({ path: keyPath, message: "'" + key + "' pertence ao grupo '" + owner + "', que está em forma de lista — move o campo para dentro da lista ou achata o grupo todo" })
+                } else {
+                    errors.push({ path: keyPath, message: "chave desconhecida" + suggestion(key, levelKeys(template)) })
+                }
                 continue
             }
-            validateValue(value, template[key], key, keyPath, fileSegments.concat(key))
+            validateEntry(value, template[key], key, displayPath, fileSegments)
         }
+    }
+
+    // dispatch for one key of an element: singleton groups are flattened in the YAML, so they
+    // contribute NO path/file-name segment - their sub-fields report at the parent level
+    const validateEntry = (value, templateValue, key, parentPath, parentSegments) => {
+        const keyPath = (parentPath ? parentPath + "." : "") + key
+        if (Array.isArray(templateValue) && isSingletonGroup(key)) {
+            if (Array.isArray(value) && value.length === 1 && value[0] !== null && typeof value[0] === 'object' && !Array.isArray(value[0])) {
+                validateElement(value[0], templateValue[0] || {}, key, parentPath, parentSegments)
+            } else {
+                errors.push({ path: keyPath, message: "esperava uma ocorrência única do grupo '" + key + "'" })
+            }
+            return
+        }
+        validateValue(value, templateValue, key, keyPath, parentSegments.concat(key))
     }
 
     const validateValue = (value, templateValue, key, displayPath, fileSegments) => {
@@ -130,15 +158,10 @@ function validateDashboard(canonical, options = {}) {
         checkScalar(value, displayPath, fileSegments)
     }
 
+    // the root is validated like any element (with no own key): meta keys skipped, singleton
+    // groups (DashboardCustomize) flattened, unknown keys suggested over the level's names
     const rootTemplate = { ...DashTemplate, ...DashExtrasTemplate }
-    for (const key of Object.keys(canonical)) {
-        if (META_KEYS.has(key)) continue
-        if (!(key in rootTemplate)) {
-            errors.push({ path: key, message: "chave desconhecida" + suggestion(key, Object.keys(rootTemplate)) })
-            continue
-        }
-        validateValue(canonical[key], rootTemplate[key], key, key, [key])
-    }
+    validateElement(canonical, rootTemplate, null, "", [])
 
     // .hbs files in the directory that nothing references (renamed/removed fields)
     for (const hbsFile of (options.hbsFiles || [])) {

@@ -26,8 +26,33 @@ typo.Board[0].Component[0].LabelCustomize[0].LabelClases = typo.Board[0].Compone
 delete typo.Board[0].Component[0].LabelCustomize[0].LabelClasses
 const typoResult = validateDashboard(typo)
 assert.equal(typoResult.errors.length, 1)
-assert.equal(typoResult.errors[0].path, "Board[1].Component[1(Label)].LabelCustomize[1].LabelClases")
+// singleton groups are flattened in the YAML, so paths skip them: the sub-field reports at the
+// component level, matching what the user sees in dashboard.yaml
+assert.equal(typoResult.errors[0].path, "Board[1].Component[1(Label)].LabelClases")
 assert.ok(typoResult.errors[0].message.includes("querias 'LabelClasses'"), typoResult.errors[0].message)
+
+// same typo written at the component level (where the flattened YAML puts the sub-fields):
+// implode leaves the unknown key there, and the suggestion still finds the group's sub-field
+const levelTypo = clean()
+levelTypo.Board[0].Component[0].LabelClases = "x"
+const levelTypoResult = validateDashboard(levelTypo)
+assert.equal(levelTypoResult.errors.length, 1)
+assert.equal(levelTypoResult.errors[0].path, "Board[1].Component[1(Label)].LabelClases")
+assert.ok(levelTypoResult.errors[0].message.includes("querias 'LabelClasses'"), levelTypoResult.errors[0].message)
+
+// an EXACT sub-field name at the level while the group is in list form: specific message (with
+// the flat form implode would have nested it into the group)
+const mixed = clean()
+mixed.Board[0].Component[0].LabelClasses = "x"
+const mixedResult = validateDashboard(mixed)
+assert.equal(mixedResult.errors.length, 1)
+assert.ok(mixedResult.errors[0].message.includes("pertence ao grupo 'LabelCustomize'"), mixedResult.errors[0].message)
+
+// a singleton group must be a single occurrence (implode always rebuilds it that way)
+const badGroup = clean()
+badGroup.Board[0].Component[0].LabelCustomize = "Classes"
+assert.ok(validateDashboard(badGroup).errors.some(e =>
+    e.path === "Board[1].Component[1(Label)].LabelCustomize" && e.message.includes("ocorrência única")))
 
 // unknown root key too
 const rootTypo = clean()

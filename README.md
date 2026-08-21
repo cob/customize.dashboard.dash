@@ -52,6 +52,13 @@ on read, but a value starting with an unquoted `#` becomes null and fails loudly
 NOT survive a pull (the file is regenerated from the server) — annotate inside the `.hbs` files
 with handlebars comments (`{{!-- --}}`) instead, those are part of the field value.
 
+Non-duplicable groups (`*Customize`, `LineBehaviour`, ...) are stored flat: the group key carries
+the multi-select value on a single line (`MenuCustomize: Classes`) and its sub-fields sit at the
+same level as the group (`MenuClasses: ...` right below) — only genuinely duplicable fields
+(`Board`, `Component`, `Text`, `Line`, `GroupAccess`, ...) are YAML lists, and each list element
+opens with its identifying key. The previous format (groups as 1-element lists) still reads fine;
+a `pull` regenerates the file in the flat form.
+
 ### Workflow
 
 1. Create (or duplicate) the dashboard in the application, once

@@ -16,8 +16,20 @@
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import YAML from 'yaml'
+import { DashTemplate, ComponentsTemplates } from './collector.js'
 
 const FILE_REF_PREFIX = "@file:"
+
+// Non-duplicable array fields (Dashboard_v1 marks every *Customize plus these three as
+// duplicable=false — checked against the definition in test_repo_format.js): they always have
+// exactly one occurrence, so the canonical's 1-element array is stored flat in dashboard.yaml —
+// the key carries the field's own value (the groups' multi-select) on a single line and any
+// sub-fields sit at the parent level (implodeDashboard re-nests them using the templates; see
+// test_repo_format.js for the collision check that makes this unambiguous)
+const SINGLETON_GROUPS = new Set(["LineBehaviour", "SlidesArg", "ImageViewerURL"])
+const isSingletonGroup = (key) => key.endsWith("Customize") || SINGLETON_GROUPS.has(key)
+
+const isElement = (value) => value !== null && typeof value === 'object' && !Array.isArray(value)
 
 // Keys added by parseDashboard that are derived from other data and would only add noise to the
 // stored representation (parseDashboard recreates them)
@@ -80,9 +92,7 @@ function explodeDashboard(canonical) {
         }
         if (node && typeof node === 'object') {
             const result = {}
-            for (const key of Object.keys(node)) {
-                result[key] = walk(node[key], pathSegments.concat(key))
-            }
+            for (const key of Object.keys(node)) emit(result, key, node[key], pathSegments)
             return result
         }
         if (typeof node === 'string' && (node.includes("\n") || node.startsWith(FILE_REF_PREFIX))) {
@@ -91,6 +101,23 @@ function explodeDashboard(canonical) {
             return FILE_REF_PREFIX + fileName
         }
         return node
+    }
+
+    // flattens singleton groups: the own value goes on the group key's line and the sub-fields
+    // are hoisted to the parent level (contributing NO path segment - "Context.hbs", not
+    // "DashboardCustomize.1.Context.hbs"); an empty occurrence ([{}]) stays as "Key: {}" so the
+    // round-trip is exact, and a group with sub-fields but no own value omits the group line
+    const emit = (result, key, value, pathSegments) => {
+        if (isSingletonGroup(key) && Array.isArray(value) && value.length === 1 && isElement(value[0])) {
+            const element = value[0]
+            if (key in element) result[key] = walk(element[key], pathSegments.concat(key))
+            else if (Object.keys(element).length === 0) result[key] = {}
+            for (const childKey of Object.keys(element)) {
+                if (childKey !== key) emit(result, childKey, element[childKey], pathSegments)
+            }
+            return
+        }
+        result[key] = walk(value, pathSegments.concat(key))
     }
 
     const exploded = walk(orderCanonical(stripDerived(structuredClone(canonical))), [])
@@ -125,7 +152,50 @@ function implodeDashboard(dashboardDir) {
         }
         return node
     }
-    return resolveRefs(YAML.parse(dashboardYaml), "")
+    return expandSingletonGroups(resolveRefs(YAML.parse(dashboardYaml), ""), DashTemplate)
+}
+
+// Inverse of the flattening done by explodeDashboard: rebuilds each singleton group as the
+// 1-element array (with the group's own value under its own key) that the canonical
+// representation uses, moving the hoisted sub-fields back inside. Guided by the same templates
+// parseDashboard uses, so it knows which parent each sub-field belongs to. The list form (the
+// pre-flat format, or a group someone kept expanded) is accepted as-is - and in that case the
+// hoisted form is NOT gathered, so a sub-field left at the parent level surfaces in the
+// validator instead of being silently merged. Unknown keys stay where they are (validation is
+// the validator's job).
+function expandSingletonGroups(element, template) {
+    if (!isElement(element) || !template) return element
+    for (const key of Object.keys(template)) {
+        const templateValue = template[key]
+        if (!Array.isArray(templateValue)) continue
+        const value = element[key]
+        if (key === "Component" && Array.isArray(value)) {
+            // boards hold typed components: each expands with its own type's template
+            element[key] = value.map(component => isElement(component)
+                ? expandSingletonGroups(component, ComponentsTemplates[component.Component])
+                : component)
+            continue
+        }
+        const groupTemplate = templateValue[0] || {}
+        if (Array.isArray(value)) {
+            element[key] = value.map(occurrence => expandSingletonGroups(occurrence, groupTemplate))
+            continue
+        }
+        if (!isSingletonGroup(key)) continue
+        // flattened form: scalar own value on the group key ("Key: {}" for an empty occurrence,
+        // no key at all when the group only has sub-fields), sub-fields hoisted at this level
+        const grouped = value === undefined ? {} : (isElement(value) ? value : { [key]: value })
+        for (const childKey of Object.keys(groupTemplate)) {
+            if (childKey !== key && childKey in element) {
+                grouped[childKey] = element[childKey]
+                delete element[childKey]
+            }
+        }
+        if (value !== undefined || Object.keys(grouped).length > 0) {
+            element[key] = [expandSingletonGroups(grouped, groupTemplate)]
+        }
+    }
+    return element
 }
 
 // Writes the exploded files to a directory, removing stale .hbs files from previous versions
@@ -163,4 +233,4 @@ function listDashboardDirs(dashboardsRoot) {
 const slugify = (name) => String(name).normalize("NFD").replaceAll(/[\u0300-\u036f]/g, "")
     .replaceAll(/[^A-Za-z0-9._-]+/g, "-").replaceAll(/^-+|-+$/g, "") || "dashboard"
 
-export { explodeDashboard, implodeDashboard, writeDashboardDir, listDashboardDirs, stripDerived, orderCanonical, slugify, elementSegment, fieldFileName, FILE_REF_PREFIX }
+export { explodeDashboard, implodeDashboard, writeDashboardDir, listDashboardDirs, stripDerived, orderCanonical, slugify, elementSegment, fieldFileName, isSingletonGroup, FILE_REF_PREFIX }
