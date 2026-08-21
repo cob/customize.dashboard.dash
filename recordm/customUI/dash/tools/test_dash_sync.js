@@ -34,7 +34,11 @@ const server = http.createServer((req, res) => {
     req.on("end", () => {
         seenCookies.push(req.headers.cookie || "")
         const instanceMatch = req.url.match(/^\/recordm\/recordm\/instances\/(\d+)$/)
-        if (req.method === "GET" && req.url === "/recordm/recordm/definitions/name/Dashboard_v1") {
+        if (req.method === "GET" && req.url.startsWith("/recordm/recordm/definitions/search/name/Dashboard_v1")) {
+            // ES search over the definition's instances, like the real endpoint (used by pull --all)
+            res.setHeader("content-type", "application/json")
+            res.end(JSON.stringify({ hits: { total: { value: 1 }, hits: [{ _id: "" + instance.id }] } }))
+        } else if (req.method === "GET" && req.url === "/recordm/recordm/definitions/name/Dashboard_v1") {
             // like the real endpoint: fieldDefinitions FLAT in pre-order, subtrees attached
             const flattenDefs = (defs) => defs.flatMap(d => [d, ...flattenDefs(d.fields || [])])
             res.setHeader("content-type", "application/json")
@@ -94,6 +98,10 @@ assert.equal(localVersion(), "7")
 const hbsFiles = readdirSync(dashDir).filter(f => f.endsWith(".hbs"))
 assert.ok(hbsFiles.length >= 1)
 assert.ok(seenCookies.every(c => c === "" || c.includes("cobtoken=test-token")))
+
+// pull --all discovers every Dashboard_v1 instance on the server (here: just this one)
+const pulledAll = await runOk("pull", "--all")
+assert.ok(pulledAll.stdout.includes("1 dashboards on the server: 1 pulled"), pulledAll.stdout)
 
 // freshly pulled -> in sync
 assert.ok((await runOk("status")).stdout.includes("✓ in sync (v7)  Plan-Test"))

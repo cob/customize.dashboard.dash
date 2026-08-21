@@ -5,6 +5,7 @@
 //
 // Usage:
 //   node tools/dash-sync.js pull <instanceId> [--force]
+//   node tools/dash-sync.js pull --all [--force]        (every Dashboard_v1 of the server)
 //   node tools/dash-sync.js push <dir|instanceId> [--dry-run] [--force]
 //   node tools/dash-sync.js diff <dir|instanceId>
 //   node tools/dash-sync.js status
@@ -38,6 +39,7 @@ import { validateDashboard } from '../src/validator.js'
 
 const INSTANCES_PATH = "/recordm/recordm/instances/"
 const DEFINITION_PATH = "/recordm/recordm/definitions/name/Dashboard_v1"
+const SEARCH_PATH = "/recordm/recordm/definitions/search/name/Dashboard_v1"
 const AUTH_PATH = "/recordm/security/auth"
 
 // ----------------------------------------------------------------- arguments and repo locations
@@ -46,7 +48,7 @@ const args = process.argv.slice(2)
 const flags = {}
 const positional = []
 for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--force" || args[i] === "--dry-run") flags[args[i].substring(2)] = true
+    if (args[i] === "--force" || args[i] === "--dry-run" || args[i] === "--all") flags[args[i].substring(2)] = true
     else if (args[i] === "--server" || args[i] === "--dir" || args[i] === "--env") flags[args[i].substring(2)] = args[++i]
     else positional.push(args[i])
 }
@@ -175,7 +177,8 @@ function writePulled(raw) {
 // ------------------------------------------------------------------------------------ commands
 
 async function pull() {
-    if (!target) throw new Error("usage: dash-sync pull <instanceId>")
+    if (flags.all) return pullAll()
+    if (!target) throw new Error("usage: dash-sync pull <instanceId> | pull --all")
     const local = findLocal(target)
     if (local && !flags.force) {
         const changes = gitUncommittedChanges(local.dir)
@@ -184,6 +187,29 @@ async function pull() {
     const raw = await getInstance(local ? local.instanceId : target)
     const { canonical, dashboardDir } = writePulled(raw)
     console.log("pulled '" + canonical.Name + "' v" + canonical.version + " -> " + dashboardDir)
+}
+
+// pulls every Dashboard_v1 instance of the server; dashboards with uncommitted local changes
+// are skipped (not fatal, unlike the single pull), so one dirty dashboard doesn't block the rest
+async function pullAll() {
+    const result = await api("GET", SEARCH_PATH + "?q=*&from=0&size=1000")
+    const total = (result.hits.total && result.hits.total.value !== undefined) ? result.hits.total.value : result.hits.total
+    const ids = result.hits.hits.map(hit => "" + hit._id)
+    if (total > ids.length) console.warn("warning: the server has " + total + " dashboards, pulling only the first " + ids.length)
+    let pulled = 0
+    let skipped = 0
+    for (const id of ids) {
+        const local = findLocal(id)
+        if (local && !flags.force && gitUncommittedChanges(local.dir)) {
+            console.warn("  ⚠ skipped '" + local.name + "' - uncommitted changes (commit them or use --force)")
+            skipped++
+            continue
+        }
+        const { canonical, dashboardDir } = writePulled(await getInstance(id))
+        console.log("pulled '" + canonical.Name + "' v" + canonical.version + " -> " + dashboardDir)
+        pulled++
+    }
+    console.log(ids.length + " dashboards on the server: " + pulled + " pulled" + (skipped ? ", " + skipped + " skipped" : ""))
 }
 
 async function push() {
