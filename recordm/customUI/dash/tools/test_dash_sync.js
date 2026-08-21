@@ -35,8 +35,10 @@ const server = http.createServer((req, res) => {
         seenCookies.push(req.headers.cookie || "")
         const instanceMatch = req.url.match(/^\/recordm\/recordm\/instances\/(\d+)$/)
         if (req.method === "GET" && req.url === "/recordm/recordm/definitions/name/Dashboard_v1") {
+            // like the real endpoint: fieldDefinitions FLAT in pre-order, subtrees attached
+            const flattenDefs = (defs) => defs.flatMap(d => [d, ...flattenDefs(d.fields || [])])
             res.setHeader("content-type", "application/json")
-            res.end(JSON.stringify(definition))
+            res.end(JSON.stringify({ ...definition, fieldDefinitions: flattenDefs(definition.fieldDefinitions) }))
         } else if (req.method === "GET" && instanceMatch && instanceMatch[1] === "" + instance.id) {
             res.setHeader("content-type", "application/json")
             res.end(JSON.stringify(instance))

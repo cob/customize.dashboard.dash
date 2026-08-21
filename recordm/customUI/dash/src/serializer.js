@@ -21,9 +21,23 @@ import { clone, collect, parseDashboard, DashTemplate, ComponentsTemplates } fro
 
 const FILE_URL_PATTERN = /^\/recordm\/recordm\/instances\/[^/]+\/files\/[^/]+\/(.+)$/
 
+// The real /definitions/name/<name> endpoint returns fieldDefinitions as a pre-order FLAT list
+// of every field in the tree, each entry still carrying its `fields` subtree (the repo copy and
+// saved definitions can be proper trees). Serializing from the flat shape emitted a rogue root
+// occurrence for every nested field - a real PUT bounced with 400 NOT_DUPLICABLE_FIELD. Rebuild
+// the tree by dropping the entries that another entry already contains; a proper tree (or an
+// id-less definition) passes through unchanged.
+function treeifyFieldDefinitions(defFields) {
+    const nested = new Set()
+    const mark = (fields) => fields.forEach(f => { if (f.id != null) nested.add(f.id); mark(f.fields || []) })
+    for (const def of defFields) mark(def.fields || [])
+    return defFields.filter(f => f.id == null || !nested.has(f.id))
+}
+
 function serializeDashboard(dash, definition) {
-    const defFields = Array.isArray(definition) ? definition : (definition && definition.fieldDefinitions)
-    if (!defFields) throw new Error("serializeDashboard: invalid definition (expected {fieldDefinitions: [...]} or an array of field definitions)")
+    const rawDefFields = Array.isArray(definition) ? definition : (definition && definition.fieldDefinitions)
+    if (!rawDefFields) throw new Error("serializeDashboard: invalid definition (expected {fieldDefinitions: [...]} or an array of field definitions)")
+    const defFields = treeifyFieldDefinitions(rawDefFields)
 
     const state = { nextPlaceholderId: -1 }
     const id = Number(dash.instanceId)

@@ -116,6 +116,15 @@ assert.equal(findFieldByDefId(adopted.fields, siglaDefId).id, 9673580)
 assert.equal(findFieldByDefId(adopted.fields, siglaDefId).value, "ACTV") // server-owned
 assert.equal(findFieldByDefId(adopted.fields, nameDefId).value, "Plan Test") // ours
 
+// ---------------------------------------------------------------------------------------------
+// the real definitions endpoint returns fieldDefinitions FLAT (every field of the tree in
+// pre-order, subtrees still attached): serialization must rebuild the tree, or every nested
+// field gains a rogue root occurrence (real PUT bounced with 400 NOT_DUPLICABLE_FIELD)
+// ---------------------------------------------------------------------------------------------
+const flattenDefs = (defs) => defs.flatMap(d => [d, ...flattenDefs(d.fields || [])])
+const flatDefinition = { ...definition, fieldDefinitions: flattenDefs(definition.fieldDefinitions) }
+assert.deepEqual(serializeDashboard(c0, flatDefinition), serializeDashboard(c0, definition))
+
 const raw1Json = JSON.stringify(raw1)
 assert.ok(!raw1Json.includes('"descendents"'))
 const checkMinimalDefs = (fields) => fields.forEach(field => {
