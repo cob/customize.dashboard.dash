@@ -1,4 +1,4 @@
-import { clone, collect, parseDashboard } from './collector.js'
+import { clone, collect, parseDashboard, DashTemplate, ComponentsTemplates } from './collector.js'
 
 // serializeDashboard is the inverse of parseDashboard (collector.js): it takes the parsed
 // (canonical) dashboard representation and the Dashboard_v1 definition and produces a RecordM
@@ -120,10 +120,27 @@ function parseDashboardFull(raw_dashboard) {
     return { ...parseDashboard(raw_dashboard), ...parseDashboardExtras(raw_dashboard) }
 }
 
-// Grafts the field ids of an existing server instance onto a serialized instance, pairing
-// occurrences of the same field (by fieldDefinition name) in order. This makes the PUT body look
-// like a regular instance-editor save: existing fields keep their ids, new occurrences keep the
-// negative placeholder ids assigned by serializeDashboard.
+// Field names the canonical representation manages (every template key, recursively): for these
+// the repo's value is authoritative, including null (= clear the field). Every OTHER field of
+// the definition is server-owned - e.g. the "$auto.ref(Solution).field(...)" fields - and a
+// push must return the server's current value untouched, like the app editor does: pushing null
+// there made RecordM re-materialize the value into a second occurrence, and the PUT bounced
+// with 400 NOT_DUPLICABLE_FIELD.
+const collectTemplateNames = (template, names) => {
+    for (const [key, value] of Object.entries(template)) {
+        names.add(key)
+        if (Array.isArray(value)) collectTemplateNames(value[0] || {}, names)
+    }
+    return names
+}
+const MANAGED_NAMES = collectTemplateNames({ ...DashTemplate, ...DashExtrasTemplate }, new Set())
+for (const template of Object.values(ComponentsTemplates)) collectTemplateNames(template, MANAGED_NAMES)
+
+// Grafts an existing server instance onto a serialized instance, pairing occurrences of the
+// same field (by fieldDefinition name) in order, so the PUT body looks like a regular
+// instance-editor save: existing fields keep their server ids (new occurrences keep the
+// negative placeholder ids assigned by serializeDashboard), and fields OUTSIDE the canonical
+// representation keep the server's value (see MANAGED_NAMES above).
 function adoptFieldIds(target, source) {
     const sourceByName = new Map()
     for (const field of (source.fields || [])) {
@@ -139,6 +156,7 @@ function adoptFieldIds(target, source) {
         if (index < occurrences.length) {
             used.set(name, index + 1)
             if (field.id == null || field.id < 0) field.id = occurrences[index].id
+            if (!MANAGED_NAMES.has(name)) field.value = occurrences[index].value
             adoptFieldIds(field, occurrences[index])
         }
     }

@@ -1,7 +1,7 @@
 // Round-trip tests for serializer.js (the inverse of parseDashboard).
 // Run with: node src/test_serializer.js   (Node >= 22)
 import assert from 'node:assert/strict'
-import { serializeDashboard, parseDashboardFull } from './serializer.js'
+import { serializeDashboard, parseDashboardFull, adoptFieldIds } from './serializer.js'
 import { generateDashboardTemplate } from './template_generator.js'
 import Handlebars from 'handlebars'
 
@@ -99,6 +99,23 @@ assert.equal(findFieldByDefId(raw2.fields, boardImageDefId).value, "fundo.png")
 // full definition node repeats its `fields` subtree and `descendents` list at every level and
 // inflated a real PUT body to 8MB (413 from nginx). The size guard keeps this from regressing.
 // ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
+// adoptFieldIds mimics an editor save: server ids everywhere, and for fields OUTSIDE the
+// canonical representation ($auto fields like "Solution Sigla") the SERVER's value is kept -
+// pushing null there made RecordM re-materialize the value into a second occurrence and reject
+// the PUT with 400 NOT_DUPLICABLE_FIELD. Managed fields keep OUR value (null included = clear).
+// ---------------------------------------------------------------------------------------------
+const siglaDefId = findDef(definition.fieldDefinitions, ["Solution", "Solution Sigla"]).id
+const nameDefId = findDef(definition.fieldDefinitions, ["Name"]).id
+const serverInstance = serializeDashboard(c0, definition)
+findFieldByDefId(serverInstance.fields, siglaDefId).value = "ACTV"
+findFieldByDefId(serverInstance.fields, siglaDefId).id = 9673580
+findFieldByDefId(serverInstance.fields, nameDefId).value = "Old Name"
+const adopted = adoptFieldIds(serializeDashboard(c0, definition), serverInstance)
+assert.equal(findFieldByDefId(adopted.fields, siglaDefId).id, 9673580)
+assert.equal(findFieldByDefId(adopted.fields, siglaDefId).value, "ACTV") // server-owned
+assert.equal(findFieldByDefId(adopted.fields, nameDefId).value, "Plan Test") // ours
+
 const raw1Json = JSON.stringify(raw1)
 assert.ok(!raw1Json.includes('"descendents"'))
 const checkMinimalDefs = (fields) => fields.forEach(field => {

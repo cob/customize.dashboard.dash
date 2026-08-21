@@ -15,6 +15,17 @@ const definition = loadNumberedDefinition()
 // ------------------------------------------------------------------------- mock RecordM server
 // state: one Dashboard_v1 instance, like RecordM would serve it
 let instance = serializeDashboard(c0, definition) // id 458930, version 7
+// server-owned $auto field (computed by RecordM from the Solution ref, not in the canonical):
+// a push must return it with the server's value, not null (else 400 NOT_DUPLICABLE_FIELD)
+const findFieldByName = (fields, name) => {
+    for (const field of fields) {
+        if (field.fieldDefinition.name === name) return field
+        const found = findFieldByName(field.fields, name)
+        if (found) return found
+    }
+    return null
+}
+findFieldByName(instance.fields, "Solution Sigla").value = "ACTV"
 const seenCookies = []
 
 const server = http.createServer((req, res) => {
@@ -35,6 +46,8 @@ const server = http.createServer((req, res) => {
             assert.ok(!body.includes('"descendents"'), "PUT body carries definition descendents")
             assert.ok(body.length < 500 * 1024, "PUT body is " + Math.round(body.length / 1024) + " KB")
             const received = JSON.parse(body)
+            assert.equal(findFieldByName(received.fields, "Solution Sigla").value, "ACTV",
+                "PUT body must return server-owned $auto values untouched")
             instance = { ...received, version: received.version + 1 } // save bumps the version
             res.setHeader("content-type", "application/json")
             res.end(JSON.stringify({ id: instance.id, version: instance.version }))
