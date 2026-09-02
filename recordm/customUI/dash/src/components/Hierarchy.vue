@@ -115,7 +115,8 @@ export default {
         this.statePersistence = new ComponentStatePersistence(this.component.id, this.activateFromPersistentChange)
     },
     beforeDestroy() {
-        this.statePersistence.stop()
+        // created() is async, so statePersistence may not exist yet
+        if (this.statePersistence) this.statePersistence.stop()
     },
     watch: {
         async input() {
@@ -135,7 +136,7 @@ export default {
 
                 await this.updateTree()
                 this.previousHash = newHash
-                if(this.statePersistence.content){   
+                if(this.statePersistence && this.statePersistence.content){
                     this.setOutput(this.statePersistence.content)
                 }
                 this.rebuilding = false
@@ -164,8 +165,10 @@ export default {
             }
         },
         parentOf(instances, id) {
-            const inst = instances[String(id)][this.parentField]
-            return inst && (String(inst[0]) in instances) ? String(inst[0]) : undefined
+            const instance = instances[String(id)]
+            if (!instance) return undefined
+            const parent = instance[this.parentField]
+            return parent && (String(parent[0]) in instances) ? String(parent[0]) : undefined
         },
         pathToRoot(instances, id) {
             const path = [String(id)]
@@ -198,6 +201,8 @@ export default {
             if (this.statePersistence) this.statePersistence.content = ""
         },
         setOutput(id) {
+            // The id can come from the url hash (state persistence) and not be in the current results
+            if (!this.instances || !this.instances[String(id)]) return
             if (this.statePersistence) this.statePersistence.content = id
             this.selectedPath = this.pathToRoot(this.instances, id)
             if (this.instanceFieldName && this.instances[id][this.instanceFieldName]) {
@@ -217,10 +222,10 @@ export default {
             const instances = {}
 
             const pushOrAdd = (k, v) => k in tree ? tree[k].push(v) : tree[k] = [v]
-            const resultIds2 = new Set(this.dashResults.map(r => String(r.id))) 
+            const resultIds = new Set(results.map(r => String(r.id)))
             for (const instance of results) {
                 const parent = instance[this.parentField]
-                if (parent && resultIds2.has(String(parent[0])))
+                if (parent && resultIds.has(String(parent[0])))
                     pushOrAdd(String(parent[0]), String(instance.id))
                 else
                     tops.push(String(instance.id))
@@ -241,6 +246,7 @@ export default {
             const pushOrAdd = (k, v) => k in newTree ? newTree[k].add(v) : newTree[k] = new Set([v])
 
             for (const instance of results) {
+                if (!instances[String(instance.id)]) continue
                 const path = this.pathToRoot(instances, instance.id)
                 newTops.add(path[0])
                 for (let i = 1; i < path.length; i++) {
@@ -262,7 +268,8 @@ export default {
         let h2 = 0x41c6ce57 ^ arr.length;
         for (let i = 0; i < arr.length; i++) {
             const item = arr[i];
-            const s = item.id + '|' + item.parent; // fields that matter
+            const parent = item[this.parentField];
+            const s = item.id + '|' + (Array.isArray(parent) ? parent[0] : parent); // fields that matter
             for (let j = 0; j < s.length; j++) {
             const ch = s.charCodeAt(j);
             h1 = Math.imul(h1 ^ ch, 2654435761);
