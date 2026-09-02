@@ -51,9 +51,9 @@ assert.deepEqual(c1.Board.map(b => b.Component.map(c => c.Component + "/" + c.id
     ["Markdown/9008", "ModalActivator/9009"],
 ])
 
-// normalization: template keys without a matching definition field stay as residues ("noButton",
-// "Style Value", ...) and unfilled customize groups converge to [{}]
-assert.deepEqual(c1.Board[0].Component[1].FilterCustomize, [{ noButton: "", Placeholder: "Filtrar...", FilterCustomize: "Placeholder" }])
+// normalization: template keys without a matching definition field stay as residues ("Style
+// Value" in this fixture's definition) and unfilled customize groups converge to [{}]
+assert.deepEqual(c1.Board[0].Component[1].FilterCustomize, [{ Placeholder: "Filtrar...", FilterCustomize: "Placeholder" }])
 const totals = c1.Board[0].Component[2]
 assert.equal(totals.Line[0].Line, "Tickets")
 assert.equal(totals.Line[0].Value[0]["Style Value"], "")
