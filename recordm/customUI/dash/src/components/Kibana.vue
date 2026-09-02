@@ -25,6 +25,11 @@
             window.addEventListener("message", this.processKibanaEvent);
             this.processKibanaEvent();
         },
+        beforeDestroy() {
+            this.stopped = true // makes the 100ms retry loops below bail out
+            window.removeEventListener("resize", this.updateIFrameStyle);
+            window.removeEventListener("message", this.processKibanaEvent);
+        },
         computed: {
             options()     { return this.component['KibanaCustomize'][0] },
             shareLink()   { return this.component['ShareLink']   || "" },
@@ -42,6 +47,7 @@
         },
         methods: {
             updateIFrameStyle() {
+                if(this.stopped) return
                 if(!this.iFrame || !this.iFrame.contentWindow || !this.iFrame.contentWindow.document.head) {
                     //iFrame do Kibana ainda não está pronta. Voltar a tentar em 100ms
                     setTimeout( () => this.updateIFrameStyle(), 100)
@@ -157,6 +163,7 @@
                 this.$set(this.component.vars, this.outputVar, this.outputFilter)
             },
             updateKibanaQuery() {
+                if(this.stopped) return
                 if(!this.iFrame || !this.iFrame.contentWindow || !this.iFrame.contentWindow.document.head || !this.iFrame.contentWindow.document.getElementsByClassName("kbnTopNavMenu__wrapper").length) {
                     //O Kibana ainda não está pronto. Voltar a tentar em 100ms
                     setTimeout(this.updateKibanaQuery, 100)

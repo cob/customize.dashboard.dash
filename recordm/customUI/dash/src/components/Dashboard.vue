@@ -43,7 +43,7 @@ export default {
         refreshFlag: Number
     },
     data: () => ({
-        activeModal: String
+        activeModal: "" // no modal shown
     }),
     created() {
         this.statePersistence = {}

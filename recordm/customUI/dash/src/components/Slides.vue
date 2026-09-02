@@ -80,7 +80,7 @@ export default {
                 return myArg['SlidesArg'];
             });
             axios.post(concurrent_dir + this.concurrentScript, args).then(res => {
-                this.markdownContent = this.loading_message;
+                this.markdownContent = loading_message;
                 setTimeout(() => {
                     this.$emit('refresh');
                     this.closeModal();
@@ -141,7 +141,7 @@ export default {
     mounted() {
         this.prepareReveal();
     },
-    unmount() {
+    beforeDestroy() {
         this.destroyReveal()
     },
     components: { Waiting2 }

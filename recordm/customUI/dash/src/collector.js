@@ -74,6 +74,9 @@ const DashTemplate = {
     }],
 };
 
+// Keys must be names of FIELDS of the Dashboard_v1 definition — the options of a *Customize
+// multi-select are not fields: they live in the group's own value and the components read them
+// via selectedOptions.
 const ComponentsTemplates = {
     "Mermaid" : {
         "MermaidCustomize" : [{
@@ -135,7 +138,6 @@ const ComponentsTemplates = {
             "LineCustomize": [{
                 "LineClasses": "",
                 "TitleClasses": "",
-                "Behaviour":"",
             }],
             "Value": [{
                 "ValueCustomize": [{
@@ -168,7 +170,6 @@ const ComponentsTemplates = {
     "Filter": {
         "FilterCustomize": [{
             "FilterClasses": "",
-            "noButton":"",
             "Placeholder": ""
         }],
         "OutputVarFilter": "",
@@ -183,7 +184,6 @@ const ComponentsTemplates = {
             "AllowCreateInstances":"",
             "CreateDefinition":"",
             "EventViews":"",
-            "StrictMode":""
         }],
         "Events": [{
             "Definition": "",
@@ -201,9 +201,6 @@ const ComponentsTemplates = {
             "InputVarList": [{}],
             "DefaultView": "",
             "ListClasses" : "",
-            "HideRowSelection,": "",
-            "HideDetailsColumn,": "",
-            "HideColumnsSelector": "",
         }],
         "ListDefinition": "",
         "ListQuery": ""
@@ -237,8 +234,6 @@ const ComponentsTemplates = {
             "InstanceViewerClasses": "",
             "NoInstanceClasses": "",
             "InstanceViewerIdentifier":"",
-            "HideSidenav": "",
-            "StopOverflow": "",
         }],
         "InstanceViewerInstanceId":"",
         "InstanceViewerOutputVar":""

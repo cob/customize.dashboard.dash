@@ -182,9 +182,11 @@
       statePersistence: Object,
     }),
     created() {
+        // cloned: the module-level toolbars are shared by every calendar instance
+        this.defaultToolbar = { ...defaultHeaderToolbar, right: this.eventView.join(",") }
+        this.headerOnlyToolbar = { ...onlyHeaderToolbar, right: this.eventView.join(",") }
         this.calendarOptions.initialView = this.eventView[0]
-        this.calendarOptions.headerToolbar.right = this.eventView.join(",")
-        onlyHeaderToolbar.right = this.calendarOptions.headerToolbar.right
+        this.calendarOptions.headerToolbar = this.defaultToolbar
         // Add custom button to toggle view to calendarOptions
         if (this.headerOnly) {
           this.calendarOptions.customButtons = {
@@ -440,7 +442,7 @@
     },
 
     methods: {
-      isHandlebars(text) { return text.includes("{|{") || text.includes("{${") },
+      isHandlebars(text) { return !!text && (text.includes("{|{") || text.includes("{${")) },
       updateCalendarBasedOnPersistedStateChange(newContent = {}) {
         if(!this.calendarApi) {
           setTimeout(() => this.updateCalendarBasedOnPersistedStateChange(newContent),100)
@@ -618,7 +620,7 @@
             this.listYearSelected = true;
             // for some reason i have yet to uncover, we have to reassign the headerToolbar with a NEW object for the
             // custom buttons to be overriden
-            this.calendarOptions.headerToolbar = {...defaultHeaderToolbar} 
+            this.calendarOptions.headerToolbar = {...this.defaultToolbar}
             this.calendarOptions["customButtons"] = this.getCalendarListNavigationButtons(this);
 
             setupDatePicker();
@@ -627,7 +629,7 @@
               toolbarHeaderLeft.insertBefore(this.datePickerElement, toolbarHeaderLeft.children[2]);
             }
           } else if (this.headerOnly) {
-            this.calendarOptions.headerToolbar = {...onlyHeaderToolbar}          
+            this.calendarOptions.headerToolbar = {...this.headerOnlyToolbar}
             this.calendarOptions["customButtons"] = {...this.getCalendarListNavigationButtons(this)}
             setupDatePicker();
             if(toolbarHeaderCenter && toolbarHeaderCenter.children.length > 0) {
@@ -638,7 +640,7 @@
             this.listYearSelected = false;
             if (this.datePickerElement) this.datePickerElement.remove();
             //this.calendarOptions["customButtons"] = undefined;
-            this.calendarOptions.headerToolbar = defaultHeaderToolbar;
+            this.calendarOptions.headerToolbar = this.defaultToolbar;
           }
         }
       },
@@ -668,7 +670,7 @@
               const endDateField          = esInstance["END DATE FIELD"]
               const descriptionEventField = esInstance["DESCRIPTION FIELD"]
               const stateField            = esInstance["STATE FIELD"]
-              const is_all_day = esInstance["IS ALL DAY"].toLowerCase() === "true"
+              const is_all_day = (esInstance["IS ALL DAY"] || "").toLowerCase() === "true"
               let instance_all_day = is_all_day
 
               const startDate = parseInt(esInstance[startDateField][0], 10)

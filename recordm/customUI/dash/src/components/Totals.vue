@@ -138,7 +138,8 @@ export default {
         },
         updatePersistenceMap(lines) {
             lines.forEach(l => {
-                if (!this.statePersistencesMap[l.filterTotalVarName]) {
+                // only lines with a FilterTotalVarName have state to persist
+                if (l.filterTotalVarName && !this.statePersistencesMap[l.filterTotalVarName]) {
                     this.statePersistencesMap[l.filterTotalVarName] = new ComponentStatePersistence(l.filterTotalVarName, this.activateFromPersistenceChange(l.filterTotalVarName))
                 }
             });

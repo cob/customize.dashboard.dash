@@ -79,7 +79,8 @@
         methods: {
           updatePersistenceMap(lines) {
             lines.forEach(l => {
-              if(!this.statePersistencesMap[l.filterVarName]) {
+              // only lines with a FilterVarName have state to persist
+              if(l.filterVarName && !this.statePersistencesMap[l.filterVarName]) {
                 this.statePersistencesMap[l.filterVarName] = new ComponentStatePersistence(l.filterVarName, this.activateFromPersistenceChange(l.filterVarName))
               }
             });

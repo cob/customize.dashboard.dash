@@ -15,7 +15,7 @@ function getDashName() {
 }
 const initialDashName = getDashName()
 
-window.cobDashAppLoaded = typeof(window.cobDashAppLoaded) !== "undefine" ? window.cobDashAppLoaded : false
+window.cobDashAppLoaded = typeof(window.cobDashAppLoaded) !== "undefined" ? window.cobDashAppLoaded : false
 
 let vueApp
 function loadVueApp(origin) {
@@ -63,7 +63,7 @@ function onHashChange() {
     if (currentDashName !== initialDashName && window.cobDashAppLoaded) {
         if(DEBUG.main) console.log("DASH: MAIN: 9: Leaving the initialDashName=",initialDashName," for currentDashName=",currentDashName,". Destroying the dashboard");
         vueApp.$destroy();
-        cobDashAppLoaded = false
+        window.cobDashAppLoaded = false
     } 
     
     if (currentDashName === initialDashName && !window.cobDashAppLoaded) {
