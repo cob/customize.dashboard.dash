@@ -79,8 +79,7 @@
         methods: {
           updatePersistenceMap(lines) {
             lines.forEach(l => {
-              // lines without a FilterVarName don't persist state (avoids an 'undefined' entry
-              // with its own hashchange listener per menu)
+              // only lines with a FilterVarName have state to persist
               if(l.filterVarName && !this.statePersistencesMap[l.filterVarName]) {
                 this.statePersistencesMap[l.filterVarName] = new ComponentStatePersistence(l.filterVarName, this.activateFromPersistenceChange(l.filterVarName))
               }

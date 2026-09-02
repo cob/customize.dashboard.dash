@@ -26,9 +26,7 @@
             this.processKibanaEvent();
         },
         beforeDestroy() {
-            // stops the retry loops below and detaches the window listeners (they kept reacting
-            // to Kibana events and resizes of dashboards no longer displayed)
-            this.stopped = true
+            this.stopped = true // makes the 100ms retry loops below bail out
             window.removeEventListener("resize", this.updateIFrameStyle);
             window.removeEventListener("message", this.processKibanaEvent);
         },

@@ -138,8 +138,7 @@ export default {
         },
         updatePersistenceMap(lines) {
             lines.forEach(l => {
-                // lines without a FilterTotalVarName don't persist state (avoids an 'undefined'
-                // entry with its own hashchange listener per component)
+                // only lines with a FilterTotalVarName have state to persist
                 if (l.filterTotalVarName && !this.statePersistencesMap[l.filterTotalVarName]) {
                     this.statePersistencesMap[l.filterTotalVarName] = new ComponentStatePersistence(l.filterTotalVarName, this.activateFromPersistenceChange(l.filterTotalVarName))
                 }

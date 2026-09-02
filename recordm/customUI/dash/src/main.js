@@ -63,8 +63,6 @@ function onHashChange() {
     if (currentDashName !== initialDashName && window.cobDashAppLoaded) {
         if(DEBUG.main) console.log("DASH: MAIN: 9: Leaving the initialDashName=",initialDashName," for currentDashName=",currentDashName,". Destroying the dashboard");
         vueApp.$destroy();
-        // 'window.' matters: without it this line throws in strict mode (modules) and the flag
-        // stayed true, so the app was never recreated when navigating back to this dashboard
         window.cobDashAppLoaded = false
     } 
     

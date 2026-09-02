@@ -182,8 +182,7 @@
       statePersistence: Object,
     }),
     created() {
-        // per-instance copies: mutating the module-level toolbars leaked one calendar's
-        // EventViews into every other calendar of the session
+        // cloned: the module-level toolbars are shared by every calendar instance
         this.defaultToolbar = { ...defaultHeaderToolbar, right: this.eventView.join(",") }
         this.headerOnlyToolbar = { ...onlyHeaderToolbar, right: this.eventView.join(",") }
         this.calendarOptions.initialView = this.eventView[0]
@@ -671,7 +670,9 @@
               const endDateField          = esInstance["END DATE FIELD"]
               const descriptionEventField = esInstance["DESCRIPTION FIELD"]
               const stateField            = esInstance["STATE FIELD"]
-              const is_all_day = (esInstance["IS ALL DAY"] || "").toLowerCase() === "true" // AllDay is optional: unset means false
+              // "IS ALL DAY" carries the event source's AllDay field (copied in allResults);
+              // the field is optional and unset means not all-day
+              const is_all_day = (esInstance["IS ALL DAY"] || "").toLowerCase() === "true"
               let instance_all_day = is_all_day
 
               const startDate = parseInt(esInstance[startDateField][0], 10)

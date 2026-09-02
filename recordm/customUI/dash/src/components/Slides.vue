@@ -142,7 +142,6 @@ export default {
         this.prepareReveal();
     },
     beforeDestroy() {
-        // ('unmount' is a Vue 3 name: in Vue 2 it never ran and the Reveal deck leaked)
         this.destroyReveal()
     },
     components: { Waiting2 }

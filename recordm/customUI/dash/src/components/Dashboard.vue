@@ -43,7 +43,7 @@ export default {
         refreshFlag: Number
     },
     data: () => ({
-        activeModal: "" // no modal shown (was the String constructor by mistake, which only worked because it compares equal to no board name)
+        activeModal: "" // no modal shown
     }),
     created() {
         this.statePersistence = {}

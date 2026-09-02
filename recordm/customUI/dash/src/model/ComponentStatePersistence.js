@@ -42,7 +42,6 @@ class ComponentStatePersistence {
             let statesInHash = rest.length > 1 ? JSON.parse(decodeURIComponent(rest.join(":")).replaceAll("'","\"")) : {}
             return statesInHash[this._id]
         } catch (e) {
-            // ('rest' is scoped to the try block: referencing it here threw its own ReferenceError)
             if(DEBUG.state) console.error("DASH: STATE: invalid parse of hash=", window.location.hash)
             return undefined
         }

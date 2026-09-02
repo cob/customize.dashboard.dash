@@ -159,9 +159,8 @@ cob.custom.customize.push(function (core, utils, _ui) {
          }})
       }
 
-      // Register the window listeners only once: this customizeMenu callback runs on every menu
-      // rebuild and re-registering accumulated duplicate handlers (each cobRefreshMenu then fired
-      // N forced updates and, while solutionDashInfo wasn't ready, N re-dispatches each)
+      // this customizeMenu callback runs on every menu rebuild: register the window listeners
+      // only once or the handlers accumulate
       if (!window.cobMenuListenersRegistered) {
          window.cobMenuListenersRegistered = true
          window.addEventListener("cobRefreshMenu", () => {
