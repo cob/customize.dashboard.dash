@@ -670,8 +670,6 @@
               const endDateField          = esInstance["END DATE FIELD"]
               const descriptionEventField = esInstance["DESCRIPTION FIELD"]
               const stateField            = esInstance["STATE FIELD"]
-              // "IS ALL DAY" carries the event source's AllDay field (copied in allResults);
-              // the field is optional and unset means not all-day
               const is_all_day = (esInstance["IS ALL DAY"] || "").toLowerCase() === "true"
               let instance_all_day = is_all_day
 
