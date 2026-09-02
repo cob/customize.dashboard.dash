@@ -74,10 +74,9 @@ const DashTemplate = {
     }],
 };
 
-// Keys must be names of FIELDS of the Dashboard_v1 definition. The options of a *Customize
-// multi-select (e.g. "noButton", "HideRowSelection") are NOT fields: they live in the group's own
-// value and the components read them via selectedOptions — listing one here only creates a
-// permanent "" residue in every parsed dashboard and misleads the validator.
+// Keys must be names of FIELDS of the Dashboard_v1 definition — the options of a *Customize
+// multi-select are not fields: they live in the group's own value and the components read them
+// via selectedOptions.
 const ComponentsTemplates = {
     "Mermaid" : {
         "MermaidCustomize" : [{
