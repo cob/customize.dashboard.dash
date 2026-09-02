@@ -15,7 +15,7 @@ function getDashName() {
 }
 const initialDashName = getDashName()
 
-window.cobDashAppLoaded = typeof(window.cobDashAppLoaded) !== "undefine" ? window.cobDashAppLoaded : false
+window.cobDashAppLoaded = typeof(window.cobDashAppLoaded) !== "undefined" ? window.cobDashAppLoaded : false
 
 let vueApp
 function loadVueApp(origin) {
@@ -63,7 +63,9 @@ function onHashChange() {
     if (currentDashName !== initialDashName && window.cobDashAppLoaded) {
         if(DEBUG.main) console.log("DASH: MAIN: 9: Leaving the initialDashName=",initialDashName," for currentDashName=",currentDashName,". Destroying the dashboard");
         vueApp.$destroy();
-        cobDashAppLoaded = false
+        // 'window.' matters: without it this line throws in strict mode (modules) and the flag
+        // stayed true, so the app was never recreated when navigating back to this dashboard
+        window.cobDashAppLoaded = false
     } 
     
     if (currentDashName === initialDashName && !window.cobDashAppLoaded) {
