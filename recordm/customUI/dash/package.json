@@ -32,13 +32,13 @@
     "tesseract.js": "^5.1.1",
     "tippy.js": "^6.3.7",
     "traverse": "^0.6.7",
-    "vue": "^2.6.11",
+    "vue": "^3.0.0",
     "vue-cropperjs": "^4.2.0",
     "yaml": "2.9.0"
   },
   "devDependencies": {
-    "@vue/cli-service": "~4.5.0",
-    "esbuild-loader": "^2.21.0",
+    "@vue/cli-service": "~5.0.9",
+    "esbuild-loader": "^4.5.0",
     "vue-template-compiler": "^2.6.11"
   }
 }
