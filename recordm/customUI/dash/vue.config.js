@@ -44,7 +44,17 @@ module.exports = {
   chainWebpack: config => {
     // para não termos chunks
     config.optimization.delete('splitChunks');
-    
+
+    // O webpack 4 (parser acorn 6) não suporta a sintaxe ES2020 ('??') presente nos bundles
+    // minificados do @cob/rest-api-wrapper >= 2.9.2. Usamos por isso o source do package
+    // (tal como já acontece com o @cob/dashboard-info, cujo main aponta para src/) e
+    // substituímos por um módulo vazio as dependências de cookies que só são usadas em Node
+    // — o mesmo que os próprios bundles do rest-api-wrapper fazem para browser.
+    config.resolve.alias
+      .set('@cob/rest-api-wrapper$', '@cob/rest-api-wrapper/src/index.js')
+      .set('tough-cookie$', __dirname + '/tools/empty-module.js')
+      .set('axios-cookiejar-support$', __dirname + '/tools/empty-module.js');
+
     // fazemos assim em vez de usar o pages, que confunde o publicPath
     config
       .plugin('html')
