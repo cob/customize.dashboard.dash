@@ -757,9 +757,31 @@
             throw e
           }
 
-          for( let i = dashboard.boardQueries.length; i > 0 ; i-- ) {
-            let dashInfoItem = dashboard.boardQueries.pop()
-            dashInfoItem.stopUpdates()
+          // Move all boardQueries from dashboard.boardQueries into a temporary oldBoardQueries array.
+          // Each query built below goes through getActiveBoardQuery, which reuses the equivalent query
+          // from the previous build (same cacheId) instead of starting a new one. The ones left unused
+          // are stopped at the end of this function (or by the next build, if this one throws).
+          if (dashboard.oldBoardQueries) dashboard.oldBoardQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
+          const oldBoardQueries = dashboard.boardQueries.splice(0)
+          dashboard.oldBoardQueries = oldBoardQueries
+
+          // Register a query of a board component so that it can be stopped/reused on the next build.
+          // IMPORTANT: every query created for a component MUST go through here, otherwise nothing ever
+          // stops it and each rebuild of the dashboard leaves behind one more self-rescheduling poller.
+          function getActiveBoardQuery(dashInfoItem) {
+            const existingIndex = oldBoardQueries.findIndex(
+              item => item.cacheId === dashInfoItem.cacheId
+            );
+
+            if (existingIndex !== -1) {
+              dashInfoItem.stopUpdates();
+              const preExistingDashInfoItem = oldBoardQueries.splice(existingIndex, 1)[0];
+              dashboard.boardQueries.push(preExistingDashInfoItem);
+              return preExistingDashInfoItem;
+            }
+
+            dashboard.boardQueries.push(dashInfoItem);
+            return dashInfoItem;
           }
 
           // Add extra info to structure
@@ -772,7 +794,7 @@
                 c.Text.forEach(t => {
                   // If Attention is configured for this menu line then add attention status as user check
                   if (t["TextCustomize"][0]["TextAttention"]) {
-                    t["TextCustomize"][0].AttentionInfo = DashFunctions.instancesList("Dashboard-Attention", "name.raw:" + t["TextCustomize"][0]["TextAttention"], 1, 0, "", "", { validity: 300 })
+                    t["TextCustomize"][0].AttentionInfo = getActiveBoardQuery(DashFunctions.instancesList("Dashboard-Attention", "name.raw:" + t["TextCustomize"][0]["TextAttention"], 1, 0, "", "", { validity: 300 }))
                   }
                 })
               } else if (c.Component === "Totals") {
@@ -784,7 +806,7 @@
                     }
                     // If Attention is configured for this value line then add attention status as user check
                     if (v["ValueCustomize"][0]["ValueAttention"]) {
-                      v["ValueCustomize"][0].AttentionInfo = DashFunctions.instancesList("Dashboard-Attention", "name.raw:" + v["ValueCustomize"][0]["ValueAttention"], 1, 0, "", "", { validity: 300 })
+                      v["ValueCustomize"][0].AttentionInfo = getActiveBoardQuery(DashFunctions.instancesList("Dashboard-Attention", "name.raw:" + v["ValueCustomize"][0]["ValueAttention"], 1, 0, "", "", { validity: 300 }))
                     }
 
                     if (v.Value === 'Label') {
@@ -793,25 +815,29 @@
                       v.dash_info = { value: v.Arg[1].Arg, href: v.Arg[0].Arg, state: "ready", isLink: true }
                     } else {
                       // add dash-info values in Totals
-                      v.dash_info = DashFunctions[v.Value].apply(this, v['Arg'].map(a => a['Arg'])) // Return DashInfo, which is used by the component
-                      dashboard.boardQueries.push(v.dash_info)
+                      v.dash_info = getActiveBoardQuery(DashFunctions[v.Value].apply(this, v['Arg'].map(a => a['Arg']))) // Return DashInfo, which is used by the component
                     }
                     return v
                   })
                 }
               } else if (c.Component == "Hierarchy") {
                 let sortOpt = c.SortFieldName ? c.SortFieldName: ""
-                c.dash_info = DashFunctions.instancesList(c.DefinitionNameHierarchy, c.FilterHierarchy, 1000, 0, sortOpt, "true", { validity: 10 } )
+                c.dash_info = getActiveBoardQuery(DashFunctions.instancesList(c.DefinitionNameHierarchy, c.FilterHierarchy, 1000, 0, sortOpt, "true", { validity: 10 } ))
                 
                 c.dash_info_inputs = { value: [], state: "ready" }
                 if (c.InputVarHierarchy && c.vars[c.InputVarHierarchy]) {
                   let inputQuery = c.vars[c.InputVarHierarchy]
-                  c.dash_info_inputs = DashFunctions.instancesList(c.DefinitionNameHierarchy, c.FilterHierarchy + " " + inputQuery, 1000, 0, sortOpt, "true", { validity: 10 } )
+                  c.dash_info_inputs = getActiveBoardQuery(DashFunctions.instancesList(c.DefinitionNameHierarchy, c.FilterHierarchy + " " + inputQuery, 1000, 0, sortOpt, "true", { validity: 10 } ))
                 }
                 
               }
             }
           }
+
+          // Clean up oldBoardQueries - stop the queries of the previous build that were not reused
+          oldBoardQueries.forEach(dashInfoItem => dashInfoItem.stopUpdates())
+          dashboard.oldBoardQueries = []
+
           return dash
         }
 
