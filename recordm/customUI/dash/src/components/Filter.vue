@@ -33,10 +33,9 @@
         mounted() {
             window.addEventListener('resize', this.resize);
         },
-        unmount() {
-            window.removeEventListener('resize', this.resize);
-        },
         beforeDestroy() {
+            // ('unmount' is a Vue 3 name: in Vue 2 it never ran and the listener leaked)
+            window.removeEventListener('resize', this.resize);
             this.statePersistence.stop()
         },
         computed: {
