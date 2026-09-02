@@ -81,7 +81,7 @@
         let dashboardName = this.dashboardName.startsWith(CHOOSERFLAG) ? this.dashboardName.substring(CHOOSERFLAG.length) : this.dashboardName;
         const accessQuery = this.userInfo.isSystem ? "" : " (groupaccess.raw:(" + this.userInfo.groupsQuery + ") OR (-groupaccess:*) )"
         const nameQuery = "( solution_menu.raw:\"" + dashboardName + "\"" + " OR name.raw:\"" + dashboardName + "\" ) "
-        const query =  "(" + nameQuery + accessQuery + ")" + ( this.dashboardName.startsWith(CHOOSERFLAG) ? "" : " OR id:\"" + dashboardName + "\"" ) 
+        const query =  "(" + nameQuery + accessQuery + ")" + ( this.dashboardName.startsWith(CHOOSERFLAG) ? "" : " OR id:\"" + dashboardName + "\"" )
         if(DEBUG.app) console.log("DASH:  APP: 1.4: dashboardQuery: username='", this.userInfo.username,"'. urlDashPart=", this.urlDashPart, " query=", query)
         return query
       },
@@ -110,12 +110,12 @@
         return (this.dashboardsCached[this.activeDashKey])
       },
 
-      
+
       refreshClasses() {
         let defaultClasses = "fixed top-16 left-1"
         if (cob.app.getSettings().mode() === "naked") {
           return "fixed left-[5px] top-[5px] "
-        } 
+        }
         return defaultClasses
       }
     },
@@ -331,11 +331,11 @@
           activeDragDropInfo.draggedItem.classList.remove("dragging")
           if (activeDragDropInfo.droppedOnZone != true) {
             activeDragDropInfo.putDraggedItemOn(activeDragDropInfo.srcZone, activeDragDropInfo.srcZonePoint)
-          }        
+          }
         }
 
         activeDragDropInfo.handleDragEnter = function (e) {
-          if (e && e.target) { 
+          if (e && e.target) {
             if(e.target.classList && e.target.classList.contains("dropZone")) {
               if(e.target.classList.contains("dropZoneHighlight") && activeDragDropInfo.draggedItem) {
                 e.target.classList.add("bg-stone-400")
@@ -402,7 +402,7 @@
               dragItem_data_attributes, dragItem_class_data_attributes,
               dropZone_html_attributes, surroundingContext
             )
-            
+
             // Get concurrent script name
             let concur_script = activeDash.dashboardParsed.DashboardCustomize[0].DragDropConcurrent
             if (concur_script) {
@@ -418,7 +418,7 @@
                   activeDragDropInfo.draggedItem.classList.remove("dragging")
                   activeDragDropInfo.droppedOnZone = true;
 
-                  
+
                   // UpdateOnDrop is time in seconds - needs to be converted to ms
                   let updateOnDrop = activeDash.dashboardParsed.DashboardCustomize[0].UpdateOnDrop
 
@@ -433,7 +433,7 @@
                       }, delay * 1000)
                     }
                   }
-                  
+
                 })
                 .catch(error => {
                   // Concurrent Error
@@ -462,7 +462,7 @@
           // <a> tags w/ hrefs are draggable by default
           if(dragItem.nodeName != "A" || (dragItem.nodeName == "A" && !dragItem.href)) {
             dragItem.setAttribute('draggable', true);
-          } 
+          }
           dragItem.addEventListener("dragstart", activeDragDropInfo.handleDragStart);
           dragItem.addEventListener("dragend", activeDragDropInfo.handleDragEnd);
         }
@@ -617,7 +617,7 @@
                 dashboard.contextQueries.push(preExistingDashInfoItem);
                 return preExistingDashInfoItem;
               }
-              
+
               dashboard.contextQueries.push(dashInfoItem);
               return dashInfoItem;
             }
@@ -626,9 +626,9 @@
             function encodeEscapedCharacters(str) {
             // Due to eval and JSON.parses, the escapes specified in the context that are not used right away by functions
             // are processed, and by the time they are used in the Totals and other components, they've been processed. This makes it
-            // impossible to properly escape escapes for example.  
+            // impossible to properly escape escapes for example.
             // Ideally, what we write in the context should be treated as raw, so that the components receive exactly what
-            // we wrote. To achieve this, we encode the escaped character (to "protect" it) and then decode it right before use. 
+            // we wrote. To achieve this, we encode the escaped character (to "protect" it) and then decode it right before use.
               const encodeEscape = (match) => encodeURIComponent(`${match[1]}`)
               return str.replaceAll(/\\(.)/g, encodeEscape)
             }
@@ -675,11 +675,11 @@
               const dashInfoItem = DashFunctions.httpPost(...decodedArgs);
               return getActiveDashboardContextQuery(dashInfoItem);
             }
-  
+
             // The &quot; is used to decode HTML encoded double quotes, placed by Handlebars. It is not the only case and not necessary
             // But was added in early stages of development and therefore can't be removed (at the risk of breaking dashboards).
-            const replacedCtx = specifiedContextParsed && specifiedContextParsed.replace ? encodeEscapedCharacters(specifiedContextParsed.replace(/&quot;/g, "\"")) : "{}" 
-            expression = `specifiedContext= ${replacedCtx}`; 
+            const replacedCtx = specifiedContextParsed && specifiedContextParsed.replace ? encodeEscapedCharacters(specifiedContextParsed.replace(/&quot;/g, "\"")) : "{}"
+            expression = `specifiedContext= ${replacedCtx}`;
             eval(expression);
 
             // Clean up oldContextQueries - clean references and stop updates
@@ -697,14 +697,14 @@
           const keys = Object.keys(context)
           for (const index in keys) {
             const key = keys[index]
-            if (dashboard.dashboardContext && dashboard.dashboardContext[key] 
+            if (dashboard.dashboardContext && dashboard.dashboardContext[key]
               && (
-                JSON.stringify(context[key]) == JSON.stringify(dashboard.dashboardContext[key]) 
+                JSON.stringify(context[key]) == JSON.stringify(dashboard.dashboardContext[key])
                 ||
-                ( 
-                  JSON.stringify(context[key].getterArgs) == JSON.stringify(dashboard.dashboardContext[key].getterArgs) 
-                  && context[key].currentState 
-                  && context[key].currentState != "cached" 
+                (
+                  JSON.stringify(context[key].getterArgs) == JSON.stringify(dashboard.dashboardContext[key].getterArgs)
+                  && context[key].currentState
+                  && context[key].currentState != "cached"
                   && context[key].currentState != "ready"
                 )
               )
@@ -800,7 +800,7 @@
               } else if (c.Component === "Totals") {
                 for (let l of c.Line) {
                   l.Value = l.Value.map(v => {
-                  v.Arg.forEach( arg => arg.Arg = typeof arg.Arg == 'string' ? decodeURIComponent(arg.Arg) : arg.Arg ) 
+                  v.Arg.forEach( arg => arg.Arg = typeof arg.Arg == 'string' ? decodeURIComponent(arg.Arg) : arg.Arg )
                     if (v.Arg[2] && v.Arg[2].Arg.startsWith("{")) {
                       eval("v.Arg[2]['Arg']="+ v.Arg[2]['Arg'])
                     }
@@ -822,14 +822,14 @@
                 }
               } else if (c.Component == "Hierarchy") {
                 let sortOpt = c.SortFieldName ? c.SortFieldName: ""
-                c.dash_info = getActiveBoardQuery(DashFunctions.instancesList(c.DefinitionNameHierarchy, c.FilterHierarchy, 1000, 0, sortOpt, "true", { validity: 10 } ))
-                
+                c.dash_info = DashFunctions.instancesList(c.DefinitionNameHierarchy, c.FilterHierarchy, 1000, 0, sortOpt, "true", { validity: 300 } )
+
                 c.dash_info_inputs = { value: [], state: "ready" }
                 if (c.InputVarHierarchy && c.vars[c.InputVarHierarchy]) {
                   let inputQuery = c.vars[c.InputVarHierarchy]
-                  c.dash_info_inputs = getActiveBoardQuery(DashFunctions.instancesList(c.DefinitionNameHierarchy, c.FilterHierarchy + " " + inputQuery, 1000, 0, sortOpt, "true", { validity: 10 } ))
+                  c.dash_info_inputs = DashFunctions.instancesList(c.DefinitionNameHierarchy, c.FilterHierarchy + " " + inputQuery, 1000, 0, sortOpt, "true", { validity: 300 } )
                 }
-                
+
               }
             }
           }
