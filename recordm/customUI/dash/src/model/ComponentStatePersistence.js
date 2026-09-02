@@ -42,13 +42,15 @@ class ComponentStatePersistence {
             let statesInHash = rest.length > 1 ? JSON.parse(decodeURIComponent(rest.join(":")).replaceAll("'","\"")) : {}
             return statesInHash[this._id]
         } catch (e) {
-            if(DEBUG.state) console.error("DASH: STATE: invalid parse of hash=", decodeURIComponent(rest.join(":")))
+            // ('rest' is scoped to the try block: referencing it here threw its own ReferenceError)
+            if(DEBUG.state) console.error("DASH: STATE: invalid parse of hash=", window.location.hash)
             return undefined
         }
     }
 
     _setStateInHash() {
         const hashParts = window.location.hash.split("/")
+        if (hashParts[2] === undefined) return // not in a dash url: nothing to persist (and .split would throw)
         const [name, ...rest] = hashParts[2].split(":")
         try {
             let statesInHash = rest.length > 1 ? JSON.parse(decodeURIComponent(rest.join(":"))) : {}

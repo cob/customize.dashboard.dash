@@ -115,7 +115,8 @@ export default {
         this.statePersistence = new ComponentStatePersistence(this.component.id, this.activateFromPersistentChange)
     },
     beforeDestroy() {
-        this.statePersistence.stop()
+        // created() is async: destruction can happen before statePersistence is assigned
+        if (this.statePersistence) this.statePersistence.stop()
     },
     watch: {
         async input() {

@@ -159,17 +159,23 @@ cob.custom.customize.push(function (core, utils, _ui) {
          }})
       }
 
-      window.addEventListener("cobRefreshMenu", () => {
-         if (solutionDashInfo && typeof solutionDashInfo.update === 'function') {
-            solutionDashInfo.update({force:true})
-         } else {
-            setTimeout(() => window.dispatchEvent(new Event("cobRefreshMenu")), 200)
-         }
-      }) // event listener for requests from the dash app (when lastDash and lastDashSolution changes)
-      window.addEventListener('click', function(e) {   // event listener that closes submenus when there's clicks outside that submenu
-         var subMenus = [...document.querySelectorAll('.cob-submenu')];
-         subMenus.forEach(sm => { if (!sm.contains(e.target)) sm.removeAttribute('open') });
-      })
+      // Register the window listeners only once: this customizeMenu callback runs on every menu
+      // rebuild and re-registering accumulated duplicate handlers (each cobRefreshMenu then fired
+      // N forced updates and, while solutionDashInfo wasn't ready, N re-dispatches each)
+      if (!window.cobMenuListenersRegistered) {
+         window.cobMenuListenersRegistered = true
+         window.addEventListener("cobRefreshMenu", () => {
+            if (solutionDashInfo && typeof solutionDashInfo.update === 'function') {
+               solutionDashInfo.update({force:true})
+            } else {
+               setTimeout(() => window.dispatchEvent(new Event("cobRefreshMenu")), 200)
+            }
+         }) // event listener for requests from the dash app (when lastDash and lastDashSolution changes)
+         window.addEventListener('click', function(e) {   // event listener that closes submenus when there's clicks outside that submenu
+            var subMenus = [...document.querySelectorAll('.cob-submenu')];
+            subMenus.forEach(sm => { if (!sm.contains(e.target)) sm.removeAttribute('open') });
+         })
+      }
       // event handlers for menus 
       window.cobMenuMouseEnter = function(e) {
          let subMenus = document.querySelectorAll(".cob-submenu");
@@ -212,9 +218,9 @@ cob.custom.customize.push(function (core, utils, _ui) {
        }
 
       const activeModule = core.getActiveModule()
-      if(activeModule) {
-         const instance = activeModule && activeModule.instance
-         const description = instance && instance.getDescription && instance.getDescription()
+      if(activeModule && activeModule.instance) {
+         const instance = activeModule.instance
+         const description = instance.getDescription && instance.getDescription()
 
          let solutionSigla
          if(instance.name == "domains"
@@ -227,7 +233,7 @@ cob.custom.customize.push(function (core, utils, _ui) {
             solutionSigla = extractFirstAtSymbol(legacyAwareDescription)
 
          } else if(instance.name == "search-definition" || instance.name == "instance.detail") {
-            solutionSigla = extractFirstAtSymbol(description.definition && description.definition.description)
+            solutionSigla = extractFirstAtSymbol(description && description.definition && description.definition.description)
 
          } else if(instance.name == "custom-resource") {
             let dashboardName = location.hash.substring("#/cob.custom-resource/".length).split("/")[0].split(":")[0]

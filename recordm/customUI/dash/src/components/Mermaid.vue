@@ -37,7 +37,8 @@ export default {
                     embedMermaid(this.bprocess, def, fld, this.$refs.mermaid, {linkClasses : lics, mermaidClasses: mcs})
                     .then( () => this.rendered = true )
                 })
-            });
+            })
+            .catch(e => console.error("DASH: Mermaid: error loading process " + this.bprocess, e));
     },
     components: { Waiting2 }
 } 
