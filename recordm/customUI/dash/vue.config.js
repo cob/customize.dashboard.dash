@@ -45,15 +45,25 @@ module.exports = {
     // para não termos chunks
     config.optimization.delete('splitChunks');
 
-    // O webpack 4 (parser acorn 6) não suporta a sintaxe ES2020 ('??') presente nos bundles
-    // minificados do @cob/rest-api-wrapper >= 2.9.2. Usamos por isso o source do package
-    // (tal como já acontece com o @cob/dashboard-info, cujo main aponta para src/) e
-    // substituímos por um módulo vazio as dependências de cookies que só são usadas em Node
-    // — o mesmo que os próprios bundles do rest-api-wrapper fazem para browser.
+    // O webpack 4 (parser acorn 6) não suporta sintaxe ES2020 ('??', '?.'), usada nos
+    // packages @cob (nos bundles minificados do rest-api-wrapper >= 2.9.2 e no source do
+    // dashboard-info >= 3.14.0). Usamos por isso o source do rest-api-wrapper (tal como já
+    // acontece com o dashboard-info, cujo main aponta para src/), substituímos por um módulo
+    // vazio as dependências de cookies que só são usadas em Node — o mesmo que os próprios
+    // bundles do rest-api-wrapper fazem para browser — e transpilamos os sources @cob para
+    // ES2019 com o esbuild-loader (a última versão compatível com webpack 4 é a 2.x).
     config.resolve.alias
       .set('@cob/rest-api-wrapper$', '@cob/rest-api-wrapper/src/index.js')
       .set('tough-cookie$', __dirname + '/tools/empty-module.js')
       .set('axios-cookiejar-support$', __dirname + '/tools/empty-module.js');
+
+    config.module
+      .rule('cob-packages-es2019')
+      .test(/\.js$/)
+      .include.add(/node_modules[\\/]@cob[\\/]/).end()
+      .use('esbuild-loader')
+      .loader('esbuild-loader')
+      .options({ target: 'es2019' });
 
     // fazemos assim em vez de usar o pages, que confunde o publicPath
     config
