@@ -5,13 +5,13 @@
 
     <div>
       <div v-if="!listYearSelected && !headerOnly" class='mb-4 text-center text-4xl'>{{ monthTitle }} {{ yearTitle }}</div>
-      <FullCalendar ref='fullCalendar' :options='calendarOptions'> 
+      <FullCalendar ref='fullCalendar' :options='calendarOptions'>
         <template #eventContent='arg' v-if="usesHandlebars">
           <div class="overflow-x-hidden w-full" v-html="arg.event.title" v-if="arg.event.extendedProps.useCustom"/>
           <CalendarDayEvent :event="arg" :color="arg.backgroundColor" v-else/>
         </template>
       </FullCalendar>
-    </div> 
+    </div>
   </div>
 </template>
 
@@ -52,7 +52,7 @@
   function getInputTypeOfDate(date){
     let monthDay = date.getDate() < 10 ? `0${date.getDate()}` :  date.getDate()
     let month = date.getMonth()+1 < 10 ? `0${date.getMonth()+1}` :  date.getMonth()+1
-    return `${date.getFullYear()}-${month}-${monthDay}` 
+    return `${date.getFullYear()}-${month}-${monthDay}`
   }
 
   function createDatePickerElement(date1, date2, singleDate = false) {
@@ -62,7 +62,7 @@
     if(!date1){
       date1 = new Date(date2.getFullYear()-1,date2.getMonth(),date2.getDate())
     }
-    
+
     let strDate1 = getInputTypeOfDate(date1)
     let strDate2 = getInputTypeOfDate(date2)
 
@@ -108,9 +108,9 @@
   function isDatePickerSingleMode(datePickerElement) {
     return datePickerElement && !datePickerElement.querySelector('span')
   }
- 
+
   export default {
-      
+
     components: {
       FullCalendar,
       Waiting,
@@ -222,7 +222,7 @@
       this.calendarApi = calendarApi
       this.initialDate = calendarApi.getDate()
 
-      this.handleViewType()      
+      this.handleViewType()
       // Hide calendar if we're in header only mode
       if(this.headerOnly) {
         this.calendarApi.el.querySelector(".fc-view-harness").classList.toggle("hidden")
@@ -238,7 +238,7 @@
 
       calendarApi.setOption('eventDidMount', (arg) => {
         if (arg.event.extendedProps.hasBG){
-            // we don't put the background on saturdays and sundays as this 
+            // we don't put the background on saturdays and sundays as this
             // feture was originally made to represent holidays
             $(arg.el).parents(":not(.fc-day-sat,.fc-day-sun) > .fc-daygrid-day-frame")
                 .css("background-color", arg.event.backgroundColor)
@@ -321,7 +321,7 @@
 
       queries() {
         let queries = []
-        
+
         if (this.dateRange) { // Only calculate queries after having a dateRange set by the calendar
           let startDate = this.dateRange[0].getTime()
           let endDate = this.dateRange[1].getTime()
@@ -336,9 +336,9 @@
               start.setSeconds(0)
             }
             // last day of the month
-            let end = new Date(start) 
+            let end = new Date(start)
             end.setMonth( start.getMonth() + 1)
-            end.setDate(0) 
+            end.setDate(0)
             end.setHours(23)
             end.setMinutes(59)
             end.setSeconds(59)
@@ -350,8 +350,8 @@
           //   startDate = new Date(this.calendarApi.getDate()).getTime()
           //   endDate = new Date(this.calendarApi.getDate().getFullYear(),this.calendarApi.getDate().getMonth()+1,1).getTime()
           // }
-          
-          for(let i in this.eventSources) {  
+
+          for(let i in this.eventSources) {
             // Calculate date range query part
             let startField = toEsFieldName(this.eventSources[i]['DateStartEventField'])
             let endField   = toEsFieldName(this.eventSources[i]['DateEndEventField'])
@@ -421,11 +421,11 @@
           if( i < this.rmEventSources.length ) {
             this.rmEventSources[i].changeArgs({query: newQueries[i]})
           } else {
-            this.rmEventSources.push( instancesList( this.eventSources[i]['Definition'], newQueries[i], 800, 0, "", {validity: 60}) )              
+            this.rmEventSources.push( instancesList( this.eventSources[i]['Definition'], newQueries[i], 800, 0, "", "", {validity: 300}) )
           }
         }
       },
-      
+
       allResults: function(esInstances) {
         const newCalendarEvents = this.buildCalendarEvents(esInstances)
         const calendarApi = this.calendarApi
@@ -466,7 +466,7 @@
         }
 
         /**
-         * It decreases (previousDateButtonClicked = false) or increases (previousDateButtonClicked = true) 
+         * It decreases (previousDateButtonClicked = false) or increases (previousDateButtonClicked = true)
          * in both the previousDate and the nextDate mini-calendar the amount of days between them.
          * @param {*} previousDateButtonClicked true | false
          */
@@ -495,7 +495,7 @@
 
           prevDate = new Date(previousDateElement.value)
           nextDate = new Date(nextDateElement.value)
-          
+
           let diff = nextDate.getTime() - prevDate.getTime()
 
           if(diff == 0){
@@ -511,7 +511,7 @@
 
           updateNavigationCalendarDates(prevDate,nextDate)
         }
-    
+
         return {
           prev: {
             text: 'prev',
@@ -657,11 +657,11 @@
       isSingleDay(start, end) {
           const start_date = new Date(start);
           start_date.setDate(start_date.getDate() + 1)
-          const end_date = new Date(end); 
+          const end_date = new Date(end);
           return start_date.getDate() == end_date.getDate() &&
                  start_date.getMonth() == end_date.getMonth() &&
                  start_date.getFullYear() == end_date.getFullYear()
-        },         
+        },
 
       buildCalendarEvents(instances) {
         return instances
@@ -716,7 +716,7 @@
                 color = DEFAULT_EVENT_COLOR
               }
 
-            let actualtitle  
+            let actualtitle
             const isHandles = esInstance["DESC IS HANDLEBARS"]
             if(isHandles ) {
               const convertedToHandlebars = descriptionEventField.replaceAll("{|{","{{").replaceAll("}|}","}}").replaceAll("{${","{{{").replaceAll("}$}","}}}")
@@ -734,11 +734,11 @@
             fc_end_date = endDate
 
             // Get the start and end date, convert them to UTC and use the UTC dates
-            // to render the events in the calendar. 
+            // to render the events in the calendar.
             if (instance_all_day) {
               let start_date = new Date(startDate);
               let end_date = new Date(endDate);
-              fc_start_date = new Date(Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate())) 
+              fc_start_date = new Date(Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate()))
               fc_end_date = new Date(Date.UTC(end_date.getFullYear(), end_date.getMonth(), end_date.getDate()+1) )
             }
 
@@ -747,9 +747,9 @@
                 title: actualtitle,
                 start: fc_start_date,
                 end: fc_end_date,
-                allDay: instance_all_day, 
+                allDay: instance_all_day,
                 backgroundColor: isHandles  ? "transparent" : color,
-                borderColor: isHandles ? "transparent" : color, 
+                borderColor: isHandles ? "transparent" : color,
                 // from: https://fullcalendar.io/docs/event-object
                 // In addition to the fields above, you may also include your own non-standard fields in each Event object.
                 // FullCalendar will not modify or delete these fields. For example, developers often include a description
@@ -766,7 +766,7 @@
         const calendarApi = this.$refs.fullCalendar.getApi()
 
 
-        let tooltipComponent 
+        let tooltipComponent
         const tooltipTemplate = esInstance["TOOLTIP TEMPLATE"]
         if(tooltipTemplate && tooltipTemplate != "") {
             const convertedToHandlebars = tooltipTemplate.replaceAll("{|{","{{").replaceAll("}|}","}}").replaceAll("{${","{{{").replaceAll("}$}","}}}")
