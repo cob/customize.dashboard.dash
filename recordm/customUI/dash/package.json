@@ -1,6 +1,6 @@
 {
   "name": "cob-dashboard-vue",
-  "version": "6.24.0",
+  "version": "6.100.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
