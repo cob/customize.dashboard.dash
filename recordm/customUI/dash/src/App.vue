@@ -924,9 +924,20 @@
           }
         }
 
-        // Add entry to window.cobSolutions map and ask _menu.js to mark the current active solution
+        // Add entry to window.cobSolutions map and ask _menus.js to mark the current active solution.
+        // markActiveSolution is defined by the customizations bundle (_menus.js), outside this app: if that
+        // bundle did not load, the menu marking is lost but the dashboard must still render, so never let
+        // this call abort loadDashboard
         window.cobSolutions[this.dashboardName] = requestResultList[0].solution_sigla && requestResultList[0].solution_sigla[0]
-        window.markActiveSolution()
+        if (typeof window.markActiveSolution === 'function') {
+          try {
+            window.markActiveSolution()
+          } catch (e) {
+            if(DEBUG.app) console.log("DASH:  APP: 5: loadDashboard: markActiveSolution failed. e=", e)
+          }
+        } else if(DEBUG.app) {
+          console.log("DASH:  APP: 5: loadDashboard: window.markActiveSolution is not defined (customizations _menus.js not loaded?)")
+        }
 
         this.error = ""
         this.stopActiveDash()
