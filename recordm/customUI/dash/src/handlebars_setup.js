@@ -209,7 +209,9 @@ Handlebars.registerHelper('dateInfoTimestamp', function (timestamp, keyword) {
 
     const date = new Date(timestamp * 1)
 
-    if (keyword == "FullDateTime") {
+    if (keyword == "toISO") {
+        return date.toISOString()
+    } if (keyword == "FullDateTime") {
         let options = {
             year: "numeric",
             month: "2-digit",
