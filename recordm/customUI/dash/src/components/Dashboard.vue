@@ -65,7 +65,7 @@ export default {
     },
     beforeDestroy() {
         Object.keys(this.vars).forEach(
-            //TODO: fix - sometimes we get this.vars with [null]. We currently test but this shouldn't happen       
+            //TODO: fix - sometimes we get this.vars with [null]. We currently test but this shouldn't happen
             v => this.statePersistence[v] && this.statePersistence[v].stop())
 
         this.runLifecycleHook(this.customizations, "onBeforeDestroy")
@@ -84,8 +84,8 @@ export default {
         customizations() { return window.CoBDashCustomizations.customizations }
     },
     watch: {
-        dashboard(old, neww) {
-            if (old.instanceId == neww.instanceId) return;
+        dashboard(oldDash, newDash) {
+            if (oldDash.instanceId == newDash.instanceId) return;
 
             this.updateDocumentTitle(newDash)
 
