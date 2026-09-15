@@ -54,6 +54,13 @@ export default {
         this.runLifecycleHook(this.customizations, "onMounted")
     },
     updated() {
+        this.updateDocumentTitle(this.dashboard)
+
+        if (this.dashboard["Details"].length > 0 && this.dashboard["Details"][0]["Link"]) {
+          this.handleDashboardLink(this.dashboard["Details"][0]["Link"])
+          return
+        }
+
         this.runLifecycleHook(this.customizations, "onUpdated")
     },
     beforeDestroy() {
@@ -79,6 +86,14 @@ export default {
     watch: {
         dashboard(old, neww) {
             if (old.instanceId == neww.instanceId) return;
+
+            this.updateDocumentTitle(newDash)
+
+            if (newDash["Details"].length > 0 && newDash["Details"][0]["Link"]) {
+              this.handleDashboardLink(newDash["Details"][0]["Link"])
+              return
+            }
+
             this.statePersistence = {}
             this.updateVars(this.vars)
         },
@@ -134,12 +149,24 @@ export default {
         },
         dashboardPatternMatcher(dashboardName, pattern) {
             try {
-                const regex = new RegExp(pattern); 
+                const regex = new RegExp(pattern);
                 return regex.test(dashboardName);
             } catch (error) {
                 console.error(`Error testing customization with regex pattern ${pattern} in dashboard ${dashboardName}: ${error.message}`);
                 return false;
             }
+        },
+        handleDashboardLink(link) {
+          if (link) {
+            window.location.replace(link)
+          }
+        },
+        updateDocumentTitle(dash) {
+          let solutionName
+          if (dash["Solution"]) {
+            solutionName = dash["Solution"][0]["Solution Sigla"]
+          }
+          document.title = (solutionName ? solutionName + " | " : "") + dash["Name"]
         }
     }
 }

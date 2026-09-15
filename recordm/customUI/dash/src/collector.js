@@ -51,6 +51,10 @@ function collect(bucket, source) {
 // parseDashboard works on a clone of this template, so it can safely live at module scope.
 const DashTemplate = {
     "Name": "",
+    "Solution":[{
+        "Solution Sigla": "",
+        "Solution Menu": "",
+    }],
     "DashboardCustomize": [{
         "Grid": "",
         "Width": "",
@@ -65,12 +69,15 @@ const DashTemplate = {
         "DragDropConcurrent":"",
         "UpdateOnDrop":"",
     }],
-    "Board": [{
-        "BoardCustomize": [{
-            "BoardClasses": "",
-            "Image": ""
+    "Details": [{
+        "Link": "",
+        "Board": [{
+            "BoardCustomize": [{
+                "BoardClasses": "",
+                "Image": ""
+            }],
+            "Component": []
         }],
-        "Component": []
     }],
 };
 
@@ -245,6 +252,10 @@ function parseDashboard(raw_dashboard) {
 
     dash.instanceId = "" + raw_dashboard.id //needed to build $file url
     raw_dashboard.fields.reduce(collect, dash);
+
+    // Adapt the final dash object to the existing code.
+    // Board configuration has moved and we want to keep existing code.
+    dash["Board"] = dash["Details"][0]["Board"] || []
 
     for( let board of dash["Board"]) {
         board["Dash"] = { id: dash.instanceId, name: dash.Name }

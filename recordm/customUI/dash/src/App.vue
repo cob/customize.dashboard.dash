@@ -909,7 +909,9 @@
           this.error = error;
           this.activeDashKey = null
           localStorage.setItem(this.userInfo.username + "-lastDash", "");
-          cob.app.publish('updated-app-info', { rebuildMenu: true });
+          if (cob.app && cob.app.publish) {
+            cob.app.publish('updated-app-info', {rebuildMenu: true});
+          }
         }
 
         const buildDragDropInfo = () => {

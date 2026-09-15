@@ -1,6 +1,6 @@
 <!-- From inspecting https://tailwindcss.com/docs/animation#spin example -->
 <template>
-  <button type="button" class="mt-2 mr-1" @click="debounceRefresh">
+  <button type="button" class="mt-3.5 mr-1" @click="debounceRefresh">
 
     <svg xmlns="http://www.w3.org/2000/svg"  :class="this.refreshClasses" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd"
