@@ -2,6 +2,26 @@
 
 ### Definition Upgrades:
 
+#### 7.0.0
+
+Added new fields: Details and Link
+* Type:
+* Details (group)
+* Link
+
+Move the duplicable field **Board** to the correct condition inside the **Details** group
+
+```
+NEW
+Type : $[*Dashboard,Link] Mandatory
+
+Details : $group $expanded $style[field-actions-hide,children-mx-0,children-bg-none,children-border-0]
+Details > [Type=Link] > Link : Mandatory
+
+ALTERED (Move board field)
+Details > [Type=Dashboard] > Board
+```
+
 #### 6.93.0
 
 Added a new `UpdateOnDrop` option to the dashboard. This allows the user to specificy (in seconds) the time after which the dash queries should be updated after an item is dropped (via drag & drop) - only when a concurrent script is called.
