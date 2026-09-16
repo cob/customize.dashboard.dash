@@ -51,10 +51,6 @@ function collect(bucket, source) {
 // parseDashboard works on a clone of this template, so it can safely live at module scope.
 const DashTemplate = {
     "Name": "",
-    "Solution":[{
-        "Solution Sigla": "",
-        "Solution Menu": "",
-    }],
     "DashboardCustomize": [{
         "Grid": "",
         "Width": "",
