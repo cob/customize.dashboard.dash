@@ -64,6 +64,7 @@ const DashTemplate = {
         "Context": "",
         "DragDropConcurrent":"",
         "UpdateOnDrop":"",
+        "Link": "",
     }],
     "Board": [{
         "BoardCustomize": [{

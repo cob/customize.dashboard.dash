@@ -54,11 +54,16 @@ export default {
         this.runLifecycleHook(this.customizations, "onMounted")
     },
     updated() {
+        if (this.options["Link"]) {
+          this.handleDashboardLink(this.options["Link"])
+          return
+        }
+
         this.runLifecycleHook(this.customizations, "onUpdated")
     },
     beforeDestroy() {
         Object.keys(this.vars).forEach(
-            //TODO: fix - sometimes we get this.vars with [null]. We currently test but this shouldn't happen       
+            //TODO: fix - sometimes we get this.vars with [null]. We currently test but this shouldn't happen
             v => this.statePersistence[v] && this.statePersistence[v].stop())
 
         this.runLifecycleHook(this.customizations, "onBeforeDestroy")
@@ -77,8 +82,13 @@ export default {
         customizations() { return window.CoBDashCustomizations.customizations }
     },
     watch: {
-        dashboard(old, neww) {
-            if (old.instanceId == neww.instanceId) return;
+        dashboard(oldDash, newDash) {
+            if (oldDash.instanceId == newDash.instanceId) return;
+
+            if (newDash['DashboardCustomize'][0]["Link"]) {
+              this.handleDashboardLink(newDash['DashboardCustomize'][0]["Link"])
+            }
+
             this.statePersistence = {}
             this.updateVars(this.vars)
         },
@@ -134,12 +144,17 @@ export default {
         },
         dashboardPatternMatcher(dashboardName, pattern) {
             try {
-                const regex = new RegExp(pattern); 
+                const regex = new RegExp(pattern);
                 return regex.test(dashboardName);
             } catch (error) {
                 console.error(`Error testing customization with regex pattern ${pattern} in dashboard ${dashboardName}: ${error.message}`);
                 return false;
             }
+        },
+        handleDashboardLink(link) {
+          if (link) {
+            window.location.replace(link)
+          }
         }
     }
 }
