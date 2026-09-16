@@ -2,9 +2,9 @@
 
 ### Definition Upgrades:
 
-#### 6.94.0
+#### 6.102.0
 
-Added new field Link in  `DashboardCustomize` group:
+Added new field Link in `DashboardCustomize` group:
 
 ```
 ALTERED
