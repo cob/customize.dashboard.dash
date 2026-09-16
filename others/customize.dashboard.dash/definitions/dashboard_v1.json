@@ -424,7 +424,7 @@
       "id": null,
       "name": "DashboardCustomize",
       "required": null,
-      "description": "$[Classes,Image,Width,Grid,Access,Vars,Context,DragDrop] $multiple $help[Select the defaults to change] ",
+      "description": "$[Classes,Image,Width,Grid,Access,Vars,Context,DragDrop,LinkOnly] $multiple $help[Select the defaults to change] ",
       "configuration": {
         "description": null,
         "keys": {
@@ -443,7 +443,8 @@
               "Access",
               "Vars",
               "Context",
-              "DragDrop"
+              "DragDrop",
+              "LinkOnly"
             ]
           }
         },
@@ -834,6 +835,35 @@
           "duplicable": false,
           "fields": [],
           "order": 21,
+          "duplicablePath": false,
+          "descendents": [],
+          "rootField": false,
+          "restricted": false,
+          "defaultValue": null
+        },
+        {
+          "id": null,
+          "name": "Link",
+          "required": null,
+          "description": null,
+          "configuration": {
+            "description": null,
+            "keys": {},
+            "extensions": {}
+          },
+          "condition": "=LinkOnly",
+          "visibilityCondition": {
+            "type": "Equal",
+            "value": [
+              "LinkOnly"
+            ],
+            "matcher": {
+              "type": "Parent"
+            }
+          },
+          "duplicable": false,
+          "fields": [],
+          "order": 22,
           "duplicablePath": false,
           "descendents": [],
           "rootField": false,
@@ -1272,6 +1302,35 @@
           "rootField": false,
           "restricted": false,
           "defaultValue": null
+        },
+        {
+          "id": null,
+          "name": "Link",
+          "required": null,
+          "description": null,
+          "configuration": {
+            "description": null,
+            "keys": {},
+            "extensions": {}
+          },
+          "condition": "=LinkOnly",
+          "visibilityCondition": {
+            "type": "Equal",
+            "value": [
+              "LinkOnly"
+            ],
+            "matcher": {
+              "type": "Parent"
+            }
+          },
+          "duplicable": false,
+          "fields": [],
+          "order": 22,
+          "duplicablePath": false,
+          "descendents": [],
+          "rootField": false,
+          "restricted": false,
+          "defaultValue": null
         }
       ],
       "rootField": true,
@@ -1304,7 +1363,7 @@
       "visibilityCondition": null,
       "duplicable": false,
       "fields": [],
-      "order": 22,
+      "order": 23,
       "duplicablePath": false,
       "descendents": [],
       "rootField": true,
@@ -1321,27 +1380,6 @@
         "keys": {
           "Group": {}
         },
-        "extensions": {}
-      },
-      "condition": null,
-      "visibilityCondition": null,
-      "duplicable": false,
-      "fields": [],
-      "order": 23,
-      "duplicablePath": false,
-      "descendents": [],
-      "rootField": true,
-      "restricted": false,
-      "defaultValue": null
-    },
-    {
-      "id": null,
-      "name": "Link",
-      "required": null,
-      "description": null,
-      "configuration": {
-        "description": null,
-        "keys": {},
         "extensions": {}
       },
       "condition": null,
