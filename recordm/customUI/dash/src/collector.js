@@ -69,15 +69,13 @@ const DashTemplate = {
         "DragDropConcurrent":"",
         "UpdateOnDrop":"",
     }],
-    "Details": [{
-        "Link": "",
-        "Board": [{
-            "BoardCustomize": [{
-                "BoardClasses": "",
-                "Image": ""
-            }],
-            "Component": []
+    "Link": "",
+    "Board": [{
+        "BoardCustomize": [{
+            "BoardClasses": "",
+            "Image": ""
         }],
+        "Component": []
     }],
 };
 
@@ -252,10 +250,6 @@ function parseDashboard(raw_dashboard) {
 
     dash.instanceId = "" + raw_dashboard.id //needed to build $file url
     raw_dashboard.fields.reduce(collect, dash);
-
-    // Adapt the final dash object to the existing code.
-    // Board configuration has moved and we want to keep existing code.
-    dash["Board"] = dash["Details"][0]["Board"] || []
 
     for( let board of dash["Board"]) {
         board["Dash"] = { id: dash.instanceId, name: dash.Name }

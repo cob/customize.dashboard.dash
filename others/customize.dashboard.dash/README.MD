@@ -2,24 +2,13 @@
 
 ### Definition Upgrades:
 
-#### 7.0.0
+#### 6.94.0
 
-Added new fields: Details and Link
-* Type:
-* Details (group)
-* Link
-
-Move the duplicable field **Board** to the correct condition inside the **Details** group
+Added new field after `Boards` group:
 
 ```
 NEW
-Type : $[*Dashboard,Link] Mandatory
-
-Details : $group $expanded $style[field-actions-hide,children-mx-0,children-bg-none,children-border-0]
-Details > [Type=Link] > Link : Mandatory
-
-ALTERED (Move board field)
-Details > [Type=Dashboard] > Board
+Link
 ```
 
 #### 6.93.0

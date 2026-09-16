@@ -54,10 +54,8 @@ export default {
         this.runLifecycleHook(this.customizations, "onMounted")
     },
     updated() {
-        this.updateDocumentTitle(this.dashboard)
-
-        if (this.dashboard["Details"].length > 0 && this.dashboard["Details"][0]["Link"]) {
-          this.handleDashboardLink(this.dashboard["Details"][0]["Link"])
+        if (this.dashboard["Link"]) {
+          this.handleDashboardLink(this.dashboard["Link"])
           return
         }
 
@@ -87,11 +85,8 @@ export default {
         dashboard(oldDash, newDash) {
             if (oldDash.instanceId == newDash.instanceId) return;
 
-            this.updateDocumentTitle(newDash)
-
-            if (newDash["Details"].length > 0 && newDash["Details"][0]["Link"]) {
-              this.handleDashboardLink(newDash["Details"][0]["Link"])
-              return
+            if (newDash["Link"]) {
+              this.handleDashboardLink(newDash["Link"])
             }
 
             this.statePersistence = {}
@@ -160,13 +155,6 @@ export default {
           if (link) {
             window.location.replace(link)
           }
-        },
-        updateDocumentTitle(dash) {
-          let solutionName
-          if (dash["Solution"]) {
-            solutionName = dash["Solution"][0]["Solution Sigla"]
-          }
-          document.title = (solutionName ? solutionName + " | " : "") + dash["Name"]
         }
     }
 }
