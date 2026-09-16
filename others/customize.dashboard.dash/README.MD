@@ -4,11 +4,14 @@
 
 #### 6.94.0
 
-Added new field after `Boards` group:
+Added new field Link in  `DashboardCustomize` group:
 
 ```
-NEW
-Link
+ALTERED
+DashboardCustomize: $[Classes,Image,Width,Grid,Access,Vars,Context,DragDrop,LinkOnly] $multiple $help[Select the defaults to change]
+
+NEW 
+DashboardCustomize [=LinkOnly] > Link : mandatory
 ```
 
 #### 6.93.0

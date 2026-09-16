@@ -54,8 +54,8 @@ export default {
         this.runLifecycleHook(this.customizations, "onMounted")
     },
     updated() {
-        if (this.dashboard["Link"]) {
-          this.handleDashboardLink(this.dashboard["Link"])
+        if (this.options["Link"]) {
+          this.handleDashboardLink(this.options["Link"])
           return
         }
 
@@ -85,8 +85,8 @@ export default {
         dashboard(oldDash, newDash) {
             if (oldDash.instanceId == newDash.instanceId) return;
 
-            if (newDash["Link"]) {
-              this.handleDashboardLink(newDash["Link"])
+            if (newDash['DashboardCustomize'][0]["Link"]) {
+              this.handleDashboardLink(newDash['DashboardCustomize'][0]["Link"])
             }
 
             this.statePersistence = {}
