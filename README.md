@@ -52,6 +52,19 @@ on read, but a value starting with an unquoted `#` becomes null and fails loudly
 NOT survive a pull (the file is regenerated from the server) — annotate inside the `.hbs` files
 with handlebars comments (`{{!-- --}}`) instead, those are part of the field value.
 
+A dashboard that only redirects (`LinkOnly` in `DashboardCustomize` + the `Link` field, since
+6.102.0) has no boards: the app follows the link instead of rendering. In `dashboard.yaml` the
+`Link` sits at the root, like the other `DashboardCustomize` sub-fields:
+
+```yaml
+DashboardCustomize: "Access\0LinkOnly"
+Link: "#/definitions/108/q=estado:aberto"
+```
+
+`validate` refuses a `Link` next to boards with values (the same rule the instance editor enforces
+on save, which a `push` would otherwise bypass) and warns when `LinkOnly` is missing from the
+group's options — the app still redirects, but the next save in the application drops the value.
+
 Non-duplicable groups (`*Customize`, `LineBehaviour`, ...) are stored flat: the group key carries
 the multi-select value on a single line (`MenuCustomize: Classes`) and its sub-fields sit at the
 same level as the group (`MenuClasses: ...` right below) — only genuinely duplicable fields
@@ -94,7 +107,10 @@ overwrite them (`--force` to override).
 ### Modules (all reusable outside the browser)
 
 * `src/collector.js` — `parseDashboard` (instance -> canonical representation) and the exported
-  `DashTemplate`/`ComponentsTemplates` that define the canonical structure
+  `DashTemplate`/`ComponentsTemplates` that define the canonical structure. When Dashboard_v1
+  gains a field, add it here: everything else (repo format, serialization, validation) is derived
+  from these templates, and `test_repo_format.js` fails while the definition has a field the
+  templates do not cover (a `pull` would silently drop it)
 * `src/template_generator.js` — `generateDashboardTemplate` (canonical -> Handlebars template),
   extracted from `App.vue`
 * `src/serializer.js` — `serializeDashboard` (canonical -> instance, the inverse of
@@ -102,7 +118,8 @@ overwrite them (`--force` to override).
   and `adoptFieldIds` (grafts server field ids for editor-like saves)
 * `src/repo_format.js` — the `dashboards/<Name>/` directory format (explode/implode of
   multiline fields into `.hbs` files)
-* `src/validator.js` — structural validation derived from the same templates the app uses
+* `src/validator.js` — structural validation derived from the same templates the app uses, plus
+  the application's own save rules (link-only dashboards)
 * `tools/dash-sync.js` — pull/push/diff/status/validate CLI
 * `tools/dev_middleware.js` — dev-server interception + browser reload (wired in `vue.config.js`)
 

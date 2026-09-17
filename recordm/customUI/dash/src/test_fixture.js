@@ -185,4 +185,25 @@ const c0 = {
     ],
 }
 
-export { c0, loadNumberedDefinition, findDef }
+// A "link-only" dashboard (Dashboard_v1 6.102.0): the DashboardCustomize group carries the
+// LinkOnly option and the Link field, and the dashboard has no boards at all — the app redirects
+// to the link instead of rendering anything (Dashboard.vue) and the instance editor refuses any
+// value under Board when Link is filled (_dashboards.js). Kept as a separate fixture because the
+// two shapes are mutually exclusive: c0 renders boards, cLinkOnly only redirects.
+const cLinkOnly = {
+    instanceId: "458931",
+    version: "3",
+    Name: "Atalho Tickets",
+    Description: "Dashboard que apenas redirecciona",
+    Order: "40",
+    Solution: "389730",
+    DashboardCustomize: [{
+        DashboardCustomize: "Access\u0000LinkOnly",
+        GroupAccess: [
+            { GroupAccess: "DASH Clientes" },
+        ],
+        Link: "#/definitions/108/q=estado:aberto",
+    }],
+}
+
+export { c0, cLinkOnly, loadNumberedDefinition, findDef }

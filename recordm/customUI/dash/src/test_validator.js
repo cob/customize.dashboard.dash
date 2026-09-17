@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { serializeDashboard, parseDashboardFull } from './serializer.js'
 import { explodeDashboard, stripDerived } from './repo_format.js'
 import { validateDashboard } from './validator.js'
-import { c0, loadNumberedDefinition } from './test_fixture.js'
+import { c0, cLinkOnly, loadNumberedDefinition } from './test_fixture.js'
 
 const definition = loadNumberedDefinition()
 const clean = () => stripDerived(parseDashboardFull(serializeDashboard(c0, definition)))
@@ -98,5 +98,43 @@ const noIdResult = validateDashboard(noId, { hbsFiles: cleanFiles.concat("orfao.
 assert.equal(noIdResult.errors.length, 0)
 assert.ok(noIdResult.warnings.some(w => w.path === "Board[1].Component[1(Label)]" && w.message.includes("sem 'id'")))
 assert.ok(noIdResult.warnings.some(w => w.path === "orfao.hbs" && w.message.includes("órfão")))
+
+// ---------------------------------------------------------------------------------------------
+// link-only dashboards (6.102.0): with 'Link' filled the app only redirects, so a board with any
+// value is a mistake - the same rule the instance editor enforces on save (_dashboards.js), here
+// because dash-sync push does not go through the editor
+// ---------------------------------------------------------------------------------------------
+const linkOnly = () => stripDerived(parseDashboardFull(serializeDashboard(cLinkOnly, definition)))
+const linkOnlyResult = validateDashboard(linkOnly())
+assert.deepEqual(linkOnlyResult.errors, [])
+assert.deepEqual(linkOnlyResult.warnings, [])
+
+// a board with content next to the Link: one error per value, at the value's path
+const withBoards = linkOnly()
+withBoards.Board = [{
+    Board: "Title",
+    BoardCustomize: [{ BoardCustomize: "Classes", BoardClasses: "col-span-12" }],
+    Component: [{ Component: "Label", id: 9001, Label: "Equipa", LabelCustomize: [{}] }],
+}]
+const withBoardsResult = validateDashboard(withBoards)
+assert.deepEqual(withBoardsResult.errors.map(e => e.path), [
+    "Board[1].Board",
+    "Board[1].BoardCustomize",
+    "Board[1].BoardClasses",
+    "Board[1].Component[1(Label)].Component",
+    "Board[1].Component[1(Label)].Label",
+])
+assert.ok(withBoardsResult.errors[0].message.includes("só de link"), withBoardsResult.errors[0].message)
+
+// the option that makes the field visible in the editor is missing: warning, not error (the app
+// redirects anyway, but a save in the application would drop the Link)
+const noOption = linkOnly()
+noOption.DashboardCustomize[0].DashboardCustomize = "Access"
+const noOptionResult = validateDashboard(noOption)
+assert.deepEqual(noOptionResult.errors, [])
+assert.ok(noOptionResult.warnings.some(w => w.path === "Link" && w.message.includes("LinkOnly")))
+
+// and a dashboard without Link is not affected by any of this
+assert.deepEqual(validateDashboard(clean()).errors, [])
 
 console.log("test_validator: ALL TESTS PASSED")
