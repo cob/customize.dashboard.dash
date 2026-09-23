@@ -5,7 +5,7 @@ import { serializeDashboard, parseDashboardFull, adoptFieldIds } from './seriali
 import { generateDashboardTemplate } from './template_generator.js'
 import Handlebars from 'handlebars'
 
-import { c0, loadNumberedDefinition, findDef } from './test_fixture.js'
+import { c0, cLinkOnly, loadNumberedDefinition, findDef } from './test_fixture.js'
 
 const definition = loadNumberedDefinition()
 
@@ -168,5 +168,17 @@ assert.ok(dashProcessed.Board[1].Component[0].Text[1].Text.includes("Análise"))
 assert.ok(dashProcessed.Board[1].Component[0].Text[2].Text.includes("Aberto"))
 // and the context vars were evaluated where used
 assert.ok(dashProcessed.DashboardCustomize[0].Context.includes("AND abc*"))
+
+// ---------------------------------------------------------------------------------------------
+// link-only dashboards (6.102.0): the Link field of DashboardCustomize survives the cycle and
+// the absence of boards converges to the single empty board occurrence RecordM returns
+// ---------------------------------------------------------------------------------------------
+const l1 = parseDashboardFull(serializeDashboard(cLinkOnly, definition))
+assert.equal(l1.Name, "Atalho Tickets")
+assert.equal(l1.DashboardCustomize[0].DashboardCustomize, "Access\u0000LinkOnly")
+assert.equal(l1.DashboardCustomize[0].Link, "#/definitions/108/q=estado:aberto")
+assert.deepEqual(l1.DashboardCustomize[0].GroupAccess, [{ GroupAccess: "DASH Clientes" }])
+assert.deepEqual(l1.Board.map(board => board.Component), [[]])
+assert.deepEqual(parseDashboardFull(serializeDashboard(l1, definition)), l1) // fixed point
 
 console.log("test_serializer: ALL TESTS PASSED")

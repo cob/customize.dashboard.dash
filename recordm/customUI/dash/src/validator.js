@@ -2,6 +2,8 @@
 // templates the app uses at runtime (DashTemplate/ComponentsTemplates). Catches the manual-edit
 // mistakes that would otherwise be silent: unknown keys (dropped by the serializer, i.e. the
 // value would be LOST on push), wrong shapes, invalid component types and broken handlebars.
+// It also enforces the rules the application itself checks when saving a dashboard in the
+// instance editor (see validateLinkOnly), which a push from the repo would otherwise bypass.
 //
 // validateDashboard(canonical, { hbsFiles? }) -> { errors: [...], warnings: [...] }
 // each finding: { path, message, file? } — paths are 1-based (the first Board is Board[1]),
@@ -42,6 +44,52 @@ function suggestion(wrong, candidates) {
         }
     }
     return best ? " — querias '" + best + "'?" : ""
+}
+
+// "Link-only" dashboards (Dashboard_v1 6.102.0): with DashboardCustomize > Link filled the app
+// redirects to that link and renders nothing (see Dashboard.vue), so anything configured under
+// Board is dead weight that the next reader will take for the dashboard's content. The instance
+// editor already refuses to save it (validateInstances in js/cob/_dashboards.js), but a
+// `dash-sync push` does not go through the editor - without this check the repo could create
+// instances the application itself considers invalid.
+function validateLinkOnly(canonical, errors, warnings) {
+    const group = Array.isArray(canonical.DashboardCustomize) ? canonical.DashboardCustomize[0] : null
+    const link = (group && typeof group.Link === 'string') ? group.Link : ""
+    if (!link.trim()) return
+
+    // the group's own value lists the selected options: without LinkOnly the editor hides the
+    // Link field, so a save in the application would drop the value pushed from the repo
+    const options = (typeof group.DashboardCustomize === 'string' ? group.DashboardCustomize : "").split("\u0000")
+    if (!options.includes("LinkOnly")) {
+        warnings.push({ path: "Link", message: "'Link' está preenchido mas 'LinkOnly' não está nas opções de 'DashboardCustomize' — o campo fica escondido no editor da aplicação" })
+    }
+
+    const typeSuffix = (element) =>
+        (element && typeof element === 'object' && typeof element.Component === 'string') ? "(" + element.Component + ")" : ""
+
+    const reportValues = (node, displayPath) => {
+        if (typeof node === 'string') {
+            if (node.trim()) errors.push({ path: displayPath, message: "dashboard só de link ('Link' preenchido): não pode ter valores nos boards" })
+            return
+        }
+        if (Array.isArray(node)) {
+            node.forEach((element, i) => reportValues(element, displayPath + "[" + (i + 1) + typeSuffix(element) + "]"))
+            return
+        }
+        if (node === null || typeof node !== 'object') return
+        for (const key of Object.keys(node)) {
+            const value = node[key]
+            if (META_KEYS.has(key)) continue
+            if (isSingletonGroup(key) && Array.isArray(value) && value.length === 1 && value[0] && typeof value[0] === 'object' && !Array.isArray(value[0])) {
+                reportValues(value[0], displayPath) // flattened in the YAML: reports at this level
+                continue
+            }
+            reportValues(value, (displayPath ? displayPath + "." : "") + key)
+        }
+    }
+
+    const boards = canonical.Board || []
+    boards.forEach((board, i) => reportValues(board, "Board[" + (i + 1) + "]"))
 }
 
 function validateDashboard(canonical, options = {}) {
@@ -162,6 +210,8 @@ function validateDashboard(canonical, options = {}) {
     // groups (DashboardCustomize) flattened, unknown keys suggested over the level's names
     const rootTemplate = { ...DashTemplate, ...DashExtrasTemplate }
     validateElement(canonical, rootTemplate, null, "", [])
+
+    validateLinkOnly(canonical, errors, warnings)
 
     // .hbs files in the directory that nothing references (renamed/removed fields)
     for (const hbsFile of (options.hbsFiles || [])) {

@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os'
 import { serializeDashboard, parseDashboardFull, DashExtrasTemplate } from './serializer.js'
 import { DashTemplate, ComponentsTemplates } from './collector.js'
 import { explodeDashboard, implodeDashboard, writeDashboardDir, listDashboardDirs, stripDerived, slugify, isSingletonGroup } from './repo_format.js'
-import { c0, loadNumberedDefinition } from './test_fixture.js'
+import { c0, cLinkOnly, loadNumberedDefinition, findDef } from './test_fixture.js'
 
 const definition = loadNumberedDefinition()
 
@@ -80,6 +80,61 @@ const checkDuplicable = (defs) => defs.forEach(def => {
     checkDuplicable(def.fields || [])
 })
 checkDuplicable(definition.fieldDefinitions)
+
+// ---------------------------------------------------------------------------------------------
+// drift guard: the templates must cover the definition. A field added to Dashboard_v1 and not
+// added to DashTemplate/ComponentsTemplates is invisible to the whole dashboards-as-code chain
+// (parseDashboard never collects it, so a pull silently omits it and the repo stops being a
+// faithful representation of the dashboard) — this is what happened to 'Link' in 6.102.0.
+// When the definition evolves, add the field to the templates or, if the tooling deliberately
+// does not manage it, list it here with the reason.
+// ---------------------------------------------------------------------------------------------
+const UNMANAGED_DEFINITION_FIELDS = new Map([
+    ["Dashboard Info", "$group: layout only, holds no value"],
+    ["Boards", "$group: layout only, holds no value"],
+    ["URL", "$link $auto: computed by RecordM from the instance id"],
+    ["Solution Sigla", "$auto.ref(Solution): computed by RecordM"],
+    ["Solution Menu", "$auto.ref(Solution): computed by RecordM"],
+    ["Solution Descrição", "$auto.ref(Solution): computed by RecordM"],
+    ["Solution Icon", "$auto.ref(Solution): computed by RecordM"],
+    ["Solution Ordem", "$auto.ref(Solution): computed by RecordM"],
+    // the 'Viewer' component option has no component in the app (Board.vue only renders
+    // ImageViewer/InstanceViewer, which superseded it in 6.74.0): its fields are dead weight
+    ["Query", "fields of the dead 'Viewer' component type"],
+    ["File", "fields of the dead 'Viewer' component type"],
+    ["ViewerCustomize", "fields of the dead 'Viewer' component type"],
+    ["ViewerClasses", "fields of the dead 'Viewer' component type"],
+    ["OutputVarViewer", "fields of the dead 'Viewer' component type"],
+])
+// the check follows the same path as collect() does over the instance: a definition field is
+// covered when its name is a key of the template in scope, and its children are then checked
+// against that key's sub-template (against the SAME scope when the field is not a template key,
+// mirroring collect(), which keeps looking for the bucket's keys deeper in the tree)
+const componentsScope = Object.assign({}, ...Object.values(ComponentsTemplates))
+const subTemplate = (template, name) => {
+    if (name === "Component") return componentsScope // typed components: any type's fields may appear here
+    const value = template[name]
+    return (Array.isArray(value) && value[0]) ? value[0] : {}
+}
+const checkCovered = (defs, template, path) => defs.forEach(def => {
+    const covered = def.name in template
+    assert.ok(covered || UNMANAGED_DEFINITION_FIELDS.has(def.name),
+        "field '" + path + "/" + def.name + "' exists in the Dashboard_v1 definition but not in the template of '" +
+        (path || "/") + "': add it to DashTemplate/ComponentsTemplates (collector.js) or to UNMANAGED_DEFINITION_FIELDS")
+    checkCovered(def.fields || [], covered ? subTemplate(template, def.name) : template, path + "/" + def.name)
+})
+checkCovered(definition.fieldDefinitions, { ...DashTemplate, ...DashExtrasTemplate }, "")
+
+// the component types the tooling knows must be options of the definition's Component field
+// (a typo there would make every component of that type unknown to the validator)
+const componentOptions = new Set(
+    findDef(definition.fieldDefinitions, ["Board", "Component"]).description.match(/\$\[([^\]]*)\]/)[1]
+        .split(",").map(option => option.replace(/^\*/, "")))
+for (const type of Object.keys(ComponentsTemplates)) {
+    assert.ok(componentOptions.has(type), "component type '" + type + "' is not an option of 'Component' in the definition")
+}
+assert.deepEqual([...componentOptions].filter(option => !(option in ComponentsTemplates)), ["Viewer"],
+    "a component type of the definition has no template: add it to ComponentsTemplates (collector.js)")
 
 // the flattening is unambiguous: at every level, the level's keys and the sub-fields of its
 // singleton groups never collide (otherwise implode couldn't know where a hoisted key belongs)
@@ -201,5 +256,17 @@ const reflatDir = join(dashboardsRoot, "reflat")
 writeDashboardDir(reflatDir, explodeDashboard(oldCanonical))
 assert.ok(!readFileSync(join(reflatDir, "dashboard.yaml"), "utf8").includes("- LabelCustomize"))
 assert.deepEqual(implodeDashboard(reflatDir), oldCanonical)
+
+// ---------------------------------------------------------------------------------------------
+// link-only dashboards (6.102.0): Link is hoisted to the root of dashboard.yaml like the other
+// DashboardCustomize sub-fields, and the directory reads back to the same canonical
+// ---------------------------------------------------------------------------------------------
+const linkOnly = stripDerived(parseDashboardFull(serializeDashboard(cLinkOnly, definition)))
+const linkOnlyFiles = explodeDashboard(linkOnly)
+assert.ok(linkOnlyFiles["dashboard.yaml"].includes('DashboardCustomize: "Access\\0LinkOnly"'))
+assert.ok(linkOnlyFiles["dashboard.yaml"].includes("\nLink: \"#/definitions/108/q=estado:aberto\""))
+const linkOnlyDir = join(dashboardsRoot, "link-only")
+writeDashboardDir(linkOnlyDir, linkOnlyFiles)
+assert.deepEqual(implodeDashboard(linkOnlyDir), linkOnly)
 
 console.log("test_repo_format: ALL TESTS PASSED")
