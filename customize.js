@@ -1,3 +1,3 @@
 module.exports = {
-  version: "6.102.1"
+  version: "6.102.2"
 };
