@@ -25,12 +25,22 @@ Where the noise of a raw export comes from (seen in this file's history) and wha
 
 What is deliberately NOT normalized (it is real content, review it):
 
-* `description` (`@COB vX.Y.Z ...`): the release version is maintained by hand and the export carries whatever the server had
+* `description` (`@COB vX.Y.Z ...`): maintained by hand, see the rule below; the export carries whatever the server had
 * `order` (global pre-order index of every field) and `descendents` (a flattened copy of `fields` embedded in every ancestor).
   Both are derived from the tree, but the server emits them, so they stay; consequence: inserting a field renumbers
   every following `order`, and a change to a field shows up once per ancestor (an edit 5 levels deep = 5-6 hunks). Judge
   the change by the report above, not by the number of lines
 * property renames between server versions (`default` -> `Default`, ...) and structural changes: shown as normal diffs
+
+When the code requires a change to the definition (new/altered field, new option, `duplicable`, ...):
+
+1. Set the definition's `description` to `@COB v<version>` where `<version>` is the customization version that ships
+   the change (`version` in `customize.js`; keep any markers after it, e.g. `$mcp-ready`). Do it on the server before
+   exporting, or edit the exported file before normalizing — it records which customization version the
+   definition corresponds to
+2. Add the matching `#### <version>` entry to "Definition Upgrades" below (ALTERED / NEW blocks, like the existing ones)
+3. Changes that do NOT touch the definition (code only) leave the `description` as is: it is the version of the last
+   definition change, not of the last release
 
 `npm run normalize-definition -- --check` (also part of `npm test`) fails if the committed file is not in the normalized
 format, e.g. after a hand edit or a raw overwrite.
