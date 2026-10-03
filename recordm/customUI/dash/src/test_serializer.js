@@ -1,7 +1,7 @@
 // Round-trip tests for serializer.js (the inverse of parseDashboard).
 // Run with: node src/test_serializer.js   (Node >= 22)
 import assert from 'node:assert/strict'
-import { serializeDashboard, parseDashboardFull, adoptFieldIds } from './serializer.js'
+import { serializeDashboard, parseDashboardFull, adoptFieldIds, duplicateFieldIds } from './serializer.js'
 import { generateDashboardTemplate } from './template_generator.js'
 import Handlebars from 'handlebars'
 
@@ -134,6 +134,53 @@ const checkMinimalDefs = (fields) => fields.forEach(field => {
 })
 checkMinimalDefs(raw1.fields)
 assert.ok(raw1Json.length < 200 * 1024, "serialized c0 grew to " + Math.round(raw1Json.length / 1024) + " KB")
+
+// ---------------------------------------------------------------------------------------------
+// Inserting an occurrence (a board added by hand in the repo, components still without `id`)
+// must not shift the pairing of everything after it: with plain positional pairing the boards
+// below slid onto the wrong server occurrence, the id-less components adopted ids that the repo
+// pins further down, and the PUT body carried the same field id twice - RecordM answered 500
+// DATA_ACCESS_ERROR with no message.
+// ---------------------------------------------------------------------------------------------
+const serverSide = serializeDashboard(c0, definition)
+let nextServerId = 90000000
+const assignServerIds = (fields) => fields.forEach(field => {
+    if (field.id < 0) field.id = nextServerId++
+    assignServerIds(field.fields)
+})
+assignServerIds(serverSide.fields) // every field of the server instance has a real id
+
+const withInsertedBoard = JSON.parse(JSON.stringify(c0))
+withInsertedBoard.Board.splice(1, 0, {
+    Board: "Novo",
+    Component: [{ Component: "Label", Label: "acabado de escrever no repo" }], // no `id`: new
+})
+const grafted = adoptFieldIds(serializeDashboard(withInsertedBoard, definition), serverSide)
+
+assert.deepEqual(duplicateFieldIds(grafted), [])
+
+const graftedBoards = grafted.fields.filter(f => f.fieldDefinition.name === "Board")
+const componentIds = (board) => board.fields.filter(f => f.fieldDefinition.name === "Component").map(f => f.id)
+assert.equal(graftedBoards.length, 4)
+assert.ok(componentIds(graftedBoards[1]).every(id => id < 0), "the inserted board's components are new")
+// the boards after the insertion keep their own components and are grafted onto THEIR server
+// board, not onto the next one: the children below each component come from the right source
+assert.deepEqual(componentIds(graftedBoards[0]), [9001, 9002, 9003])
+assert.deepEqual(componentIds(graftedBoards[2]), [9004, 9005, 9006, 9007])
+assert.deepEqual(componentIds(graftedBoards[3]), [9008, 9009])
+const serverBoards = serverSide.fields.filter(f => f.fieldDefinition.name === "Board")
+assert.equal(graftedBoards[2].id, serverBoards[1].id)
+assert.equal(graftedBoards[3].id, serverBoards[2].id)
+assert.ok(graftedBoards[1].id < 0, "the inserted board is a new occurrence")
+
+// a component whose type changed in the repo takes over no occurrence of the other type
+const retyped = JSON.parse(JSON.stringify(c0))
+delete retyped.Board[0].Component[0].id
+retyped.Board[0].Component[0] = { Component: "Markdown", MDContent: "era um Label" }
+const retypedGrafted = adoptFieldIds(serializeDashboard(retyped, definition), serverSide)
+assert.deepEqual(duplicateFieldIds(retypedGrafted), [])
+assert.ok(componentIds(retypedGrafted.fields.filter(f => f.fieldDefinition.name === "Board")[0])[0] < 0,
+    "a Markdown must not take over the Label's occurrence")
 
 // ---------------------------------------------------------------------------------------------
 // End-to-end smoke test: the canonical representation must feed the real template pipeline

@@ -225,7 +225,7 @@ function listDashboardDirs(dashboardsRoot) {
         if (!existsSync(join(dir, "dashboard.yaml"))) continue
         try {
             const canonical = YAML.parse(readFileSync(join(dir, "dashboard.yaml"), 'utf8'))
-            result.push({ name: entry.name, dir, instanceId: "" + canonical.instanceId, version: "" + canonical.version })
+            result.push({ name: entry.name, dir, instanceId: canonical.instanceId == null ? "" : "" + canonical.instanceId, version: canonical.version == null ? "" : "" + canonical.version })
         } catch (e) {
             result.push({ name: entry.name, dir, error: "invalid dashboard.yaml: " + e.message })
         }

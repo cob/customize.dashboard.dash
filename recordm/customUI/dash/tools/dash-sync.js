@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 // dash-sync: keeps dashboards represented in a git repo ("dashboards as code") in sync with the
-// Dashboard_v1 instances of a RecordM server. Dashboards are always CREATED in the application;
-// the repo only manages existing ones (the only way in is `pull`).
+// Dashboard_v1 instances of a RecordM server. A dashboard comes into the repo by `pull` (it exists
+// on the server) or by `new` (it is born in the repo, without instanceId, and the first `push`
+// creates the instance on the server and records its instanceId/version).
 //
 // Usage:
+//   node tools/dash-sync.js new <name> [--from <dir|instanceId>] [--solution <id>]
 //   node tools/dash-sync.js pull <instanceId> | pull --all [--force]
 //   node tools/dash-sync.js pull --all [--force]        (every Dashboard_v1 of the server)
 //   node tools/dash-sync.js push <dir|instanceId> [--dry-run] [--force]
@@ -15,6 +17,8 @@
 //   --server <url>   RecordM server (default: resolved from the cob-cli repo, see below)
 //   --env <name>     cob-cli environment to resolve the server from (default: prod)
 //   --dir <path>     dashboards directory (default: <repo root>/recordm/customUI/dashs)
+//   --from <src>     new: clone a local dashboard dir or a server instance instead of an empty skeleton
+//   --solution <id>  new: Solution (instance id) of the new dashboard (default: the source's, or empty)
 //   --force          pull: overwrite uncommitted local changes; push: ignore server version check
 //   --dry-run        push: write the PUT body to a temp file instead of sending it
 //
@@ -33,11 +37,12 @@ import { tmpdir } from 'node:os'
 import { spawnSync } from 'node:child_process'
 import { isDeepStrictEqual } from 'node:util'
 import readline from 'node:readline'
-import { parseDashboardFull, serializeDashboard, adoptFieldIds } from '../src/serializer.js'
+import { parseDashboardFull, serializeDashboard, adoptFieldIds, duplicateFieldIds } from '../src/serializer.js'
 import { explodeDashboard, implodeDashboard, writeDashboardDir, listDashboardDirs, stripDerived, slugify } from '../src/repo_format.js'
 import { validateDashboard } from '../src/validator.js'
 
 const INSTANCES_PATH = "/recordm/recordm/instances/"
+const DEFINITION_NAME = "Dashboard_v1"
 const DEFINITION_PATH = "/recordm/recordm/definitions/name/Dashboard_v1"
 const SEARCH_PATH = "/recordm/recordm/definitions/search/name/Dashboard_v1"
 const AUTH_PATH = "/recordm/security/auth"
@@ -49,7 +54,7 @@ const flags = {}
 const positional = []
 for (let i = 0; i < args.length; i++) {
     if (args[i] === "--force" || args[i] === "--dry-run" || args[i] === "--all") flags[args[i].substring(2)] = true
-    else if (args[i] === "--server" || args[i] === "--dir" || args[i] === "--env") flags[args[i].substring(2)] = args[++i]
+    else if (["--server", "--dir", "--env", "--from", "--solution"].includes(args[i])) flags[args[i].substring(2)] = args[++i]
     else positional.push(args[i])
 }
 const [command, target] = positional
@@ -161,11 +166,13 @@ function gitUncommittedChanges(dir) {
 // template residues and empty-vs-missing differences never show up as false diffs
 const normalize = (canonical, definition) => parseDashboardFull(serializeDashboard(canonical, definition))
 
-function writePulled(raw) {
+function writePulled(raw, intoDir) {
     const canonical = parseDashboardFull(raw)
     const existing = findLocal(canonical.instanceId)
     let dashboardDir
-    if (existing) {
+    if (intoDir) {
+        dashboardDir = intoDir // a just-created dashboard keeps the directory it was born in
+    } else if (existing) {
         dashboardDir = existing.dir
     } else {
         let name = slugify(canonical.Name)
@@ -219,7 +226,7 @@ async function pullAll() {
     // they live in the index and survive the file removal (git restore brings them back)
     let removed = 0
     for (const orphan of listDashboardDirs(dashboardsRoot)) {
-        if (orphan.error || ids.includes(orphan.instanceId)) continue
+        if (orphan.error || !orphan.instanceId || ids.includes(orphan.instanceId)) continue // no instanceId: born in the repo, not pushed yet
         // porcelain "XY path": Y is the worktree status - untracked ("??") or unstaged edits
         const unstaged = gitUncommittedChanges(orphan.dir).split("\n").filter(line => line && line[1] !== " ")
         if (unstaged.length > 0) {
@@ -237,8 +244,9 @@ async function pullAll() {
 async function push() {
     if (!target) throw new Error("usage: dash-sync push <dir|instanceId> [--dry-run]")
     const local = findLocal(target)
-    if (!local) throw new Error("dashboard '" + target + "' not found in " + dashboardsRoot + " (dashboards are created in the app and brought in with pull)")
+    if (!local) throw new Error("dashboard '" + target + "' not found in " + dashboardsRoot + " (bring it in with 'pull <instanceId>', or start one with 'new <name>')")
     const canonical = implodeDashboard(local.dir)
+    const isNew = canonical.instanceId == null || canonical.instanceId === ""
 
     // structural validation first: an unknown key means the value would be silently LOST on push
     const findings = validateDashboard(canonical, { hbsFiles: readdirSync(local.dir).filter(f => f.endsWith(".hbs")) })
@@ -249,18 +257,32 @@ async function push() {
     }
 
     const definition = await getDefinition()
-    const serverRaw = await getInstance(canonical.instanceId)
-
-    if ("" + serverRaw.version !== "" + canonical.version && !flags.force) {
-        throw new Error("'" + local.name + "': server is at v" + serverRaw.version + " but local representation is v" + canonical.version +
-            " - someone changed it in the app. Run 'dash-sync diff " + local.name + "' and 'dash-sync pull' first (or push --force to overwrite)")
+    let body
+    if (isNew) {
+        // born in the repo: every field gets a negative placeholder id, which RecordM turns into
+        // a real one on create (same convention as the empty occurrences of an update)
+        body = { type: DEFINITION_NAME, fields: serializeDashboard(canonical, definition).fields }
+    } else {
+        const serverRaw = await getInstance(canonical.instanceId)
+        if ("" + serverRaw.version !== "" + canonical.version && !flags.force) {
+            throw new Error("'" + local.name + "': server is at v" + serverRaw.version + " but local representation is v" + canonical.version +
+                " - someone changed it in the app. Run 'dash-sync diff " + local.name + "' and 'dash-sync pull' first (or push --force to overwrite)")
+        }
+        const serialized = adoptFieldIds(serializeDashboard(canonical, definition), serverRaw)
+        body = { ...serverRaw, fields: serialized.fields }
     }
 
-    const serialized = adoptFieldIds(serializeDashboard(canonical, definition), serverRaw)
-    const body = { ...serverRaw, fields: serialized.fields }
+    // a repeated field id is answered by RecordM with a bare 500 DATA_ACCESS_ERROR: say what
+    // collided instead of letting the server do it (it usually means two occurrences of the repo
+    // claim the same server field - check the 'id:' lines of the dashboard.yaml)
+    const duplicates = duplicateFieldIds(body)
+    if (duplicates.length > 0) {
+        for (const d of duplicates) console.error("  \u2717 id " + d.id + " emitido em " + d.first + " e em " + d.second)
+        throw new Error("'" + local.name + "': " + duplicates.length + " id(s) de campo repetidos no corpo do PUT - o servidor rejeitaria com 500 DATA_ACCESS_ERROR")
+    }
 
     const bodyKB = Math.round(JSON.stringify(body).length / 1024)
-    console.log("PUT body: " + bodyKB + " KB")
+    console.log((isNew ? "POST" : "PUT") + " body: " + bodyKB + " KB")
     if (bodyKB > 900) {
         console.warn("warning: body close to/over nginx's default 1MB client_max_body_size - a 413 means the server limit needs raising")
     }
@@ -268,25 +290,90 @@ async function push() {
     if (flags["dry-run"]) {
         const bodyFile = join(mkdtempSync(join(tmpdir(), "dash-push-")), "put-body.json")
         writeFileSync(bodyFile, JSON.stringify(body, null, 2))
-        console.log("dry-run: PUT " + INSTANCES_PATH + canonical.instanceId + " body written to " + bodyFile)
+        console.log("dry-run: " + (isNew ? "POST " + INSTANCES_PATH : "PUT " + INSTANCES_PATH + canonical.instanceId) + " body written to " + bodyFile)
         return
     }
 
-    await api("PUT", INSTANCES_PATH + canonical.instanceId, body)
+    let instanceId = canonical.instanceId
+    if (isNew) {
+        const created = await api("POST", INSTANCES_PATH, body)
+        instanceId = created && created.id
+        if (instanceId == null) throw new Error("server created the instance but did not return its id: " + JSON.stringify(created))
+    } else {
+        await api("PUT", INSTANCES_PATH + instanceId, body)
+    }
 
-    // finish with an implicit pull: records the new version and the server's normalization
-    const pulled = writePulled(await getInstance(canonical.instanceId))
-    console.log("pushed '" + pulled.canonical.Name + "' v" + canonical.version + " -> v" + pulled.canonical.version)
-    const contentOf = (c) => ({ ...normalize(c, definition), version: null }) // versions differ by design
+    // finish with an implicit pull: records the new instanceId/version and the server's normalization
+    const pulled = writePulled(await getInstance(instanceId), isNew ? local.dir : undefined)
+    console.log(isNew
+        ? "created '" + pulled.canonical.Name + "' as instance " + pulled.canonical.instanceId + " v" + pulled.canonical.version + " -> " + pulled.dashboardDir
+        : "pushed '" + pulled.canonical.Name + "' v" + canonical.version + " -> v" + pulled.canonical.version)
+    const contentOf = (c) => stripDerived({ ...normalize(c, definition), instanceId: null, version: null }) // identity (and the Dash.id derived from it) differs by design
     if (!isDeepStrictEqual(contentOf(canonical), contentOf(pulled.canonical))) {
         console.warn("warning: the server normalized some values on save - check 'git diff " + pulled.dashboardDir + "'")
     }
+}
+
+// ------------------------------------------------------------------------------------------ new
+
+// drops everything tied to the source's identity on the server: the instance id/version and the
+// ids of the components (server field ids - kept, they would collide with, or even edit, the
+// source). $file images stay behind too: the stored file lives in the source instance.
+function detachFromServer(canonical) {
+    const images = []
+    const walk = (node, path) => {
+        if (Array.isArray(node)) return node.forEach((element, i) => walk(element, path + "[" + (i + 1) + "]"))
+        if (!node || typeof node !== 'object') return
+        delete node.id
+        for (const key of Object.keys(node)) {
+            if (key === "Image" && typeof node[key] === 'string' && node[key] !== "") {
+                images.push(path + ".Image = " + node[key])
+                delete node[key]
+            } else {
+                walk(node[key], path ? path + "." + key : key)
+            }
+        }
+    }
+    delete canonical.instanceId
+    delete canonical.version
+    walk(canonical, "")
+    return images
+}
+
+async function newCommand() {
+    if (!target) throw new Error("usage: dash-sync new <name> [--from <dir|instanceId>] [--solution <id>]")
+    const dirName = slugify(target)
+    const dashboardDir = join(dashboardsRoot, dirName)
+    if (existsSync(dashboardDir)) throw new Error("'" + dashboardDir + "' already exists")
+
+    let canonical
+    let images = []
+    if (flags.from) {
+        const source = findLocal(flags.from)
+        const sourceCanonical = source ? implodeDashboard(source.dir) : parseDashboardFull(await getInstance(flags.from))
+        canonical = structuredClone(sourceCanonical)
+        images = detachFromServer(canonical)
+        canonical.Name = target
+    } else {
+        canonical = { Name: target }
+    }
+    if (flags.solution) canonical.Solution = flags.solution
+
+    writeDashboardDir(dashboardDir, explodeDashboard(canonical))
+    console.log("created '" + target + "' (not on the server yet) -> " + dashboardDir)
+    if (images.length > 0) {
+        console.warn("warning: " + images.length + " $file image(s) were not copied (the file belongs to the source instance) - upload them again in the app after the push:")
+        for (const image of images) console.warn("  " + image)
+    }
+    if (flags.from && !flags.solution) console.warn("note: Solution/Order were copied from the source - check where the new dashboard will show up in the menu")
+    console.log("next: edit it, run 'dash-sync validate " + dirName + "', then 'dash-sync push " + dirName + "' to create it on the server")
 }
 
 async function diffCommand() {
     if (!target) throw new Error("usage: dash-sync diff <dir|instanceId>")
     const local = findLocal(target)
     if (!local) throw new Error("dashboard '" + target + "' not found in " + dashboardsRoot)
+    if (!local.instanceId) throw new Error("'" + local.name + "' was not pushed yet - nothing to diff against")
     const definition = await getDefinition()
     const localNorm = normalize(implodeDashboard(local.dir), definition)
     const serverNorm = parseDashboardFull(await getInstance(local.instanceId))
@@ -310,6 +397,10 @@ async function status() {
     for (const entry of dirs) {
         try {
             if (entry.error) throw new Error(entry.error)
+            if (!entry.instanceId) {
+                console.log("➕ new (not pushed)  " + entry.name)
+                continue
+            }
             const localNorm = normalize(implodeDashboard(entry.dir), definition)
             const serverNorm = parseDashboardFull(await getInstance(entry.instanceId))
             let state
@@ -341,7 +432,7 @@ async function validate() {
     let totalErrors = 0
     let totalWarnings = 0
     for (const entry of dirs) {
-        console.log(entry.name + " (instance " + entry.instanceId + ")")
+        console.log(entry.name + " (" + (entry.instanceId ? "instance " + entry.instanceId : "not pushed") + ")")
         let findings
         try {
             if (entry.error) throw new Error(entry.error)
@@ -360,9 +451,9 @@ async function validate() {
     if (totalErrors > 0) process.exitCode = 1
 }
 
-const commands = { pull, push, diff: diffCommand, status, validate }
+const commands = { new: newCommand, pull, push, diff: diffCommand, status, validate }
 if (!commands[command]) {
-    console.error("usage: dash-sync <pull|push|diff|status|validate> [args]  (see header of tools/dash-sync.js)")
+    console.error("usage: dash-sync <new|pull|push|diff|status|validate> [args]  (see header of tools/dash-sync.js)")
     process.exit(1)
 }
 commands[command]().then(
