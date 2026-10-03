@@ -1,5 +1,43 @@
 # COB Dashboard
 
+### Updating `definitions/dashboard_v1.json`
+
+The definition is exported from a server (`GET /recordm/recordm/definitions/name/Dashboard_v1`) and
+committed here. A plain overwrite rewrites the whole file (58k lines), burying the real change.
+Always go through the normalizer instead:
+
+```
+cd recordm/customUI/dash
+npm run normalize-definition -- <exported.json>        # on a clean working tree
+git diff --stat                                        # should only show the real changes
+npm test                                               # includes the drift guards below
+```
+
+It prints the real differences by field path (`changed: DashboardCustomize > Link .required: null -> "mandatory"`),
+so you can confirm that is what you meant to change before committing.
+
+Where the noise of a raw export comes from (seen in this file's history) and what the normalizer does:
+
+| Noise | Example in the history | Handling |
+|---|---|---|
+| Formatting | server exports minified; some commits had no final newline | always 2-space indent, LF, one final newline, no `\u` escapes |
+| Key order | `descendents`/`rootField`/`duplicablePath` and `Multiple`/`Select` swap places between server releases (1800+ lines each time) | key order is learned from the version already in the repo (most used order per key set), so it never flips; key sets never seen before keep the exported order |
+
+What is deliberately NOT normalized (it is real content, review it):
+
+* `description` (`@COB vX.Y.Z ...`): the release version is maintained by hand and the export carries whatever the server had
+* `order` (global pre-order index of every field) and `descendents` (a flattened copy of `fields` embedded in every ancestor).
+  Both are derived from the tree, but the server emits them, so they stay; consequence: inserting a field renumbers
+  every following `order`, and a change to a field shows up once per ancestor (an edit 5 levels deep = 5-6 hunks). Judge
+  the change by the report above, not by the number of lines
+* property renames between server versions (`default` -> `Default`, ...) and structural changes: shown as normal diffs
+
+`npm run normalize-definition -- --check` (also part of `npm test`) fails if the committed file is not in the normalized
+format, e.g. after a hand edit or a raw overwrite.
+
+The tests also use this file as the source of truth for `dashboard.yaml` (dashboards as code): when a field changes
+`duplicable` or a new field is added, `test_repo_format.js` fails until `src/collector.js` / `src/repo_format.js` follow it.
+
 ### Definition Upgrades:
 
 #### 6.102.0

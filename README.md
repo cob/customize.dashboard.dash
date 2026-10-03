@@ -21,7 +21,8 @@ dashboard_chooser_0.28.0.xlsx (this one substitutes the chooser dashboard; delet
 
 ### Definition Upgrades:
 
-See [readme](./others/customize.dashboard.dash/README.MD)
+See [readme](./others/customize.dashboard.dash/README.MD) — it also explains how to update
+`dashboard_v1.json` from a server export with the minimum diff (`npm run normalize-definition`)
 
 ## Development
 

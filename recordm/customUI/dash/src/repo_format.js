@@ -20,13 +20,13 @@ import { DashTemplate, ComponentsTemplates } from './collector.js'
 
 const FILE_REF_PREFIX = "@file:"
 
-// Non-duplicable array fields (Dashboard_v1 marks every *Customize plus these three as
+// Non-duplicable array fields (Dashboard_v1 marks every *Customize plus these two as
 // duplicable=false — checked against the definition in test_repo_format.js): they always have
 // exactly one occurrence, so the canonical's 1-element array is stored flat in dashboard.yaml —
 // the key carries the field's own value (the groups' multi-select) on a single line and any
 // sub-fields sit at the parent level (implodeDashboard re-nests them using the templates; see
 // test_repo_format.js for the collision check that makes this unambiguous)
-const SINGLETON_GROUPS = new Set(["LineBehaviour", "SlidesArg", "ImageViewerURL"])
+const SINGLETON_GROUPS = new Set(["LineBehaviour", "SlidesArg"])
 const isSingletonGroup = (key) => key.endsWith("Customize") || SINGLETON_GROUPS.has(key)
 
 const isElement = (value) => value !== null && typeof value === 'object' && !Array.isArray(value)
