@@ -8,7 +8,7 @@ Always go through the normalizer instead:
 
 ```
 cd recordm/customUI/dash
-npm run normalize-definition -- <exported.json>        # on a clean working tree
+npm run normalize-definition -- <exported.json>        # overwrites the repo file in place
 git diff --stat                                        # should only show the real changes
 npm test                                               # includes the drift guards below
 ```
@@ -24,7 +24,15 @@ Where the noise of a raw export comes from (seen in this file's history) and wha
 | Noise | Example in the history | Handling |
 |---|---|---|
 | Formatting | server exports minified; some commits had no final newline | always 2-space indent, LF, one final newline, no `\u` escapes |
-| Key order | `descendents`/`rootField`/`duplicablePath` and `Multiple`/`Select` swap places between server releases (1800+ lines each time) | key order is learned from the version already in the repo (most used order per key set), so it never flips; key sets never seen before keep the exported order |
+| Key order | `descendents`/`rootField`/`duplicablePath` and `Multiple`/`Select` swap places between server releases (1800+ lines each time) | the key order is fixed by the normalizer (see below), so the output is the same bytes whatever the order of the export |
+
+Key order is canonical, not learned from the file already in the repo: the keys of the root, of each field definition,
+of `configuration`, `visibilityCondition`, `matcher` and the `AutoRefField`/`Reference` args follow a fixed table
+(`KEY_ORDER` in `tools/normalize_definition.js`); any other object — the free-named maps `configuration.keys` and
+`configuration.extensions`, or a shape that does not exist yet — is sorted alphabetically. Arrays are never reordered
+(`fields` order and `Select` options are content). `test_normalize_definition.js` shuffles every object of the
+definition and checks the output does not change. If a future server release adds a property to the field definition,
+add it to the table (it would otherwise be placed alphabetically, still deterministic, but away from its siblings).
 
 What is deliberately NOT normalized (it is real content, review it):
 

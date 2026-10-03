@@ -36,13 +36,13 @@
       "configuration": {
         "description": null,
         "keys": {
+          "InstanceDescription": {},
           "Reference": {
             "args": {
               "query": "*",
               "definition": "Dashboard-Solutions"
             }
-          },
-          "InstanceDescription": {}
+          }
         },
         "extensions": {
           "$groupEdit": {}
@@ -172,13 +172,13 @@
           "configuration": {
             "description": null,
             "keys": {
-              "InstanceDescription": {},
               "AutoRefField": {
                 "args": {
                   "source_field": "Solution",
                   "field_name": "Ordem"
                 }
-              }
+              },
+              "InstanceDescription": {}
             },
             "extensions": {}
           },
@@ -317,13 +317,13 @@
           "configuration": {
             "description": null,
             "keys": {
-              "InstanceDescription": {},
               "AutoRefField": {
                 "args": {
                   "source_field": "Solution",
                   "field_name": "Ordem"
                 }
-              }
+              },
+              "InstanceDescription": {}
             },
             "extensions": {}
           },
@@ -402,10 +402,10 @@
       "configuration": {
         "description": null,
         "keys": {
+          "InstanceDescription": {},
           "Number": {
             "args": {}
-          },
-          "InstanceDescription": {}
+          }
         },
         "extensions": {}
       },
@@ -428,12 +428,12 @@
       "configuration": {
         "description": null,
         "keys": {
-          "Multiple": {},
           "Help": {
             "args": [
               "Select the defaults to change"
             ]
           },
+          "Multiple": {},
           "Select": {
             "args": [
               "Classes",
@@ -808,16 +808,16 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Number": {
-                "args": {
-                  "decimal_places": "2"
-                }
-              },
               "Help": {
                 "args": [
                   "If you wish to for the dashboard to update the queries after a drop is performed",
                   "specify the number of seconds after which the update should happen."
                 ]
+              },
+              "Number": {
+                "args": {
+                  "decimal_places": "2"
+                }
               }
             },
             "extensions": {}
@@ -1270,16 +1270,16 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Number": {
-                "args": {
-                  "decimal_places": "2"
-                }
-              },
               "Help": {
                 "args": [
                   "If you wish to for the dashboard to update the queries after a drop is performed",
                   "specify the number of seconds after which the update should happen."
                 ]
+              },
+              "Number": {
+                "args": {
+                  "decimal_places": "2"
+                }
               }
             },
             "extensions": {}
@@ -1415,12 +1415,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes",
@@ -1588,6 +1588,7 @@
           "configuration": {
             "description": null,
             "keys": {
+              "InstanceDescription": {},
               "Select": {
                 "args": [
                   "Label",
@@ -1606,8 +1607,7 @@
                   "ImageViewer",
                   "InstanceViewer"
                 ]
-              },
-              "InstanceDescription": {}
+              }
             },
             "extensions": {
               "$style": {
@@ -1629,12 +1629,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -1840,12 +1840,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -1981,12 +1981,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -2306,12 +2306,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -2727,12 +2727,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -2925,12 +2925,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "LineClasses",
@@ -3138,12 +3138,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -3524,12 +3524,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -4072,6 +4072,11 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Help": {
+                        "args": [
+                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                        ]
+                      },
                       "Select": {
                         "args": [
                           "Listing",
@@ -4079,11 +4084,6 @@
                           "Link"
                         ],
                         "default": "Listing"
-                      },
-                      "Help": {
-                        "args": [
-                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                        ]
                       }
                     },
                     "extensions": {}
@@ -4300,12 +4300,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "LineClasses",
@@ -4587,12 +4587,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -4973,12 +4973,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -5521,12 +5521,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -6064,6 +6064,11 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Help": {
+                        "args": [
+                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                        ]
+                      },
                       "Select": {
                         "args": [
                           "Listing",
@@ -6071,11 +6076,6 @@
                           "Link"
                         ],
                         "default": "Listing"
-                      },
-                      "Help": {
-                        "args": [
-                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                        ]
                       }
                     },
                     "extensions": {}
@@ -6382,12 +6382,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -6752,12 +6752,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -6988,12 +6988,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -7122,16 +7122,16 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Default": {
+                        "args": {
+                          "value": "FALSE"
+                        }
+                      },
                       "Select": {
                         "args": [
                           "TRUE",
                           "FALSE"
                         ]
-                      },
-                      "Default": {
-                        "args": {
-                          "value": "FALSE"
-                        }
                       }
                     },
                     "extensions": {}
@@ -7384,16 +7384,16 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Default": {
+                        "args": {
+                          "value": "FALSE"
+                        }
+                      },
                       "Select": {
                         "args": [
                           "TRUE",
                           "FALSE"
                         ]
-                      },
-                      "Default": {
-                        "args": {
-                          "value": "FALSE"
-                        }
                       }
                     },
                     "extensions": {}
@@ -7949,12 +7949,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "InputVar",
@@ -8272,12 +8272,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "LinkClasses",
@@ -8440,12 +8440,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -8615,12 +8615,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -8842,13 +8842,13 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "'EndOfContentTrigger'",
                       "to configure end of slides update. False if you want to ONLY SHOW contents"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -9122,12 +9122,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -9752,15 +9752,15 @@
                   "configuration": {
                     "description": "Default: max-h-[70vh]",
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer container"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "max-h-[70vh]"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer container"
+                        ]
                       }
                     },
                     "extensions": {
@@ -9794,15 +9794,15 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer buttons"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer buttons"
+                        ]
                       }
                     },
                     "extensions": {
@@ -9908,15 +9908,15 @@
                   "configuration": {
                     "description": "Default: max-h-[70vh]",
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer container"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "max-h-[70vh]"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer container"
+                        ]
                       }
                     },
                     "extensions": {
@@ -9950,15 +9950,15 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer buttons"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer buttons"
+                        ]
                       }
                     },
                     "extensions": {
@@ -10432,12 +10432,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -10711,12 +10711,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -10889,12 +10889,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -11214,12 +11214,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -11635,12 +11635,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -12051,12 +12051,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -12315,12 +12315,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "LineClasses",
@@ -12528,12 +12528,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -12914,12 +12914,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -13462,6 +13462,11 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Help": {
+                        "args": [
+                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                        ]
+                      },
                       "Select": {
                         "args": [
                           "Listing",
@@ -13469,11 +13474,6 @@
                           "Link"
                         ],
                         "default": "Listing"
-                      },
-                      "Help": {
-                        "args": [
-                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                        ]
                       }
                     },
                     "extensions": {}
@@ -13690,12 +13690,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "LineClasses",
@@ -13977,12 +13977,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -14363,12 +14363,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -14911,12 +14911,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -15454,6 +15454,11 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Help": {
+                        "args": [
+                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                        ]
+                      },
                       "Select": {
                         "args": [
                           "Listing",
@@ -15461,11 +15466,6 @@
                           "Link"
                         ],
                         "default": "Listing"
-                      },
-                      "Help": {
-                        "args": [
-                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                        ]
                       }
                     },
                     "extensions": {}
@@ -15772,12 +15772,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "LineClasses",
@@ -16059,12 +16059,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -16445,12 +16445,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -16993,12 +16993,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -17536,6 +17536,11 @@
               "configuration": {
                 "description": null,
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Listing",
@@ -17543,11 +17548,6 @@
                       "Link"
                     ],
                     "default": "Listing"
-                  },
-                  "Help": {
-                    "args": [
-                      "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                    ]
                   }
                 },
                 "extensions": {}
@@ -17849,12 +17849,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -18366,12 +18366,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -18668,12 +18668,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -18802,16 +18802,16 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Default": {
+                        "args": {
+                          "value": "FALSE"
+                        }
+                      },
                       "Select": {
                         "args": [
                           "TRUE",
                           "FALSE"
                         ]
-                      },
-                      "Default": {
-                        "args": {
-                          "value": "FALSE"
-                        }
                       }
                     },
                     "extensions": {}
@@ -19064,16 +19064,16 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Default": {
+                        "args": {
+                          "value": "FALSE"
+                        }
+                      },
                       "Select": {
                         "args": [
                           "TRUE",
                           "FALSE"
                         ]
-                      },
-                      "Default": {
-                        "args": {
-                          "value": "FALSE"
-                        }
                       }
                     },
                     "extensions": {}
@@ -19327,16 +19327,16 @@
               "configuration": {
                 "description": null,
                 "keys": {
+                  "Default": {
+                    "args": {
+                      "value": "FALSE"
+                    }
+                  },
                   "Select": {
                     "args": [
                       "TRUE",
                       "FALSE"
                     ]
-                  },
-                  "Default": {
-                    "args": {
-                      "value": "FALSE"
-                    }
                   }
                 },
                 "extensions": {}
@@ -20069,12 +20069,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "InputVar",
@@ -20481,12 +20481,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "LinkClasses",
@@ -20711,12 +20711,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -20923,12 +20923,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -21226,13 +21226,13 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "'EndOfContentTrigger'",
                       "to configure end of slides update. False if you want to ONLY SHOW contents"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -21608,12 +21608,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -22349,15 +22349,15 @@
                   "configuration": {
                     "description": "Default: max-h-[70vh]",
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer container"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "max-h-[70vh]"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer container"
+                        ]
                       }
                     },
                     "extensions": {
@@ -22391,15 +22391,15 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer buttons"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer buttons"
+                        ]
                       }
                     },
                     "extensions": {
@@ -22505,15 +22505,15 @@
                   "configuration": {
                     "description": "Default: max-h-[70vh]",
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer container"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "max-h-[70vh]"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer container"
+                        ]
                       }
                     },
                     "extensions": {
@@ -22547,15 +22547,15 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer buttons"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer buttons"
+                        ]
                       }
                     },
                     "extensions": {
@@ -22662,15 +22662,15 @@
               "configuration": {
                 "description": "Default: max-h-[70vh]",
                 "keys": {
-                  "Help": {
-                    "args": [
-                      "Classes for the image viewer container"
-                    ]
-                  },
                   "Default": {
                     "args": {
                       "value": "max-h-[70vh]"
                     }
+                  },
+                  "Help": {
+                    "args": [
+                      "Classes for the image viewer container"
+                    ]
                   }
                 },
                 "extensions": {
@@ -22704,15 +22704,15 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Help": {
-                    "args": [
-                      "Classes for the image viewer buttons"
-                    ]
-                  },
                   "Default": {
                     "args": {
                       "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                     }
+                  },
+                  "Help": {
+                    "args": [
+                      "Classes for the image viewer buttons"
+                    ]
                   }
                 },
                 "extensions": {
@@ -23289,12 +23289,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes",
@@ -23530,6 +23530,7 @@
           "configuration": {
             "description": null,
             "keys": {
+              "InstanceDescription": {},
               "Select": {
                 "args": [
                   "Label",
@@ -23548,8 +23549,7 @@
                   "ImageViewer",
                   "InstanceViewer"
                 ]
-              },
-              "InstanceDescription": {}
+              }
             },
             "extensions": {
               "$style": {
@@ -23571,12 +23571,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -23782,12 +23782,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -23923,12 +23923,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -24248,12 +24248,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -24669,12 +24669,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -24867,12 +24867,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "LineClasses",
@@ -25080,12 +25080,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -25466,12 +25466,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -26014,6 +26014,11 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Help": {
+                        "args": [
+                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                        ]
+                      },
                       "Select": {
                         "args": [
                           "Listing",
@@ -26021,11 +26026,6 @@
                           "Link"
                         ],
                         "default": "Listing"
-                      },
-                      "Help": {
-                        "args": [
-                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                        ]
                       }
                     },
                     "extensions": {}
@@ -26242,12 +26242,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "LineClasses",
@@ -26529,12 +26529,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -26915,12 +26915,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -27463,12 +27463,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -28006,6 +28006,11 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Help": {
+                        "args": [
+                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                        ]
+                      },
                       "Select": {
                         "args": [
                           "Listing",
@@ -28013,11 +28018,6 @@
                           "Link"
                         ],
                         "default": "Listing"
-                      },
-                      "Help": {
-                        "args": [
-                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                        ]
                       }
                     },
                     "extensions": {}
@@ -28324,12 +28324,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -28694,12 +28694,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -28930,12 +28930,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -29064,16 +29064,16 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Default": {
+                        "args": {
+                          "value": "FALSE"
+                        }
+                      },
                       "Select": {
                         "args": [
                           "TRUE",
                           "FALSE"
                         ]
-                      },
-                      "Default": {
-                        "args": {
-                          "value": "FALSE"
-                        }
                       }
                     },
                     "extensions": {}
@@ -29326,16 +29326,16 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Default": {
+                        "args": {
+                          "value": "FALSE"
+                        }
+                      },
                       "Select": {
                         "args": [
                           "TRUE",
                           "FALSE"
                         ]
-                      },
-                      "Default": {
-                        "args": {
-                          "value": "FALSE"
-                        }
                       }
                     },
                     "extensions": {}
@@ -29891,12 +29891,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "InputVar",
@@ -30214,12 +30214,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "LinkClasses",
@@ -30382,12 +30382,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -30557,12 +30557,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -30784,13 +30784,13 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "'EndOfContentTrigger'",
                       "to configure end of slides update. False if you want to ONLY SHOW contents"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -31064,12 +31064,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -31694,15 +31694,15 @@
                   "configuration": {
                     "description": "Default: max-h-[70vh]",
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer container"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "max-h-[70vh]"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer container"
+                        ]
                       }
                     },
                     "extensions": {
@@ -31736,15 +31736,15 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer buttons"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer buttons"
+                        ]
                       }
                     },
                     "extensions": {
@@ -31850,15 +31850,15 @@
                   "configuration": {
                     "description": "Default: max-h-[70vh]",
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer container"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "max-h-[70vh]"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer container"
+                        ]
                       }
                     },
                     "extensions": {
@@ -31892,15 +31892,15 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer buttons"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer buttons"
+                        ]
                       }
                     },
                     "extensions": {
@@ -32374,12 +32374,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -32653,12 +32653,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -32831,12 +32831,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -33156,12 +33156,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -33577,12 +33577,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -33993,12 +33993,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -34257,12 +34257,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "LineClasses",
@@ -34470,12 +34470,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -34856,12 +34856,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -35404,6 +35404,11 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Help": {
+                        "args": [
+                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                        ]
+                      },
                       "Select": {
                         "args": [
                           "Listing",
@@ -35411,11 +35416,6 @@
                           "Link"
                         ],
                         "default": "Listing"
-                      },
-                      "Help": {
-                        "args": [
-                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                        ]
                       }
                     },
                     "extensions": {}
@@ -35632,12 +35632,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "LineClasses",
@@ -35919,12 +35919,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -36305,12 +36305,12 @@
                       "configuration": {
                         "description": null,
                         "keys": {
-                          "Multiple": {},
                           "Help": {
                             "args": [
                               "Select the defaults to change"
                             ]
                           },
+                          "Multiple": {},
                           "Select": {
                             "args": [
                               "Classes",
@@ -36853,12 +36853,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -37396,6 +37396,11 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Help": {
+                        "args": [
+                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                        ]
+                      },
                       "Select": {
                         "args": [
                           "Listing",
@@ -37403,11 +37408,6 @@
                           "Link"
                         ],
                         "default": "Listing"
-                      },
-                      "Help": {
-                        "args": [
-                          "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                        ]
                       }
                     },
                     "extensions": {}
@@ -37714,12 +37714,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "LineClasses",
@@ -38001,12 +38001,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -38387,12 +38387,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -38935,12 +38935,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -39478,6 +39478,11 @@
               "configuration": {
                 "description": null,
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Listing",
@@ -39485,11 +39490,6 @@
                       "Link"
                     ],
                     "default": "Listing"
-                  },
-                  "Help": {
-                    "args": [
-                      "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                    ]
                   }
                 },
                 "extensions": {}
@@ -39791,12 +39791,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -40308,12 +40308,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -40610,12 +40610,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -40744,16 +40744,16 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Default": {
+                        "args": {
+                          "value": "FALSE"
+                        }
+                      },
                       "Select": {
                         "args": [
                           "TRUE",
                           "FALSE"
                         ]
-                      },
-                      "Default": {
-                        "args": {
-                          "value": "FALSE"
-                        }
                       }
                     },
                     "extensions": {}
@@ -41006,16 +41006,16 @@
                   "configuration": {
                     "description": null,
                     "keys": {
+                      "Default": {
+                        "args": {
+                          "value": "FALSE"
+                        }
+                      },
                       "Select": {
                         "args": [
                           "TRUE",
                           "FALSE"
                         ]
-                      },
-                      "Default": {
-                        "args": {
-                          "value": "FALSE"
-                        }
                       }
                     },
                     "extensions": {}
@@ -41269,16 +41269,16 @@
               "configuration": {
                 "description": null,
                 "keys": {
+                  "Default": {
+                    "args": {
+                      "value": "FALSE"
+                    }
+                  },
                   "Select": {
                     "args": [
                       "TRUE",
                       "FALSE"
                     ]
-                  },
-                  "Default": {
-                    "args": {
-                      "value": "FALSE"
-                    }
                   }
                 },
                 "extensions": {}
@@ -42011,12 +42011,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "InputVar",
@@ -42423,12 +42423,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "LinkClasses",
@@ -42653,12 +42653,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -42865,12 +42865,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -43168,13 +43168,13 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "'EndOfContentTrigger'",
                       "to configure end of slides update. False if you want to ONLY SHOW contents"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -43550,12 +43550,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes"
@@ -44291,15 +44291,15 @@
                   "configuration": {
                     "description": "Default: max-h-[70vh]",
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer container"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "max-h-[70vh]"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer container"
+                        ]
                       }
                     },
                     "extensions": {
@@ -44333,15 +44333,15 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer buttons"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer buttons"
+                        ]
                       }
                     },
                     "extensions": {
@@ -44447,15 +44447,15 @@
                   "configuration": {
                     "description": "Default: max-h-[70vh]",
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer container"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "max-h-[70vh]"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer container"
+                        ]
                       }
                     },
                     "extensions": {
@@ -44489,15 +44489,15 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Help": {
-                        "args": [
-                          "Classes for the image viewer buttons"
-                        ]
-                      },
                       "Default": {
                         "args": {
                           "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                         }
+                      },
+                      "Help": {
+                        "args": [
+                          "Classes for the image viewer buttons"
+                        ]
                       }
                     },
                     "extensions": {
@@ -44604,15 +44604,15 @@
               "configuration": {
                 "description": "Default: max-h-[70vh]",
                 "keys": {
-                  "Help": {
-                    "args": [
-                      "Classes for the image viewer container"
-                    ]
-                  },
                   "Default": {
                     "args": {
                       "value": "max-h-[70vh]"
                     }
+                  },
+                  "Help": {
+                    "args": [
+                      "Classes for the image viewer container"
+                    ]
                   }
                 },
                 "extensions": {
@@ -44646,15 +44646,15 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Help": {
-                    "args": [
-                      "Classes for the image viewer buttons"
-                    ]
-                  },
                   "Default": {
                     "args": {
                       "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                     }
+                  },
+                  "Help": {
+                    "args": [
+                      "Classes for the image viewer buttons"
+                    ]
                   }
                 },
                 "extensions": {
@@ -45227,12 +45227,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes",
@@ -45506,12 +45506,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes"
@@ -45684,12 +45684,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -46009,12 +46009,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -46430,12 +46430,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes",
@@ -46846,12 +46846,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes",
@@ -47110,12 +47110,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "LineClasses",
@@ -47323,12 +47323,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -47709,12 +47709,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -48257,6 +48257,11 @@
               "configuration": {
                 "description": null,
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Listing",
@@ -48264,11 +48269,6 @@
                       "Link"
                     ],
                     "default": "Listing"
-                  },
-                  "Help": {
-                    "args": [
-                      "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                    ]
                   }
                 },
                 "extensions": {}
@@ -48485,12 +48485,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "LineClasses",
@@ -48772,12 +48772,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -49158,12 +49158,12 @@
                   "configuration": {
                     "description": null,
                     "keys": {
-                      "Multiple": {},
                       "Help": {
                         "args": [
                           "Select the defaults to change"
                         ]
                       },
+                      "Multiple": {},
                       "Select": {
                         "args": [
                           "Classes",
@@ -49706,12 +49706,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -50249,6 +50249,11 @@
               "configuration": {
                 "description": null,
                 "keys": {
+                  "Help": {
+                    "args": [
+                      "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                    ]
+                  },
                   "Select": {
                     "args": [
                       "Listing",
@@ -50256,11 +50261,6 @@
                       "Link"
                     ],
                     "default": "Listing"
-                  },
-                  "Help": {
-                    "args": [
-                      "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                    ]
                   }
                 },
                 "extensions": {}
@@ -50567,12 +50567,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "LineClasses",
@@ -50854,12 +50854,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -51240,12 +51240,12 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Multiple": {},
                   "Help": {
                     "args": [
                       "Select the defaults to change"
                     ]
                   },
+                  "Multiple": {},
                   "Select": {
                     "args": [
                       "Classes",
@@ -51788,12 +51788,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes",
@@ -52331,6 +52331,11 @@
           "configuration": {
             "description": null,
             "keys": {
+              "Help": {
+                "args": [
+                  "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
+                ]
+              },
               "Select": {
                 "args": [
                   "Listing",
@@ -52338,11 +52343,6 @@
                   "Link"
                 ],
                 "default": "Listing"
-              },
-              "Help": {
-                "args": [
-                  "Select how you want this component to behave. <br/> Listing: Default behavior <br/> Link: Every line uses a custom link and redirects upon clicking. <br/> Filter: allows the specification of a var and its value to be used across components in the dashboard."
-                ]
               }
             },
             "extensions": {}
@@ -52644,12 +52644,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes",
@@ -53161,12 +53161,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change<br><br><b>EscapeSpecialChars:</b> Escapes ElasticSearch chars in the filter"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes",
@@ -53463,12 +53463,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes",
@@ -53597,16 +53597,16 @@
               "configuration": {
                 "description": null,
                 "keys": {
+                  "Default": {
+                    "args": {
+                      "value": "FALSE"
+                    }
+                  },
                   "Select": {
                     "args": [
                       "TRUE",
                       "FALSE"
                     ]
-                  },
-                  "Default": {
-                    "args": {
-                      "value": "FALSE"
-                    }
                   }
                 },
                 "extensions": {}
@@ -53859,16 +53859,16 @@
               "configuration": {
                 "description": null,
                 "keys": {
+                  "Default": {
+                    "args": {
+                      "value": "FALSE"
+                    }
+                  },
                   "Select": {
                     "args": [
                       "TRUE",
                       "FALSE"
                     ]
-                  },
-                  "Default": {
-                    "args": {
-                      "value": "FALSE"
-                    }
                   }
                 },
                 "extensions": {}
@@ -54122,16 +54122,16 @@
           "configuration": {
             "description": null,
             "keys": {
+              "Default": {
+                "args": {
+                  "value": "FALSE"
+                }
+              },
               "Select": {
                 "args": [
                   "TRUE",
                   "FALSE"
                 ]
-              },
-              "Default": {
-                "args": {
-                  "value": "FALSE"
-                }
               }
             },
             "extensions": {}
@@ -54864,12 +54864,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "InputVar",
@@ -55276,12 +55276,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "LinkClasses",
@@ -55506,12 +55506,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes"
@@ -55718,12 +55718,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes",
@@ -56021,13 +56021,13 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "'EndOfContentTrigger'",
                   "to configure end of slides update. False if you want to ONLY SHOW contents"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes",
@@ -56403,12 +56403,12 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Multiple": {},
               "Help": {
                 "args": [
                   "Select the defaults to change"
                 ]
               },
+              "Multiple": {},
               "Select": {
                 "args": [
                   "Classes"
@@ -57144,15 +57144,15 @@
               "configuration": {
                 "description": "Default: max-h-[70vh]",
                 "keys": {
-                  "Help": {
-                    "args": [
-                      "Classes for the image viewer container"
-                    ]
-                  },
                   "Default": {
                     "args": {
                       "value": "max-h-[70vh]"
                     }
+                  },
+                  "Help": {
+                    "args": [
+                      "Classes for the image viewer container"
+                    ]
                   }
                 },
                 "extensions": {
@@ -57186,15 +57186,15 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Help": {
-                    "args": [
-                      "Classes for the image viewer buttons"
-                    ]
-                  },
                   "Default": {
                     "args": {
                       "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                     }
+                  },
+                  "Help": {
+                    "args": [
+                      "Classes for the image viewer buttons"
+                    ]
                   }
                 },
                 "extensions": {
@@ -57300,15 +57300,15 @@
               "configuration": {
                 "description": "Default: max-h-[70vh]",
                 "keys": {
-                  "Help": {
-                    "args": [
-                      "Classes for the image viewer container"
-                    ]
-                  },
                   "Default": {
                     "args": {
                       "value": "max-h-[70vh]"
                     }
+                  },
+                  "Help": {
+                    "args": [
+                      "Classes for the image viewer container"
+                    ]
                   }
                 },
                 "extensions": {
@@ -57342,15 +57342,15 @@
               "configuration": {
                 "description": null,
                 "keys": {
-                  "Help": {
-                    "args": [
-                      "Classes for the image viewer buttons"
-                    ]
-                  },
                   "Default": {
                     "args": {
                       "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                     }
+                  },
+                  "Help": {
+                    "args": [
+                      "Classes for the image viewer buttons"
+                    ]
                   }
                 },
                 "extensions": {
@@ -57457,15 +57457,15 @@
           "configuration": {
             "description": "Default: max-h-[70vh]",
             "keys": {
-              "Help": {
-                "args": [
-                  "Classes for the image viewer container"
-                ]
-              },
               "Default": {
                 "args": {
                   "value": "max-h-[70vh]"
                 }
+              },
+              "Help": {
+                "args": [
+                  "Classes for the image viewer container"
+                ]
               }
             },
             "extensions": {
@@ -57499,15 +57499,15 @@
           "configuration": {
             "description": null,
             "keys": {
-              "Help": {
-                "args": [
-                  "Classes for the image viewer buttons"
-                ]
-              },
               "Default": {
                 "args": {
                   "value": "bg-blue-600 text-stone-200 font-light  border-2 text-sm border-stone-800 px-2 py-1 hover:bg-blue-400 hover:cursor-pointer"
                 }
+              },
+              "Help": {
+                "args": [
+                  "Classes for the image viewer buttons"
+                ]
               }
             },
             "extensions": {
