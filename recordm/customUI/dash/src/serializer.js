@@ -150,31 +150,109 @@ const collectTemplateNames = (template, names) => {
 const MANAGED_NAMES = collectTemplateNames({ ...DashTemplate, ...DashExtrasTemplate }, new Set())
 for (const template of Object.values(ComponentsTemplates)) collectTemplateNames(template, MANAGED_NAMES)
 
+// Every field id the representation pins explicitly (the components' `id`, kept by the repo so
+// an edited component updates the server occurrence instead of replacing it). These identify an
+// existing occurrence and may NEVER be handed to a different one: the same id twice in a PUT
+// body is rejected by RecordM with an opaque 500 DATA_ACCESS_ERROR.
+function collectIds(fields, acc = new Set()) {
+    for (const field of (fields || [])) {
+        if (field.id > 0) acc.add(field.id)
+        collectIds(field.fields, acc)
+    }
+    return acc
+}
+
+function groupByName(fields) {
+    const byName = new Map()
+    for (const field of (fields || [])) {
+        const name = field.fieldDefinition.name
+        if (!byName.has(name)) byName.set(name, [])
+        byName.get(name).push(field)
+    }
+    return byName
+}
+
+// Pairs the occurrences of one field name, target index -> source index. Positional pairing
+// alone breaks as soon as the repo INSERTS an occurrence (a new board, a new component): every
+// occurrence after it shifts by one and ends up grafted onto the wrong server occurrence - and
+// the ids the repo pins further down are then emitted twice. So anchor first, position after.
+function pairOccurrences(targets, sources, pinned, name) {
+    const sourceIds = sources.map(source => collectIds([source]))
+    const pairs = new Map()
+    const claimed = new Set()
+
+    // 1. anchored: occurrences that share a pinned id. For a component that is its own `id`;
+    // for a board (which carries no id of its own) it is the ids of the components below it.
+    const candidates = []
+    targets.forEach((target, ti) => {
+        const ids = [...collectIds([target])]
+        sources.forEach((source, si) => {
+            const score = ids.filter(id => sourceIds[si].has(id)).length
+            if (score > 0) candidates.push({ ti, si, score })
+        })
+    })
+    candidates.sort((a, b) => b.score - a.score)
+    for (const { ti, si } of candidates) {
+        if (pairs.has(ti) || claimed.has(si)) continue
+        pairs.set(ti, si)
+        claimed.add(si)
+    }
+
+    // 2. positional, for what is left (occurrences with no id anywhere, and genuinely new ones).
+    // A source whose subtree holds an id pinned ELSEWHERE in the target is off the table: it
+    // belongs to another occurrence, and lending its ids here is the duplicate-id bug above.
+    const available = sources
+        .map((source, si) => si)
+        .filter(si => !claimed.has(si) && ![...sourceIds[si]].some(id => pinned.has(id)))
+    targets.forEach((target, ti) => {
+        if (pairs.has(ti)) return
+        const si = available.find(si => !claimed.has(si)
+            // components are typed: another type holds different children, so taking over its
+            // occurrence would rewrite the wrong component
+            && (name !== "Component" || sources[si].value === target.value))
+        if (si === undefined) return
+        pairs.set(ti, si)
+        claimed.add(si)
+    })
+    return pairs
+}
+
 // Grafts an existing server instance onto a serialized instance, pairing occurrences of the
-// same field (by fieldDefinition name) in order, so the PUT body looks like a regular
-// instance-editor save: existing fields keep their server ids (new occurrences keep the
+// same field (by fieldDefinition name, see pairOccurrences), so the PUT body looks like a
+// regular instance-editor save: existing fields keep their server ids (new occurrences keep the
 // negative placeholder ids assigned by serializeDashboard), and fields OUTSIDE the canonical
 // representation keep the server's value (see MANAGED_NAMES above).
-function adoptFieldIds(target, source) {
-    const sourceByName = new Map()
-    for (const field of (source.fields || [])) {
-        const name = field.fieldDefinition.name
-        if (!sourceByName.has(name)) sourceByName.set(name, [])
-        sourceByName.get(name).push(field)
-    }
-    const used = new Map()
-    for (const field of (target.fields || [])) {
-        const name = field.fieldDefinition.name
-        const occurrences = sourceByName.get(name) || []
-        const index = used.get(name) || 0
-        if (index < occurrences.length) {
-            used.set(name, index + 1)
-            if (field.id == null || field.id < 0) field.id = occurrences[index].id
-            if (!MANAGED_NAMES.has(name)) field.value = occurrences[index].value
-            adoptFieldIds(field, occurrences[index])
+function adoptFieldIds(target, source, pinned) {
+    if (pinned === undefined) pinned = collectIds(target.fields)
+    const sourceByName = groupByName(source.fields)
+    for (const [name, targets] of groupByName(target.fields)) {
+        const sources = sourceByName.get(name) || []
+        for (const [ti, si] of pairOccurrences(targets, sources, pinned, name)) {
+            const field = targets[ti]
+            if (field.id == null || field.id < 0) field.id = sources[si].id
+            if (!MANAGED_NAMES.has(name)) field.value = sources[si].value
+            adoptFieldIds(field, sources[si], pinned)
         }
     }
     return target
 }
 
-export { serializeDashboard, parseDashboardFull, parseDashboardExtras, adoptFieldIds, DashExtrasTemplate }
+// Fields emitted more than once with the same id: RecordM answers such a PUT with a bare 500
+// DATA_ACCESS_ERROR, so push checks the body itself and says which occurrences collide.
+function duplicateFieldIds(instance) {
+    const seen = new Map()
+    const duplicates = []
+    const walk = (fields, path) => (fields || []).forEach((field, i) => {
+        const where = path + "/" + field.fieldDefinition.name + "[" + (i + 1) + "]"
+        if (field.id > 0) {
+            if (seen.has(field.id)) duplicates.push({ id: field.id, first: seen.get(field.id), second: where })
+            else seen.set(field.id, where)
+        }
+        walk(field.fields, where)
+    })
+    walk(instance.fields, "")
+    return duplicates
+}
+
+
+export { serializeDashboard, parseDashboardFull, parseDashboardExtras, adoptFieldIds, duplicateFieldIds, DashExtrasTemplate }
