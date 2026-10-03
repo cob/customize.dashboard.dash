@@ -35,8 +35,9 @@ npm test        # requires Node >= 22
 ## Dashboards as code
 
 Complex dashboards can be represented in the client repo (git: IDE editing, versioning, diffs)
-while simple ones keep being edited directly in the application. Dashboards are always CREATED in
-the application; `pull` is the only way into the repo.
+while simple ones keep being edited directly in the application. A dashboard comes into the repo by
+`pull` (it already exists in the application) or by `new` (it is born in the repo, without an
+`instanceId`, and its first `push` creates it on the server).
 
 ### Layout (in the client repo)
 
@@ -74,7 +75,13 @@ a `pull` regenerates the file in the flat form.
 
 ### Workflow
 
-1. Create (or duplicate) the dashboard in the application, once
+1. Create (or duplicate) the dashboard in the application, once - or start it in the repo with
+   `npm run dash-sync new <Name> [--from <dir|instanceId>] [--solution <id>]`: an empty skeleton, or a
+   clone of a local dashboard / a server instance (a clone drops the instance identity, the component
+   ids and the `$file` images - the stored file belongs to the source - so upload those again in the
+   application after the push). A new dashboard has no `instanceId` yet: skip step 2, its first `push`
+   (step 4) POSTs it and records `instanceId`/`version` through the implicit pull. `Solution`/`Order`
+   are copied from the source unless `--solution` is given: check where it will show in the menu
 2. `npm run dash-sync pull <instanceId>` — brings it into `recordm/customUI/dashs/`
    (`pull --all` brings every Dashboard_v1 of the server, and removes from disk the local
    dashboards whose instance was deleted on the server — git shows the deletion, the developer
@@ -87,7 +94,10 @@ a `pull` regenerates the file in the flat form.
    straight to the real server, so the interception and the reload only work on 8041. Iterating
    writes NOTHING to RecordM, so the instance version history keeps its meaning
 4. `npm run dash-sync push <Name>` — deliberate save: one meaningful version on the instance.
-   Refuses if the server version moved (someone edited in the app): use `diff`/`pull` first
+   Refuses if the server version moved (someone edited in the app): use `diff`/`pull` first.
+   Also refuses, before sending, a body that repeats a field id (RecordM would answer with an opaque
+   500 `DATA_ACCESS_ERROR`): the message lists the colliding occurrences - usually two components of
+   the repo claiming the same `id:`
 5. `npm run dash-sync status` / `diff <Name>` — detect and inspect changes made in the application
 6. `npm run dash-sync validate [Name]` — offline structural validation (unknown keys with
    suggestions, component types, per-field handlebars, orphan .hbs files; paths are 1-based:
@@ -115,12 +125,14 @@ overwrite them (`--force` to override).
   extracted from `App.vue`
 * `src/serializer.js` — `serializeDashboard` (canonical -> instance, the inverse of
   `parseDashboard`), `parseDashboardFull` (canonical + Solution/Description/Order root fields)
-  and `adoptFieldIds` (grafts server field ids for editor-like saves)
+  `adoptFieldIds` (grafts server field ids for editor-like saves: occurrences are paired by pinned
+  `id` first and by position after, so inserting a board/component does not shift the others onto
+  the wrong server occurrence) and `duplicateFieldIds` (ids emitted twice in a PUT body)
 * `src/repo_format.js` — the `dashboards/<Name>/` directory format (explode/implode of
   multiline fields into `.hbs` files)
 * `src/validator.js` — structural validation derived from the same templates the app uses, plus
   the application's own save rules (link-only dashboards)
-* `tools/dash-sync.js` — pull/push/diff/status/validate CLI
+* `tools/dash-sync.js` — new/pull/push/diff/status/validate CLI
 * `tools/dev_middleware.js` — dev-server interception + browser reload (wired in `vue.config.js`)
 
 The guaranteed property (see `src/test_serializer.js`) is that serialization is a fixed point of the
