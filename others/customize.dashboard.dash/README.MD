@@ -13,6 +13,9 @@ git diff --stat                                        # should only show the re
 npm test                                               # includes the drift guards below
 ```
 
+`<exported.json>` is the file downloaded from the server (NOT the repo file, which is the default target); relative paths
+are resolved from `recordm/customUI/dash`, so the repo's definition is `../../../others/customize.dashboard.dash/definitions/dashboard_v1.json`.
+
 It prints the real differences by field path (`changed: DashboardCustomize > Link .required: null -> "mandatory"`),
 so you can confirm that is what you meant to change before committing.
 

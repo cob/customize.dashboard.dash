@@ -10,7 +10,7 @@
 //
 // <target.json> defaults to others/customize.dashboard.dash/definitions/dashboard_v1.json and is
 // also the baseline (read before it is overwritten), so run it on a clean working tree.
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, realpathSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 export const DEFAULT_TARGET = fileURLToPath(new URL('../../../../others/customize.dashboard.dash/definitions/dashboard_v1.json', import.meta.url))
@@ -101,6 +101,16 @@ export const semanticChanges = (before, after) => {
     return changes
 }
 
+// relative paths are resolved from the current directory (recordm/customUI/dash when run via npm)
+const readOrExit = (path, what) => {
+    try {
+        return readFileSync(path, "utf8")
+    } catch (error) {
+        console.error(`Cannot read ${what} '${path}' (${error.code}). Relative paths are resolved from ${process.cwd()}`)
+        process.exit(2)
+    }
+}
+
 const main = args => {
     const check = args[0] === "--check"
     const [input, target = DEFAULT_TARGET] = check ? [null, ...args.slice(1)] : args
@@ -108,7 +118,7 @@ const main = args => {
         console.error("usage: normalize_definition.js <exported.json> [<target.json>]\n       normalize_definition.js --check [<target.json>]")
         process.exit(2)
     }
-    const baselineText = readFileSync(target, "utf8")
+    const baselineText = readOrExit(target, "target")
     if (check) {
         if (normalize(baselineText, baselineText) !== baselineText) {
             console.error(`${target} is not in the normalized format (run: node tools/normalize_definition.js <file> to fix)`)
@@ -117,7 +127,12 @@ const main = args => {
         console.log(`${target}: normalized`)
         return
     }
-    const normalized = normalize(readFileSync(input, "utf8"), baselineText)
+    const inputText = readOrExit(input, "exported definition")
+    if (realpathSync(input) === realpathSync(target)) {
+        console.error(`'${input}' is the target itself: pass the file exported from the server as the first argument`)
+        process.exit(2)
+    }
+    const normalized = normalize(inputText, baselineText)
     const changes = semanticChanges(JSON.parse(baselineText), JSON.parse(normalized))
     writeFileSync(target, normalized)
     console.log(`${target} written. Real differences vs the previous version (${changes.length}):`)
