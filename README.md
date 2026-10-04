@@ -11,6 +11,12 @@ custom-ui.items.home.label=Home
 custom-ui.items.home.url=dash
 ```
 
+Requires `ui-all` >= 6.32.0: since that version RecordM serves Tailwind itself (preflight, pre-compiled
+utilities and a lazily loaded Play CDN, see the Tailwind section of the ui-all README), so this
+customization no longer ships it. The pre-compiled `static.css` of ui-all is generated from the sources of
+this repo (`npm run build-tailwind-static` there, with this repo cloned next to it), so run it after
+changing the classes used by the dash components; until then the new classes fall back to the Play CDN.
+
 After creating the definitions, import the following xls       
 ```
 1.dashboard-solutions.xlsx
