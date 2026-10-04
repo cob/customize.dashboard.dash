@@ -211,7 +211,7 @@ Handlebars.registerHelper('dateInfoTimestamp', function (timestamp, keyword) {
 
     if (keyword == "toISO") {
         return date.toISOString()
-    } if (keyword == "FullDateTime") {
+    } else if (keyword == "FullDateTime") {
         let options = {
             year: "numeric",
             month: "2-digit",
@@ -221,7 +221,7 @@ Handlebars.registerHelper('dateInfoTimestamp', function (timestamp, keyword) {
             hour12: false,
         };
         return new Intl.DateTimeFormat(undefined, options).format(date)
-    } if (keyword == "FullDate") {
+    } else if (keyword == "FullDate") {
         let options = {
             year: "numeric",
             month: "2-digit",
@@ -229,7 +229,7 @@ Handlebars.registerHelper('dateInfoTimestamp', function (timestamp, keyword) {
             hour12: false,
         };
         return new Intl.DateTimeFormat(undefined, options).format(date)
-    } if (keyword == "FullTime") {
+    } else if (keyword == "FullTime") {
         let options = {
             hour: "numeric",
             minute: "numeric",
