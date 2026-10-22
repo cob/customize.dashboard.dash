@@ -6,16 +6,19 @@
 import hljs from "highlight.js/lib/core"
 import handlebars from "highlight.js/lib/languages/handlebars"
 import json from "highlight.js/lib/languages/json"
+import { decorateNesting } from "../handlebars_nesting.js"
 
 hljs.registerLanguage("handlebars", handlebars)
 hljs.registerLanguage("json", json)
 
-// passadas a cada parse para não alterar o marked global (partilhado com o mdPreview do RecordM)
+// As opções vão em cada parse. Assim o marked global, que o mdPreview do RecordM também usa, fica igual.
 const MARKED_OPTIONS = {
   langPrefix: "hljs language-",
   highlight(code, lang) {
-    if (!lang || !hljs.getLanguage(lang)) return code
-    return hljs.highlight(code, { language: lang, ignoreIllegals: true }).value
+    const language = lang && hljs.getLanguage(lang)
+    if (!language) return code
+    const html = hljs.highlight(code, { language: lang, ignoreIllegals: true }).value
+    return language.name === "Handlebars" ? decorateNesting(code, html) : html
   }
 }
 
@@ -102,6 +105,11 @@ export default {
   --color-danger-emphasis: #da3633;
   --color-done-fg: #a371f7;
   --color-done-emphasis: #8957e5;
+  --hb-level-0: #ff7b72;
+  --hb-level-1: #f778ba;
+  --hb-level-2: #39c5cf;
+  --hb-level-3: #e3b341;
+  --hb-level-4: #c3d43a;
 }
 
 .markdown-body[data-theme="Light"] {
@@ -156,6 +164,11 @@ export default {
   --color-danger-emphasis: #cf222e;
   --color-done-fg: #8250df;
   --color-done-emphasis: #8250df;
+  --hb-level-0: #cf222e;
+  --hb-level-1: #bf3989;
+  --hb-level-2: #1b7c83;
+  --hb-level-3: #7d4e00;
+  --hb-level-4: #5c6b00;
 }
 
 
@@ -1126,7 +1139,7 @@ text-decoration: underline;
 color: var(--color-prettylights-syntax-constant-other-reference-link);
 }
 
-/* highlight.js (handlebars, json): as cores vêm das variáveis prettylights de cada Mode */
+/* Cores do highlight.js. Usam as variáveis prettylights, por isso seguem o Mode. */
 .markdown-body .hljs-comment {
 color: var(--color-prettylights-syntax-comment);
 }
@@ -1157,6 +1170,36 @@ color: var(--color-prettylights-syntax-string);
 .markdown-body .hljs-literal,
 .markdown-body .hljs-literal .hljs-keyword {
 color: var(--color-prettylights-syntax-constant);
+}
+
+/* Cada nível de blocos handlebars tem a sua cor. O nível vem do handlebars_nesting.js. */
+.markdown-body .hb-level-0 .hljs-template-tag,
+.markdown-body .hb-level-0 .hljs-template-tag * {
+color: var(--hb-level-0);
+}
+
+.markdown-body .hb-level-1 .hljs-template-tag,
+.markdown-body .hb-level-1 .hljs-template-tag * {
+color: var(--hb-level-1);
+}
+
+.markdown-body .hb-level-2 .hljs-template-tag,
+.markdown-body .hb-level-2 .hljs-template-tag * {
+color: var(--hb-level-2);
+}
+
+.markdown-body .hb-level-3 .hljs-template-tag,
+.markdown-body .hb-level-3 .hljs-template-tag * {
+color: var(--hb-level-3);
+}
+
+.markdown-body .hb-level-4 .hljs-template-tag,
+.markdown-body .hb-level-4 .hljs-template-tag * {
+color: var(--hb-level-4);
+}
+
+.markdown-body .hb-error {
+text-decoration: underline wavy var(--color-danger-fg);
 }
 
 .markdown-body g-emoji {
