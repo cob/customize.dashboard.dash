@@ -17,6 +17,7 @@
   import Dashboard from './components/Dashboard.vue'
   import Refresh from './components/shared/Refresh.vue'
   import ComponentStatePersistence from "./model/ComponentStatePersistence";
+  import { calendarRangeVar, calendarQueries } from "./model/CalendarQueries";
   import sha256 from "crypto-js/sha256";
   import { nextTick } from 'vue'
 
@@ -830,6 +831,15 @@
                   c.dash_info_inputs = DashFunctions.instancesList(c.DefinitionNameHierarchy, c.FilterHierarchy + " " + inputQuery, 1000, 0, sortOpt, "true", { validity: 300 } )
                 }
 
+              } else if (c.Component === "Calendar") {
+                // The queries depend on the date range being shown, which the Calendar publishes in a var
+                const range = c.vars[calendarRangeVar(c)]
+                const queries = range ? calendarQueries(c, range) : []
+                c.Events.forEach((e, i) => {
+                  e.dash_info = queries[i]
+                    ? getActiveBoardQuery(DashFunctions.instancesList(e.Definition, queries[i], 800, 0, "", "", { validity: 300 }))
+                    : { value: [], state: "ready" }
+                })
               }
             }
           }

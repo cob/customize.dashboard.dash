@@ -1,0 +1,10 @@
+{
+  "vms": {
+    "default": {
+      "template": "tpl-server-repo",
+      "bundles": [
+        "cob-learning"
+      ]
+    }
+  }
+}
