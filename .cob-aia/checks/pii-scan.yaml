@@ -1,0 +1,31 @@
+# PII-scan state. Every finding starts as `pending` and blocks the
+# cob-aia gate until you mark it with one of three terminal statuses:
+
+#   accepted          — placeholder ou contacto público autorizado (e.g.
+#                       `alice@example.com`, contact email num README).
+#                       Nada para mitigar.
+#   migrated_to_sops  — PII real movido para um ficheiro SOPS-encrypted.
+#   removed           — PII real apagado da árvore.
+
+# NOTA: `migrated_to_sops` e `removed` apagam o valor do snapshot atual
+# mas NÃO do histórico git — `git log -p` continua a expor o plaintext.
+# Reescrita de história (`git filter-repo` + force-push + re-clone de
+# todos os colaboradores) reduz o leak local, mas cópias externas
+# (forks, mirrors, CI caches) mantêm-no. Ao contrário de um token, um
+# email não é rotacionável: para PII real, trata como data breach e
+# notifica os afetados.
+
+# cob-aia rewrites this file only when the set of findings changes and
+# creates it only once there is something to record. Deleting an entry
+# forces a re-scan — the finding comes back as `pending`.
+
+# This file is committed; use commit messages to record decisions.
+# `git log -p` of this path is the audit trail.
+
+version: 2
+findings:
+  - fingerprint: 6bd1ce1f7f394bdd
+    type: email
+    locations:
+      - { path: recordm/customUI/dash/assets/images/create.png, line: 3808 }
+    status: accepted # accepted | migrated_to_sops | removed   (default `pending` blocks)

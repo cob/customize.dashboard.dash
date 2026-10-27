@@ -22,7 +22,6 @@
   import interactionPlugin from '@fullcalendar/interaction'
   import listPlugin from '@fullcalendar/list'
   import allLocales from '@fullcalendar/core/locales-all';
-  import {instancesList} from '@cob/dashboard-info';
   import Waiting from './shared/Waiting.vue'
   import debounce from 'lodash.debounce';
   import {toEsFieldName} from '@cob/rest-api-wrapper/src/utils/ESHelper';
@@ -30,6 +29,7 @@
   import tippy from 'tippy.js';
   import Instance from "@/components/shared/Instance";
   import ComponentStatePersistence from "@/model/ComponentStatePersistence";
+  import { calendarRangeVar, calendarQueryBounds, calendarDateRangeQuery } from "@/model/CalendarQueries";
   import Handlebars from 'handlebars'
   import CalendarDayEvent from './CalendarDayEvent.vue'
   import Vue from 'vue'
@@ -124,7 +124,6 @@
 
     data: () => ({
       datePickerElement: undefined,
-      rmEventSources: [], // Array with a DashInfo(...) for each event source spec
       createDefinitionId: null,
       listYearSelected: false,
       monthTitle: null,
@@ -283,23 +282,18 @@
 
     beforeDestroy() {
       this.statePersistence.stop()
-      for (var i=0; i < this.rmEventSources.length; i++) {
-        this.rmEventSources[i].stopUpdates()
-      }
     },
 
     computed: {
       // Customizations component model
       options()              { return this.component['CalendarCustomize'][0] },
       classes()              { return this.options['CalendarClasses'] || 'p-4' },
-      inputVarCalendar()     { return this.options['InputVarCalendar'] || [] },
       allowCreateInstances() { return this.options['AllowCreateInstances'] === 'TRUE' || false},
       createDefinition()     { return this.options['CreateDefinition'] },
       eventView()            { return this.options['EventViews'] && this.options['EventViews'].split(',') || ['dayGridWeek','dayGridMonth','listYear'] },
       outputVar()            { return this.options['OutputVarCalendar'] || '' },
       outputVarInterval()    { return this.options['OutputVarInterval'] || '' },
       dayMaxEvents()         { return parseInt(this.options['MaxVisibleDayEvents'], 10) || MAX_VISIBLE_DAY_EVENTS },
-      cropMonth() { return this.options['CalendarCustomize']!=null && this.options['CalendarCustomize'].split("\u0000").indexOf("CropMonth") !== -1},
       headerOnly() { return this.options['CalendarCustomize']!=null && this.options['CalendarCustomize'].split("\u0000").indexOf("HeaderOnly") !== -1},
       // strictMode()           {return this.options['StrictMode'] === 'TRUE' || false},
 
@@ -307,7 +301,7 @@
       eventSources()         { return this.component['Events'] },
 
       // Behavior component model
-      updatingFlag()         { return this.eventSources.map(source => source.state == "loading" || source.state == "updating" ).reduce( (acc,v) => acc || v, false) }, //True if any source is loading|updating
+      updatingFlag()         { return this.eventSources.some(source => source.dash_info && (source.dash_info.state == "loading" || source.dash_info.state == "updating")) }, //True if any source is loading|updating
 
       /**
        * Returns true if the current calendar view is a single-day view (dayGridDay or listDay).
@@ -319,78 +313,12 @@
         return viewType === 'dayGridDay' || viewType === 'listDay'
       },
 
-      queries() {
-        let queries = []
-
-        if (this.dateRange) { // Only calculate queries after having a dateRange set by the calendar
-          let startDate = this.dateRange[0].getTime()
-          let endDate = this.dateRange[1].getTime()
-
-          if(this.cropMonth) {
-            let start = new Date(this.dateRange[0])
-            if(start.getDate() > 1){
-              start.setDate(1)
-              start.setMonth( start.getMonth() + 1)
-              start.setHours(0)
-              start.setMinutes(0)
-              start.setSeconds(0)
-            }
-            // last day of the month
-            let end = new Date(start)
-            end.setMonth( start.getMonth() + 1)
-            end.setDate(0)
-            end.setHours(23)
-            end.setMinutes(59)
-            end.setSeconds(59)
-
-            startDate = start.getTime()
-            endDate = end.getTime()
-          }
-          // if ("dayGridMonth" === this.calendarApi.view.type && this.strictMode){ //check if the grid view is dayMonthGridView
-          //   startDate = new Date(this.calendarApi.getDate()).getTime()
-          //   endDate = new Date(this.calendarApi.getDate().getFullYear(),this.calendarApi.getDate().getMonth()+1,1).getTime()
-          // }
-
-          for(let i in this.eventSources) {
-            // Calculate date range query part
-            let startField = toEsFieldName(this.eventSources[i]['DateStartEventField'])
-            let endField   = toEsFieldName(this.eventSources[i]['DateEndEventField'])
-            let dateRangeQuery = `${startField}:[${startDate} TO ${endDate-1}]`
-            if (endField) {
-              dateRangeQuery += ` OR ${endField}:[${startDate+1} TO ${endDate-1}]`
-              dateRangeQuery += ` OR (${startField}:<${startDate} AND ${endField}:>=${endDate-1})`
-            }
-            dateRangeQuery = `(${dateRangeQuery})`
-
-            // Calculate final query
-            const eventQuery = this.eventSources[i]['EventsQuery'] || '*'
-            const baseQuery = `${eventQuery} AND (${dateRangeQuery})`
-            const inputVars = new Set(this.inputVarCalendar.map(inputVar => inputVar['InputVarCalendar']));
-            const finalQuery = `${baseQuery} ${[...inputVars].map(inputVar => this.component.vars[inputVar]).join(' ')}`.trim()
-
-            queries.push(finalQuery)
-
-            // If set, the 'outputVar' should be a query reflecting the current date range displayed on the calendar. Since we can use only one date_field for the query we opt to use the first(0) "Event Source" specs
-            if (i==0 && this.outputVar) { this.$set(this.component.vars, this.outputVar, dateRangeQuery) }
-            // If set, the outputVarInterval will be an object
-            if (i==0 && this.outputVarInterval) {
-              let outputVarIntervalObj = {
-                "startDate": `${startDate}`,
-                "endDate": `${endDate-1}`
-              }
-              this.$set(this.component.vars, this.outputVarInterval, outputVarIntervalObj)
-            }
-          }
-        }
-        return queries
-      },
-
       allResults() {
         let results = []
-        for (var i=0; i<this.rmEventSources.length;i++) {
-          const rmEventSource = this.rmEventSources[i]
-          if (rmEventSource.results && rmEventSource.results.value) {
-            for(let result of rmEventSource.results.value) {
+        for (var i=0; i<this.eventSources.length;i++) {
+          const dashInfo = this.eventSources[i].dash_info
+          if (dashInfo && dashInfo.value) {
+            for(let result of dashInfo.value) {
               const descritpionIsHandlebars = this.isHandlebars(this.eventSources[i]['DescriptionEventField'])
               const description = this.eventSources[i]['DescriptionEventField']
 
@@ -411,20 +339,8 @@
     },
 
     watch: {
-      queries: function(newQueries) {
-        this.calendarApi.setOption('noEventsContent', {html: '<div>&nbsp;</div>'})
-        // If we're in header only mode and the calendar is hidden, we don't need to launch the queries
-        if (this.headerOnly && this.isCalendarHidden) {
-          return
-        }
-        for (var i=0; i<newQueries.length; i++) {
-          if( i < this.rmEventSources.length ) {
-            this.rmEventSources[i].changeArgs({query: newQueries[i]})
-          } else {
-            this.rmEventSources.push( instancesList( this.eventSources[i]['Definition'], newQueries[i], 800, 0, "", "", {validity: 300}) )
-          }
-        }
-      },
+      dateRange() { this.publishDateRange() },
+      isCalendarHidden() { this.publishDateRange() },
 
       allResults: function(esInstances) {
         const newCalendarEvents = this.buildCalendarEvents(esInstances)
@@ -443,6 +359,24 @@
 
     methods: {
       isHandlebars(text) { return !!text && (text.includes("{|{") || text.includes("{${")) },
+      // The event queries are built (and stopped/refreshed) by App.vue, from the date range we publish here
+      publishDateRange() {
+        if (!this.dateRange) return // Only after having a dateRange set by the calendar
+        this.calendarApi.setOption('noEventsContent', {html: '<div>&nbsp;</div>'})
+
+        const range = [this.dateRange[0].getTime(), this.dateRange[1].getTime()]
+        // If we're in header only mode and the calendar is hidden, we don't need to launch the queries
+        const hidden = this.headerOnly && this.isCalendarHidden
+        this.$set(this.component.vars, calendarRangeVar(this.component), hidden ? undefined : range)
+
+        // If set, the 'outputVar' should be a query reflecting the current date range displayed on the calendar. Since we can use only one date_field for the query we opt to use the first(0) "Event Source" specs
+        const { startDate, endDate } = calendarQueryBounds(this.component, range)
+        if (this.outputVar) { this.$set(this.component.vars, this.outputVar, calendarDateRangeQuery(this.eventSources[0], startDate, endDate)) }
+        // If set, the outputVarInterval will be an object
+        if (this.outputVarInterval) {
+          this.$set(this.component.vars, this.outputVarInterval, { "startDate": `${startDate}`, "endDate": `${endDate-1}` })
+        }
+      },
       updateCalendarBasedOnPersistedStateChange(newContent = {}) {
         if(!this.calendarApi) {
           setTimeout(() => this.updateCalendarBasedOnPersistedStateChange(newContent),100)
@@ -721,9 +655,9 @@
             if(isHandles ) {
               const convertedToHandlebars = descriptionEventField.replaceAll("{|{","{{").replaceAll("}|}","}}").replaceAll("{${","{{{").replaceAll("}$}","}}}")
               const template = Handlebars.compile(convertedToHandlebars)
-              esInstance._dashboard =  this.dashboard
-              esInstance._calendarView = this.calendarApi.view.type
-              actualtitle = template(esInstance)
+              // Not set on esInstance: it belongs to the query results (owned by App.vue), and the dashboard
+              // contains that query, so it would become a cycle that breaks the query's JSON.stringify
+              actualtitle = template({ ...esInstance, _dashboard: this.dashboard, _calendarView: this.calendarApi.view.type })
             } else {
               const title = esInstance[descriptionEventField] || [esInstance.id]
               actualtitle = title[0] + (title.length > 1 ? `(${title.length})` : '')
