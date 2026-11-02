@@ -705,8 +705,8 @@
         if(tooltipTemplate && tooltipTemplate != "") {
             const convertedToHandlebars = tooltipTemplate.replaceAll("{|{","{{").replaceAll("}|}","}}").replaceAll("{${","{{{").replaceAll("}$}","}}}")
 
-            const template = Handlebars.compile(convertedToHandlebars)
-            tooltipComponent = template(esInstance)
+          const template = Handlebars.compile(convertedToHandlebars)
+          tooltipComponent = template({ ...esInstance, _dashboard: this.dashboard, _calendarView: calendarApi.view.type })
         } else {
           tooltipComponent = new Vue(Object.assign({propsData: {esInstance}}, Instance)).$mount().$el
         }
