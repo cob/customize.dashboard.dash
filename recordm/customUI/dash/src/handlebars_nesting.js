@@ -60,8 +60,12 @@ export function blockDepths(code) {
 function htmlLines(html) {
     const open = []
     return html.split("\n").map(line => {
-        const prefix = open.join("")
-        ;(line.match(SPAN_RE) || []).forEach(tag => tag === "</span>" ? open.pop() : open.push(tag))
+        const prefix = open.join("");
+        (line.match(SPAN_RE) || []).forEach(tag =>
+            tag === "</span>"
+                ? open.pop()
+                : open.push(tag)
+        )
         return prefix + line + "</span>".repeat(open.length)
     })
 }
