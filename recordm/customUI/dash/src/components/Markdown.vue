@@ -3,6 +3,21 @@
 </template>
 
 <script>
+import hljs from "highlight.js/lib/core"
+import handlebars from "highlight.js/lib/languages/handlebars"
+import json from "highlight.js/lib/languages/json"
+
+hljs.registerLanguage("handlebars", handlebars)
+hljs.registerLanguage("json", json)
+
+// passadas a cada parse para não alterar o marked global (partilhado com o mdPreview do RecordM)
+const MARKED_OPTIONS = {
+  langPrefix: "hljs language-",
+  highlight(code, lang) {
+    if (!lang || !hljs.getLanguage(lang)) return code
+    return hljs.highlight(code, { language: lang, ignoreIllegals: true }).value
+  }
+}
 
 export default {
   props: {
@@ -14,7 +29,7 @@ export default {
         const content = this.component["MDContent"]
 
         if(content && content !== "")
-          return marked.parse(content)
+          return marked.parse(content, MARKED_OPTIONS)
 
         console.warn("empty content in markdown component!")
         return ""
@@ -1109,6 +1124,39 @@ color: var(--color-prettylights-syntax-sublimelinter-gutter-mark);
 .markdown-body .pl-corl {
 text-decoration: underline;
 color: var(--color-prettylights-syntax-constant-other-reference-link);
+}
+
+/* highlight.js (handlebars, json): as cores vêm das variáveis prettylights de cada Mode */
+.markdown-body .hljs-comment {
+color: var(--color-prettylights-syntax-comment);
+}
+
+.markdown-body .hljs-template-tag,
+.markdown-body .hljs-keyword,
+.markdown-body .hljs-built_in {
+color: var(--color-prettylights-syntax-keyword);
+}
+
+.markdown-body .hljs-template-variable {
+color: var(--color-prettylights-syntax-variable);
+}
+
+.markdown-body .hljs-name {
+color: var(--color-prettylights-syntax-entity);
+}
+
+.markdown-body .hljs-attr {
+color: var(--color-prettylights-syntax-entity-tag);
+}
+
+.markdown-body .hljs-string {
+color: var(--color-prettylights-syntax-string);
+}
+
+.markdown-body .hljs-number,
+.markdown-body .hljs-literal,
+.markdown-body .hljs-literal .hljs-keyword {
+color: var(--color-prettylights-syntax-constant);
 }
 
 .markdown-body g-emoji {
