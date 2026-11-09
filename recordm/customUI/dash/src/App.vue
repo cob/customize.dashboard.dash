@@ -23,6 +23,8 @@
 
   window.CoBDasHDebug = window.CoBDasHDebug || {}
   const DEBUG = window.CoBDasHDebug
+  const CONTEXT_BUILD_DEBOUNCE_MS = 200  // wait this long for other context changes before rebuilding the dashboard
+  const CONTEXT_BUILD_MAX_WAIT_MS = 1000 // but never postpone a rebuild beyond this, while changes keep coming
 // window.CoBDasHDebug.app = true
 
   const DASHBOARD_DEF = "Dashboard_v1"
@@ -720,17 +722,31 @@
           return context;
         }
 
-        const contextWatcher = (newContext) => {
-          const newContextString = JSON.stringify(newContext)
-          if(this.dashboardsCached[dashKey].dashboardContextString == newContextString ) {
+        const rebuildIfContextChanged = () => {
+          const cached = this.dashboardsCached[dashKey]
+          if (!cached || this.activeDashKey !== dashKey) return // dashboard was stopped meanwhile
+          const newContextString = JSON.stringify(cached.dashboardContext)
+          if(cached.dashboardContextString == newContextString ) {
             return
           } else {
-            this.dashboardsCached[dashKey].dashboardContextString = newContextString
+            cached.dashboardContextString = newContextString
           }
-          if(DEBUG.app) console.log("DASH:  APP: 5.3.1: loadDashboard: contextWatcher: context changed for '", this.dashboardsCached[dashKey].id + "/" + newDashEs.name,"'. newContext=",newContext)
+          if(DEBUG.app) console.log("DASH:  APP: 5.3.1: loadDashboard: contextWatcher: context changed for '", cached.id + "/" + newDashEs.name,"'. newContext=",cached.dashboardContext)
 
-          const newProcessed = buildDashboard(this.dashboardsCached[dashKey])
-          this.$set(this.dashboardsCached[dashKey], "dashboardProcessed", newProcessed);
+          const newProcessed = buildDashboard(cached)
+          this.$set(cached, "dashboardProcessed", newProcessed);
+        }
+
+        // Each change of the context (typically one of its queries answering) rebuilds and re-renders the whole
+        // dashboard, which is the expensive part when the context holds big lists. The queries of a dashboard
+        // usually answer within a short window of each other, so a change only schedules a rebuild and later
+        // changes inside that window join it (never postponing it beyond CONTEXT_BUILD_MAX_WAIT_MS).
+        const contextWatcher = () => {
+          const cached = this.dashboardsCached[dashKey]
+          clearTimeout(cached.contextBuildTimer)
+          if (!cached.contextBuildFirst) cached.contextBuildFirst = Date.now()
+          const wait = Math.max(0, Math.min(CONTEXT_BUILD_DEBOUNCE_MS, cached.contextBuildFirst + CONTEXT_BUILD_MAX_WAIT_MS - Date.now()))
+          cached.contextBuildTimer = setTimeout(() => { cached.contextBuildFirst = null; rebuildIfContextChanged() }, wait)
         }
 
         const buildDashboard = (dashboard) => {
@@ -1041,6 +1057,8 @@
           activeDash.stopBaseContextWatcher()
           activeDash.stopContextWatcher()
           activeDash.stopSiblingsWatcher()
+          clearTimeout(activeDash.contextBuildTimer)
+          activeDash.contextBuildFirst = null
 
           // Stop sibling query and any queries defined in context, if present
           activeDash.solutionSiblings.stopUpdates()

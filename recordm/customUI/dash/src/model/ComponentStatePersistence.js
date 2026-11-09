@@ -39,7 +39,7 @@ class ComponentStatePersistence {
         const hashParts = window.location.hash.split("/")
         try {
             const [name, ...rest] = hashParts[2].split(":")
-            let statesInHash = rest.length > 1 ? JSON.parse(decodeURIComponent(rest.join(":")).replaceAll("'","\"")) : {}
+            let statesInHash = rest.join(":").trim() !== "" ? JSON.parse(decodeURIComponent(rest.join(":")).replaceAll("'","\"")) : {}
             return statesInHash[this._id]
         } catch (e) {
             if(DEBUG.state) console.error("DASH: STATE: invalid parse of hash=", window.location.hash)
@@ -52,7 +52,7 @@ class ComponentStatePersistence {
         if (hashParts[2] === undefined) return // not in a dash url: nothing to persist (and .split would throw)
         const [name, ...rest] = hashParts[2].split(":")
         try {
-            let statesInHash = rest.length > 1 ? JSON.parse(decodeURIComponent(rest.join(":"))) : {}
+            let statesInHash = rest.join(":").trim() !== "" ? JSON.parse(decodeURIComponent(rest.join(":"))) : {}
 
             // Update if content changed and we are still in a dash custom-UI
             if(JSON.stringify(statesInHash[this._id]) !== JSON.stringify(this._content) && hashParts[3] && hashParts[3].startsWith("dash") ) {
