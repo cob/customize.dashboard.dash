@@ -23,7 +23,7 @@
     "@zxing/library": "^0.21.3",
     "cropperjs": "^1.6.2",
     "crypto-js": "^4.1.1",
-    "handlebars": "^4.7.7",
+    "handlebars": "^4.7.10",
     "highlight.js": "^10.7.3",
     "jsqr": "^1.4.0",
     "lodash.debounce": "^4.0.8",
@@ -36,7 +36,7 @@
     "yaml": "2.9.0"
   },
   "devDependencies": {
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-service": "~5.0.9",
     "esbuild-loader": "^2.21.0",
     "vue-template-compiler": "^2.6.11"
   }
