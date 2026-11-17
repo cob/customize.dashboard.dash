@@ -10,7 +10,7 @@
     "normalize-definition": "node tools/normalize_definition.js"
   },
   "dependencies": {
-    "@cob/dashboard-info": "^3.14.0",
+    "@cob/dashboard-info": "^3.14.1",
     "@cob/rest-api-wrapper": "^2.9.2",
     "@fullcalendar/core": "^6.1.6",
     "@fullcalendar/daygrid": "^6.1.6",
