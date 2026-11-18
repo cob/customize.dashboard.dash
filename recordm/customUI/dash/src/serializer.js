@@ -57,9 +57,9 @@ function serializeFields(defFields, node, state) {
             // Components are typed: parseDashboard turns each Component field into an object with
             // the type under 'Component' and the original field id under 'id' (see the board loop
             // in collector.js). The children are the keys of the type's ComponentsTemplates entry.
-            for (const component of value) {
-                fields.push(makeField(def, component["Component"], component, state, component.id))
-            }
+            value.forEach((component, occurrence) => {
+                fields.push(makeField(def, component["Component"], component, state, component.id, occurrence))
+            })
             if (value.length === 0) {
                 fields.push(makeField(def, null, null, state))
             }
@@ -67,9 +67,9 @@ function serializeFields(defFields, node, state) {
             // Duplicable (or collected-as-array) field: one occurrence per element. Each element
             // carries the occurrence's own value under the field's name (set by collect) and the
             // children values under their names.
-            for (const element of value) {
-                fields.push(makeField(def, element ? element[def.name] : null, element, state))
-            }
+            value.forEach((element, occurrence) => {
+                fields.push(makeField(def, element ? element[def.name] : null, element, state, undefined, occurrence))
+            })
             if (value.length === 0) {
                 fields.push(makeField(def, null, null, state))
             }
@@ -86,9 +86,17 @@ function serializeFields(defFields, node, state) {
     return fields
 }
 
-function makeField(def, value, childrenNode, state, knownId) {
+// `occurrence` is the position of this field among the occurrences of the same definition field
+// under the same parent. RecordM stores `duplicate` exactly as the body says (absent = false) and
+// the instance editor picks the button from it alone: the first occurrence is the original (shows
+// "duplicate"), every other one is a duplicate (shows "remove"). A body without the flag turned
+// every occurrence into an original, and no board/component could be removed in the editor.
+// It follows the position, not the server field the id was adopted from: reordering in the repo
+// swaps the flags, like dragging does in the editor.
+function makeField(def, value, childrenNode, state, knownId, occurrence = 0) {
     return {
         id: (knownId !== undefined && knownId !== null) ? knownId : state.nextPlaceholderId--,
+        duplicate: occurrence > 0 && def.duplicable !== false,
         // only what parseDashboard/adoptFieldIds read: embedding the full definition node would
         // repeat its `fields` subtree and `descendents` list at every level, inflating a PUT
         // body to several MB (a real push bounced off nginx's request size limit with 413)

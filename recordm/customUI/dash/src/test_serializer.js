@@ -228,4 +228,39 @@ assert.deepEqual(l1.DashboardCustomize[0].GroupAccess, [{ GroupAccess: "DASH Cli
 assert.deepEqual(l1.Board.map(board => board.Component), [[]])
 assert.deepEqual(parseDashboardFull(serializeDashboard(l1, definition)), l1) // fixed point
 
+// ---------------------------------------------------------------------------------------------
+// `duplicate`: RecordM stores the flag as sent (absent = false) and the instance editor shows
+// "remove" only on occurrences flagged as duplicates. Bodies without it left every board and
+// component as an original: several "duplicate" buttons and nothing that could be removed.
+// Under each parent the first occurrence of a field is the original, the others are duplicates.
+// ---------------------------------------------------------------------------------------------
+const checkDuplicateFlags = (fields, where) => {
+    const seen = new Set()
+    for (const field of fields) {
+        const name = field.fieldDefinition.name
+        assert.equal(field.duplicate, seen.has(name), where + "/" + name + ": duplicate must be " + seen.has(name))
+        seen.add(name)
+        checkDuplicateFlags(field.fields, where + "/" + name)
+    }
+}
+checkDuplicateFlags(raw1.fields, "")
+const boardFields = raw1.fields.filter(field => field.fieldDefinition.name === "Board")
+assert.deepEqual(boardFields.map(field => field.duplicate), [false, true, true])
+assert.deepEqual(boardFields[1].fields.filter(field => field.fieldDefinition.name === "Component").map(field => field.duplicate),
+    [false, true, true, true])
+checkDuplicateFlags(serializeDashboard(cLinkOnly, definition).fields, "") // the lone empty board is an original
+
+// a push repairs an instance saved without the flags: the body follows the position in the repo,
+// whatever the server holds for the field whose id it adopts
+const flagless = serializeDashboard(c0, definition)
+const dropFlags = (fields) => fields.forEach(field => { field.duplicate = false; dropFlags(field.fields) })
+dropFlags(flagless.fields)
+checkDuplicateFlags(adoptFieldIds(serializeDashboard(c0, definition), flagless).fields, "")
+
+// a field the definition says is not duplicable is never flagged, even with a stray second
+// element in the repo (the server rejects that body on its own, with NOT_DUPLICABLE_FIELD)
+const strayCustomize = { ...c0, DashboardCustomize: [c0.DashboardCustomize[0], c0.DashboardCustomize[0]] }
+assert.deepEqual(serializeDashboard(strayCustomize, definition).fields
+    .filter(field => field.fieldDefinition.name === "DashboardCustomize").map(field => field.duplicate), [false, false])
+
 console.log("test_serializer: ALL TESTS PASSED")
