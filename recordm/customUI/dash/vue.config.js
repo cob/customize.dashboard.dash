@@ -57,10 +57,12 @@ module.exports = {
       .set('tough-cookie$', __dirname + '/tools/empty-module.js')
       .set('axios-cookiejar-support$', __dirname + '/tools/empty-module.js');
 
+    // O mesmo para o Marp (componente SlidesMarp) e as suas dependências, que usam sintaxe
+    // ES2022 (campos de classe, "??", "?.") e ficheiros .cjs e .mjs.
     config.module
       .rule('cob-packages-es2019')
-      .test(/\.js$/)
-      .include.add(/node_modules[\\/]@cob[\\/]/).end()
+      .test(/\.[cm]?js$/)
+      .include.add(/node_modules[\\/](@cob|@marp-team|@csstools|@xmldom|highlight\.js|postcss[^\\/]*|js-yaml|markdown-it[^\\/]*|linkify-it|mdurl|uc\.micro|entities|punycode\.js|katex|xss|cssfilter|cssesc|nanoid|picocolors|source-map-js|mathjax-full|speech-rule-engine|mhchemparser|mj-context-menu)[\\/]/).end()
       .use('esbuild-loader')
       .loader('esbuild-loader')
       .options({ target: 'es2019' });

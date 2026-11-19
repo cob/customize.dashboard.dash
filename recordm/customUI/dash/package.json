@@ -19,6 +19,7 @@
     "@fullcalendar/multimonth": "^6.1.8",
     "@fullcalendar/timegrid": "^6.1.6",
     "@fullcalendar/vue": "^6.1.6",
+    "@marp-team/marp-core": "^4.4.0",
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
     "cropperjs": "^1.6.2",

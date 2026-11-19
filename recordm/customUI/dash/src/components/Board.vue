@@ -13,6 +13,8 @@
             <Activator v-if="item['Component'] === 'ModalActivator'" :component="item" :key="i" @show-modal="d => $emit('show-modal', d)"/>
             <Slides    v-if="item['Component'] === 'Slides'"      :component="item" :key="i"
             v-on="$listeners" @show-modal="d => $emit('show-modal', d)" :refreshFlag="refreshFlag"/>
+            <SlidesMarp v-if="item['Component'] === 'SlidesMarp'" :component="item" :key="i"
+            v-on="$listeners" @show-modal="d => $emit('show-modal', d)" :refreshFlag="refreshFlag"/>
             <Hierarchy v-if="item['Component'] === 'Hierarchy'" :component="item" :key="i" :refreshFlag="refreshFlag"/>
             <ImageViewer  v-if="item['Component'] === 'ImageViewer'"  :component="item" :key="i" />
             <InstanceViewer  v-if="item['Component'] === 'InstanceViewer'"  :component="item" :key="i" />
@@ -32,12 +34,13 @@
     import Activator from './Activator.vue'
     import Markdown from './Markdown.vue'
     import Slides from './Slides.vue'
+    import SlidesMarp from './SlidesMarp.vue'
     import Hierarchy from './Hierarchy.vue'
     import ImageViewer from './ImageViewer.vue'
     import InstanceViewer from "./InstanceViewer.vue";
 
     export default {
-        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown, Slides, Hierarchy, ImageViewer, InstanceViewer },
+        components: { Label, Menu, Totals, Kibana, Filtro, Calendar, List, Mermaid, Activator, Markdown, Slides, SlidesMarp, Hierarchy, ImageViewer, InstanceViewer },
         props: {
           board: Object,
           refreshFlag: Number,

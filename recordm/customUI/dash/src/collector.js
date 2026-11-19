@@ -101,6 +101,14 @@ const ComponentsTemplates = {
             "SlidesArg": [{}]
         }]
     },
+    "SlidesMarp": {
+        "MarpContent" : "",
+        "MarpSlidesCustomize": [{
+            "MarpSlidesClasses" : "",
+            "MarpConcurrentScript":"",
+            "MarpSlidesArg": [{}]
+        }]
+    },
     "ModalActivator" : {
         "ModalActivatorCustomize" : [{
             "ModalActivatorClasses" : ""
